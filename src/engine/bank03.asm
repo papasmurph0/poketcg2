@@ -99,7 +99,7 @@ StartMenu_ContinueFromDiary:
 	farcall Func_1055e
 	farcall UpdateOWScroll
 	farcall SaveTargetFadePals
-	farcall Func_1109f
+	farcall SetOverworldAndFadePalsFrameFunc
 	call DoFrame
 	ld a, OWMODE_CONTINUE_DUEL
 	call ExecuteOWModeScript
@@ -198,13 +198,13 @@ PlayNextMusic:
 ; fade in to black + some processing
 OverworldFadeInToBlack:
 	ld a, $01
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	ret
 
 ; fade out to black + some processing
 OverworldFadeOutToBlack:
 	ld a, $01
-	call Func_33a3
+	call FadeOutOverworldToBlackOrWhite
 	ret
 
 OverworldResumeAfterDuel:
@@ -1242,7 +1242,7 @@ OverworldLoop::
 	farcall Func_1055e
 	farcall UpdateOWScroll
 	farcall SaveTargetFadePals
-	farcall Func_1109f
+	farcall SetOverworldAndFadePalsFrameFunc
 	call DoFrame
 	ld a, FALSE
 	ld b, $00

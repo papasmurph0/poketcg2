@@ -185,7 +185,7 @@ InitGROverworldMapState: ; Func_300a8
 	farcall GetEventValue
 	call z, .asm_30175
 	ld a, 0
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
@@ -748,7 +748,7 @@ MovePlayerAcrossGROverworldPath: ; Func_30452
 	farcall StartPalFadeToBlackOrWhite
 .wait_fade
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	ret
 
 .data
@@ -873,7 +873,7 @@ DoGRBlimpMovement_GRIsland:
 	call .FadeOut
 .finish
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	ret
 
 ; fades out to white or black

@@ -4976,7 +4976,7 @@ SECTION "Bank 7@65f8", ROMX[$65f8], BANK[$7]
 
 RunDuelFromSRAM:
 	farcall Stub_10cfe
-	farcall Func_1109f
+	farcall SetOverworldAndFadePalsFrameFunc
 	farcall BeginScreenTransitionToWhite
 	bank1call StartDuelFromSRAM
 	farcall EndScreenTransitionFromWhite
@@ -5490,7 +5490,7 @@ _ShowGrandMasterCupBracket:
 	farcall SetFrameFuncAndFadeFromWhite
 	ld c, PAD_B
 	farcall WaitForButtonPress
-	call Func_3f61
+	call ClearCallbackPointer
 	farcall FadeToWhiteAndUnsetFrameFunc
 	ret
 
@@ -5799,7 +5799,7 @@ PrintGrandMasterCupBracketChampion:
 	ld [wGrandMasterCupBracketChampion], a
 	call .DrawSprite
 	ld hl, SpinGrandMasterCupBracketChampionSprite
-	call Func_3f6b
+	call SetCallbackPointer
 	pop af
 	add a
 	ld c, a

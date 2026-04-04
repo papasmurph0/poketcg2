@@ -20,7 +20,7 @@ Prologue::
 	lb de, 0, 0
 	farcall Func_12c0ce
 	ld a, $00
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	call WaitPalFading
 	call EnableLCD
 
@@ -138,7 +138,7 @@ Prologue::
 	xor a
 	call PlaySFX
 	ld a, $01
-	call Func_33a3
+	call FadeOutOverworldToBlackOrWhite
 	ld a, SFX_WARP
 	call PlaySFX
 	ret
@@ -2914,7 +2914,7 @@ HandlePokemonDomeWarpFadeInPreload: ; Func_3d6ca
 	ld [wOverworldScriptPointer + 1], a
 .loaded_ow_script
 	ld a, $00
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
@@ -2933,7 +2933,7 @@ HandlePokemonDomeWarpFadeOutPreload: ; Func_3d719
 	ret
 .after_grand_master_cup
 	ld a, $00
-	call Func_33a3
+	call FadeOutOverworldToBlackOrWhite
 	scf
 	ccf
 	ret
@@ -3903,14 +3903,14 @@ HandlePokemonDomeBackWarpFadeInPreload: ; Func_3ddb8
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
 	ld a, $00
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
 
 HandlePokemonDomeBackWarpFadeOutPreload: ; Func_3de67
 	ld a, $00
-	call Func_33a3
+	call FadeOutOverworldToBlackOrWhite
 	scf
 	ccf
 	ret

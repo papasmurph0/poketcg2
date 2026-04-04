@@ -8317,7 +8317,7 @@ Func_2fe54:
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
 	ld a, 0
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
@@ -8415,7 +8415,7 @@ Func_2fe9a:
 	call .FadeToWhite
 .exit
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	ret
 
 .FadeToWhite:

@@ -553,21 +553,21 @@ WaitForOWObjectAnimation::
 	pop af
 	ret
 
-Func_338f::
+FadeInOverworldFromBlackOrWhite:: ; Func_338f
 	push af
 	farcall SaveTargetFadePals
-	farcall Func_1109f
+	farcall SetOverworldAndFadePalsFrameFunc
 	call DoFrame
 	pop af
 	ld b, $00
 	farcall StartPalFadeFromBlackOrWhite
 	ret
 
-Func_33a3::
+FadeOutOverworldToBlackOrWhite:: ; Func_33a3
 	ld b, $00
 	farcall StartPalFadeToBlackOrWhite
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	ld a, EVENT_EF
 	farcall ZeroOutEventValue
 	ret
@@ -1900,7 +1900,7 @@ FrameFunc_FadePals::
 	pop af
 	ret
 
-Func_3a39::
+FrameFunc_OverworldAndFadePals:: ; Func_3a39
 	push af
 	push bc
 	push de
@@ -1932,7 +1932,7 @@ FrameFunc_SpriteAnimationAndFadePals::
 	push bc
 	push de
 	push hl
-	call Func_3f78
+	call CallCallbackPointerIfSet
 	farcall UpdateSpriteAnims
 	farcall FadePalettes
 	pop hl
@@ -1941,7 +1941,7 @@ FrameFunc_SpriteAnimationAndFadePals::
 	pop af
 	ret
 
-Func_3a81::
+FrameFunc_DuelAnimationsAndSpriteAnims:: ; Func_3a81
 	push af
 	push bc
 	push de
@@ -2290,7 +2290,7 @@ ResetAnimationQueue::
 	push af
 	call FinishQueuedAnimations
 	farcall ClearDuelAnimationState
-	farcall Func_110b9
+	farcall SetDuelAnimationsAndSpriteAnimsFrameFunc
 	ld a, $01
 	ld [wDuelAnimFrameFuncActive], a
 	pop af
@@ -2301,7 +2301,7 @@ FinishQueuedAnimations::
 	ld a, [wDuelAnimFrameFuncActive]
 	and a
 	jr z, .asm_3c60
-	farcall Func_110c2
+	farcall UnsetDuelAnimationsAndSpriteAnimsFrameFunc
 .asm_3c60
 	xor a
 	ld [wDuelAnimFrameFuncActive], a
@@ -2827,7 +2827,7 @@ DisableInt_LYCoincidence::
 	ret
 
 ; clears wCallbackPointer
-Func_3f61::
+ClearCallbackPointer:: ; Func_3f61
 	di
 	xor a
 	ld [wCallbackPointer + 0], a
@@ -2836,7 +2836,7 @@ Func_3f61::
 	ret
 
 ; sets wCallbackPointer to function in hl
-Func_3f6b::
+SetCallbackPointer:: ; Func_3f6b
 	di
 	push af
 	ld a, l
@@ -2848,7 +2848,7 @@ Func_3f6b::
 	ret
 
 ; jumps to wCallbackPointer if not null
-Func_3f78::
+CallCallbackPointerIfSet:: ; Func_3f78
 	push af
 	ld hl, wCallbackPointer
 	ld a, [hli]

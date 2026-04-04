@@ -29,8 +29,8 @@ _PlayCredits::
 	ld [wCreditsScrollYTarget], a
 	ld [wCreditsScrollSpeed], a
 	farcall RunCreditsCommands
-	call Func_3f61
-	call Func_3f61 ; repeated
+	call ClearCallbackPointer
+	call ClearCallbackPointer ; repeated
 	ret
 
 Func_138c6:
@@ -303,7 +303,7 @@ CreditsCmd_Scroll:
 	; this won't work since the frame function
 	; doesn't actually call wCallbackPointer
 	ld hl, Func_3e7a
-	call Func_3f6b
+	call SetCallbackPointer
 	ret
 
 Func_13ac1::
@@ -389,11 +389,11 @@ CreditsCmd_LoadMap:
 
 CreditsCmd_InitOW:
 	call InitOWObjects
-	call Func_1109f
+	call SetOverworldAndFadePalsFrameFunc
 	ret
 
 CreditsCmd_DeinitOW:
-	call Func_110a8
+	call UnsetOverworldAndFadePalsFrameFunc
 	ret
 
 CreditsCmd_LoadTilemap:

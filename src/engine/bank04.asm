@@ -292,7 +292,7 @@ BeginScreenTransitionToWhite: ; Func_1022a
 	farcall SetAllOBPaletteFadeConfigsToEnabled
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
-	call Func_110a8
+	call UnsetOverworldAndFadePalsFrameFunc
 	call Func_10ea7
 	call Func_1059f
 	call Func_10d40
@@ -317,7 +317,7 @@ EndScreenTransitionFromWhite: ; Func_10252
 	call Func_1055e
 	call UpdateOWScroll
 	call EnableLCD
-	call Func_1109f
+	call SetOverworldAndFadePalsFrameFunc
 	farcall SetAllBGPaletteFadeConfigsToEnabled
 	farcall SetAllOBPaletteFadeConfigsToEnabled
 	farcall StartFadeFromWhite
@@ -3219,14 +3219,14 @@ UnsetFadePalsFrameFunc:
 	call PopFrameFunction
 	ret
 
-Func_1109f::
+SetOverworldAndFadePalsFrameFunc:: ; Func_1109f
 	push hl
-	ld hl, Func_3a39
+	ld hl, FrameFunc_OverworldAndFadePals
 	call PushFrameFunction
 	pop hl
 	ret
 
-Func_110a8::
+UnsetOverworldAndFadePalsFrameFunc:: ; Func_110a8
 	call PopFrameFunction
 	ret
 
@@ -3241,14 +3241,14 @@ UnsetSpriteAnimationAndFadePalsFrameFunc::
 	call PopFrameFunction
 	ret
 
-Func_110b9::
+SetDuelAnimationsAndSpriteAnimsFrameFunc:: ; Func_110b9
 	push hl
-	ld hl, Func_3a81
+	ld hl, FrameFunc_DuelAnimationsAndSpriteAnims
 	call PushFrameFunction
 	pop hl
 	ret
 
-Func_110c2::
+UnsetDuelAnimationsAndSpriteAnimsFrameFunc:: ; Func_110c2
 	call PopFrameFunction
 	ret
 
@@ -6512,7 +6512,7 @@ Func_13dfa:
 	farcall SetAllPaletteFadeConfigsToEnabled
 	ld a, $ff
 	farcall InitFadePalettes
-	call Func_3f61
+	call ClearCallbackPointer
 	farcall ClearDuelAnimationState
 	farcall EnableAnimations
 	ret

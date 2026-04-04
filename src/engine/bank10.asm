@@ -822,7 +822,7 @@ InitTCGIslandOverworldState: ; Func_4048a
 	ld b, WEST
 	farcall LoadOWObject
 	ld a, $00
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
@@ -1160,7 +1160,7 @@ MovePlayerToSelectedTCGIslandLocation: ; Func_406d1
 	farcall StartPalFadeToBlackOrWhite
 .wait_fade
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	ret
 
 TCGIslandLocationPositions:
@@ -1264,7 +1264,7 @@ DoGRBlimpMovement_TCGIsland:
 	call .FadeOut
 .finish
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	ret
 
 ; fades out to white or black
@@ -1419,7 +1419,7 @@ HandleMasonLaboratoryMainWarpFadeInPreload: ; Func_40e91
 	farcall ZeroOutEventValue
 	call DrawMasonLaboratoryMainChallengeMachineTilemap
 	ld a, $00
-	call Func_338f
+	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
@@ -5627,7 +5627,7 @@ HandleGrCastleBiruritchiWarpFadeOutPreload: ; Func_42f86
 	ld b, $04
 	farcall StartPalFadeToBlackOrWhite
 	call WaitPalFading
-	farcall Func_110a8
+	farcall UnsetOverworldAndFadePalsFrameFunc
 	scf
 	ccf
 	ret

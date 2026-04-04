@@ -238,6 +238,39 @@ Func_415f3 -> ExecuteTcgChallengeHallStepEvents
 Func_415fa -> LoadTcgChallengeHallNPCs
 ; loads challenge hall NPC set according to active cup state
 
+Func_338f -> FadeInOverworldFromBlackOrWhite
+; sets the overworld transition frame function and fades in from black or white
+
+Func_33a3 -> FadeOutOverworldToBlackOrWhite
+; fades out to black or white, waits for completion, and clears the overworld transition frame function
+
+Func_3a39 -> FrameFunc_OverworldAndFadePals
+; per-frame overworld transition handler that updates overworld visuals and palette fading
+
+Func_3a81 -> FrameFunc_DuelAnimationsAndSpriteAnims
+; per-frame queued duel animation handler that also updates sprite animations when no screen anim is active
+
+Func_1109f -> SetOverworldAndFadePalsFrameFunc
+; pushes the overworld transition frame function used during overworld fades and white transitions
+
+Func_110a8 -> UnsetOverworldAndFadePalsFrameFunc
+; pops the overworld transition frame function used during overworld fades and white transitions
+
+Func_110b9 -> SetDuelAnimationsAndSpriteAnimsFrameFunc
+; pushes the queued duel animation frame function while duel animation buffers are active
+
+Func_110c2 -> UnsetDuelAnimationsAndSpriteAnimsFrameFunc
+; pops the queued duel animation frame function after duel animations finish
+
+Func_3f61 -> ClearCallbackPointer
+; clears the home-bank callback pointer used by frame functions and other deferred helpers
+
+Func_3f6b -> SetCallbackPointer
+; stores a function pointer in wCallbackPointer for later callback execution
+
+Func_3f78 -> CallCallbackPointerIfSet
+; jumps to the stored callback function only when wCallbackPointer is non-zero
+
 Func_41603 -> HandleTcgChallengeHallWarpFadeInPreload
 ; prepares challenge hall cup-opponent NPC placement during warp fade-in preload
 
