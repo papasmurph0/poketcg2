@@ -823,10 +823,10 @@ HandleMasonLaboratoryComputerRoomWarpFadeInPreload: ; Func_3c697
 
 HandleMasonLaboratoryComputerRoomInteractions: ; Func_3c6b3
 	ld hl, MasonLaboratoryComputerRoom_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3c6c1
 	ld hl, MasonLaboratoryComputerRoom_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3c6c1
 	scf
 	ret
@@ -1027,7 +1027,7 @@ LoadMasonLaboratoryTrainingRoomNPCs: ; Func_3c81e
 
 HandleMasonLaboratoryTrainingRoomInteractions: ; Func_3c825
 	ld hl, MasonLaboratoryTrainingRoom_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1682,10 +1682,10 @@ LoadLightningClubLobbyNPCs: ; Func_3cd32
 
 HandleLightningClubLobbyInteractions: ; Func_3cd3b
 	ld hl, LightningClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3cd49
 	ld hl, LightningClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3cd49
 	scf
 	ret
@@ -1990,10 +1990,10 @@ LoadGrassClubLobbyNPCs: ; Func_3cfaf
 
 HandleGrassClubLobbyInteractions: ; Func_3cfb8
 	ld hl, GrassClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3cfc6
 	ld hl, GrassClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3cfc6
 	scf
 	ret
@@ -2363,7 +2363,7 @@ LoadTcgChallengeHallEntranceNPCs: ; Func_3d260
 
 HandleTcgChallengeHallEntranceInteractions: ; Func_3d269
 	ld hl, TcgChallengeHallEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -2496,10 +2496,10 @@ LoadTcgChallengeHallLobbyNPCs: ; Func_3d3a7
 
 HandleTcgChallengeHallLobbyInteractions: ; Func_3d3b0
 	ld hl, TcgChallengeHallLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3d3be
 	ld hl, TcgChallengeHallLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3d3be
 	scf
 	ret
@@ -2951,10 +2951,10 @@ HandlePokemonDomeWarpEndSFX: ; Func_3d734
 
 HandlePokemonDomeInteractions: ; Func_3d740
 	ld hl, PokemonDome_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .done
 	ld hl, PokemonDome_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .done
 	scf
 	ret
@@ -4524,7 +4524,7 @@ Script_GrandMasterCupAfterDuel:
 	ld a, NPC_CUP_HOST
 	ld hl, .NPCMovement_3e338
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	farcall ClearOWObject
 	ld a, $01
@@ -4611,7 +4611,7 @@ Script_GrandMasterCupAfterDuel:
 	ld a, NPC_CUP_HOST
 	ld hl, .NPCMovement_3e40a
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	farcall ClearOWObject
 	ld a, $01
@@ -5053,10 +5053,10 @@ LoadIshiharasVillaMainNPCs: ; Func_3e731
 
 HandleIshiharasVillaMainInteractions: ; Func_3e73a
 	ld hl, IshiharasVillaMain_NPCInteractions
-	call Func_32aa
+	call HandleNPCInteractions_NoTurnNPC
 	jr nc, .asm_3e748
 	ld hl, IshiharasVillaMain_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3e748
 	scf
 	ret
@@ -5378,10 +5378,10 @@ LoadIshiharasVillaLibraryNPCs: ; Func_3e988
 
 HandleIshiharasVillaLibraryInteractions: ; Func_3e991
 	ld hl, IshiharasVillaLibrary_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3e99f
 	ld hl, IshiharasVillaLibrary_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3e99f
 	scf
 	ret
@@ -5882,10 +5882,10 @@ LoadGameCenterEntranceNPCs: ; Func_3ed99
 
 HandleGameCenterEntranceInteractions: ; Func_3eda2
 	ld hl, GameCenterEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .done
 	ld hl, GameCenterEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .done
 	scf
 	ret
@@ -6148,10 +6148,10 @@ LoadGameCenterLobbyNPCs: ; Func_3ef9c
 
 HandleGameCenterLobbyInteractions: ; Func_3efa5
 	ld hl, GameCenterLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .done
 	ld hl, GameCenterLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .done
 	scf
 	ret
@@ -6292,10 +6292,10 @@ LoadCardDungeonPawnNPCs: ; Func_3f09a
 
 HandleCardDungeonPawnInteractions: ; Func_3f0a3
 	ld hl, CardDungeonPawn_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3f0b1
 	ld hl, CardDungeonPawn_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3f0b1
 	scf
 	ret
@@ -6511,10 +6511,10 @@ LoadCardDungeonKnightNPCs: ; Func_3f240
 
 HandleCardDungeonKnightInteractions: ; Func_3f249
 	ld hl, CardDungeonKnight_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3f257
 	ld hl, CardDungeonKnight_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3f257
 	scf
 	ret
@@ -6752,10 +6752,10 @@ LoadCardDungeonRookNPCs: ; Func_3f410
 
 HandleCardDungeonRookInteractions: ; Func_3f419
 	ld hl, CardDungeonRook_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3f427
 	ld hl, CardDungeonRook_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3f427
 	scf
 	ret
@@ -7029,10 +7029,10 @@ LoadWaterFortLobbyNPCs: ; Func_3f657
 
 HandleWaterFortLobbyInteractions: ; Func_3f660
 	ld hl, WaterFortLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3f66e
 	ld hl, WaterFortLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3f66e
 	scf
 	ret
@@ -7258,7 +7258,7 @@ LoadFightingFortMaze19NPCs: ; Func_3f806
 
 HandleFightingFortMaze19Interactions: ; Func_3f80f
 	ld hl, FightingFortMaze19_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -7395,7 +7395,7 @@ HandleFightingFortBasementWarpFadeInPreload: ; Func_3f8c6
 
 HandleFightingFortBasementInteractions: ; Func_3f904
 	ld hl, FightingFortBasement_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -7457,7 +7457,7 @@ ScriptFightingFortBasementWarpEntrance: ; Func_3f95e
 	ld b, BANK(.NPCMovement_3f980)
 	ld hl, .NPCMovement_3f980
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	ld a, [wPlayerOWObject]
 	farcall SetOWObjectFlag5_WithID
 	ld a, $01

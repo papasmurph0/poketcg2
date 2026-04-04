@@ -945,7 +945,7 @@ LoadCardDungeonQueenNPCs: ; Func_311a8
 
 HandleCardDungeonQueenInteractions: ; Func_311b1
 	ld hl, CardDungeonQueen_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1314,7 +1314,7 @@ LoadGrChallengeHallEntranceNPCs: ; Func_31490
 
 HandleGrChallengeHallEntranceInteractions: ; Func_31499
 	ld hl, GrChallengeHallEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1442,7 +1442,7 @@ HandleGrassFortEntranceWarpFadeInPreload: ; Func_3157e
 
 HandleGrassFortEntranceInteractions: ; Func_3159f
 	ld hl, GrassFortEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1546,10 +1546,10 @@ LoadGrassFortLobbyNPCs: ; Func_3167a
 
 HandleGrassFortLobbyInteractions: ; Func_31683
 	ld hl, GrassFortLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_31691
 	ld hl, GrassFortLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_31691
 	scf
 	ret
@@ -1752,10 +1752,10 @@ HandleGrassFortMidoriWarpFadeInPreload: ; Func_317eb
 
 HandleGrassFortMidoriInteractions: ; Func_31815
 	ld hl, GrassFortMidori_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_31823
 	ld hl, GrassFortMidori_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_31823
 	scf
 	ret
@@ -2006,10 +2006,10 @@ HandleGrassFortYutaWarpFadeInPreload: ; Func_319dc
 
 HandleGrassFortYutaInteractions: ; Func_319f2
 	ld hl, GrassFortYuta_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_31a00
 	ld hl, GrassFortYuta_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_31a00
 	scf
 	ret
@@ -2230,10 +2230,10 @@ HandleGrassFortMiyukiWarpFadeInPreload: ; Func_31b92
 
 HandleGrassFortMiyukiInteractions: ; Func_31ba8
 	ld hl, GrassFortMiyuki_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_31bb6
 	ld hl, GrassFortMiyuki_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_31bb6
 	scf
 	ret
@@ -2454,10 +2454,10 @@ HandleLightningFortEntranceWarpFadeInPreload: ; Func_31d37
 
 HandleLightningFortEntranceInteractions: ; Func_31d5e
 	ld hl, LightningFortEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_31d6c
 	ld hl, LightningFortEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_31d6c
 	scf
 	ret
@@ -2572,10 +2572,10 @@ LoadLightningFortLobbyNPCs: ; Func_31e59
 
 HandleLightningFortLobbyInteractions: ; Func_31e62
 	ld hl, LightningFortLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_31e70
 	ld hl, LightningFortLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_31e70
 	scf
 	ret
@@ -2814,10 +2814,10 @@ HandleLightningFortRennaWarpFadeInPreload: ; Func_32016
 
 HandleLightningFortRennaInteractions: ; Func_32037
 	ld hl, LightningFortRenna_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_32045
 	ld hl, LightningFortRenna_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_32045
 	scf
 	ret
@@ -3031,10 +3031,10 @@ HandleLightningFortIchikawaWarpFadeInPreload: ; Func_321ba
 
 HandleLightningFortIchikawaInteractions: ; Func_321e4
 	ld hl, LightningFortIchikawa_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_321f2
 	ld hl, LightningFortIchikawa_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_321f2
 	scf
 	ret
@@ -3365,7 +3365,7 @@ LoadLightningFortCatherineNPCs: ; Func_32456
 
 HandleLightningFortCatherineInteractions: ; Func_3245f
 	ld hl, LightningFortCatherine_NPCInteractions
-	call Func_32aa
+	call HandleNPCInteractions_NoTurnNPC
 	scf
 	ret
 
@@ -3589,10 +3589,10 @@ HandleFireFortEntranceWarpFadeInPreload: ; Func_325cc
 
 HandleFireFortEntranceInteractions: ; Func_3261c
 	ld hl, FireFortEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3262a
 	ld hl, FireFortEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3262a
 	scf
 	ret
@@ -3726,10 +3726,10 @@ LoadFireFortLobbyNPCs: ; Func_3272e
 
 HandleFireFortLobbyInteractions: ; Func_32737
 	ld hl, FireFortLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_32745
 	ld hl, FireFortLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_32745
 	scf
 	ret
@@ -3901,10 +3901,10 @@ HandleFireFortJesWarpFadeInPreload: ; Func_3286d
 
 HandleFireFortJesInteractions: ; Func_3288e
 	ld hl, FireFortJes_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3289c
 	ld hl, FireFortJes_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3289c
 	scf
 	ret
@@ -4105,10 +4105,10 @@ HandleFireFortYukiWarpFadeInPreload: ; Func_329d6
 
 HandleFireFortYukiInteractions: ; Func_32a18
 	ld hl, FireFortYuki_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_32a26
 	ld hl, FireFortYuki_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_32a26
 	scf
 	ret
@@ -4443,10 +4443,10 @@ HandleFireFortShokoWarpFadeInPreload: ; Func_32c5a
 
 HandleFireFortShokoInteractions: ; Func_32c7a
 	ld hl, FireFortShoko_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_32c88
 	ld hl, FireFortShoko_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_32c88
 	scf
 	ret
@@ -4717,7 +4717,7 @@ LoadFireFortHideroNPCs: ; Func_32e58
 
 HandleFireFortHideroInteractions: ; Func_32e61
 	ld hl, FireFortHidero_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -4958,10 +4958,10 @@ HandleWaterFortEntranceWarpFadeInPreload: ; Func_32ff6
 
 HandleWaterFortEntranceInteractions: ; Func_33046
 	ld hl, WaterFortEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_33054
 	ld hl, WaterFortEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_33054
 	scf
 	ret
@@ -5092,10 +5092,10 @@ HandleWaterFortMiyajimaWarpFadeInPreload: ; Func_33129
 
 HandleWaterFortMiyajimaInteractions: ; Func_3314a
 	ld hl, WaterFortMiyajima_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_33158
 	ld hl, WaterFortMiyajima_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_33158
 	scf
 	ret
@@ -5274,7 +5274,7 @@ LoadWaterFortKanokoNPCs: ; Func_33285
 
 HandleWaterFortKanokoInteractions: ; Func_3328e
 	ld hl, WaterFortKanoko_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -5475,10 +5475,10 @@ HandleFightingFortEntranceWarpFadeInPreload: ; Func_333bd
 
 HandleFightingFortEntranceInteractions: ; Func_33424
 	ld hl, FightingFortEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_33432
 	ld hl, FightingFortEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_33432
 	scf
 	ret
@@ -5648,7 +5648,7 @@ LoadFightingFortMaze2NPCs: ; Func_33578
 
 HandleFightingFortMaze2Interactions: ; Func_33581
 	ld hl, FightingFortMaze2_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -5803,7 +5803,7 @@ LoadFightingFortMaze4NPCs: ; Func_336c1
 
 HandleFightingFortMaze4Interactions: ; Func_336ca
 	ld hl, FightingFortMaze4_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -6022,7 +6022,7 @@ LoadFightingFortMaze8NPCs: ; Func_338c6
 
 HandleFightingFortMaze8Interactions: ; Func_338cf
 	ld hl, FightingFortMaze8_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -6420,7 +6420,7 @@ LoadFightingFortMaze17NPCs: ; Func_33ca9
 
 HandleFightingFortMaze17Interactions: ; Func_33cb2
 	ld hl, FightingFortMaze17_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 

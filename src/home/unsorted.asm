@@ -210,7 +210,7 @@ ExecuteOWModeScript::
 	ld l, a
 	jp hl
 
-Func_3195::
+GetOppositePlayerDirection:: ; Func_3195
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectAnimStruct1Flag0And1
 	ld a, b
@@ -218,13 +218,13 @@ Func_3195::
 	ld b, a
 	ret
 
-Func_31a1::
-	call Func_3332
+HandleOverworldIdleMode:: ; Func_31a1
+	call DoOverworldFrame
 	call HandleOverworldPlayerInput
 	ret
 
-Func_31a8::
-	call Func_3332
+HandleOverworldMoveMode:: ; Func_31a8
+	call DoOverworldFrame
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectSpriteAnimFlags
 	bit SPRITEANIMSTRUCT_MOVE_F, a
@@ -387,14 +387,14 @@ ExecuteCoordScript::
 	jr .loop_lookup
 
 ; hl = npc script list (*_NPCInteractions)
-Func_328c::
+HandleNPCInteractions:: ; Func_328c
 	push hl
 	farcall GetPlayerFacingTilePosition
 	farcall FindNPCAtLocation
 	cp NPC_NONE
 	jr z, .set_carry
 	push af
-	call Func_3195
+	call GetOppositePlayerDirection
 	pop af
 	farcall SetOWObjectDirection
 	pop hl
@@ -406,7 +406,7 @@ Func_328c::
 	ret
 
 ; hl = npc script list (*_NPCInteractions)
-Func_32aa::
+HandleNPCInteractions_NoTurnNPC:: ; Func_32aa
 	push hl
 	farcall GetPlayerFacingTilePosition
 	farcall FindNPCAtLocation
@@ -422,7 +422,7 @@ Func_32aa::
 
 ; if player's anim struct flag 0 or 1 is set, set carry
 ; else, execute player's coord script with the script list in hl
-Func_32bf::
+ExecutePlayerCoordScriptIfNotMoving:: ; Func_32bf
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectAnimStruct1Flag0And1
 	ld a, 0
@@ -494,7 +494,7 @@ HandleOverworldPlayerMoveInput::
 .exit
 	ret
 
-Func_3332::
+DoOverworldFrame:: ; Func_3332
 	call DoFrame
 	ret
 
@@ -505,7 +505,7 @@ WaitPalFading::
 	jr nz, .loop
 	ret
 
-Func_3340::
+WaitForPlayerAnimation:: ; Func_3340
 .asm_3340
 	call DoFrame
 	farcall Func_10df3
@@ -526,7 +526,7 @@ Func_3340::
 	ret
 
 ; a = NPC_* ID
-Func_336d::
+WaitForOWObjectMovement:: ; Func_336d
 	push af
 .loop_wait
 	call DoFrame
@@ -572,7 +572,7 @@ Func_33a3::
 	farcall ZeroOutEventValue
 	ret
 
-Func_33b7::
+LoadCurrentMapHeaderAndScriptPointers:: ; Func_33b7
 	ld a, [wCurMap]
 	ld c, a
 	ld b, $00

@@ -85,10 +85,10 @@ Func_2c0d1:
 
 Func_2c0f1:
 	ld hl, IshiharasHouse_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2c0ff
 	ld hl, IshiharasHouse_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2c0ff
 	scf
 	ret
@@ -678,7 +678,7 @@ Func_2c50a:
 
 Func_2c560:
 	ld hl, LightningClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1259,7 +1259,7 @@ PsychicClubEntrance_MapScripts:
 	db $ff
 
 Func_2c9ac:
-	call Func_3332
+	call DoOverworldFrame
 	call Func_2ca46
 	call HandleOverworldPlayerInput
 	scf
@@ -1332,7 +1332,7 @@ Func_2c9e8:
 
 Func_2ca14:
 	ld hl, PsychicClubEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1400,7 +1400,7 @@ Func_2ca46:
 	farcall Func_10e3c
 .asm_2ca9a
 	ld a, NPC_STEPHANIE
-	call Func_336d
+	call WaitForOWObjectMovement
 .exit
 	ret
 
@@ -1556,10 +1556,10 @@ Func_2cbd6:
 
 Func_2cbdf:
 	ld hl, PsychicClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2cbed
 	ld hl, PsychicClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2cbed
 	scf
 	ret
@@ -1836,7 +1836,7 @@ Func_2cda2:
 
 Func_2ce11:
 	ld hl, PsychicClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -2712,10 +2712,10 @@ Func_2d4a5:
 
 Func_2d4ae:
 	ld hl, RockClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2d4bc
 	ld hl, RockClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2d4bc
 	scf
 	ret
@@ -2969,7 +2969,7 @@ Func_2d673:
 
 Func_2d6a6:
 	ld hl, RockClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -3519,10 +3519,10 @@ Func_2dae5:
 
 Func_2daee:
 	ld hl, FightingClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2dafc
 	ld hl, FightingClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2dafc
 	scf
 	ret
@@ -3826,7 +3826,7 @@ Func_2dd31:
 
 Func_2dd3a:
 	ld hl, FightingClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -4499,7 +4499,7 @@ Func_2e1f5:
 
 Func_2e1fe:
 	ld hl, GrassClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -4987,7 +4987,7 @@ Func_2e548:
 
 Func_2e574:
 	ld hl, ScienceClubEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -5195,10 +5195,10 @@ Func_2e725:
 
 Func_2e72e:
 	ld hl, ScienceClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2e73c
 	ld hl, ScienceClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2e73c
 	scf
 	ret
@@ -5529,7 +5529,7 @@ Func_2e996:
 
 Func_2e99f:
 	ld hl, ScienceClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -6197,10 +6197,10 @@ Func_2eea1:
 
 Func_2eeaa:
 	ld hl, WaterClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2eeb8
 	ld hl, WaterClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2eeb8
 	scf
 	ret
@@ -6499,10 +6499,10 @@ Func_2f0a5:
 
 Func_2f0f7:
 	ld hl, WaterClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2f105
 	ld hl, WaterClub_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2f105
 	scf
 	ret
@@ -7299,10 +7299,10 @@ Func_2f6ce:
 
 Func_2f6d7:
 	ld hl, FireClubLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2f6e5
 	ld hl, FireClubLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2f6e5
 	scf
 	ret
@@ -7531,10 +7531,10 @@ Func_2f86e:
 
 Func_2f8c8:
 	ld hl, FireClub_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_2f8d6
 	ld hl, FireClub_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_2f8d6
 	scf
 	ret
@@ -8168,10 +8168,10 @@ Func_2fd8a:
 
 Func_2fd93:
 	ld hl, PokemonDomeEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .done
 	ld hl, PokemonDomeEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .done
 	scf
 	ret

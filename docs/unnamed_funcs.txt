@@ -340,6 +340,15 @@ Func_41dac -> HandleGrAirportBoardingTileTrigger
 Func_41db4 -> UpdateGrAirportBoardingAlignment
 ; updates player and GR5 facing/movement alignment near airport boarding tiles
 
+Func_328c -> HandleNPCInteractions
+; runs the facing-NPC interaction table and turns the matched NPC toward the player
+
+Func_32aa -> HandleNPCInteractions_NoTurnNPC
+; runs the facing-NPC interaction table without changing the matched NPC direction
+
+Func_32bf -> ExecutePlayerCoordScriptIfNotMoving
+; executes the player coordinate script only when the player is not moving
+
 Func_41f14 -> ExecuteSealedFortStepEvents
 ; runs Sealed Fort coordinate-triggered step-event scripts
 
@@ -1686,4 +1695,25 @@ Func_30056 -> SetAaronStep1IfEnteringFightingFortFromGROverworld
 
 Func_30065 -> AdvanceAaronStepOrReset
 ; advances Aaron's Fighting Fort step state when the expected step matches, otherwise clears it
+
+Func_3195 -> GetOppositePlayerDirection
+; returns the direction opposite the player's facing direction in b
+
+Func_31a1 -> HandleOverworldIdleMode
+; runs one overworld frame and handles idle-mode player input
+
+Func_31a8 -> HandleOverworldMoveMode
+; runs one overworld frame and updates move-mode speed control until movement finishes
+
+Func_3332 -> DoOverworldFrame
+; runs a single overworld frame update
+
+Func_3340 -> WaitForPlayerAnimation
+; waits until scripted overworld movement and the player animation sequence finish
+
+Func_336d -> WaitForOWObjectMovement
+; waits until the specified overworld object's movement flag clears
+
+Func_33b7 -> LoadCurrentMapHeaderAndScriptPointers
+; loads current map header data and refreshes current/next map script pointers
 

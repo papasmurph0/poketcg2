@@ -65,7 +65,7 @@ StartMenu_ContinueFromDiary:
 	ld a, [wPlayerOWObject]
 	ld b, TRUE
 	farcall SetOWObjectAnimStruct1Flag2
-	call Func_33b7
+	call LoadCurrentMapHeaderAndScriptPointers
 	call UpdateGameStateVars_Wrapper
 	call InitSaveDataState
 	ld a, TRUE
@@ -89,7 +89,7 @@ StartMenu_ContinueFromDiary:
 	ld a, [wPlayerOWObject]
 	ld b, TRUE
 	farcall SetOWObjectAnimStruct1Flag2
-	call Func_33b7
+	call LoadCurrentMapHeaderAndScriptPointers
 	call UpdateGameStateVars_Wrapper
 	call InitSaveDataState
 	ld a, TRUE
@@ -122,7 +122,7 @@ StartMenu_ContinueDuel:
 	ld a, [wPlayerOWObject]
 	ld b, TRUE
 	farcall SetOWObjectAnimStruct1Flag2
-	call Func_33b7
+	call LoadCurrentMapHeaderAndScriptPointers
 	call EnablePlayTimeCounter
 	ld a, EVENT_F0
 	call MaxOutEventValue
@@ -152,12 +152,12 @@ OWModePostprocess::
 	jp hl
 
 .PointerTable
-	dw Func_31a1                               ; OWMODE_IDLE
+	dw HandleOverworldIdleMode                 ; OWMODE_IDLE
 	dw .Exit                                   ; OWMODE_MUSIC_PRELOAD
 	dw OverworldFadeInToBlack                  ; OWMODE_WARP_FADE_IN_PRELOAD
 	dw Overworld10FramesWarpInterval           ; OWMODE_WARP_INTERVAL
 	dw OverworldFadeOutToBlack                 ; OWMODE_WARP_FADE_OUT_PRELOAD
-	dw Func_31a8                               ; OWMODE_MOVE
+	dw HandleOverworldMoveMode                 ; OWMODE_MOVE
 	dw OverworldResumeAndHandlePlayerMoveInput ; OWMODE_STEP_EVENT
 	dw .Exit                                   ; OWMODE_NPC_POSITION
 	dw OverworldResumeFromInteract             ; OWMODE_INTERACT
@@ -3372,7 +3372,7 @@ ScriptCommand_StartDuel:
 	jp IncreaseScriptPointerBy3
 
 ScriptCommand_WaitForPlayerAnimation:
-	call Func_3340
+	call WaitForPlayerAnimation
 	jp IncreaseScriptPointerBy1
 
 ScriptCommand_WaitForFade:

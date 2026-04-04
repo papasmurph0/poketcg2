@@ -794,10 +794,10 @@ Func_34614:
 
 Func_3461d:
 	ld hl, TcgAirportEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3462b
 	ld hl, TcgAirportEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3462b
 	scf
 	ret
@@ -847,7 +847,7 @@ Func_34635:
 	farcall Func_10e3c
 .asm_34689
 	ld a, NPC_GR_5
-	call Func_336d
+	call WaitForOWObjectMovement
 .asm_3468e
 	ret
 
@@ -1116,7 +1116,7 @@ Func_34873:
 
 Func_3489d:
 	ld hl, TcgAirport_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -1365,7 +1365,7 @@ Func_34a7d:
 	lb bc, WEST | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall Func_10e3c
 	ld a, NPC_GR_5
-	call Func_336d
+	call WaitForOWObjectMovement
 	ret
 
 Func_34a96:
@@ -1378,7 +1378,7 @@ Func_34a96:
 	lb bc, EAST | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall Func_10e3c
 	ld a, NPC_GR_5
-	call Func_336d
+	call WaitForOWObjectMovement
 	ret
 
 GrAirportEntrance_MapHeader:
@@ -1430,10 +1430,10 @@ Func_34b1d:
 
 Func_34b26:
 	ld hl, GrAirportEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_34b34
 	ld hl, GrAirportEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_34b34
 	scf
 	ret
@@ -1561,10 +1561,10 @@ Func_34c33:
 
 Func_34c3c:
 	ld hl, GameCenter1_NPCInteractions
-	call Func_32aa
+	call HandleNPCInteractions_NoTurnNPC
 	jr nc, .asm_34c4a
 	ld hl, GameCenter1_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_34c4a
 	scf
 	ret
@@ -1905,10 +1905,10 @@ Func_34eee:
 
 Func_34ef7:
 	ld hl, GameCenter2_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_34f05
 	ld hl, GameCenter2_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_34f05
 	scf
 	ret
@@ -2181,10 +2181,10 @@ Func_350ed:
 
 Func_350f6:
 	ld hl, CardDungeonBishop_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_35104
 	ld hl, CardDungeonBishop_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_35104
 	scf
 	ret
@@ -2460,10 +2460,10 @@ Func_35329:
 
 Func_35332:
 	ld hl, GrChallengeHallLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_35340
 	ld hl, GrChallengeHallLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_35340
 	scf
 	ret
@@ -2699,7 +2699,7 @@ Func_354da:
 
 Func_354e3:
 	ld hl, GrassFortMorino_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -2898,7 +2898,7 @@ Func_35634:
 
 Func_35661:
 	ld hl, WaterFortSenta_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -3187,7 +3187,7 @@ Func_35865:
 
 Func_35882:
 	ld hl, WaterFortAira_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -3432,10 +3432,10 @@ Func_35a0d:
 
 Func_35a7c:
 	ld hl, FightingFort_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_35a8a
 	ld hl, FightingFort_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_35a8a
 	scf
 	ret
@@ -3820,10 +3820,10 @@ Func_35d8a:
 
 Func_35da0:
 	ld hl, FightingFortGoda_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_35dae
 	ld hl, FightingFortGoda_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_35dae
 	scf
 	ret
@@ -4060,7 +4060,7 @@ Func_35f60:
 
 Func_35f69:
 	ld hl, FightingFortGrace_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -4316,7 +4316,7 @@ Func_36114:
 
 Func_36140:
 	ld hl, PsychicStrongholdEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -4415,10 +4415,10 @@ Func_36215:
 
 Func_3621e:
 	ld hl, PsychicStrongholdLobby_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_3622c
 	ld hl, PsychicStrongholdLobby_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_3622c
 	scf
 	ret
@@ -4679,7 +4679,7 @@ Func_36434:
 
 Func_36440:
 	ld hl, PsychicStronghold_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -5813,7 +5813,7 @@ Func_36d1e:
 
 Func_36d21:
 	ld hl, PsychicStrongholdMami_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -6197,7 +6197,7 @@ Func_36ff2:
 
 Func_37011:
 	ld hl, ColorlessAltar_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -6685,7 +6685,7 @@ GrCastleEntrance_MapScripts:
 	db $ff
 
 Func_373cb:
-	call Func_3332
+	call DoOverworldFrame
 	ld a, EVENT_GR_CASTLE_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
 	jr z, .asm_37409
@@ -6763,10 +6763,10 @@ Func_3741f:
 
 Func_3746b:
 	ld hl, GrCastleEntrance_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_37479
 	ld hl, GrCastleEntrance_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_37479
 	scf
 	ret
@@ -7072,7 +7072,7 @@ Func_3766c:
 
 Func_376ed:
 	ld hl, GrCastle_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 

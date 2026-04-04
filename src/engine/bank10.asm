@@ -1432,10 +1432,10 @@ DrawMasonLaboratoryMainChallengeMachineTilemap: ; Func_40ef9
 
 HandleMasonLaboratoryMainInteractions: ; Func_40f04
 	ld hl, MasonLaboratoryMain_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_40f12
 	ld hl, MasonLaboratoryMain_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_40f12
 	scf
 	ret
@@ -2411,7 +2411,7 @@ HandleTcgChallengeHallWarpFadeInPreload: ; Func_41603
 
 HandleTcgChallengeHallInteractions: ; Func_41622
 	ld hl, TcgChallengeHall_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -2715,7 +2715,7 @@ Script_TCGCupRound1AfterDuel:
 	ld b, BANK(.NPCMovement_418a1)
 	ld hl, .NPCMovement_418a1
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	ld a, $01
 	start_script
 	start_dialog
@@ -2736,7 +2736,7 @@ Script_TCGCupRound1AfterDuel:
 	ld b, BANK(.NPCMovement_4189c)
 	ld hl, .NPCMovement_4189c
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	farcall ClearOWObject
 	ld a, $01
@@ -2842,7 +2842,7 @@ Script_TCGCupRound2AfterDuel:
 	ld b, BANK(.NPCMovement_419a6)
 	ld hl, .NPCMovement_419a6
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	ld a, $01
 	start_script
 	start_dialog
@@ -2863,7 +2863,7 @@ Script_TCGCupRound2AfterDuel:
 	ld b, BANK(.NPCMovement_419a1)
 	ld hl, .NPCMovement_419a1
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	farcall ClearOWObject
 	ld a, $01
@@ -3019,7 +3019,7 @@ Script_TCGCupRound3AfterDuel:
 	ld b, BANK(.NPCMovement_41ae0)
 	ld hl, .NPCMovement_41ae0
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	farcall ClearOWObject
 	ld a, $01
@@ -3274,7 +3274,7 @@ HandleGrAirportWarpEndSFX: ; Func_41ca1
 
 HandleGrAirportInteractions: ; Func_41ccb
 	ld hl, GrAirport_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	scf
 	ret
 
@@ -3476,7 +3476,7 @@ EnsureGr5BoardingX3: ; Func_41e5c
 	lb bc, WEST | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall Func_10e3c
 	ld a, NPC_GR_5
-	call Func_336d
+	call WaitForOWObjectMovement
 	ret
 
 EnsureGr5BoardingX4: ; Func_41e75
@@ -3489,7 +3489,7 @@ EnsureGr5BoardingX4: ; Func_41e75
 	lb bc, EAST | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall Func_10e3c
 	ld a, NPC_GR_5
-	call Func_336d
+	call WaitForOWObjectMovement
 	ret
 
 SealedFort_MapHeader:
@@ -4528,10 +4528,10 @@ HandleGrChallengeHallWarpFadeInPreload: ; Func_4266e
 
 HandleGrChallengeHallInteractions: ; Func_426b9
 	ld hl, GrChallengeHall_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_426c7
 	ld hl, GrChallengeHall_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_426c7
 	scf
 	ret
@@ -5366,7 +5366,7 @@ Script_GRCupOpponentEliminated:
 	ld b, BANK(.NPCMovement_42d9b)
 	ld hl, .NPCMovement_42d9b
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	push af
 	ld b, BANK(.NPCMovement_42da0)
@@ -5376,14 +5376,14 @@ Script_GRCupOpponentEliminated:
 	ld a, NPC_GR_CUP_CLERK_RIGHT
 	ld hl, .NPCMovement_42da3
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	farcall ClearOWObject
 	ld a, NPC_GR_CUP_CLERK_RIGHT
 	ld b, BANK(.NPCMovement_42da8)
 	ld hl, .NPCMovement_42da8
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	ld a, $01
 	start_script
 	start_dialog
@@ -5428,7 +5428,7 @@ Script_GRCupNewChallenger:
 	ld a, NPC_GR_CUP_CLERK_RIGHT
 	ld hl, .NPCMovement_42e0a
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	pop af
 	ld b, BANK(.NPCMovement_42e05)
 	ASSERT BANK(.NPCMovement_42e05) == BANK(.NPCMovement_42e0f)
@@ -5437,7 +5437,7 @@ Script_GRCupNewChallenger:
 	ld a, NPC_GR_CUP_CLERK_RIGHT
 	ld hl, .NPCMovement_42e0f
 	farcall MoveNPC
-	call Func_3340
+	call WaitForPlayerAnimation
 	ld a, $01
 	start_script
 	start_dialog
@@ -5645,10 +5645,10 @@ HandleGrCastleBiruritchiWarpEndSFX: ; Func_42fa1
 
 HandleGrCastleBiruritchiInteractions: ; Func_42fad
 	ld hl, GrCastleBiruritchi_NPCInteractions
-	call Func_328c
+	call HandleNPCInteractions
 	jr nc, .asm_42fbb
 	ld hl, GrCastleBiruritchi_OWInteractions
-	call Func_32bf
+	call ExecutePlayerCoordScriptIfNotMoving
 .asm_42fbb
 	scf
 	ret
