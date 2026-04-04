@@ -295,7 +295,7 @@ BeginScreenTransitionToWhite: ; Func_1022a
 	call UnsetOverworldAndFadePalsFrameFunc
 	call Func_10ea7
 	call Func_1059f
-	call Func_10d40
+	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
 	pop hl
 	pop de
@@ -308,7 +308,7 @@ EndScreenTransitionFromWhite: ; Func_10252
 	push bc
 	push de
 	push hl
-	call Func_10d40
+	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
 	call Func_10ed3
 	call Func_105de
@@ -356,7 +356,7 @@ BeginScreenTransitionToWhiteWithSpriteAnims: ; Func_102a4
 	call Func_10ea7
 	call Func_1059f
 	call SetSpriteAnimationAndFadePalsFrameFunc
-	call Func_10d40
+	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
 	pop hl
 	pop de
@@ -369,7 +369,7 @@ EndScreenTransitionFromWhiteWithSpriteAnims: ; Func_102c4
 	push bc
 	push de
 	push hl
-	call Func_10d40
+	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
 	call Func_10ed3
 	call Func_105de
@@ -2492,7 +2492,7 @@ GetPalettesWithID:
 	pop bc
 	ret
 
-Func_10d40::
+InitOWObjectsAndNPCMovement:: ; Func_10d40
 	call InitOWObjects
 	ld a, 1
 	call SetwD8A1
@@ -2645,7 +2645,7 @@ MoveNPC:
 	call _MoveNPC
 	ret
 
-Func_10df3::
+CountOWObjectsWithMovementScript:: ; Func_10df3
 	call Func_113d2
 	ret
 
@@ -2709,7 +2709,7 @@ FindNPCAtLocation::
 ; a = NPC_* ID
 ; b = direction
 ; c = speed
-Func_10e3c::
+TryStepNPCInDirection:: ; Func_10e3c
 	push bc
 	push de
 	push hl
@@ -2775,14 +2775,14 @@ Func_10e3c::
 	ld a, [wNPCStepResult]
 	ld e, a
 	ld a, [wNPCStepNPCID]
-	call Func_1132e
+	call BeginNPCStep
 	pop hl
 	pop de
 	pop bc
 	ret
 
 Func_10ea3::
-	call Func_11384
+	call StepAllScriptedNPCs
 	ret
 
 Func_10ea7:
@@ -2897,7 +2897,7 @@ ClearwD986:
 	ld [wNPCBoundaryOverride], a
 	ret
 
-Func_10f32:
+SaveNPCStateBuffer: ; Func_10f32
 	push af
 	push bc
 	push de
@@ -2908,7 +2908,7 @@ Func_10f32:
 .loop
 	bit ACTIVE_OBJ_F, [hl]
 	jr z, .next
-	call .Func_10f53
+	call .save_object_state
 .next
 	push bc
 	ld bc, OWOBJSTRUCT_LENGTH
@@ -2922,7 +2922,7 @@ Func_10f32:
 	pop af
 	ret
 
-.Func_10f53:
+.save_object_state:
 	push bc
 	push hl
 	inc hl
@@ -2954,12 +2954,12 @@ Func_10f32:
 	pop bc
 	ret
 
-Func_10f78:
+LoadNPCStateBuffer: ; Func_10f78
 	push af
 	push bc
 	push de
 	push hl
-	call Func_10d40
+	call InitOWObjectsAndNPCMovement
 	ld hl, wNPCStateBuffer
 	ld c, MAX_NUM_OW_OBJECTS
 .loop
@@ -3655,7 +3655,7 @@ _GetOWObjectSpeedAndMoveDuration:
 ; a = NPC_* ID
 ; b = direction
 ; c = speed
-Func_1132e:
+BeginNPCStep: ; Func_1132e
 	push bc
 	push de
 	push hl
@@ -3722,8 +3722,9 @@ _MoveNPC:
 	pop af
 	ret
 
-; e = ?
-Func_11384::
+; advances queued packed NPC movement steps for all objects with active movement scripts
+; e scales the movement distance extracted from each packed movement entry
+StepAllScriptedNPCs:: ; Func_11384
 	push af
 	push bc
 	push de
@@ -3777,7 +3778,7 @@ ENDR
 	cp $ff
 	jr z, .asm_113cb
 	ld a, d
-	call Func_1132e
+	call BeginNPCStep
 	ret
 
 .asm_113cb
@@ -6502,7 +6503,7 @@ GetPlayerGender:
 
 Func_13dfa:
 	call DisableLCD
-	call Func_10d40
+	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
 	call EnableLCD
 	ld a, BANK("WRAM1")

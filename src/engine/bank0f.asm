@@ -1571,9 +1571,9 @@ HandleLightningClubEntranceWarpFadeInPreload: ; Func_3cbfb
 	call LoadTxRam2
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_340a4)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene2)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_340a4
+	ld hl, RunRonaldSecondMeetingCardPopScene2
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h

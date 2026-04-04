@@ -1403,7 +1403,7 @@ PlayAttackAnimation_DealAttackDamage:
 	ld a, EFFECTCMDTYPE_BEFORE_DAMAGE
 	call TryExecuteEffectCommandFunction
 	call ApplyDamageModifiers_DamageToTarget
-	call Func_189d
+	call HandleTransparencyIfApplicable
 	ld a, e
 	or d
 	jr z, .asm_15dc
@@ -1429,9 +1429,9 @@ PlayAttackAnimation_DealAttackDamage:
 	bank1call DrawDuelHUDs
 	pop hl
 	call PrintKnockedOutIfHLZero
-	jr Func_17fb
+	jr HandleAfterDamageEffects
 
-Func_17ed:
+WaitForInputAndHandleAfterDamageEffects: ; Func_17ed
 	call DrawWideTextBox_WaitForInput
 	xor a
 	ld hl, wDamage
@@ -1439,7 +1439,7 @@ Func_17ed:
 	ld [hl], a
 ;	fallthrough
 
-Func_17fb:
+HandleAfterDamageEffects: ; Func_17fb
 	ld a, [wNoDamageOrEffect]
 	push af
 	ld hl, wTempNonTurnDuelistCardID
@@ -1459,7 +1459,7 @@ Func_17fb:
 	ld [wNoDamageOrEffect], a
 	bank1call ProcessEffectsTriggeredByTakingDamage
 	bank1call ApplyStatusConditionQueue
-	call Func_1bb4
+	call RedrawDuelSceneAndShowEffectFailedText
 	bank1call UpdateArenaCardLastTurnDamage
 	bank1call HandleDestinyBondAndBetweenTurnKnockOuts
 	or a
@@ -1497,7 +1497,7 @@ HandleConfusionDamageToSelf:
 	pop hl
 	ld a, l
 	call DealConfusionDamageToSelf
-	call Func_1bb4
+	call RedrawDuelSceneAndShowEffectFailedText
 	bank1call HandleDestinyBondAndBetweenTurnKnockOuts
 	bank1call ClearNonTurnTemporaryDuelvars
 	or a
@@ -1556,7 +1556,7 @@ SendAttackDataToLinkOpponent::
 	ldh [hTemp_ffa0], a
 	ret
 
-Func_189d:
+HandleTransparencyIfApplicable: ; Func_189d
 	ld a, [wLoadedAttackCategory]
 	bit RESIDUAL_F, a
 	ret nz
@@ -2062,7 +2062,7 @@ DealDamageToPlayAreaPokemon_GotPlayAreaLocation::
 	pop hl
 	ret
 
-Func_1bb4:
+RedrawDuelSceneAndShowEffectFailedText: ; Func_1bb4
 	call FinishQueuedAnimations
 	bank1call DrawDuelMainScene
 	bank1call DrawDuelHUDs
@@ -2081,7 +2081,7 @@ PrintFailedEffectText::
 	ret z
 	cp $1
 	jr z, .no_effect_from_status
-	call Func_19fd
+	call LoadCardNameAndAttackNameForEffectFailedText
 	ldtx hl, WasUnsuccessfulText
 	call DrawWideTextBox_PrintText
 	scf
@@ -2092,7 +2092,7 @@ PrintFailedEffectText::
 	scf
 	ret
 
-Func_19fd:
+LoadCardNameAndAttackNameForEffectFailedText: ; Func_19fd
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -2114,7 +2114,7 @@ Func_19fd:
 
 ShowMetronomeUnsuccessfulText:
 	bank1call ClearNonTurnTemporaryDuelvars
-	call Func_19fd
+	call LoadCardNameAndAttackNameForEffectFailedText
 	ldtx hl, MetronomeWasUnsuccessfulText
 	jp DrawWideTextBox_WaitForInput
 

@@ -34,17 +34,17 @@ IshiharasHouse_OWInteractions:
 	db $ff
 
 IshiharasHouse_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2c0c1
-	dbw OWMODE_INTERACT, Func_2c0f1
-	dbw OWMODE_NPC_POSITION, Func_2c0c8
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2c0d1
-	dbw OWMODE_SAVE_PRELOAD, Func_2c101
-	dbw OWMODE_SAVE_POSTLOAD, Func_2c12f
-	dbw OWMODE_CONTINUE_OW, Func_2c13e
-	dbw OWMODE_MUSIC_PRELOAD, Func_2c0b4
+	dbw OWMODE_STEP_EVENT, ExecuteIshiharasHouseStepEvents
+	dbw OWMODE_INTERACT, HandleIshiharasHouseInteractions
+	dbw OWMODE_NPC_POSITION, LoadIshiharasHouseNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleIshiharasHouseWarpFadeInPreload
+	dbw OWMODE_SAVE_PRELOAD, SaveIshiharaHouseEventFlagsForSave
+	dbw OWMODE_SAVE_POSTLOAD, ClearIshiharaHouseSavedEventFlags
+	dbw OWMODE_CONTINUE_OW, RestoreIshiharaHouseEventFlagsOnContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetIshiharasHouseMusicIfIshiharaHidden
 	db $ff
 
-Func_2c0b4:
+SetIshiharasHouseMusicIfIshiharaHidden: ; Func_2c0b4
 	call IshiharasHouse_IshiharaAppearanceCheck
 	jr nc, .asm_2c0be
 	ld a, MUSIC_OVERWORLD
@@ -54,19 +54,19 @@ Func_2c0b4:
 	ccf
 	ret
 
-Func_2c0c1:
+ExecuteIshiharasHouseStepEvents: ; Func_2c0c1
 	ld hl, IshiharasHouse_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2c0c8:
+LoadIshiharasHouseNPCs: ; Func_2c0c8
 	ld hl, IshiharasHouse_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2c0d1:
+HandleIshiharasHouseWarpFadeInPreload: ; Func_2c0d1
 	xor a
 	start_script
 	send_mail $11
@@ -83,7 +83,7 @@ Func_2c0d1:
 	scf
 	ret
 
-Func_2c0f1:
+HandleIshiharasHouseInteractions: ; Func_2c0f1
 	ld hl, IshiharasHouse_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2c0ff
@@ -93,7 +93,7 @@ Func_2c0f1:
 	scf
 	ret
 
-Func_2c101:
+SaveIshiharaHouseEventFlagsForSave: ; Func_2c101
 	xor a
 	push af
 	ld a, EVENT_ISHIHARA_LOCATION_STATE
@@ -123,7 +123,7 @@ Func_2c101:
 	ccf
 	ret
 
-Func_2c12f:
+ClearIshiharaHouseSavedEventFlags: ; Func_2c12f
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, VAR_00
@@ -132,7 +132,7 @@ Func_2c12f:
 	ccf
 	ret
 
-Func_2c13e:
+RestoreIshiharaHouseEventFlagsOnContinueOverworld: ; Func_2c13e
 	ld a, EVENT_ISHIHARA_LOCATION_STATE
 	farcall ZeroOutEventValue
 	ld a, VAR_00
@@ -584,31 +584,31 @@ LightningClub_StepEvents:
 
 LightningClub_NPCs:
 	npc NPC_ISAAC, 6, 2, SOUTH, NULL
-	npc NPC_JENNIFER, 7, 9, SOUTH, Func_2c8f9
+	npc NPC_JENNIFER, 7, 9, SOUTH, CheckShowLightningClubJenniferOrBrandon
 	npc NPC_NICHOLAS, 3, 5, SOUTH, NULL
-	npc NPC_BRANDON, 11, 6, SOUTH, Func_2c8f9
-	npc NPC_GR_4, 7, 4, SOUTH, Func_2c929
+	npc NPC_BRANDON, 11, 6, SOUTH, CheckShowLightningClubJenniferOrBrandon
+	npc NPC_GR_4, 7, 4, SOUTH, CheckShowLightningClubGr4
 	db $ff
 
 LightningClub_NPCInteractions:
-	npc_script NPC_ISAAC, Func_2c645
-	npc_script NPC_JENNIFER, Func_2c73b
-	npc_script NPC_NICHOLAS, Func_2c79d
-	npc_script NPC_BRANDON, Func_2c897
-	npc_script NPC_GR_4, Func_2c90e
+	npc_script NPC_ISAAC, ScriptLightningClubIsaac
+	npc_script NPC_JENNIFER, ScriptLightningClubJennifer
+	npc_script NPC_NICHOLAS, ScriptLightningClubNicholas
+	npc_script NPC_BRANDON, ScriptLightningClubBrandon
+	npc_script NPC_GR_4, ScriptLightningClubGr4
 	db $ff
 
 LightningClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2c4fa
-	dbw OWMODE_INTERACT, Func_2c560
-	dbw OWMODE_AFTER_DUEL, Func_2c568
-	dbw OWMODE_NPC_POSITION, Func_2c501
-	dbw OWMODE_MUSIC_PRELOAD, Func_2c4db
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2c50a
-	dbw OWMODE_MUSIC_PRELOAD, Func_2c4db
+	dbw OWMODE_STEP_EVENT, ExecuteLightningClubStepEvents
+	dbw OWMODE_INTERACT, HandleLightningClubInteractions
+	dbw OWMODE_AFTER_DUEL, HandleLightningClubAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadLightningClubNPCs
+	dbw OWMODE_MUSIC_PRELOAD, SetLightningClubMusicAndMapGfxByPikachuCoinState
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleLightningClubWarpFadeInPreload
+	dbw OWMODE_MUSIC_PRELOAD, SetLightningClubMusicAndMapGfxByPikachuCoinState
 	db $ff
 
-Func_2c4db:
+SetLightningClubMusicAndMapGfxByPikachuCoinState: ; Func_2c4db
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
 	jr nz, .asm_2c4ea
@@ -626,19 +626,19 @@ Func_2c4db:
 	ccf
 	ret
 
-Func_2c4fa:
+ExecuteLightningClubStepEvents: ; Func_2c4fa
 	ld hl, LightningClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2c501:
+LoadLightningClubNPCs: ; Func_2c501
 	ld hl, LightningClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2c50a:
+HandleLightningClubWarpFadeInPreload: ; Func_2c50a
 	ld a, EVENT_MET_GR4_LIGHTNING_CLUB
 	farcall GetEventValue
 	jr z, .asm_2c524
@@ -652,9 +652,9 @@ Func_2c50a:
 .asm_2c524
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_2c584)
+	ld a, BANK(RunLightningClubGr4IntroCutscene)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_2c584
+	ld hl, RunLightningClubGr4IntroCutscene
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -676,13 +676,13 @@ Func_2c50a:
 	scf
 	ret
 
-Func_2c560:
+HandleLightningClubInteractions: ; Func_2c560
 	ld hl, LightningClub_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2c568:
+HandleLightningClubAfterDuel: ; Func_2c568
 	ld hl, LightningClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -690,13 +690,13 @@ Func_2c568:
 	ret
 
 LightningClub_AfterDuelScripts:
-	npc_script NPC_ISAAC, Func_2c6ec
-	npc_script NPC_JENNIFER, Func_2c781
-	npc_script NPC_NICHOLAS, Func_2c847
-	npc_script NPC_BRANDON, Func_2c8dd
+	npc_script NPC_ISAAC, ScriptLightningClubAfterDuelIsaac
+	npc_script NPC_JENNIFER, ScriptLightningClubAfterDuelJennifer
+	npc_script NPC_NICHOLAS, ScriptLightningClubAfterDuelNicholas
+	npc_script NPC_BRANDON, ScriptLightningClubAfterDuelBrandon
 	db $ff
 
-Func_2c584:
+RunLightningClubGr4IntroCutscene: ; Func_2c584
 	xor a
 	start_script
 	wait_for_fade
@@ -797,7 +797,7 @@ Script_2c5f5:
 	db SOUTH, MOVE_8
 	db $ff
 
-Func_2c645:
+ScriptLightningClubIsaac: ; Func_2c645
 	ld a, NPC_ISAAC
 	ld [wScriptNPC], a
 	ldtx hl, DialogIsaacText
@@ -887,7 +887,7 @@ Func_2c645:
 	end_script
 	ret
 
-Func_2c6ec:
+ScriptLightningClubAfterDuelIsaac: ; Func_2c6ec
 	xor a
 	start_script
 	start_dialog
@@ -932,7 +932,7 @@ Func_2c6ec:
 	end_script
 	ret
 
-Func_2c73b:
+ScriptLightningClubJennifer: ; Func_2c73b
 	ld a, NPC_JENNIFER
 	ld [wScriptNPC], a
 	ldtx hl, DialogJenniferText
@@ -971,7 +971,7 @@ Func_2c73b:
 	end_script
 	ret
 
-Func_2c781:
+ScriptLightningClubAfterDuelJennifer: ; Func_2c781
 	xor a
 	start_script
 	start_dialog
@@ -988,7 +988,7 @@ Func_2c781:
 	end_script
 	ret
 
-Func_2c79d:
+ScriptLightningClubNicholas: ; Func_2c79d
 	ld a, NPC_NICHOLAS
 	ld [wScriptNPC], a
 	ldtx hl, DialogNicholasText
@@ -1079,7 +1079,7 @@ Func_2c79d:
 	end_script
 	ret
 
-Func_2c847:
+ScriptLightningClubAfterDuelNicholas: ; Func_2c847
 	xor a
 	start_script
 	start_dialog
@@ -1125,7 +1125,7 @@ Func_2c847:
 	end_script
 	ret
 
-Func_2c897:
+ScriptLightningClubBrandon: ; Func_2c897
 	ld a, NPC_BRANDON
 	ld [wScriptNPC], a
 	ldtx hl, DialogBrandonText
@@ -1164,7 +1164,7 @@ Func_2c897:
 	end_script
 	ret
 
-Func_2c8dd:
+ScriptLightningClubAfterDuelBrandon: ; Func_2c8dd
 	xor a
 	start_script
 	start_dialog
@@ -1181,7 +1181,7 @@ Func_2c8dd:
 	end_script
 	ret
 
-Func_2c8f9:
+CheckShowLightningClubJenniferOrBrandon: ; Func_2c8f9
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2c90c
@@ -1195,7 +1195,7 @@ Func_2c8f9:
 	scf
 	ret
 
-Func_2c90e:
+ScriptLightningClubGr4: ; Func_2c90e
 	ld a, NPC_GR_4
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR4Text
@@ -1211,7 +1211,7 @@ Func_2c90e:
 	end_script
 	ret
 
-Func_2c929:
+CheckShowLightningClubGr4: ; Func_2c929
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
 	jr z, .asm_2c933
@@ -1234,39 +1234,39 @@ PsychicClubEntrance_StepEvents:
 	map_exit 0, 4, MAP_PSYCHIC_CLUB_LOBBY, 14, 7, WEST
 	map_exit 4, 0, MAP_PSYCHIC_CLUB, 6, 12, NORTH
 	map_exit 5, 0, MAP_PSYCHIC_CLUB, 7, 12, NORTH
-	ow_script 4, 2, Func_2ca3e
-	ow_script 5, 2, Func_2ca3e
+	ow_script 4, 2, HandlePsychicClubEntranceDoorTileTrigger
+	ow_script 5, 2, HandlePsychicClubEntranceDoorTileTrigger
 	db $ff
 
 PsychicClubEntrance_NPCs:
-	npc NPC_STEPHANIE, 5, 1, SOUTH, Func_2cabb
+	npc NPC_STEPHANIE, 5, 1, SOUTH, CheckShowPsychicClubEntranceStephanie
 	db $ff
 
 PsychicClubEntrance_NPCInteractions:
-	npc_script NPC_STEPHANIE, Func_2caa0
+	npc_script NPC_STEPHANIE, ScriptPsychicClubEntranceStephanie
 	db $ff
 
 PsychicClubEntrance_MapScripts:
-	dbw OWMODE_IDLE, Func_2c9ac
-	dbw OWMODE_STEP_EVENT, Func_2c9d8
-	dbw OWMODE_INTERACT, Func_2ca14
-	dbw OWMODE_AFTER_DUEL, Func_2ca1c
-	dbw OWMODE_NPC_POSITION, Func_2c9df
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2c9e8
-	dbw OWMODE_CONTINUE_OW, Func_2ca22
-	dbw OWMODE_MUSIC_PRELOAD, Func_2c9b8
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2c9c8
+	dbw OWMODE_IDLE, HandlePsychicClubEntranceIdle
+	dbw OWMODE_STEP_EVENT, ExecutePsychicClubEntranceStepEvents
+	dbw OWMODE_INTERACT, HandlePsychicClubEntranceInteractions
+	dbw OWMODE_AFTER_DUEL, HandlePsychicClubEntranceAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadPsychicClubEntranceNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandlePsychicClubEntranceWarpFadeInPreload
+	dbw OWMODE_CONTINUE_OW, HandlePsychicClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetPsychicClubEntranceGRMusicIfBottomRightCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayPsychicClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2c9ac:
+HandlePsychicClubEntranceIdle: ; Func_2c9ac
 	call DoOverworldFrame
-	call Func_2ca46
+	call UpdatePsychicClubEntranceStephanieDoorBlock
 	call HandleOverworldPlayerInput
 	scf
 	ccf
 	ret
 
-Func_2c9b8:
+SetPsychicClubEntranceGRMusicIfBottomRightCoinPieceMissing: ; Func_2c9b8
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2c9c5
@@ -1277,7 +1277,7 @@ Func_2c9b8:
 	ccf
 	ret
 
-Func_2c9c8:
+PlayPsychicClubEntranceRonaldThemePostload: ; Func_2c9c8
 	call PsychicClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -1289,38 +1289,38 @@ Func_2c9c8:
 	ccf
 	ret
 
-Func_2c9d8:
+ExecutePsychicClubEntranceStepEvents: ; Func_2c9d8
 	ld hl, PsychicClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2c9df:
+LoadPsychicClubEntranceNPCs: ; Func_2c9df
 	ld hl, PsychicClubEntrance_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2c9e8:
+HandlePsychicClubEntranceWarpFadeInPreload: ; Func_2c9e8
 	call PsychicClubEntrance_ShouldRonaldAppear
 	jr c, .quit
 	cp RONALD_DUEL_GC_PIECES_2
 	jr z, .duel
 	jr nc, .gift
 ; card pop
-	ld hl, Func_34037
+	ld hl, RunRonaldSecondMeetingCardPopScene1
 	jr .got_event
 .duel
-	ld hl, Func_3417e
+	ld hl, RunRonaldGCPieces2DuelIntroScript
 	jr .got_event
 .gift
-	ld hl, Func_341f7
+	ld hl, RunRonaldGCPieces4GiftScript
 .got_event
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34037)
-	ASSERT BANK(Func_34037) == BANK(Func_3417e)
-	ASSERT BANK(Func_34037) == BANK(Func_341f7)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene1)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces2DuelIntroScript)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces4GiftScript)
 	ld [wOverworldScriptBank], a
 	ld a, l
 	ld [wOverworldScriptPointer], a
@@ -1330,18 +1330,18 @@ Func_2c9e8:
 	scf
 	ret
 
-Func_2ca14:
+HandlePsychicClubEntranceInteractions: ; Func_2ca14
 	ld hl, PsychicClubEntrance_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2ca1c:
+HandlePsychicClubEntranceAfterDuel: ; Func_2ca1c
 	farcall Script_RonaldGCPieces2AfterDuel
 	scf
 	ret
 
-Func_2ca22:
+HandlePsychicClubEntranceContinueOverworld: ; Func_2ca22
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2ca3c
@@ -1355,12 +1355,12 @@ Func_2ca22:
 	scf
 	ret
 
-Func_2ca3e:
-	call Func_2ca46
+HandlePsychicClubEntranceDoorTileTrigger: ; Func_2ca3e
+	call UpdatePsychicClubEntranceStephanieDoorBlock
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
-Func_2ca46:
+UpdatePsychicClubEntranceStephanieDoorBlock: ; Func_2ca46
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
 	jr nz, .exit
@@ -1387,7 +1387,7 @@ Func_2ca46:
 	jr z, .exit
 	ld a, NPC_STEPHANIE
 	lb bc, EAST | MOVE_BACKWARDS, MOVE_SPEED_WALK
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 	jr .asm_2ca9a
 .asm_2ca86
 	ld a, NPC_STEPHANIE
@@ -1397,7 +1397,7 @@ Func_2ca46:
 	jr z, .exit
 	ld a, NPC_STEPHANIE
 	lb bc, WEST | MOVE_BACKWARDS, MOVE_SPEED_WALK
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 .asm_2ca9a
 	ld a, NPC_STEPHANIE
 	call WaitForOWObjectMovement
@@ -1405,7 +1405,7 @@ Func_2ca46:
 	ret
 
 ; beating GR4 at Lightning Club unlocks Psychic Club sequence
-Func_2caa0:
+ScriptPsychicClubEntranceStephanie: ; Func_2caa0
 	ld a, NPC_STEPHANIE
 	ld [wScriptNPC], a
 	ldtx hl, DialogStephanieText
@@ -1421,7 +1421,7 @@ Func_2caa0:
 	end_script
 	ret
 
-Func_2cabb:
+CheckShowPsychicClubEntranceStephanie: ; Func_2cabb
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
 	jr z, .asm_2cac5
@@ -1481,19 +1481,19 @@ PsychicClubLobby_StepEvents:
 PsychicClubLobby_NPCs:
 	npc NPC_PSYCHIC_CLUB_GLASSES_LAD, 8, 8, EAST, NULL
 	npc NPC_PSYCHIC_CLUB_LASS, 10, 9, WEST, NULL
-	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, Func_2cca8
+	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, CheckShowPsychicClubLobbyImakuniBlack
 	npc NPC_PSYCHIC_CLUB_CAPPED_LAD, 7, 6, EAST, NULL
-	npc NPC_PSYCHIC_CLUB_GR_LASS, 14, 4, SOUTH, Func_2cd0e
+	npc NPC_PSYCHIC_CLUB_GR_LASS, 14, 4, SOUTH, CheckShowPsychicClubLobbyGrLass
 	npc NPC_CLERK_BATTLE_CENTER, 2, 2, SOUTH, NULL
 	npc NPC_CLERK_GIFT_CENTER, 4, 2, SOUTH, NULL
 	db $ff
 
 PsychicClubLobby_NPCInteractions:
-	npc_script NPC_PSYCHIC_CLUB_GLASSES_LAD, Func_2cc11
-	npc_script NPC_PSYCHIC_CLUB_LASS, Func_2cc7d
+	npc_script NPC_PSYCHIC_CLUB_GLASSES_LAD, ScriptPsychicClubLobbyGlassesLadTradeAlakazam
+	npc_script NPC_PSYCHIC_CLUB_LASS, ScriptPsychicClubLobbyLass
 	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
-	npc_script NPC_PSYCHIC_CLUB_CAPPED_LAD, Func_2ccb7
-	npc_script NPC_PSYCHIC_CLUB_GR_LASS, Func_2cce8
+	npc_script NPC_PSYCHIC_CLUB_CAPPED_LAD, ScriptPsychicClubLobbyCappedLad
+	npc_script NPC_PSYCHIC_CLUB_GR_LASS, ScriptPsychicClubLobbyGrLass
 	db $ff
 
 PsychicClubLobby_OWInteractions:
@@ -1507,16 +1507,16 @@ PsychicClubLobby_OWInteractions:
 	db $ff
 
 PsychicClubLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2cbcf
-	dbw OWMODE_INTERACT, Func_2cbdf
-	dbw OWMODE_NPC_POSITION, Func_2cbd6
-	dbw OWMODE_AFTER_DUEL, Func_2cbef
-	dbw OWMODE_CONTINUE_OW, Func_2cbf5
-	dbw OWMODE_MUSIC_PRELOAD, Func_2cba8
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2cbba
+	dbw OWMODE_STEP_EVENT, ExecutePsychicClubLobbyStepEvents
+	dbw OWMODE_INTERACT, HandlePsychicClubLobbyInteractions
+	dbw OWMODE_NPC_POSITION, LoadPsychicClubLobbyNPCs
+	dbw OWMODE_AFTER_DUEL, HandlePsychicClubLobbyAfterDuel
+	dbw OWMODE_CONTINUE_OW, HandlePsychicClubLobbyContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetPsychicClubLobbyGRMusicIfBottomRightCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayPsychicClubLobbyImakuniBlackThemePostload
 	db $ff
 
-Func_2cba8:
+SetPsychicClubLobbyGRMusicIfBottomRightCoinPieceMissing: ; Func_2cba8
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2cbb7
@@ -1528,7 +1528,7 @@ Func_2cba8:
 	ccf
 	ret
 
-Func_2cbba:
+PlayPsychicClubLobbyImakuniBlackThemePostload: ; Func_2cbba
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 3
@@ -1542,19 +1542,19 @@ Func_2cbba:
 	ccf
 	ret
 
-Func_2cbcf:
+ExecutePsychicClubLobbyStepEvents: ; Func_2cbcf
 	ld hl, PsychicClubLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2cbd6:
+LoadPsychicClubLobbyNPCs: ; Func_2cbd6
 	ld hl, PsychicClubLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2cbdf:
+HandlePsychicClubLobbyInteractions: ; Func_2cbdf
 	ld hl, PsychicClubLobby_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2cbed
@@ -1564,12 +1564,12 @@ Func_2cbdf:
 	scf
 	ret
 
-Func_2cbef:
+HandlePsychicClubLobbyAfterDuel: ; Func_2cbef
 	farcall Script_ImakuniBlackAfterDuel
 	scf
 	ret
 
-Func_2cbf5:
+HandlePsychicClubLobbyContinueOverworld: ; Func_2cbf5
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2cc0f
@@ -1583,7 +1583,7 @@ Func_2cbf5:
 	scf
 	ret
 
-Func_2cc11:
+ScriptPsychicClubLobbyGlassesLadTradeAlakazam: ; Func_2cc11
 	ld a, NPC_PSYCHIC_CLUB_GLASSES_LAD
 	ld [wScriptNPC], a
 	ldtx hl, DialogGlassesLadText
@@ -1634,7 +1634,7 @@ Func_2cc11:
 	end_script
 	ret
 
-Func_2cc7d:
+ScriptPsychicClubLobbyLass: ; Func_2cc7d
 	ld a, NPC_PSYCHIC_CLUB_LASS
 	ld [wScriptNPC], a
 	ldtx hl, DialogLassText
@@ -1657,7 +1657,7 @@ Func_2cc7d:
 	end_script
 	ret
 
-Func_2cca8:
+CheckShowPsychicClubLobbyImakuniBlack: ; Func_2cca8
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $03
@@ -1669,7 +1669,7 @@ Func_2cca8:
 	ccf
 	ret
 
-Func_2ccb7:
+ScriptPsychicClubLobbyCappedLad: ; Func_2ccb7
 	ld a, NPC_PSYCHIC_CLUB_CAPPED_LAD
 	ld [wScriptNPC], a
 	ldtx hl, DialogCappedKidText
@@ -1696,7 +1696,7 @@ Func_2ccb7:
 	end_script
 	ret
 
-Func_2cce8:
+ScriptPsychicClubLobbyGrLass: ; Func_2cce8
 	ld a, NPC_PSYCHIC_CLUB_GR_LASS
 	ld [wScriptNPC], a
 	ldtx hl, DialogGRKidText
@@ -1718,7 +1718,7 @@ Func_2cce8:
 	end_script
 	ret
 
-Func_2cd0e:
+CheckShowPsychicClubLobbyGrLass: ; Func_2cd0e
 	ld a, EVENT_GOT_GR_COIN
 	farcall GetEventValue
 	jr z, .asm_2cd20
@@ -1747,27 +1747,27 @@ PsychicClub_NPCs:
 	npc NPC_ROBERT, 3, 10, WEST, NULL
 	npc NPC_DANIEL, 4, 5, NORTH, NULL
 	npc NPC_STEPHANIE, 11, 6, EAST, NULL
-	npc NPC_GR_4, 7, 3, SOUTH, Func_2d23c
+	npc NPC_GR_4, 7, 3, SOUTH, CheckShowPsychicClubGr4
 	db $ff
 
 PsychicClub_NPCInteractions:
-	npc_script NPC_MURRAY, Func_2ce88
-	npc_script NPC_ROBERT, Func_2cfcc
-	npc_script NPC_DANIEL, Func_2d046
-	npc_script NPC_STEPHANIE, Func_2d0b3
-	npc_script NPC_GR_4, Func_2d190
+	npc_script NPC_MURRAY, ScriptPsychicClubMurray
+	npc_script NPC_ROBERT, ScriptPsychicClubRobert
+	npc_script NPC_DANIEL, ScriptPsychicClubDaniel
+	npc_script NPC_STEPHANIE, ScriptPsychicClubStephanie
+	npc_script NPC_GR_4, ScriptPsychicClubGr4
 	db $ff
 
 PsychicClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2cd92
-	dbw OWMODE_INTERACT, Func_2ce11
-	dbw OWMODE_AFTER_DUEL, Func_2ce19
-	dbw OWMODE_NPC_POSITION, Func_2cd99
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2cda2
-	dbw OWMODE_MUSIC_PRELOAD, Func_2cd82
+	dbw OWMODE_STEP_EVENT, ExecutePsychicClubStepEvents
+	dbw OWMODE_INTERACT, HandlePsychicClubInteractions
+	dbw OWMODE_AFTER_DUEL, HandlePsychicClubAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadPsychicClubNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandlePsychicClubWarpFadeInPreload
+	dbw OWMODE_MUSIC_PRELOAD, SetPsychicClubGRMusicIfBottomRightCoinPieceMissing
 	db $ff
 
-Func_2cd82:
+SetPsychicClubGRMusicIfBottomRightCoinPieceMissing: ; Func_2cd82
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2cd8f
@@ -1778,19 +1778,19 @@ Func_2cd82:
 	ccf
 	ret
 
-Func_2cd92:
+ExecutePsychicClubStepEvents: ; Func_2cd92
 	ld hl, PsychicClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2cd99:
+LoadPsychicClubNPCs: ; Func_2cd99
 	ld hl, PsychicClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2cda2:
+HandlePsychicClubWarpFadeInPreload: ; Func_2cda2
 	ld a, EVENT_MET_GR4_PSYCHIC_CLUB
 	farcall GetEventValue
 	jr z, .asm_2cdc6
@@ -1807,9 +1807,9 @@ Func_2cda2:
 .asm_2cdc6
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_2ce39)
+	ld a, BANK(RunPsychicClubGr4IntroCutscene)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_2ce39
+	ld hl, RunPsychicClubGr4IntroCutscene
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -1834,13 +1834,13 @@ Func_2cda2:
 	scf
 	ret
 
-Func_2ce11:
+HandlePsychicClubInteractions: ; Func_2ce11
 	ld hl, PsychicClub_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2ce19:
+HandlePsychicClubAfterDuel: ; Func_2ce19
 	ld hl, PsychicClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -1848,14 +1848,14 @@ Func_2ce19:
 	ret
 
 PsychicClub_AfterDuelScripts:
-	npc_script NPC_MURRAY, Func_2cf73
-	npc_script NPC_ROBERT, Func_2d02a
-	npc_script NPC_DANIEL, Func_2d097
-	npc_script NPC_STEPHANIE, Func_2d142
-	npc_script NPC_GR_4, Func_2d20e
+	npc_script NPC_MURRAY, ScriptPsychicClubAfterDuelMurray
+	npc_script NPC_ROBERT, ScriptPsychicClubAfterDuelRobert
+	npc_script NPC_DANIEL, ScriptPsychicClubAfterDuelDaniel
+	npc_script NPC_STEPHANIE, ScriptPsychicClubAfterDuelStephanie
+	npc_script NPC_GR_4, ScriptPsychicClubAfterDuelGr4
 	db $ff
 
-Func_2ce39:
+RunPsychicClubGr4IntroCutscene: ; Func_2ce39
 	xor a
 	start_script
 	wait_for_fade
@@ -1896,7 +1896,7 @@ Func_2ce39:
 	db SOUTH, MOVE_4
 	db $ff
 
-Func_2ce88:
+ScriptPsychicClubMurray: ; Func_2ce88
 	ld a, NPC_MURRAY
 	ld [wScriptNPC], a
 	ldtx hl, DialogMurrayText
@@ -2016,7 +2016,7 @@ Func_2ce88:
 	end_script
 	ret
 
-Func_2cf73:
+ScriptPsychicClubAfterDuelMurray: ; Func_2cf73
 	xor a
 	start_script
 	start_dialog
@@ -2066,7 +2066,7 @@ Func_2cf73:
 	end_script
 	ret
 
-Func_2cfcc:
+ScriptPsychicClubRobert: ; Func_2cfcc
 	ld a, NPC_ROBERT
 	ld [wScriptNPC], a
 	ldtx hl, DialogRobertText
@@ -2119,7 +2119,7 @@ Func_2cfcc:
 	end_script
 	ret
 
-Func_2d02a:
+ScriptPsychicClubAfterDuelRobert: ; Func_2d02a
 	xor a
 	start_script
 	start_dialog
@@ -2136,7 +2136,7 @@ Func_2d02a:
 	end_script
 	ret
 
-Func_2d046:
+ScriptPsychicClubDaniel: ; Func_2d046
 	ld a, NPC_DANIEL
 	ld [wScriptNPC], a
 	ldtx hl, DialogDanielText
@@ -2182,7 +2182,7 @@ Func_2d046:
 	end_script
 	ret
 
-Func_2d097:
+ScriptPsychicClubAfterDuelDaniel: ; Func_2d097
 	xor a
 	start_script
 	start_dialog
@@ -2199,7 +2199,7 @@ Func_2d097:
 	end_script
 	ret
 
-Func_2d0b3:
+ScriptPsychicClubStephanie: ; Func_2d0b3
 	ld a, NPC_STEPHANIE
 	ld [wScriptNPC], a
 	ldtx hl, DialogStephanieText
@@ -2276,7 +2276,7 @@ Func_2d0b3:
 	end_script
 	ret
 
-Func_2d142:
+ScriptPsychicClubAfterDuelStephanie: ; Func_2d142
 	xor a
 	start_script
 	start_dialog
@@ -2321,7 +2321,7 @@ Func_2d142:
 	end_script
 	ret
 
-Func_2d190:
+ScriptPsychicClubGr4: ; Func_2d190
 	ld a, NPC_GR_4
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR4Text
@@ -2383,7 +2383,7 @@ Func_2d190:
 	end_script
 	ret
 
-Func_2d20e:
+ScriptPsychicClubAfterDuelGr4: ; Func_2d20e
 	xor a
 	start_script
 	start_dialog
@@ -2408,7 +2408,7 @@ Func_2d20e:
 	end_script
 	ret
 
-Func_2d23c:
+CheckShowPsychicClubGr4: ; Func_2d23c
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
 	jr z, .asm_2d246
@@ -2542,14 +2542,14 @@ RockClubEntrance_StepEvents:
 	db $ff
 
 RockClubEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2d376
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2d37d
-	dbw OWMODE_CONTINUE_OW, Func_2d399
-	dbw OWMODE_MUSIC_PRELOAD, Func_2d356
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2d366
+	dbw OWMODE_STEP_EVENT, ExecuteRockClubEntranceStepEvents
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleRockClubEntranceWarpFadeInPreload
+	dbw OWMODE_CONTINUE_OW, HandleRockClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetRockClubEntranceMusicIfGr1NotMet
+	dbw OWMODE_MUSIC_POSTLOAD, PlayRockClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2d356:
+SetRockClubEntranceMusicIfGr1NotMet: ; Func_2d356
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
 	jr nz, .asm_2d363
@@ -2560,7 +2560,7 @@ Func_2d356:
 	ccf
 	ret
 
-Func_2d366:
+PlayRockClubEntranceRonaldThemePostload: ; Func_2d366
 	call RockClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -2572,20 +2572,20 @@ Func_2d366:
 	ccf
 	ret
 
-Func_2d376:
+ExecuteRockClubEntranceStepEvents: ; Func_2d376
 	ld hl, RockClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2d37d:
+HandleRockClubEntranceWarpFadeInPreload: ; Func_2d37d
 	call RockClubEntrance_ShouldRonaldAppear
 	jr c, .quit
 ; card pop
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34111)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene3)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_34111
+	ld hl, RunRonaldSecondMeetingCardPopScene3
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -2594,7 +2594,7 @@ Func_2d37d:
 	scf
 	ret
 
-Func_2d399:
+HandleRockClubEntranceContinueOverworld: ; Func_2d399
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2d3b3
@@ -2635,7 +2635,7 @@ RockClubLobby_StepEvents:
 RockClubLobby_NPCs:
 	npc NPC_ROCK_CLUB_LASS, 5, 6, EAST, NULL
 	npc NPC_ROCK_CLUB_WOMAN, 12, 10, NORTH, NULL
-	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, Func_2d57c
+	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, CheckShowRockClubLobbyImakuniBlack
 	npc NPC_ROCK_CLUB_CHAP, 8, 9, WEST, NULL
 	npc NPC_ROCK_CLUB_CAPPED_LAD, 10, 3, SOUTH, NULL
 	npc NPC_CLERK_BATTLE_CENTER, 2, 2, SOUTH, NULL
@@ -2643,11 +2643,11 @@ RockClubLobby_NPCs:
 	db $ff
 
 RockClubLobby_NPCInteractions:
-	npc_script NPC_ROCK_CLUB_LASS, Func_2d4e0
-	npc_script NPC_ROCK_CLUB_WOMAN, Func_2d546
+	npc_script NPC_ROCK_CLUB_LASS, ScriptRockClubLobbyLassTradeSnorlax
+	npc_script NPC_ROCK_CLUB_WOMAN, ScriptRockClubLobbyWoman
 	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
-	npc_script NPC_ROCK_CLUB_CHAP, Func_2d58b
-	npc_script NPC_ROCK_CLUB_CAPPED_LAD, Func_2d5c7
+	npc_script NPC_ROCK_CLUB_CHAP, ScriptRockClubLobbyChap
+	npc_script NPC_ROCK_CLUB_CAPPED_LAD, ScriptRockClubLobbyCappedLad
 	db $ff
 
 RockClubLobby_OWInteractions:
@@ -2661,16 +2661,16 @@ RockClubLobby_OWInteractions:
 	db $ff
 
 RockClubLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2d49e
-	dbw OWMODE_INTERACT, Func_2d4ae
-	dbw OWMODE_NPC_POSITION, Func_2d4a5
-	dbw OWMODE_AFTER_DUEL, Func_2d4be
-	dbw OWMODE_CONTINUE_OW, Func_2d4c4
-	dbw OWMODE_MUSIC_PRELOAD, Func_2d472
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2d489
+	dbw OWMODE_STEP_EVENT, ExecuteRockClubLobbyStepEvents
+	dbw OWMODE_INTERACT, HandleRockClubLobbyInteractions
+	dbw OWMODE_NPC_POSITION, LoadRockClubLobbyNPCs
+	dbw OWMODE_AFTER_DUEL, HandleRockClubLobbyAfterDuel
+	dbw OWMODE_CONTINUE_OW, HandleRockClubLobbyContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetRockClubLobbyMusicByGr1AndImakuniState
+	dbw OWMODE_MUSIC_POSTLOAD, PlayRockClubLobbyImakuniBlackThemePostload
 	db $ff
 
-Func_2d472:
+SetRockClubLobbyMusicByGr1AndImakuniState: ; Func_2d472
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
 	jr nz, .asm_2d486
@@ -2684,7 +2684,7 @@ Func_2d472:
 	ccf
 	ret
 
-Func_2d489:
+PlayRockClubLobbyImakuniBlackThemePostload: ; Func_2d489
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 4
@@ -2698,19 +2698,19 @@ Func_2d489:
 	ccf
 	ret
 
-Func_2d49e:
+ExecuteRockClubLobbyStepEvents: ; Func_2d49e
 	ld hl, RockClubLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2d4a5:
+LoadRockClubLobbyNPCs: ; Func_2d4a5
 	ld hl, RockClubLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2d4ae:
+HandleRockClubLobbyInteractions: ; Func_2d4ae
 	ld hl, RockClubLobby_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2d4bc
@@ -2720,12 +2720,12 @@ Func_2d4ae:
 	scf
 	ret
 
-Func_2d4be:
+HandleRockClubLobbyAfterDuel: ; Func_2d4be
 	farcall Script_ImakuniBlackAfterDuel
 	scf
 	ret
 
-Func_2d4c4:
+HandleRockClubLobbyContinueOverworld: ; Func_2d4c4
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2d4de
@@ -2739,7 +2739,7 @@ Func_2d4c4:
 	scf
 	ret
 
-Func_2d4e0:
+ScriptRockClubLobbyLassTradeSnorlax: ; Func_2d4e0
 	ld a, NPC_ROCK_CLUB_LASS
 	ld [wScriptNPC], a
 	ldtx hl, DialogLassText
@@ -2788,7 +2788,7 @@ Func_2d4e0:
 	end_script
 	ret
 
-Func_2d546:
+ScriptRockClubLobbyWoman: ; Func_2d546
 	ld a, NPC_ROCK_CLUB_WOMAN
 	ld [wScriptNPC], a
 	ldtx hl, DialogWomanText
@@ -2816,7 +2816,7 @@ Func_2d546:
 	end_script
 	ret
 
-Func_2d57c:
+CheckShowRockClubLobbyImakuniBlack: ; Func_2d57c
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $04
@@ -2828,7 +2828,7 @@ Func_2d57c:
 	ccf
 	ret
 
-Func_2d58b:
+ScriptRockClubLobbyChap: ; Func_2d58b
 	ld a, NPC_ROCK_CLUB_CHAP
 	ld [wScriptNPC], a
 	ldtx hl, DialogChap1Text
@@ -2860,7 +2860,7 @@ Func_2d58b:
 	end_script
 	ret
 
-Func_2d5c7:
+ScriptRockClubLobbyCappedLad: ; Func_2d5c7
 	ld a, NPC_ROCK_CLUB_CAPPED_LAD
 	ld [wScriptNPC], a
 	ldtx hl, DialogCappedKidText
@@ -2902,26 +2902,26 @@ RockClub_NPCs:
 	npc NPC_MATTHEW, 2, 3, SOUTH, NULL
 	npc NPC_RYAN, 9, 7, EAST, NULL
 	npc NPC_ANDREW, 3, 8, EAST, NULL
-	npc NPC_GR_1, 7, 3, NORTH, Func_2d8f3
+	npc NPC_GR_1, 7, 3, NORTH, CheckShowRockClubGr1
 	db $ff
 
 RockClub_NPCInteractions:
-	npc_script NPC_GENE, Func_2d754
-	npc_script NPC_MATTHEW, Func_2d7ea
-	npc_script NPC_RYAN, Func_2d841
-	npc_script NPC_ANDREW, Func_2d89c
+	npc_script NPC_GENE, ScriptRockClubGene
+	npc_script NPC_MATTHEW, ScriptRockClubMatthew
+	npc_script NPC_RYAN, ScriptRockClubRyan
+	npc_script NPC_ANDREW, ScriptRockClubAndrew
 	db $ff
 
 RockClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2d663
-	dbw OWMODE_INTERACT, Func_2d6a6
-	dbw OWMODE_NPC_POSITION, Func_2d66a
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2d673
-	dbw OWMODE_AFTER_DUEL, Func_2d6ae
-	dbw OWMODE_MUSIC_PRELOAD, Func_2d653
+	dbw OWMODE_STEP_EVENT, ExecuteRockClubStepEvents
+	dbw OWMODE_INTERACT, HandleRockClubInteractions
+	dbw OWMODE_NPC_POSITION, LoadRockClubNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleRockClubWarpFadeInPreload
+	dbw OWMODE_AFTER_DUEL, HandleRockClubAfterDuel
+	dbw OWMODE_MUSIC_PRELOAD, SetRockClubMusicIfGr1NotMet
 	db $ff
 
-Func_2d653:
+SetRockClubMusicIfGr1NotMet: ; Func_2d653
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
 	jr nz, .asm_2d660
@@ -2932,27 +2932,27 @@ Func_2d653:
 	ccf
 	ret
 
-Func_2d663:
+ExecuteRockClubStepEvents: ; Func_2d663
 	ld hl, RockClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2d66a:
+LoadRockClubNPCs: ; Func_2d66a
 	ld hl, RockClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2d673:
+HandleRockClubWarpFadeInPreload: ; Func_2d673
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
 	jr nz, .asm_2d6a4
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_2d6ca)
+	ld a, BANK(RunRockClubGr1IntroCutscene)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_2d6ca
+	ld hl, RunRockClubGr1IntroCutscene
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -2967,13 +2967,13 @@ Func_2d673:
 	scf
 	ret
 
-Func_2d6a6:
+HandleRockClubInteractions: ; Func_2d6a6
 	ld hl, RockClub_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2d6ae:
+HandleRockClubAfterDuel: ; Func_2d6ae
 	ld hl, RockClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -2981,13 +2981,13 @@ Func_2d6ae:
 	ret
 
 RockClub_AfterDuelScripts:
-	npc_script NPC_GENE, Func_2d7c3
-	npc_script NPC_MATTHEW, Func_2d825
-	npc_script NPC_RYAN, Func_2d87e
-	npc_script NPC_ANDREW, Func_2d8d7
+	npc_script NPC_GENE, ScriptRockClubAfterDuelGene
+	npc_script NPC_MATTHEW, ScriptRockClubAfterDuelMatthew
+	npc_script NPC_RYAN, ScriptRockClubAfterDuelRyan
+	npc_script NPC_ANDREW, ScriptRockClubAfterDuelAndrew
 	db $ff
 
-Func_2d6ca:
+RunRockClubGr1IntroCutscene: ; Func_2d6ca
 	xor a
 	start_script
 	wait_for_fade
@@ -3050,7 +3050,7 @@ Func_2d6ca:
 	db SOUTH, MOVE_10
 	db $ff
 
-Func_2d754:
+ScriptRockClubGene: ; Func_2d754
 	ld a, NPC_GENE
 	ld [wScriptNPC], a
 	ldtx hl, DialogGeneText
@@ -3105,7 +3105,7 @@ Func_2d754:
 	end_script
 	ret
 
-Func_2d7c3:
+ScriptRockClubAfterDuelGene: ; Func_2d7c3
 	xor a
 	start_script
 	start_dialog
@@ -3126,7 +3126,7 @@ Func_2d7c3:
 	end_script
 	ret
 
-Func_2d7ea:
+ScriptRockClubMatthew: ; Func_2d7ea
 	ld a, NPC_MATTHEW
 	ld [wScriptNPC], a
 	ldtx hl, DialogMatthewText
@@ -3158,7 +3158,7 @@ Func_2d7ea:
 	end_script
 	ret
 
-Func_2d825:
+ScriptRockClubAfterDuelMatthew: ; Func_2d825
 	xor a
 	start_script
 	start_dialog
@@ -3175,7 +3175,7 @@ Func_2d825:
 	end_script
 	ret
 
-Func_2d841:
+ScriptRockClubRyan: ; Func_2d841
 	ld a, NPC_RYAN
 	ld [wScriptNPC], a
 	ldtx hl, DialogRyanText
@@ -3208,7 +3208,7 @@ Func_2d841:
 	end_script
 	ret
 
-Func_2d87e:
+ScriptRockClubAfterDuelRyan: ; Func_2d87e
 	xor a
 	start_script
 	start_dialog
@@ -3226,7 +3226,7 @@ Func_2d87e:
 	end_script
 	ret
 
-Func_2d89c:
+ScriptRockClubAndrew: ; Func_2d89c
 	ld a, NPC_ANDREW
 	ld [wScriptNPC], a
 	ldtx hl, DialogAndrewText
@@ -3258,7 +3258,7 @@ Func_2d89c:
 	end_script
 	ret
 
-Func_2d8d7:
+ScriptRockClubAfterDuelAndrew: ; Func_2d8d7
 	xor a
 	start_script
 	start_dialog
@@ -3275,7 +3275,7 @@ Func_2d8d7:
 	end_script
 	ret
 
-Func_2d8f3:
+CheckShowRockClubGr1: ; Func_2d8f3
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
 	jr z, .asm_2d8fd
@@ -3328,15 +3328,15 @@ FightingClubEntrance_StepEvents:
 	db $ff
 
 FightingClubEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2d99f
-	dbw OWMODE_AFTER_DUEL, Func_2d9d2
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2d9a6
-	dbw OWMODE_CONTINUE_OW, Func_2d9d8
-	dbw OWMODE_MUSIC_PRELOAD, Func_2d97f
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2d98f
+	dbw OWMODE_STEP_EVENT, ExecuteFightingClubEntranceStepEvents
+	dbw OWMODE_AFTER_DUEL, HandleFightingClubEntranceAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleFightingClubEntranceWarpFadeInPreload
+	dbw OWMODE_CONTINUE_OW, HandleFightingClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetFightingClubEntranceGRMusicIfTopLeftCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayFightingClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2d97f:
+SetFightingClubEntranceGRMusicIfTopLeftCoinPieceMissing: ; Func_2d97f
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2d98c
@@ -3347,7 +3347,7 @@ Func_2d97f:
 	ccf
 	ret
 
-Func_2d98f:
+PlayFightingClubEntranceRonaldThemePostload: ; Func_2d98f
 	call FightingClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -3359,31 +3359,31 @@ Func_2d98f:
 	ccf
 	ret
 
-Func_2d99f:
+ExecuteFightingClubEntranceStepEvents: ; Func_2d99f
 	ld hl, FightingClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2d9a6:
+HandleFightingClubEntranceWarpFadeInPreload: ; Func_2d9a6
 	call FightingClubEntrance_ShouldRonaldAppear
 	jr c, .quit
 	cp RONALD_DUEL_GC_PIECES_2
 	jr z, .duel
 	jr nc, .gift
 ; card pop
-	ld hl, Func_34037
+	ld hl, RunRonaldSecondMeetingCardPopScene1
 	jr .got_event
 .duel
-	ld hl, Func_3417e
+	ld hl, RunRonaldGCPieces2DuelIntroScript
 	jr .got_event
 .gift
-	ld hl, Func_341f7
+	ld hl, RunRonaldGCPieces4GiftScript
 .got_event
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34037)
-	ASSERT BANK(Func_34037) == BANK(Func_3417e)
-	ASSERT BANK(Func_34037) == BANK(Func_341f7)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene1)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces2DuelIntroScript)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces4GiftScript)
 	ld [wOverworldScriptBank], a
 	ld a, l
 	ld [wOverworldScriptPointer], a
@@ -3393,12 +3393,12 @@ Func_2d9a6:
 	scf
 	ret
 
-Func_2d9d2:
+HandleFightingClubEntranceAfterDuel: ; Func_2d9d2
 	farcall Script_RonaldGCPieces2AfterDuel
 	scf
 	ret
 
-Func_2d9d8:
+HandleFightingClubEntranceContinueOverworld: ; Func_2d9d8
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2d9f2
@@ -3465,15 +3465,15 @@ FightingClubLobby_NPCs:
 	npc NPC_FIGHTING_CLUB_CAPPED_LASS, 6, 8, SOUTH, NULL
 	npc NPC_CLERK_BATTLE_CENTER, 2, 2, SOUTH, NULL
 	npc NPC_CLERK_GIFT_CENTER, 4, 2, SOUTH, NULL
-	npc NPC_MICHAEL, 11, 6, EAST, Func_2db97
+	npc NPC_MICHAEL, 11, 6, EAST, CheckShowFightingClubLobbyMichael
 	db $ff
 
 FightingClubLobby_NPCInteractions:
-	npc_script NPC_FIGHTING_CLUB_PAPPY, Func_2dbac
-	npc_script NPC_FIGHTING_CLUB_GLASSES_KID, Func_2dc17
-	npc_script NPC_FIGHTING_CLUB_CAPPED_GUY, Func_2dc48
-	npc_script NPC_FIGHTING_CLUB_CAPPED_LASS, Func_2dc79
-	npc_script NPC_MICHAEL, Func_2db0e
+	npc_script NPC_FIGHTING_CLUB_PAPPY, ScriptFightingClubLobbyPappyTradeHitmonlee
+	npc_script NPC_FIGHTING_CLUB_GLASSES_KID, ScriptFightingClubLobbyGlassesKid
+	npc_script NPC_FIGHTING_CLUB_CAPPED_GUY, ScriptFightingClubLobbyCappedGuy
+	npc_script NPC_FIGHTING_CLUB_CAPPED_LASS, ScriptFightingClubLobbyCappedLass
+	npc_script NPC_MICHAEL, ScriptFightingClubLobbyMichael
 	db $ff
 
 FightingClubLobby_OWInteractions:
@@ -3487,14 +3487,14 @@ FightingClubLobby_OWInteractions:
 	db $ff
 
 FightingClubLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2dade
-	dbw OWMODE_INTERACT, Func_2daee
-	dbw OWMODE_NPC_POSITION, Func_2dae5
-	dbw OWMODE_AFTER_DUEL, Func_2dafe
-	dbw OWMODE_MUSIC_PRELOAD, Func_2dace
+	dbw OWMODE_STEP_EVENT, ExecuteFightingClubLobbyStepEvents
+	dbw OWMODE_INTERACT, HandleFightingClubLobbyInteractions
+	dbw OWMODE_NPC_POSITION, LoadFightingClubLobbyNPCs
+	dbw OWMODE_AFTER_DUEL, HandleFightingClubLobbyAfterDuel
+	dbw OWMODE_MUSIC_PRELOAD, SetFightingClubLobbyGRMusicIfTopLeftCoinPieceMissing
 	db $ff
 
-Func_2dace:
+SetFightingClubLobbyGRMusicIfTopLeftCoinPieceMissing: ; Func_2dace
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2dadb
@@ -3505,19 +3505,19 @@ Func_2dace:
 	ccf
 	ret
 
-Func_2dade:
+ExecuteFightingClubLobbyStepEvents: ; Func_2dade
 	ld hl, FightingClubLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2dae5:
+LoadFightingClubLobbyNPCs: ; Func_2dae5
 	ld hl, FightingClubLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2daee:
+HandleFightingClubLobbyInteractions: ; Func_2daee
 	ld hl, FightingClubLobby_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2dafc
@@ -3527,7 +3527,7 @@ Func_2daee:
 	scf
 	ret
 
-Func_2dafe:
+HandleFightingClubLobbyAfterDuel: ; Func_2dafe
 	ld hl, FightingClubLobby_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -3535,10 +3535,10 @@ Func_2dafe:
 	ret
 
 FightingClubLobby_AfterDuelScripts:
-	npc_script NPC_MICHAEL, Func_2db7b
+	npc_script NPC_MICHAEL, ScriptFightingClubLobbyAfterDuelMichael
 	db $ff
 
-Func_2db0e:
+ScriptFightingClubLobbyMichael: ; Func_2db0e
 	ld a, NPC_MICHAEL
 	ld [wScriptNPC], a
 	ldtx hl, DialogMichaelText
@@ -3594,7 +3594,7 @@ Func_2db0e:
 	end_script
 	ret
 
-Func_2db7b:
+ScriptFightingClubLobbyAfterDuelMichael: ; Func_2db7b
 	xor a
 	start_script
 	start_dialog
@@ -3611,7 +3611,7 @@ Func_2db7b:
 	end_script
 	ret
 
-Func_2db97:
+CheckShowFightingClubLobbyMichael: ; Func_2db97
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2dba9
@@ -3625,7 +3625,7 @@ Func_2db97:
 	ccf
 	ret
 
-Func_2dbac:
+ScriptFightingClubLobbyPappyTradeHitmonlee: ; Func_2dbac
 	ld a, NPC_FIGHTING_CLUB_PAPPY
 	ld [wScriptNPC], a
 	ldtx hl, DialogPappy3Text
@@ -3676,7 +3676,7 @@ Func_2dbac:
 	end_script
 	ret
 
-Func_2dc17:
+ScriptFightingClubLobbyGlassesKid: ; Func_2dc17
 	ld a, NPC_FIGHTING_CLUB_GLASSES_KID
 	ld [wScriptNPC], a
 	ldtx hl, DialogGlassesKid2Text
@@ -3703,7 +3703,7 @@ Func_2dc17:
 	end_script
 	ret
 
-Func_2dc48:
+ScriptFightingClubLobbyCappedGuy: ; Func_2dc48
 	ld a, NPC_FIGHTING_CLUB_CAPPED_GUY
 	ld [wScriptNPC], a
 	ldtx hl, DialogCappedGuyText
@@ -3730,7 +3730,7 @@ Func_2dc48:
 	end_script
 	ret
 
-Func_2dc79:
+ScriptFightingClubLobbyCappedLass: ; Func_2dc79
 	ld a, NPC_FIGHTING_CLUB_CAPPED_LASS
 	ld [wScriptNPC], a
 	ldtx hl, DialogCappedKidText
@@ -3763,31 +3763,31 @@ FightingClub_StepEvents:
 	db $ff
 
 FightingClub_NPCs:
-	npc NPC_MITCH, 5, 2, SOUTH, Func_2dde4
-	npc NPC_MICHAEL, 7, 7, SOUTH, Func_2df9c
-	npc NPC_CHRIS, 2, 5, SOUTH, Func_2df9c
-	npc NPC_JESSICA, 9, 4, SOUTH, Func_2df9c
-	npc NPC_GR_1, 6, 2, SOUTH, Func_2e023
+	npc NPC_MITCH, 5, 2, SOUTH, CheckShowFightingClubMitch
+	npc NPC_MICHAEL, 7, 7, SOUTH, CheckShowFightingClubMembers
+	npc NPC_CHRIS, 2, 5, SOUTH, CheckShowFightingClubMembers
+	npc NPC_JESSICA, 9, 4, SOUTH, CheckShowFightingClubMembers
+	npc NPC_GR_1, 6, 2, SOUTH, CheckShowFightingClubGr1
 	db $ff
 
 FightingClub_NPCInteractions:
-	npc_script NPC_MITCH, Func_2dd62
-	npc_script NPC_MICHAEL, Func_2ddf1
-	npc_script NPC_CHRIS, Func_2dead
-	npc_script NPC_JESSICA, Func_2df3a
-	npc_script NPC_GR_1, Func_2dfb1
+	npc_script NPC_MITCH, ScriptFightingClubMitch
+	npc_script NPC_MICHAEL, ScriptFightingClubMichael
+	npc_script NPC_CHRIS, ScriptFightingClubChris
+	npc_script NPC_JESSICA, ScriptFightingClubJessica
+	npc_script NPC_GR_1, ScriptFightingClubGr1
 	db $ff
 
 FightingClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2dd0e
-	dbw OWMODE_INTERACT, Func_2dd3a
-	dbw OWMODE_NPC_POSITION, Func_2dd31
-	dbw OWMODE_AFTER_DUEL, Func_2dd42
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2dd15
-	dbw OWMODE_MUSIC_PRELOAD, Func_2dcfe
+	dbw OWMODE_STEP_EVENT, ExecuteFightingClubStepEvents
+	dbw OWMODE_INTERACT, HandleFightingClubInteractions
+	dbw OWMODE_NPC_POSITION, LoadFightingClubNPCs
+	dbw OWMODE_AFTER_DUEL, HandleFightingClubAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleFightingClubWarpFadeInPreload
+	dbw OWMODE_MUSIC_PRELOAD, SetFightingClubGRMusicIfTopLeftCoinPieceMissing
 	db $ff
 
-Func_2dcfe:
+SetFightingClubGRMusicIfTopLeftCoinPieceMissing: ; Func_2dcfe
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2dd0b
@@ -3798,12 +3798,12 @@ Func_2dcfe:
 	ccf
 	ret
 
-Func_2dd0e:
+ExecuteFightingClubStepEvents: ; Func_2dd0e
 	ld hl, FightingClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2dd15:
+HandleFightingClubWarpFadeInPreload: ; Func_2dd15
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2dd2f
@@ -3817,20 +3817,20 @@ Func_2dd15:
 	scf
 	ret
 
-Func_2dd31:
+LoadFightingClubNPCs: ; Func_2dd31
 	ld hl, FightingClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2dd3a:
+HandleFightingClubInteractions: ; Func_2dd3a
 	ld hl, FightingClub_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2dd42:
+HandleFightingClubAfterDuel: ; Func_2dd42
 	ld hl, FightingClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -3838,14 +3838,14 @@ Func_2dd42:
 	ret
 
 FightingClub_AfterDuelScripts:
-	npc_script NPC_MITCH, Func_2ddc8
-	npc_script NPC_MICHAEL, Func_2de75
-	npc_script NPC_CHRIS, Func_2df1e
-	npc_script NPC_JESSICA, Func_2df80
-	npc_script NPC_GR_1, Func_2e008
+	npc_script NPC_MITCH, ScriptFightingClubAfterDuelMitch
+	npc_script NPC_MICHAEL, ScriptFightingClubAfterDuelMichael
+	npc_script NPC_CHRIS, ScriptFightingClubAfterDuelChris
+	npc_script NPC_JESSICA, ScriptFightingClubAfterDuelJessica
+	npc_script NPC_GR_1, ScriptFightingClubAfterDuelGr1
 	db $ff
 
-Func_2dd62:
+ScriptFightingClubMitch: ; Func_2dd62
 	ld a, NPC_MITCH
 	ld [wScriptNPC], a
 	ldtx hl, DialogMitchText
@@ -3900,7 +3900,7 @@ Func_2dd62:
 	end_script
 	ret
 
-Func_2ddc8:
+ScriptFightingClubAfterDuelMitch: ; Func_2ddc8
 	xor a
 	start_script
 	start_dialog
@@ -3917,7 +3917,7 @@ Func_2ddc8:
 	end_script
 	ret
 
-Func_2dde4:
+CheckShowFightingClubMitch: ; Func_2dde4
 	ld a, EVENT_GODAS_ROOM_CAGE_STATE
 	farcall GetEventValue
 	jr nz, .asm_2ddee
@@ -3928,7 +3928,7 @@ Func_2dde4:
 	ccf
 	ret
 
-Func_2ddf1:
+ScriptFightingClubMichael: ; Func_2ddf1
 	ld a, NPC_MICHAEL
 	ld [wScriptNPC], a
 	ldtx hl, DialogMichaelText
@@ -3999,7 +3999,7 @@ Func_2ddf1:
 	end_script
 	ret
 
-Func_2de75:
+ScriptFightingClubAfterDuelMichael: ; Func_2de75
 	xor a
 	start_script
 	start_dialog
@@ -4031,7 +4031,7 @@ Func_2de75:
 	end_script
 	ret
 
-Func_2dead:
+ScriptFightingClubChris: ; Func_2dead
 	ld a, NPC_CHRIS
 	ld [wScriptNPC], a
 	ldtx hl, DialogChrisText
@@ -4093,7 +4093,7 @@ Func_2dead:
 	end_script
 	ret
 
-Func_2df1e:
+ScriptFightingClubAfterDuelChris: ; Func_2df1e
 	xor a
 	start_script
 	start_dialog
@@ -4110,7 +4110,7 @@ Func_2df1e:
 	end_script
 	ret
 
-Func_2df3a:
+ScriptFightingClubJessica: ; Func_2df3a
 	ld a, NPC_JESSICA
 	ld [wScriptNPC], a
 	ldtx hl, DialogJessicaText
@@ -4149,7 +4149,7 @@ Func_2df3a:
 	end_script
 	ret
 
-Func_2df80:
+ScriptFightingClubAfterDuelJessica: ; Func_2df80
 	xor a
 	start_script
 	start_dialog
@@ -4166,7 +4166,7 @@ Func_2df80:
 	end_script
 	ret
 
-Func_2df9c:
+CheckShowFightingClubMembers: ; Func_2df9c
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
 	jr z, .asm_2dfaf
@@ -4180,7 +4180,7 @@ Func_2df9c:
 	scf
 	ret
 
-Func_2dfb1:
+ScriptFightingClubGr1: ; Func_2dfb1
 	ld a, NPC_GR_1
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR1Text
@@ -4228,7 +4228,7 @@ Func_2dfb1:
 	end_script
 	ret
 
-Func_2e008:
+ScriptFightingClubAfterDuelGr1: ; Func_2e008
 	xor a
 	start_script
 	start_dialog
@@ -4244,7 +4244,7 @@ Func_2e008:
 	end_script
 	ret
 
-Func_2e023:
+CheckShowFightingClubGr1: ; Func_2e023
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2e036
@@ -4305,15 +4305,15 @@ GrassClubEntrance_StepEvents:
 	db $ff
 
 GrassClubEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2e0dc
-	dbw OWMODE_AFTER_DUEL, Func_2e10f
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2e0e3
-	dbw OWMODE_CONTINUE_OW, Func_2e115
-	dbw OWMODE_MUSIC_PRELOAD, Func_2e0bc
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2e0cc
+	dbw OWMODE_STEP_EVENT, ExecuteGrassClubEntranceStepEvents
+	dbw OWMODE_AFTER_DUEL, HandleGrassClubEntranceAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleGrassClubEntranceWarpFadeInPreload
+	dbw OWMODE_CONTINUE_OW, HandleGrassClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetGrassClubEntranceGRMusicIfTopRightCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayGrassClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2e0bc:
+SetGrassClubEntranceGRMusicIfTopRightCoinPieceMissing: ; Func_2e0bc
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2e0c9
@@ -4324,7 +4324,7 @@ Func_2e0bc:
 	ccf
 	ret
 
-Func_2e0cc:
+PlayGrassClubEntranceRonaldThemePostload: ; Func_2e0cc
 	call GrassClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -4336,31 +4336,31 @@ Func_2e0cc:
 	ccf
 	ret
 
-Func_2e0dc:
+ExecuteGrassClubEntranceStepEvents: ; Func_2e0dc
 	ld hl, GrassClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2e0e3:
+HandleGrassClubEntranceWarpFadeInPreload: ; Func_2e0e3
 	call GrassClubEntrance_ShouldRonaldAppear
 	jr c, .quit
 	cp RONALD_DUEL_GC_PIECES_2
 	jr z, .duel
 	jr nc, .gift
 ; card pop
-	ld hl, Func_34037
+	ld hl, RunRonaldSecondMeetingCardPopScene1
 	jr .got_event
 .duel
-	ld hl, Func_3417e
+	ld hl, RunRonaldGCPieces2DuelIntroScript
 	jr .got_event
 .gift
-	ld hl, Func_341f7
+	ld hl, RunRonaldGCPieces4GiftScript
 .got_event
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34037)
-	ASSERT BANK(Func_34037) == BANK(Func_3417e)
-	ASSERT BANK(Func_34037) == BANK(Func_341f7)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene1)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces2DuelIntroScript)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces4GiftScript)
 	ld [wOverworldScriptBank], a
 	ld a, l
 	ld [wOverworldScriptPointer], a
@@ -4370,12 +4370,12 @@ Func_2e0e3:
 	scf
 	ret
 
-Func_2e10f:
+HandleGrassClubEntranceAfterDuel: ; Func_2e10f
 	farcall Script_RonaldGCPieces2AfterDuel
 	scf
 	ret
 
-Func_2e115:
+HandleGrassClubEntranceContinueOverworld: ; Func_2e115
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2e12f
@@ -4436,31 +4436,31 @@ GrassClub_StepEvents:
 	db $ff
 
 GrassClub_NPCs:
-	npc NPC_NIKKI, 6, 2, SOUTH, Func_2e3f6
-	npc NPC_BRITTANY, 10, 4, NORTH, Func_2e3f6
-	npc NPC_KRISTIN, 2, 7, EAST, Func_2e3f6
-	npc NPC_HEATHER, 7, 9, SOUTH, Func_2e3f6
-	npc NPC_GR_2, 7, 8, SOUTH, Func_2e498
+	npc NPC_NIKKI, 6, 2, SOUTH, CheckShowGrassClubMembers
+	npc NPC_BRITTANY, 10, 4, NORTH, CheckShowGrassClubMembers
+	npc NPC_KRISTIN, 2, 7, EAST, CheckShowGrassClubMembers
+	npc NPC_HEATHER, 7, 9, SOUTH, CheckShowGrassClubMembers
+	npc NPC_GR_2, 7, 8, SOUTH, CheckShowGrassClubGr2
 	db $ff
 
 GrassClub_NPCInteractions:
-	npc_script NPC_NIKKI, Func_2e226
-	npc_script NPC_BRITTANY, Func_2e28c
-	npc_script NPC_KRISTIN, Func_2e332
-	npc_script NPC_HEATHER, Func_2e394
-	npc_script NPC_GR_2, Func_2e40b
+	npc_script NPC_NIKKI, ScriptGrassClubNikki
+	npc_script NPC_BRITTANY, ScriptGrassClubBrittany
+	npc_script NPC_KRISTIN, ScriptGrassClubKristin
+	npc_script NPC_HEATHER, ScriptGrassClubHeather
+	npc_script NPC_GR_2, ScriptGrassClubGr2
 	db $ff
 
 GrassClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2e1d2
-	dbw OWMODE_INTERACT, Func_2e1fe
-	dbw OWMODE_AFTER_DUEL, Func_2e206
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2e1d9
-	dbw OWMODE_NPC_POSITION, Func_2e1f5
-	dbw OWMODE_MUSIC_PRELOAD, Func_2e1c2
+	dbw OWMODE_STEP_EVENT, ExecuteGrassClubStepEvents
+	dbw OWMODE_INTERACT, HandleGrassClubInteractions
+	dbw OWMODE_AFTER_DUEL, HandleGrassClubAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleGrassClubWarpFadeInPreload
+	dbw OWMODE_NPC_POSITION, LoadGrassClubNPCs
+	dbw OWMODE_MUSIC_PRELOAD, SetGrassClubGRMusicIfTopRightCoinPieceMissing
 	db $ff
 
-	Func_2e1c2:
+SetGrassClubGRMusicIfTopRightCoinPieceMissing: ; Func_2e1c2
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2e1cf
@@ -4471,12 +4471,12 @@ GrassClub_MapScripts:
 	ccf
 	ret
 
-Func_2e1d2:
+ExecuteGrassClubStepEvents: ; Func_2e1d2
 	ld hl, GrassClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2e1d9:
+HandleGrassClubWarpFadeInPreload: ; Func_2e1d9
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2e1f3
@@ -4490,20 +4490,20 @@ Func_2e1d9:
 	scf
 	ret
 
-Func_2e1f5:
+LoadGrassClubNPCs: ; Func_2e1f5
 	ld hl, GrassClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2e1fe:
+HandleGrassClubInteractions: ; Func_2e1fe
 	ld hl, GrassClub_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2e206:
+HandleGrassClubAfterDuel: ; Func_2e206
 	ld hl, GrassClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -4511,14 +4511,14 @@ Func_2e206:
 	ret
 
 GrassClub_AfterDuelScripts:
-	npc_script NPC_NIKKI, Func_2e26e
-	npc_script NPC_BRITTANY, Func_2e2f6
-	npc_script NPC_KRISTIN, Func_2e378
-	npc_script NPC_HEATHER, Func_2e3da
-	npc_script NPC_GR_2, Func_2e449
+	npc_script NPC_NIKKI, ScriptGrassClubAfterDuelNikki
+	npc_script NPC_BRITTANY, ScriptGrassClubAfterDuelBrittany
+	npc_script NPC_KRISTIN, ScriptGrassClubAfterDuelKristin
+	npc_script NPC_HEATHER, ScriptGrassClubAfterDuelHeather
+	npc_script NPC_GR_2, ScriptGrassClubAfterDuelGr2
 	db $ff
 
-Func_2e226:
+ScriptGrassClubNikki: ; Func_2e226
 	ld a, NPC_NIKKI
 	ld [wScriptNPC], a
 	ldtx hl, DialogNikkiText
@@ -4558,7 +4558,7 @@ Func_2e226:
 	end_script
 	ret
 
-Func_2e26e:
+ScriptGrassClubAfterDuelNikki: ; Func_2e26e
 	xor a
 	start_script
 	start_dialog
@@ -4576,7 +4576,7 @@ Func_2e26e:
 	end_script
 	ret
 
-Func_2e28c:
+ScriptGrassClubBrittany: ; Func_2e28c
 	ld a, NPC_BRITTANY
 	ld [wScriptNPC], a
 	ldtx hl, DialogBrittanyText
@@ -4633,7 +4633,7 @@ Func_2e28c:
 	end_script
 	ret
 
-Func_2e2f6:
+ScriptGrassClubAfterDuelBrittany: ; Func_2e2f6
 	xor a
 	start_script
 	start_dialog
@@ -4667,7 +4667,7 @@ Func_2e2f6:
 	end_script
 	ret
 
-Func_2e332:
+ScriptGrassClubKristin: ; Func_2e332
 	ld a, NPC_KRISTIN
 	ld [wScriptNPC], a
 	ldtx hl, DialogKristinText
@@ -4706,7 +4706,7 @@ Func_2e332:
 	end_script
 	ret
 
-Func_2e378:
+ScriptGrassClubAfterDuelKristin: ; Func_2e378
 	xor a
 	start_script
 	start_dialog
@@ -4723,7 +4723,7 @@ Func_2e378:
 	end_script
 	ret
 
-Func_2e394:
+ScriptGrassClubHeather: ; Func_2e394
 	ld a, NPC_HEATHER
 	ld [wScriptNPC], a
 	ldtx hl, DialogHeatherText
@@ -4762,7 +4762,7 @@ Func_2e394:
 	end_script
 	ret
 
-Func_2e3da:
+ScriptGrassClubAfterDuelHeather: ; Func_2e3da
 	xor a
 	start_script
 	start_dialog
@@ -4779,7 +4779,7 @@ Func_2e3da:
 	end_script
 	ret
 
-Func_2e3f6:
+CheckShowGrassClubMembers: ; Func_2e3f6
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr z, .asm_2e409
@@ -4793,7 +4793,7 @@ Func_2e3f6:
 	scf
 	ret
 
-Func_2e40b:
+ScriptGrassClubGr2: ; Func_2e40b
 	ld a, NPC_GR_2
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR2Text
@@ -4826,7 +4826,7 @@ Func_2e40b:
 	end_script
 	ret
 
-Func_2e449:
+ScriptGrassClubAfterDuelGr2: ; Func_2e449
 	xor a
 	start_script
 	start_dialog
@@ -4870,7 +4870,7 @@ Func_2e449:
 	db SOUTH, MOVE_7
 	db $ff
 
-Func_2e498:
+CheckShowGrassClubGr2: ; Func_2e498
 	ld a, EVENT_GOT_ODDISH_COIN
 	farcall GetEventValue
 	jr z, .asm_2e4b5
@@ -4903,25 +4903,25 @@ ScienceClubEntrance_StepEvents:
 	db $ff
 
 ScienceClubEntrance_NPCs:
-	npc NPC_JOSEPH, 6, 1, SOUTH, Func_2e62a
+	npc NPC_JOSEPH, 6, 1, SOUTH, CheckShowScienceClubEntranceJoseph
 	db $ff
 
 ScienceClubEntrance_NPCInteractions:
-	npc_script NPC_JOSEPH, Func_2e5d0
+	npc_script NPC_JOSEPH, ScriptScienceClubEntranceJoseph
 	db $ff
 
 ScienceClubEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2e538
-	dbw OWMODE_INTERACT, Func_2e574
-	dbw OWMODE_AFTER_DUEL, Func_2e57c
-	dbw OWMODE_NPC_POSITION, Func_2e53f
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2e548
-	dbw OWMODE_CONTINUE_OW, Func_2e582
-	dbw OWMODE_MUSIC_PRELOAD, Func_2e518
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2e528
+	dbw OWMODE_STEP_EVENT, ExecuteScienceClubEntranceStepEvents
+	dbw OWMODE_INTERACT, HandleScienceClubEntranceInteractions
+	dbw OWMODE_AFTER_DUEL, HandleScienceClubEntranceAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadScienceClubEntranceNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleScienceClubEntranceWarpFadeInPreload
+	dbw OWMODE_CONTINUE_OW, HandleScienceClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetScienceClubEntranceGRMusicIfTopRightCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayScienceClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2e518:
+SetScienceClubEntranceGRMusicIfTopRightCoinPieceMissing: ; Func_2e518
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2e525
@@ -4932,7 +4932,7 @@ Func_2e518:
 	ccf
 	ret
 
-Func_2e528:
+PlayScienceClubEntranceRonaldThemePostload: ; Func_2e528
 	call ScienceClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -4944,38 +4944,38 @@ Func_2e528:
 	ccf
 	ret
 
-Func_2e538:
+ExecuteScienceClubEntranceStepEvents: ; Func_2e538
 	ld hl, ScienceClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2e53f:
+LoadScienceClubEntranceNPCs: ; Func_2e53f
 	ld hl, ScienceClubEntrance_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2e548:
+HandleScienceClubEntranceWarpFadeInPreload: ; Func_2e548
 	call ScienceClubEntrance_ShouldRonaldAppear
 	jr c, .quit
 	cp RONALD_DUEL_GC_PIECES_2
 	jr z, .duel
 	jr nc, .gift
 ; card pop
-	ld hl, Func_34037
+	ld hl, RunRonaldSecondMeetingCardPopScene1
 	jr .got_event
 .duel
-	ld hl, Func_3417e
+	ld hl, RunRonaldGCPieces2DuelIntroScript
 	jr .got_event
 .gift
-	ld hl, Func_341f7
+	ld hl, RunRonaldGCPieces4GiftScript
 .got_event
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34037)
-	ASSERT BANK(Func_34037) == BANK(Func_3417e)
-	ASSERT BANK(Func_34037) == BANK(Func_341f7)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene1)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces2DuelIntroScript)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces4GiftScript)
 	ld [wOverworldScriptBank], a
 	ld a, l
 	ld [wOverworldScriptPointer], a
@@ -4985,18 +4985,18 @@ Func_2e548:
 	scf
 	ret
 
-Func_2e574:
+HandleScienceClubEntranceInteractions: ; Func_2e574
 	ld hl, ScienceClubEntrance_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2e57c:
+HandleScienceClubEntranceAfterDuel: ; Func_2e57c
 	farcall Script_RonaldGCPieces2AfterDuel
 	scf
 	ret
 
-Func_2e582:
+HandleScienceClubEntranceContinueOverworld: ; Func_2e582
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2e59c
@@ -5046,7 +5046,7 @@ ScienceClubEntrance_ShouldRonaldAppear:
 	ccf
 	ret
 
-Func_2e5d0:
+ScriptScienceClubEntranceJoseph: ; Func_2e5d0
 	ld a, NPC_JOSEPH
 	ld [wScriptNPC], a
 	ldtx hl, DialogJosephText
@@ -5091,7 +5091,7 @@ Func_2e5d0:
 	end_script
 	ret
 
-Func_2e62a:
+CheckShowScienceClubEntranceJoseph: ; Func_2e62a
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr z, .asm_2e63c
@@ -5116,23 +5116,23 @@ ScienceClubLobby_StepEvents:
 	db $ff
 
 ScienceClubLobby_NPCs:
-	npc NPC_DAVID, 9, 6, EAST, Func_2e80d
-	npc NPC_ERIK, 4, 9, EAST, Func_2e80d
-	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, Func_2e822
-	npc NPC_SCIENCE_CLUB_MAN, 3, 9, WEST, Func_2e8d1
-	npc NPC_SCIENCE_CLUB_GLASSES_KID, 13, 4, SOUTH, Func_2e8d1
-	npc NPC_SCIENCE_CLUB_TECH, 7, 9, WEST, Func_2e8d1
+	npc NPC_DAVID, 9, 6, EAST, CheckShowScienceClubLobbyDavidErik
+	npc NPC_ERIK, 4, 9, EAST, CheckShowScienceClubLobbyDavidErik
+	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, CheckShowScienceClubLobbyImakuniBlack
+	npc NPC_SCIENCE_CLUB_MAN, 3, 9, WEST, CheckShowScienceClubLobbyManGlassesKidTech
+	npc NPC_SCIENCE_CLUB_GLASSES_KID, 13, 4, SOUTH, CheckShowScienceClubLobbyManGlassesKidTech
+	npc NPC_SCIENCE_CLUB_TECH, 7, 9, WEST, CheckShowScienceClubLobbyManGlassesKidTech
 	npc NPC_CLERK_BATTLE_CENTER, 2, 2, SOUTH, NULL
 	npc NPC_CLERK_GIFT_CENTER, 4, 2, SOUTH, NULL
 	db $ff
 
 ScienceClubLobby_NPCInteractions:
-	npc_script NPC_DAVID, Func_2e76e
-	npc_script NPC_ERIK, Func_2e7e3
+	npc_script NPC_DAVID, ScriptScienceClubLobbyDavid
+	npc_script NPC_ERIK, ScriptScienceClubLobbyErik
 	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
-	npc_script NPC_SCIENCE_CLUB_MAN, Func_2e831
-	npc_script NPC_SCIENCE_CLUB_GLASSES_KID, Func_2e862
-	npc_script NPC_SCIENCE_CLUB_TECH, Func_2e8a0
+	npc_script NPC_SCIENCE_CLUB_MAN, ScriptScienceClubLobbyMan
+	npc_script NPC_SCIENCE_CLUB_GLASSES_KID, ScriptScienceClubLobbyGlassesKid
+	npc_script NPC_SCIENCE_CLUB_TECH, ScriptScienceClubLobbyTech
 	db $ff
 
 ScienceClubLobby_OWInteractions:
@@ -5146,16 +5146,16 @@ ScienceClubLobby_OWInteractions:
 	db $ff
 
 ScienceClubLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2e71e
-	dbw OWMODE_INTERACT, Func_2e72e
-	dbw OWMODE_AFTER_DUEL, Func_2e73e
-	dbw OWMODE_NPC_POSITION, Func_2e725
-	dbw OWMODE_CONTINUE_OW, Func_2e752
-	dbw OWMODE_MUSIC_PRELOAD, Func_2e6f7
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2e709
+	dbw OWMODE_STEP_EVENT, ExecuteScienceClubLobbyStepEvents
+	dbw OWMODE_INTERACT, HandleScienceClubLobbyInteractions
+	dbw OWMODE_AFTER_DUEL, HandleScienceClubLobbyAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadScienceClubLobbyNPCs
+	dbw OWMODE_CONTINUE_OW, HandleScienceClubLobbyContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetScienceClubLobbyGRMusicIfTopRightCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayScienceClubLobbyImakuniBlackThemePostload
 	db $ff
 
-Func_2e6f7:
+SetScienceClubLobbyGRMusicIfTopRightCoinPieceMissing: ; Func_2e6f7
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2e706
@@ -5167,7 +5167,7 @@ Func_2e6f7:
 	ccf
 	ret
 
-Func_2e709:
+PlayScienceClubLobbyImakuniBlackThemePostload: ; Func_2e709
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 7
@@ -5181,19 +5181,19 @@ Func_2e709:
 	ccf
 	ret
 
-Func_2e71e:
+ExecuteScienceClubLobbyStepEvents: ; Func_2e71e
 	ld hl, ScienceClubLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2e725:
+LoadScienceClubLobbyNPCs: ; Func_2e725
 	ld hl, ScienceClubLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2e72e:
+HandleScienceClubLobbyInteractions: ; Func_2e72e
 	ld hl, ScienceClubLobby_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2e73c
@@ -5203,7 +5203,7 @@ Func_2e72e:
 	scf
 	ret
 
-Func_2e73e:
+HandleScienceClubLobbyAfterDuel: ; Func_2e73e
 	ld hl, ScienceClubLobby_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -5211,11 +5211,11 @@ Func_2e73e:
 	ret
 
 ScienceClubLobby_AfterDuelScripts:
-	npc_script NPC_DAVID, Func_2e7c7
+	npc_script NPC_DAVID, ScriptScienceClubLobbyAfterDuelDavid
 	npc_script NPC_IMAKUNI_BLACK, Script_ImakuniBlackAfterDuel
 	db $ff
 
-Func_2e752:
+HandleScienceClubLobbyContinueOverworld: ; Func_2e752
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2e76c
@@ -5229,7 +5229,7 @@ Func_2e752:
 	scf
 	ret
 
-Func_2e76e:
+ScriptScienceClubLobbyDavid: ; Func_2e76e
 	ld a, NPC_DAVID
 	ld [wScriptNPC], a
 	ldtx hl, DialogDavidText
@@ -5277,7 +5277,7 @@ Func_2e76e:
 	end_script
 	ret
 
-Func_2e7c7:
+ScriptScienceClubLobbyAfterDuelDavid: ; Func_2e7c7
 	xor a
 	start_script
 	start_dialog
@@ -5294,7 +5294,7 @@ Func_2e7c7:
 	end_script
 	ret
 
-Func_2e7e3:
+ScriptScienceClubLobbyErik: ; Func_2e7e3
 	ld a, NPC_ERIK
 	ld [wScriptNPC], a
 	ldtx hl, DialogErikText
@@ -5319,7 +5319,7 @@ Func_2e7e3:
 	end_script
 	ret
 
-Func_2e80d:
+CheckShowScienceClubLobbyDavidErik: ; Func_2e80d
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2e81f
@@ -5333,7 +5333,7 @@ Func_2e80d:
 	ccf
 	ret
 
-Func_2e822:
+CheckShowScienceClubLobbyImakuniBlack: ; Func_2e822
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $07
@@ -5345,7 +5345,7 @@ Func_2e822:
 	ccf
 	ret
 
-Func_2e831:
+ScriptScienceClubLobbyMan: ; Func_2e831
 	ld a, NPC_SCIENCE_CLUB_MAN
 	ld [wScriptNPC], a
 	ldtx hl, DialogManText
@@ -5372,7 +5372,7 @@ Func_2e831:
 	end_script
 	ret
 
-Func_2e862:
+ScriptScienceClubLobbyGlassesKid: ; Func_2e862
 	ld a, NPC_SCIENCE_CLUB_GLASSES_KID
 	ld [wScriptNPC], a
 	ldtx hl, DialogGlassesKid1Text
@@ -5405,7 +5405,7 @@ Func_2e862:
 	end_script
 	ret
 
-Func_2e8a0:
+ScriptScienceClubLobbyTech: ; Func_2e8a0
 	ld a, NPC_SCIENCE_CLUB_TECH
 	ld [wScriptNPC], a
 	ldtx hl, DialogTechText
@@ -5432,7 +5432,7 @@ Func_2e8a0:
 	end_script
 	ret
 
-Func_2e8d1:
+CheckShowScienceClubLobbyManGlassesKidTech: ; Func_2e8d1
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2e8e4
@@ -5457,31 +5457,31 @@ ScienceClub_StepEvents:
 	db $ff
 
 ScienceClub_NPCs:
-	npc NPC_RICK, 2, 2, NORTH, Func_2ea87
-	npc NPC_DAVID, 10, 2, NORTH, Func_2ec07
-	npc NPC_JOSEPH, 6, 5, WEST, Func_2ec07
-	npc NPC_ERIK, 3, 8, EAST, Func_2ec07
-	npc NPC_GR_2, 6, 8, SOUTH, Func_2eca9
+	npc NPC_RICK, 2, 2, NORTH, CheckShowScienceClubRick
+	npc NPC_DAVID, 10, 2, NORTH, CheckShowScienceClubMembers
+	npc NPC_JOSEPH, 6, 5, WEST, CheckShowScienceClubMembers
+	npc NPC_ERIK, 3, 8, EAST, CheckShowScienceClubMembers
+	npc NPC_GR_2, 6, 8, SOUTH, CheckShowScienceClubGr2
 	db $ff
 
 ScienceClub_NPCInteractions:
-	npc_script NPC_RICK, Func_2e9c7
-	npc_script NPC_DAVID, Func_2ea94
-	npc_script NPC_JOSEPH, Func_2eaef
-	npc_script NPC_ERIK, Func_2eba5
-	npc_script NPC_GR_2, Func_2ec1c
+	npc_script NPC_RICK, ScriptScienceClubRick
+	npc_script NPC_DAVID, ScriptScienceClubDavid
+	npc_script NPC_JOSEPH, ScriptScienceClubJoseph
+	npc_script NPC_ERIK, ScriptScienceClubErik
+	npc_script NPC_GR_2, ScriptScienceClubGr2
 	db $ff
 
 ScienceClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2e955
-	dbw OWMODE_INTERACT, Func_2e99f
-	dbw OWMODE_AFTER_DUEL, Func_2e9a7
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2e95c
-	dbw OWMODE_NPC_POSITION, Func_2e996
-	dbw OWMODE_MUSIC_PRELOAD, Func_2e945
+	dbw OWMODE_STEP_EVENT, ExecuteScienceClubStepEvents
+	dbw OWMODE_INTERACT, HandleScienceClubInteractions
+	dbw OWMODE_AFTER_DUEL, HandleScienceClubAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleScienceClubWarpFadeInPreload
+	dbw OWMODE_NPC_POSITION, LoadScienceClubNPCs
+	dbw OWMODE_MUSIC_PRELOAD, SetScienceClubGRMusicIfTopRightCoinPieceMissing
 	db $ff
 
-Func_2e945:
+SetScienceClubGRMusicIfTopRightCoinPieceMissing: ; Func_2e945
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr nz, .asm_2e952
@@ -5492,12 +5492,12 @@ Func_2e945:
 	ccf
 	ret
 
-Func_2e955:
+ExecuteScienceClubStepEvents: ; Func_2e955
 	ld hl, ScienceClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2e95c:
+HandleScienceClubWarpFadeInPreload: ; Func_2e95c
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2e994
@@ -5520,20 +5520,20 @@ Func_2e95c:
 	scf
 	ret
 
-Func_2e996:
+LoadScienceClubNPCs: ; Func_2e996
 	ld hl, ScienceClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2e99f:
+HandleScienceClubInteractions: ; Func_2e99f
 	ld hl, ScienceClub_NPCInteractions
 	call HandleNPCInteractions
 	scf
 	ret
 
-Func_2e9a7:
+HandleScienceClubAfterDuel: ; Func_2e9a7
 	ld hl, ScienceClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -5541,14 +5541,14 @@ Func_2e9a7:
 	ret
 
 ScienceClub_AfterDuelScripts:
-	npc_script NPC_RICK, Func_2ea4b
-	npc_script NPC_DAVID, Func_2ead1
-	npc_script NPC_JOSEPH, Func_2eb6d
-	npc_script NPC_ERIK, Func_2ebeb
-	npc_script NPC_GR_2, Func_2ec5a
+	npc_script NPC_RICK, ScriptScienceClubAfterDuelRick
+	npc_script NPC_DAVID, ScriptScienceClubAfterDuelDavid
+	npc_script NPC_JOSEPH, ScriptScienceClubAfterDuelJoseph
+	npc_script NPC_ERIK, ScriptScienceClubAfterDuelErik
+	npc_script NPC_GR_2, ScriptScienceClubAfterDuelGr2
 	db $ff
 
-Func_2e9c7:
+ScriptScienceClubRick: ; Func_2e9c7
 	ld a, NPC_RICK
 	ld [wScriptNPC], a
 	ldtx hl, DialogRickText
@@ -5615,7 +5615,7 @@ Func_2e9c7:
 	end_script
 	ret
 
-Func_2ea4b:
+ScriptScienceClubAfterDuelRick: ; Func_2ea4b
 	xor a
 	start_script
 	start_dialog
@@ -5649,7 +5649,7 @@ Func_2ea4b:
 	end_script
 	ret
 
-Func_2ea87:
+CheckShowScienceClubRick: ; Func_2ea87
 	ld a, EVENT_MIDORIS_ROOM_CAGE_STATE
 	farcall GetEventValue
 	jr z, .asm_2ea92
@@ -5660,7 +5660,7 @@ Func_2ea87:
 	scf
 	ret
 
-Func_2ea94:
+ScriptScienceClubDavid: ; Func_2ea94
 	ld a, NPC_DAVID
 	ld [wScriptNPC], a
 	ldtx hl, DialogDavidText
@@ -5693,7 +5693,7 @@ Func_2ea94:
 	end_script
 	ret
 
-Func_2ead1:
+ScriptScienceClubAfterDuelDavid: ; Func_2ead1
 	xor a
 	start_script
 	start_dialog
@@ -5711,7 +5711,7 @@ Func_2ead1:
 	end_script
 	ret
 
-Func_2eaef:
+ScriptScienceClubJoseph: ; Func_2eaef
 	ld a, NPC_JOSEPH
 	ld [wScriptNPC], a
 	ldtx hl, DialogJosephText
@@ -5780,7 +5780,7 @@ Func_2eaef:
 	end_script
 	ret
 
-Func_2eb6d:
+ScriptScienceClubAfterDuelJoseph: ; Func_2eb6d
 	xor a
 	start_script
 	start_dialog
@@ -5812,7 +5812,7 @@ Func_2eb6d:
 	end_script
 	ret
 
-Func_2eba5:
+ScriptScienceClubErik: ; Func_2eba5
 	ld a, NPC_ERIK
 	ld [wScriptNPC], a
 	ldtx hl, DialogErikText
@@ -5851,7 +5851,7 @@ Func_2eba5:
 	end_script
 	ret
 
-Func_2ebeb:
+ScriptScienceClubAfterDuelErik: ; Func_2ebeb
 	xor a
 	start_script
 	start_dialog
@@ -5868,7 +5868,7 @@ Func_2ebeb:
 	end_script
 	ret
 
-Func_2ec07:
+CheckShowScienceClubMembers: ; Func_2ec07
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
 	jr z, .asm_2ec1a
@@ -5882,7 +5882,7 @@ Func_2ec07:
 	scf
 	ret
 
-Func_2ec1c:
+ScriptScienceClubGr2: ; Func_2ec1c
 	ld a, NPC_GR_2
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR2Text
@@ -5915,7 +5915,7 @@ Func_2ec1c:
 	end_script
 	ret
 
-Func_2ec5a:
+ScriptScienceClubAfterDuelGr2: ; Func_2ec5a
 	xor a
 	start_script
 	start_dialog
@@ -5959,7 +5959,7 @@ Func_2ec5a:
 	db SOUTH, MOVE_6
 	db $ff
 
-Func_2eca9:
+CheckShowScienceClubGr2: ; Func_2eca9
 	ld a, EVENT_GOT_ODDISH_COIN
 	farcall GetEventValue
 	jr z, .asm_2ecc6
@@ -5992,15 +5992,15 @@ WaterClubEntrance_StepEvents:
 	db $ff
 
 WaterClubEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2ed37
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2ed3e
-	dbw OWMODE_WARP_FADE_OUT_PRELOAD, Func_2ed75
-	dbw OWMODE_CONTINUE_OW, Func_2ed8c
-	dbw OWMODE_MUSIC_PRELOAD, Func_2ed17
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2ed27
+	dbw OWMODE_STEP_EVENT, ExecuteWaterClubEntranceStepEvents
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleWaterClubEntranceWarpFadeInPreload
+	dbw OWMODE_WARP_FADE_OUT_PRELOAD, HandleWaterClubEntranceWarpFadeOutPreload
+	dbw OWMODE_CONTINUE_OW, HandleWaterClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetWaterClubEntranceGRMusicIfStarmieCoinMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayWaterClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2ed17:
+SetWaterClubEntranceGRMusicIfStarmieCoinMissing: ; Func_2ed17
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr nz, .asm_2ed24
@@ -6011,7 +6011,7 @@ Func_2ed17:
 	ccf
 	ret
 
-Func_2ed27:
+PlayWaterClubEntranceRonaldThemePostload: ; Func_2ed27
 	call WaterClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -6023,12 +6023,12 @@ Func_2ed27:
 	ccf
 	ret
 
-Func_2ed37:
+ExecuteWaterClubEntranceStepEvents: ; Func_2ed37
 	ld hl, WaterClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2ed3e:
+HandleWaterClubEntranceWarpFadeInPreload: ; Func_2ed3e
 	xor a
 	start_script
 	send_mail $12
@@ -6039,17 +6039,17 @@ Func_2ed3e:
 	jr nz, .gift
 	ldtx hl, DialogGR3Text
 	call LoadTxRam2
-	ld hl, Func_340a4
+	ld hl, RunRonaldSecondMeetingCardPopScene2
 	jr .got_event
 .gift
 	ld a, EVENT_EE
 	farcall ZeroOutEventValue
-	ld hl, Func_3451d
+	ld hl, RunRonaldWonGR3GiftScript
 .got_event
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_340a4)
-	ASSERT BANK(Func_340a4) == BANK(Func_3451d)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene2)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene2) == BANK(RunRonaldWonGR3GiftScript)
 	ld [wOverworldScriptBank], a
 	ld a, l
 	ld [wOverworldScriptPointer], a
@@ -6059,7 +6059,7 @@ Func_2ed3e:
 	scf
 	ret
 
-Func_2ed75:
+HandleWaterClubEntranceWarpFadeOutPreload: ; Func_2ed75
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr z, .asm_2ed8a
@@ -6072,7 +6072,7 @@ Func_2ed75:
 	scf
 	ret
 
-Func_2ed8c:
+HandleWaterClubEntranceContinueOverworld: ; Func_2ed8c
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2eda6
@@ -6120,9 +6120,9 @@ WaterClubLobby_StepEvents:
 	db $ff
 
 WaterClubLobby_NPCs:
-	npc NPC_JOSHUA, 8, 6, WEST, Func_2ef5f
+	npc NPC_JOSHUA, 8, 6, WEST, CheckShowWaterClubLobbyJoshua
 	npc NPC_WATER_CLUB_LASS, 11, 1, WEST, NULL
-	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, Func_2ef9f
+	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, CheckShowWaterClubLobbyImakuniBlack
 	npc NPC_WATER_CLUB_PAPPY, 12, 11, EAST, NULL
 	npc NPC_WATER_CLUB_LONGHAIRED_LASS, 4, 9, SOUTH, NULL
 	npc NPC_CLERK_BATTLE_CENTER, 2, 2, SOUTH, NULL
@@ -6130,11 +6130,11 @@ WaterClubLobby_NPCs:
 	db $ff
 
 WaterClubLobby_NPCInteractions:
-	npc_script NPC_JOSHUA, Func_2eeea
-	npc_script NPC_WATER_CLUB_LASS, Func_2ef74
+	npc_script NPC_JOSHUA, ScriptWaterClubLobbyJoshua
+	npc_script NPC_WATER_CLUB_LASS, ScriptWaterClubLobbyLass
 	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
-	npc_script NPC_WATER_CLUB_PAPPY, Func_2efae
-	npc_script NPC_WATER_CLUB_LONGHAIRED_LASS, Func_2efe1
+	npc_script NPC_WATER_CLUB_PAPPY, ScriptWaterClubLobbyPappy
+	npc_script NPC_WATER_CLUB_LONGHAIRED_LASS, ScriptWaterClubLobbyLonghairedLass
 	db $ff
 
 WaterClubLobby_OWInteractions:
@@ -6148,16 +6148,16 @@ WaterClubLobby_OWInteractions:
 	db $ff
 
 WaterClubLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2ee9a
-	dbw OWMODE_INTERACT, Func_2eeaa
-	dbw OWMODE_AFTER_DUEL, Func_2eeba
-	dbw OWMODE_NPC_POSITION, Func_2eea1
-	dbw OWMODE_CONTINUE_OW, Func_2eece
-	dbw OWMODE_MUSIC_PRELOAD, Func_2ee73
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2ee85
+	dbw OWMODE_STEP_EVENT, ExecuteWaterClubLobbyStepEvents
+	dbw OWMODE_INTERACT, HandleWaterClubLobbyInteractions
+	dbw OWMODE_AFTER_DUEL, HandleWaterClubLobbyAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadWaterClubLobbyNPCs
+	dbw OWMODE_CONTINUE_OW, HandleWaterClubLobbyContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetWaterClubLobbyGRMusicIfStarmieCoinMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayWaterClubLobbyImakuniBlackThemePostload
 	db $ff
 
-Func_2ee73:
+SetWaterClubLobbyGRMusicIfStarmieCoinMissing: ; Func_2ee73
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr nz, .asm_2ee82
@@ -6169,7 +6169,7 @@ Func_2ee73:
 	ccf
 	ret
 
-Func_2ee85:
+PlayWaterClubLobbyImakuniBlackThemePostload: ; Func_2ee85
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 8
@@ -6183,19 +6183,19 @@ Func_2ee85:
 	ccf
 	ret
 
-Func_2ee9a:
+ExecuteWaterClubLobbyStepEvents: ; Func_2ee9a
 	ld hl, WaterClubLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2eea1:
+LoadWaterClubLobbyNPCs: ; Func_2eea1
 	ld hl, WaterClubLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2eeaa:
+HandleWaterClubLobbyInteractions: ; Func_2eeaa
 	ld hl, WaterClubLobby_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2eeb8
@@ -6205,7 +6205,7 @@ Func_2eeaa:
 	scf
 	ret
 
-Func_2eeba:
+HandleWaterClubLobbyAfterDuel: ; Func_2eeba
 	ld hl, WaterClubLobby_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -6213,11 +6213,11 @@ Func_2eeba:
 	ret
 
 WaterClubLobby_AfterDuelScripts:
-	npc_script NPC_JOSHUA, Func_2ef43
+	npc_script NPC_JOSHUA, ScriptWaterClubLobbyAfterDuelJoshua
 	npc_script NPC_IMAKUNI_BLACK, Script_ImakuniBlackAfterDuel
 	db $ff
 
-Func_2eece:
+HandleWaterClubLobbyContinueOverworld: ; Func_2eece
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2eee8
@@ -6231,7 +6231,7 @@ Func_2eece:
 	scf
 	ret
 
-Func_2eeea:
+ScriptWaterClubLobbyJoshua: ; Func_2eeea
 	ld a, NPC_JOSHUA
 	ld [wScriptNPC], a
 	ldtx hl, DialogJoshuaText
@@ -6279,7 +6279,7 @@ Func_2eeea:
 	end_script
 	ret
 
-Func_2ef43:
+ScriptWaterClubLobbyAfterDuelJoshua: ; Func_2ef43
 	xor a
 	start_script
 	start_dialog
@@ -6296,7 +6296,7 @@ Func_2ef43:
 	end_script
 	ret
 
-Func_2ef5f:
+CheckShowWaterClubLobbyJoshua: ; Func_2ef5f
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2ef71
@@ -6310,7 +6310,7 @@ Func_2ef5f:
 	ccf
 	ret
 
-Func_2ef74:
+ScriptWaterClubLobbyLass: ; Func_2ef74
 	ld a, NPC_WATER_CLUB_LASS
 	ld [wScriptNPC], a
 	ldtx hl, DialogLassText
@@ -6333,7 +6333,7 @@ Func_2ef74:
 	end_script
 	ret
 
-Func_2ef9f:
+CheckShowWaterClubLobbyImakuniBlack: ; Func_2ef9f
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $08
@@ -6345,7 +6345,7 @@ Func_2ef9f:
 	ccf
 	ret
 
-Func_2efae:
+ScriptWaterClubLobbyPappy: ; Func_2efae
 	ld a, NPC_WATER_CLUB_PAPPY
 	ld [wScriptNPC], a
 	ldtx hl, DialogPappy1Text
@@ -6373,7 +6373,7 @@ Func_2efae:
 	end_script
 	ret
 
-Func_2efe1:
+ScriptWaterClubLobbyLonghairedLass: ; Func_2efe1
 	ld a, NPC_WATER_CLUB_LONGHAIRED_LASS
 	ld [wScriptNPC], a
 	ldtx hl, DialogLonghairedKidText
@@ -6411,37 +6411,37 @@ WaterClub_StepEvents:
 	db $ff
 
 WaterClub_NPCs:
-	npc NPC_AMY_LOUNGE, 11, 2, SOUTH, Func_2f36d
-	npc NPC_JOSHUA, 10, 4, SOUTH, Func_2f36d
-	npc NPC_SARA, 4, 9, EAST, Func_2f478
-	npc NPC_AMANDA, 11, 10, WEST, Func_2f478
-	npc NPC_AMY, 4, 6, SOUTH, Func_2f1ed
-	npc NPC_GR_3, 8, 6, SOUTH, Func_2f4f2
+	npc NPC_AMY_LOUNGE, 11, 2, SOUTH, CheckShowWaterClubAmyLoungeAndJoshua
+	npc NPC_JOSHUA, 10, 4, SOUTH, CheckShowWaterClubAmyLoungeAndJoshua
+	npc NPC_SARA, 4, 9, EAST, CheckShowWaterClubSaraAmanda
+	npc NPC_AMANDA, 11, 10, WEST, CheckShowWaterClubSaraAmanda
+	npc NPC_AMY, 4, 6, SOUTH, CheckShowWaterClubAmy
+	npc NPC_GR_3, 8, 6, SOUTH, CheckShowWaterClubGr3
 	db $ff
 
 WaterClub_NPCInteractions:
-	npc_script NPC_AMY_LOUNGE, Func_2f1fa
-	npc_script NPC_JOSHUA, Func_2f2cf
-	npc_script NPC_SARA, Func_2f382
-	npc_script NPC_AMANDA, Func_2f3f1
-	npc_script NPC_AMY, Func_2f1d2
-	npc_script NPC_GR_3, Func_2f485
+	npc_script NPC_AMY_LOUNGE, ScriptWaterClubLoungeAmy
+	npc_script NPC_JOSHUA, ScriptWaterClubJoshua
+	npc_script NPC_SARA, ScriptWaterClubSara
+	npc_script NPC_AMANDA, ScriptWaterClubAmanda
+	npc_script NPC_AMY, ScriptWaterClubAmy
+	npc_script NPC_GR_3, ScriptWaterClubGr3
 	db $ff
 
 WaterClub_OWInteractions:
-	ow_script 12, 3, Func_2f1fa
+	ow_script 12, 3, ScriptWaterClubLoungeAmy
 	db $ff
 
 WaterClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2f095
-	dbw OWMODE_INTERACT, Func_2f0f7
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2f0a5
-	dbw OWMODE_AFTER_DUEL, Func_2f107
-	dbw OWMODE_NPC_POSITION, Func_2f09c
-	dbw OWMODE_MUSIC_PRELOAD, Func_2f085
+	dbw OWMODE_STEP_EVENT, ExecuteWaterClubStepEvents
+	dbw OWMODE_INTERACT, HandleWaterClubInteractions
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleWaterClubWarpFadeInPreload
+	dbw OWMODE_AFTER_DUEL, HandleWaterClubAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadWaterClubNPCs
+	dbw OWMODE_MUSIC_PRELOAD, SetWaterClubGRMusicIfStarmieCoinMissing
 	db $ff
 
-Func_2f085:
+SetWaterClubGRMusicIfStarmieCoinMissing: ; Func_2f085
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr nz, .asm_2f092
@@ -6452,19 +6452,19 @@ Func_2f085:
 	ccf
 	ret
 
-Func_2f095:
+ExecuteWaterClubStepEvents: ; Func_2f095
 	ld hl, WaterClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2f09c:
+LoadWaterClubNPCs: ; Func_2f09c
 	ld hl, WaterClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2f0a5:
+HandleWaterClubWarpFadeInPreload: ; Func_2f0a5
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr nz, .asm_2f0c3
@@ -6497,7 +6497,7 @@ Func_2f0a5:
 	scf
 	ret
 
-Func_2f0f7:
+HandleWaterClubInteractions: ; Func_2f0f7
 	ld hl, WaterClub_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2f105
@@ -6507,7 +6507,7 @@ Func_2f0f7:
 	scf
 	ret
 
-Func_2f107:
+HandleWaterClubAfterDuel: ; Func_2f107
 	ld hl, WaterClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -6515,11 +6515,11 @@ Func_2f107:
 	ret
 
 WaterClub_AfterDuelScripts:
-	npc_script NPC_AMY_LOUNGE, Func_2f28a
-	npc_script NPC_JOSHUA, Func_2f335
-	npc_script NPC_SARA, Func_2f3d5
-	npc_script NPC_AMANDA, Func_2f44f
-	npc_script NPC_GR_3, Func_2f4d9
+	npc_script NPC_AMY_LOUNGE, ScriptWaterClubAfterDuelAmyLounge
+	npc_script NPC_JOSHUA, ScriptWaterClubAfterDuelJoshua
+	npc_script NPC_SARA, ScriptWaterClubAfterDuelSara
+	npc_script NPC_AMANDA, ScriptWaterClubAfterDuelAmanda
+	npc_script NPC_GR_3, ScriptWaterClubAfterDuelGr3
 	db $ff
 
 Script_2f127:
@@ -6609,7 +6609,7 @@ Script_2f19d:
 	end_script
 	ret
 
-Func_2f1d2:
+ScriptWaterClubAmy: ; Func_2f1d2
 	ld a, NPC_AMY
 	ld [wScriptNPC], a
 	ldtx hl, DialogAmyText
@@ -6625,7 +6625,7 @@ Func_2f1d2:
 	end_script
 	ret
 
-Func_2f1ed:
+CheckShowWaterClubAmy: ; Func_2f1ed
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2f1f7
@@ -6636,7 +6636,7 @@ Func_2f1ed:
 	ccf
 	ret
 
-Func_2f1fa:
+ScriptWaterClubLoungeAmy: ; Func_2f1fa
 	ld a, NPC_AMY_LOUNGE
 	ld [wScriptNPC], a
 	ldtx hl, DialogAmyText
@@ -6713,7 +6713,7 @@ Func_2f1fa:
 	end_script
 	ret
 
-Func_2f28a:
+ScriptWaterClubAfterDuelAmyLounge: ; Func_2f28a
 	xor a
 	start_script
 	start_dialog
@@ -6751,7 +6751,7 @@ Func_2f28a:
 	end_script
 	ret
 
-Func_2f2cf:
+ScriptWaterClubJoshua: ; Func_2f2cf
 	ld a, NPC_JOSHUA
 	ld [wScriptNPC], a
 	ldtx hl, DialogJoshuaText
@@ -6806,7 +6806,7 @@ Func_2f2cf:
 	end_script
 	ret
 
-Func_2f335:
+ScriptWaterClubAfterDuelJoshua: ; Func_2f335
 	xor a
 	start_script
 	start_dialog
@@ -6838,7 +6838,7 @@ Func_2f335:
 	end_script
 	ret
 
-Func_2f36d:
+CheckShowWaterClubAmyLoungeAndJoshua: ; Func_2f36d
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr z, .asm_2f380
@@ -6852,7 +6852,7 @@ Func_2f36d:
 	scf
 	ret
 
-Func_2f382:
+ScriptWaterClubSara: ; Func_2f382
 	ld a, NPC_SARA
 	ld [wScriptNPC], a
 	ldtx hl, DialogSaraText
@@ -6898,7 +6898,7 @@ Func_2f382:
 	end_script
 	ret
 
-Func_2f3d5:
+ScriptWaterClubAfterDuelSara: ; Func_2f3d5
 	xor a
 	start_script
 	start_dialog
@@ -6915,7 +6915,7 @@ Func_2f3d5:
 	end_script
 	ret
 
-Func_2f3f1:
+ScriptWaterClubAmanda: ; Func_2f3f1
 	ld a, NPC_AMANDA
 	ld [wScriptNPC], a
 	ldtx hl, DialogAmandaText
@@ -6968,7 +6968,7 @@ Func_2f3f1:
 	end_script
 	ret
 
-Func_2f44f:
+ScriptWaterClubAfterDuelAmanda: ; Func_2f44f
 	xor a
 	start_script
 	start_dialog
@@ -6991,7 +6991,7 @@ Func_2f44f:
 	end_script
 	ret
 
-Func_2f478:
+CheckShowWaterClubSaraAmanda: ; Func_2f478
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr z, .asm_2f483
@@ -7002,7 +7002,7 @@ Func_2f478:
 	scf
 	ret
 
-Func_2f485:
+ScriptWaterClubGr3: ; Func_2f485
 	ld a, NPC_GR_3
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR3Text
@@ -7048,7 +7048,7 @@ Func_2f485:
 	end_script
 	ret
 
-Func_2f4d9:
+ScriptWaterClubAfterDuelGr3: ; Func_2f4d9
 	xor a
 	start_script
 	start_dialog
@@ -7063,7 +7063,7 @@ Func_2f4d9:
 	end_script
 	ret
 
-Func_2f4f2:
+CheckShowWaterClubGr3: ; Func_2f4f2
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr z, .asm_2f4fc
@@ -7089,15 +7089,15 @@ FireClubEntrance_StepEvents:
 	db $ff
 
 FireClubEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2f56e
-	dbw OWMODE_AFTER_DUEL, Func_2f5a8
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2f575
-	dbw OWMODE_CONTINUE_OW, Func_2f5ae
-	dbw OWMODE_MUSIC_PRELOAD, Func_2f54e
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2f55e
+	dbw OWMODE_STEP_EVENT, ExecuteFireClubEntranceStepEvents
+	dbw OWMODE_AFTER_DUEL, HandleFireClubEntranceAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleFireClubEntranceWarpFadeInPreload
+	dbw OWMODE_CONTINUE_OW, HandleFireClubEntranceContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetFireClubEntranceGRMusicIfBottomLeftCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayFireClubEntranceRonaldThemePostload
 	db $ff
 
-Func_2f54e:
+SetFireClubEntranceGRMusicIfBottomLeftCoinPieceMissing: ; Func_2f54e
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2f55b
@@ -7108,7 +7108,7 @@ Func_2f54e:
 	ccf
 	ret
 
-Func_2f55e:
+PlayFireClubEntranceRonaldThemePostload: ; Func_2f55e
 	call FireClubEntrance_ShouldRonaldAppear
 	jr nc, .appear
 	scf
@@ -7120,12 +7120,12 @@ Func_2f55e:
 	ccf
 	ret
 
-Func_2f56e:
+ExecuteFireClubEntranceStepEvents: ; Func_2f56e
 	ld hl, FireClubEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2f575:
+HandleFireClubEntranceWarpFadeInPreload: ; Func_2f575
 	xor a
 	start_script
 	send_mail $12
@@ -7136,19 +7136,19 @@ Func_2f575:
 	jr z, .duel
 	jr nc, .gift
 ; card pop
-	ld hl, Func_34037
+	ld hl, RunRonaldSecondMeetingCardPopScene1
 	jr .asm_2f594
 .duel
-	ld hl, Func_3417e
+	ld hl, RunRonaldGCPieces2DuelIntroScript
 	jr .asm_2f594
 .gift
-	ld hl, Func_341f7
+	ld hl, RunRonaldGCPieces4GiftScript
 .asm_2f594
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34037)
-	ASSERT BANK(Func_34037) == BANK(Func_3417e)
-	ASSERT BANK(Func_34037) == BANK(Func_341f7)
+	ld a, BANK(RunRonaldSecondMeetingCardPopScene1)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces2DuelIntroScript)
+	ASSERT BANK(RunRonaldSecondMeetingCardPopScene1) == BANK(RunRonaldGCPieces4GiftScript)
 	ld [wOverworldScriptBank], a
 	ld a, l
 	ld [wOverworldScriptPointer], a
@@ -7158,12 +7158,12 @@ Func_2f575:
 	scf
 	ret
 
-Func_2f5a8:
+HandleFireClubEntranceAfterDuel: ; Func_2f5a8
 	farcall Script_RonaldGCPieces2AfterDuel
 	scf
 	ret
 
-Func_2f5ae:
+HandleFireClubEntranceContinueOverworld: ; Func_2f5ae
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2f5c8
@@ -7225,7 +7225,7 @@ FireClubLobby_StepEvents:
 
 FireClubLobby_NPCs:
 	npc NPC_FIRE_CLUB_PUNK_GUY, 8, 4, NORTH, NULL
-	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, Func_2f76f
+	npc NPC_IMAKUNI_BLACK, 1, 10, WEST, CheckShowFireClubLobbyImakuniBlack
 	npc NPC_FIRE_CLUB_MARTIAL_ARTIST, 10, 9, NORTH, NULL
 	npc NPC_FIRE_CLUB_GAL, 5, 8, SOUTH, NULL
 	npc NPC_CLERK_BATTLE_CENTER, 2, 2, SOUTH, NULL
@@ -7233,10 +7233,10 @@ FireClubLobby_NPCs:
 	db $ff
 
 FireClubLobby_NPCInteractions:
-	npc_script NPC_FIRE_CLUB_PUNK_GUY, Func_2f709
+	npc_script NPC_FIRE_CLUB_PUNK_GUY, ScriptFireClubLobbyPunkGuyTradeFlareon
 	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
-	npc_script NPC_FIRE_CLUB_MARTIAL_ARTIST, Func_2f77e
-	npc_script NPC_FIRE_CLUB_GAL, Func_2f7a4
+	npc_script NPC_FIRE_CLUB_MARTIAL_ARTIST, ScriptFireClubLobbyMartialArtist
+	npc_script NPC_FIRE_CLUB_GAL, ScriptFireClubLobbyGal
 	db $ff
 
 FireClubLobby_OWInteractions:
@@ -7250,16 +7250,16 @@ FireClubLobby_OWInteractions:
 	db $ff
 
 FireClubLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2f6c7
-	dbw OWMODE_INTERACT, Func_2f6d7
-	dbw OWMODE_NPC_POSITION, Func_2f6ce
-	dbw OWMODE_AFTER_DUEL, Func_2f6e7
-	dbw OWMODE_CONTINUE_OW, Func_2f6ed
-	dbw OWMODE_MUSIC_PRELOAD, Func_2f6a0
-	dbw OWMODE_MUSIC_POSTLOAD, Func_2f6b2
+	dbw OWMODE_STEP_EVENT, ExecuteFireClubLobbyStepEvents
+	dbw OWMODE_INTERACT, HandleFireClubLobbyInteractions
+	dbw OWMODE_NPC_POSITION, LoadFireClubLobbyNPCs
+	dbw OWMODE_AFTER_DUEL, HandleFireClubLobbyAfterDuel
+	dbw OWMODE_CONTINUE_OW, HandleFireClubLobbyContinueOverworld
+	dbw OWMODE_MUSIC_PRELOAD, SetFireClubLobbyGRMusicIfBottomLeftCoinPieceMissing
+	dbw OWMODE_MUSIC_POSTLOAD, PlayFireClubLobbyImakuniBlackThemePostload
 	db $ff
 
-Func_2f6a0:
+SetFireClubLobbyGRMusicIfBottomLeftCoinPieceMissing: ; Func_2f6a0
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2f6af
@@ -7271,7 +7271,7 @@ Func_2f6a0:
 	ccf
 	ret
 
-Func_2f6b2:
+PlayFireClubLobbyImakuniBlackThemePostload: ; Func_2f6b2
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 9
@@ -7285,19 +7285,19 @@ Func_2f6b2:
 	ccf
 	ret
 
-Func_2f6c7:
+ExecuteFireClubLobbyStepEvents: ; Func_2f6c7
 	ld hl, FireClubLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2f6ce:
+LoadFireClubLobbyNPCs: ; Func_2f6ce
 	ld hl, FireClubLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2f6d7:
+HandleFireClubLobbyInteractions: ; Func_2f6d7
 	ld hl, FireClubLobby_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2f6e5
@@ -7307,12 +7307,12 @@ Func_2f6d7:
 	scf
 	ret
 
-Func_2f6e7:
+HandleFireClubLobbyAfterDuel: ; Func_2f6e7
 	farcall Script_ImakuniBlackAfterDuel
 	scf
 	ret
 
-Func_2f6ed:
+HandleFireClubLobbyContinueOverworld: ; Func_2f6ed
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_2f707
@@ -7326,7 +7326,7 @@ Func_2f6ed:
 	scf
 	ret
 
-Func_2f709:
+ScriptFireClubLobbyPunkGuyTradeFlareon: ; Func_2f709
 	ld a, NPC_FIRE_CLUB_PUNK_GUY
 	ld [wScriptNPC], a
 	ldtx hl, DialogPunkGuyText
@@ -7375,7 +7375,7 @@ Func_2f709:
 	end_script
 	ret
 
-Func_2f76f:
+CheckShowFireClubLobbyImakuniBlack: ; Func_2f76f
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $09
@@ -7387,7 +7387,7 @@ Func_2f76f:
 	ccf
 	ret
 
-Func_2f77e:
+ScriptFireClubLobbyMartialArtist: ; Func_2f77e
 	ld a, NPC_FIRE_CLUB_MARTIAL_ARTIST
 	ld [wScriptNPC], a
 	ldtx hl, DialogMartialArtistText
@@ -7409,7 +7409,7 @@ Func_2f77e:
 	end_script
 	ret
 
-Func_2f7a4:
+ScriptFireClubLobbyGal: ; Func_2f7a4
 	ld a, NPC_FIRE_CLUB_GAL
 	ld [wScriptNPC], a
 	ldtx hl, DialogGal1Text
@@ -7446,34 +7446,34 @@ FireClub_NPCs:
 	npc NPC_JOHN, 6, 9, SOUTH, NULL
 	npc NPC_ADAM, 5, 7, SOUTH, NULL
 	npc NPC_JONATHAN, 10, 5, SOUTH, NULL
-	npc NPC_GR_3, 7, 5, SOUTH, Func_2fc29
+	npc NPC_GR_3, 7, 5, SOUTH, CheckShowFireClubGr3
 	db $ff
 
 FireClub_NPCInteractions:
-	npc_script NPC_KEN, Func_2f926
-	npc_script NPC_JOHN, Func_2fa25
-	npc_script NPC_ADAM, Func_2faa1
-	npc_script NPC_JONATHAN, Func_2fb4e
-	npc_script NPC_GR_3, Func_2fbd3
+	npc_script NPC_KEN, ScriptFireClubKen
+	npc_script NPC_JOHN, ScriptFireClubJohn
+	npc_script NPC_ADAM, ScriptFireClubAdam
+	npc_script NPC_JONATHAN, ScriptFireClubJonathan
+	npc_script NPC_GR_3, ScriptFireClubGr3
 	db $ff
 
 FireClub_OWInteractions:
-	ow_script 7, 12, Func_2fcad
-	ow_script 6, 12, Func_2fcb7
-	ow_script 5, 12, Func_2fcc1
-	ow_script 8, 12, Func_2fccb
+	ow_script 7, 12, ScriptFireClubOWInteractionKen
+	ow_script 6, 12, ScriptFireClubOWInteractionJohn
+	ow_script 5, 12, ScriptFireClubOWInteractionAdam
+	ow_script 8, 12, ScriptFireClubOWInteractionJonathan
 	db $ff
 
 FireClub_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2f85e
-	dbw OWMODE_INTERACT, Func_2f8c8
-	dbw OWMODE_AFTER_DUEL, Func_2f8d8
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2f86e
-	dbw OWMODE_NPC_POSITION, Func_2f865
-	dbw OWMODE_MUSIC_PRELOAD, Func_2f84e
+	dbw OWMODE_STEP_EVENT, ExecuteFireClubStepEvents
+	dbw OWMODE_INTERACT, HandleFireClubInteractions
+	dbw OWMODE_AFTER_DUEL, HandleFireClubAfterDuel
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleFireClubWarpFadeInPreload
+	dbw OWMODE_NPC_POSITION, LoadFireClubNPCs
+	dbw OWMODE_MUSIC_PRELOAD, SetFireClubGRMusicIfBottomLeftCoinPieceMissing
 	db $ff
 
-Func_2f84e:
+SetFireClubGRMusicIfBottomLeftCoinPieceMissing: ; Func_2f84e
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_LEFT
 	farcall GetEventValue
 	jr nz, .asm_2f85b
@@ -7484,19 +7484,19 @@ Func_2f84e:
 	ccf
 	ret
 
-Func_2f85e:
+ExecuteFireClubStepEvents: ; Func_2f85e
 	ld hl, FireClub_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2f865:
+LoadFireClubNPCs: ; Func_2f865
 	ld hl, FireClub_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2f86e:
+HandleFireClubWarpFadeInPreload: ; Func_2f86e
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
 	jr nz, .asm_2f891
@@ -7529,7 +7529,7 @@ Func_2f86e:
 	scf
 	ret
 
-Func_2f8c8:
+HandleFireClubInteractions: ; Func_2f8c8
 	ld hl, FireClub_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .asm_2f8d6
@@ -7539,7 +7539,7 @@ Func_2f8c8:
 	scf
 	ret
 
-Func_2f8d8:
+HandleFireClubAfterDuel: ; Func_2f8d8
 	ld hl, FireClub_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
@@ -7547,11 +7547,11 @@ Func_2f8d8:
 	ret
 
 FireClub_AfterDuelScripts:
-	npc_script NPC_KEN, Func_2f9ed
-	npc_script NPC_JOHN, Func_2fa85
-	npc_script NPC_ADAM, Func_2fb32
-	npc_script NPC_JONATHAN, Func_2fbb7
-	npc_script NPC_GR_3, Func_2fc0e
+	npc_script NPC_KEN, ScriptFireClubAfterDuelKen
+	npc_script NPC_JOHN, ScriptFireClubAfterDuelJohn
+	npc_script NPC_ADAM, ScriptFireClubAfterDuelAdam
+	npc_script NPC_JONATHAN, ScriptFireClubAfterDuelJonathan
+	npc_script NPC_GR_3, ScriptFireClubAfterDuelGr3
 	db $ff
 
 Script_2f8f8:
@@ -7580,7 +7580,7 @@ Script_2f8f8:
 	db SOUTH, MOVE_3
 	db $ff
 
-Func_2f926:
+ScriptFireClubKen: ; Func_2f926
 	ld a, NPC_KEN
 	ld [wScriptNPC], a
 	ldtx hl, DialogKenText
@@ -7688,7 +7688,7 @@ Func_2f926:
 	end_script
 	ret
 
-Func_2f9ed:
+ScriptFireClubAfterDuelKen: ; Func_2f9ed
 	xor a
 	start_script
 	start_dialog
@@ -7720,7 +7720,7 @@ Func_2f9ed:
 	end_script
 	ret
 
-Func_2fa25:
+ScriptFireClubJohn: ; Func_2fa25
 	ld a, NPC_JOHN
 	ld [wScriptNPC], a
 	ldtx hl, DialogJohnText
@@ -7774,7 +7774,7 @@ Func_2fa25:
 	end_script
 	ret
 
-Func_2fa85:
+ScriptFireClubAfterDuelJohn: ; Func_2fa85
 	xor a
 	start_script
 	start_dialog
@@ -7791,7 +7791,7 @@ Func_2fa85:
 	end_script
 	ret
 
-Func_2faa1:
+ScriptFireClubAdam: ; Func_2faa1
 	ld a, NPC_ADAM
 	ld [wScriptNPC], a
 	ldtx hl, DialogAdamText
@@ -7869,7 +7869,7 @@ Func_2faa1:
 	end_script
 	ret
 
-Func_2fb32:
+ScriptFireClubAfterDuelAdam: ; Func_2fb32
 	xor a
 	start_script
 	start_dialog
@@ -7886,7 +7886,7 @@ Func_2fb32:
 	end_script
 	ret
 
-Func_2fb4e:
+ScriptFireClubJonathan: ; Func_2fb4e
 	ld a, NPC_JONATHAN
 	ld [wScriptNPC], a
 	ldtx hl, DialogJonathanText
@@ -7944,7 +7944,7 @@ Func_2fb4e:
 	end_script
 	ret
 
-Func_2fbb7:
+ScriptFireClubAfterDuelJonathan: ; Func_2fbb7
 	xor a
 	start_script
 	start_dialog
@@ -7961,7 +7961,7 @@ Func_2fbb7:
 	end_script
 	ret
 
-Func_2fbd3:
+ScriptFireClubGr3: ; Func_2fbd3
 	ld a, NPC_GR_3
 	ld [wScriptNPC], a
 	ldtx hl, DialogGR3Text
@@ -7993,7 +7993,7 @@ Func_2fbd3:
 	end_script
 	ret
 
-Func_2fc0e:
+ScriptFireClubAfterDuelGr3: ; Func_2fc0e
 	xor a
 	start_script
 	start_dialog
@@ -8009,7 +8009,7 @@ Func_2fc0e:
 	end_script
 	ret
 
-Func_2fc29:
+CheckShowFireClubGr3: ; Func_2fc29
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
 	jr z, .asm_2fc3c
@@ -8079,29 +8079,29 @@ Script_2fc3e:
 	db SOUTH, MOVE_4
 	db $ff
 
-Func_2fcad:
+ScriptFireClubOWInteractionKen: ; Func_2fcad
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
 	ret nz
-	jp Func_2f926
+	jp ScriptFireClubKen
 
-Func_2fcb7:
+ScriptFireClubOWInteractionJohn: ; Func_2fcb7
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
 	ret nz
-	jp Func_2fa25
+	jp ScriptFireClubJohn
 
-Func_2fcc1:
+ScriptFireClubOWInteractionAdam: ; Func_2fcc1
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
 	ret nz
-	jp Func_2faa1
+	jp ScriptFireClubAdam
 
-Func_2fccb:
+ScriptFireClubOWInteractionJonathan: ; Func_2fccb
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
 	ret nz
-	jp Func_2fb4e
+	jp ScriptFireClubJonathan
 
 PokemonDomeEntrance_MapHeader:
 	db MAP_GFX_POKEMON_DOME_ENTRANCE
@@ -8137,13 +8137,13 @@ PokemonDomeEntrance_OWInteractions:
 	db $ff
 
 PokemonDomeEntrance_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_2fd83
-	dbw OWMODE_INTERACT, Func_2fd93
-	dbw OWMODE_NPC_POSITION, Func_2fd8a
-	dbw OWMODE_MUSIC_PRELOAD, Func_2fd73
+	dbw OWMODE_STEP_EVENT, ExecutePokemonDomeEntranceStepEvents
+	dbw OWMODE_INTERACT, HandlePokemonDomeEntranceInteractions
+	dbw OWMODE_NPC_POSITION, LoadPokemonDomeEntranceNPCs
+	dbw OWMODE_MUSIC_PRELOAD, SetPokemonDomeEntranceGRMusicIfGRCoinMissing
 	db $ff
 
-Func_2fd73:
+SetPokemonDomeEntranceGRMusicIfGRCoinMissing: ; Func_2fd73
 	ld a, EVENT_GOT_GR_COIN
 	farcall GetEventValue
 	jr nz, .done
@@ -8154,19 +8154,19 @@ Func_2fd73:
 	ccf
 	ret
 
-Func_2fd83:
+ExecutePokemonDomeEntranceStepEvents: ; Func_2fd83
 	ld hl, PokemonDomeEntrance_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_2fd8a:
+LoadPokemonDomeEntranceNPCs: ; Func_2fd8a
 	ld hl, PokemonDomeEntrance_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_2fd93:
+HandlePokemonDomeEntranceInteractions: ; Func_2fd93
 	ld hl, PokemonDomeEntrance_NPCInteractions
 	call HandleNPCInteractions
 	jr nc, .done
@@ -8285,12 +8285,12 @@ OverheadIslands_MapHeader:
 	db MUSIC_GR_BLIMP
 
 OverheadIslands_MapScripts:
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_2fe54
-	dbw OWMODE_WARP_FADE_OUT_PRELOAD, Func_2fe94
-	dbw OWMODE_WARP_END_SFX, Func_2fe97
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleOverheadIslandsWarpFadeInPreload
+	dbw OWMODE_WARP_FADE_OUT_PRELOAD, NoOpOverheadIslandsWarpFadeOutPreload
+	dbw OWMODE_WARP_END_SFX, NoOpOverheadIslandsWarpEndSFX
 	db $ff
 
-Func_2fe54:
+HandleOverheadIslandsWarpFadeInPreload: ; Func_2fe54
 	farcall InitOWObjects
 	ld a, [wPrevMap]
 	cp OVERWORLD_MAP_TCG
@@ -8309,9 +8309,9 @@ Func_2fe54:
 .got_blimp_data
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_2fe9a)
+	ld a, BANK(RunOverheadIslandsBlimpFlyoverScript)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_2fe9a
+	ld hl, RunOverheadIslandsBlimpFlyoverScript
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -8322,17 +8322,17 @@ Func_2fe54:
 	ccf
 	ret
 
-Func_2fe94:
+NoOpOverheadIslandsWarpFadeOutPreload: ; Func_2fe94
 	scf
 	ccf
 	ret
 
-Func_2fe97:
+NoOpOverheadIslandsWarpEndSFX: ; Func_2fe97
 	scf
 	ccf
 	ret
 
-Func_2fe9a:
+RunOverheadIslandsBlimpFlyoverScript: ; Func_2fe9a
 	ld a, [wPrevMap]
 	cp OVERWORLD_MAP_TCG
 	jr z, .from_tcg_to_gr

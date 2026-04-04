@@ -543,7 +543,7 @@ _DrawYourOrOppPlayAreaScreen::
 
 DrawYourOrOppPlayAreaScreen_EmptiedScreen:
 	call LoadSymbolsFont
-	call Func_1dff
+	call LoadPlayAreaIconTiles
 	bank1call SetDefaultPalettes
 	lb de, 6, 0
 	call InitTextPrinting
@@ -637,7 +637,7 @@ DrawInPlayAreaScreen::
 	push af
 	ld a, CONSOLE_DMG
 	ld [wConsole], a
-	call Func_1dff
+	call LoadPlayAreaIconTiles
 	pop af
 	ld [wConsole], a
 	bank1call SetDefaultPalettes
@@ -694,7 +694,7 @@ _DrawPlayersPrizeAndBenchCards::
 	call DoFrame
 	call EmptyScreen
 	call LoadSymbolsFont
-	call Func_1dff
+	call LoadPlayAreaIconTiles
 ; player cards
 	ld a, PLAYER_TURN
 	ld [wCheckMenuPlayAreaWhichDuelist], a
@@ -8202,7 +8202,7 @@ CardAlbum:
 	call DrawRegularTextBox
 	lb de, 1, 0
 	ldtx hl, BoosterPackTitleText ; title
-	call Func_2c4b
+	call PrintTextNoDelayAndZeroAttributes
 	farcall FillBoosterPackMenuItems
 	ldtx hl, ViewWhichCardFileText
 	call DrawWideTextBox_PrintText

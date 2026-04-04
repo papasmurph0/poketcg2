@@ -62,11 +62,13 @@ SetNextElementOfList2::
 	ld hl, wListPointer2
 	jr SetNextElementOfList_Common
 
-Func_0b6e:
+; Return the current 16-bit element of the list at wListPointer in de,
+; and advance the list to the next element.
+GetNextWordOfList:
 	push hl
 	push bc
 	ld hl, wListPointer
-Func_0b73:
+.get_next_word
 	ld c, [hl]
 	inc hl
 	ld b, [hl]
@@ -76,7 +78,7 @@ Func_0b73:
 	ld a, [bc]
 	ld d, a
 	inc bc
-Func_0b7c:
+.set_list_to_next_word
 	ld [hl], b
 	dec hl
 	ld [hl], c
@@ -84,17 +86,21 @@ Func_0b7c:
 	pop hl
 	ret
 
-Func_0b82:
+; Return the current 16-bit element of the list at wListPointer2 in de,
+; and advance the list to the next element.
+GetNextWordOfList2:
 	push hl
 	push bc
 	ld hl, wListPointer2
-	jr Func_0b73
+	jr GetNextWordOfList.get_next_word
 
-Func_0b89:
+; Set the current 16-bit element of the list at wListPointer to de,
+; and advance the list to the next element.
+SetNextWordOfList:
 	push hl
 	push bc
 	ld hl, wListPointer
-Func_0b8e:
+.set_next_word
 	ld c, [hl]
 	inc hl
 	ld b, [hl]
@@ -104,18 +110,21 @@ Func_0b8e:
 	ld a, d
 	ld [bc], a
 	inc bc
-	jr Func_0b7c
+	jr GetNextWordOfList.set_list_to_next_word
 
-Func_0b99::
+; Set the current 16-bit element of the list at wListPointer2 to de,
+; and advance the list to the next element.
+SetNextWordOfList2:: ; Func_0b99
 	push hl
 	push bc
 	ld hl, wListPointer2
-	jr Func_0b8e
+	jr SetNextWordOfList.set_next_word
 
-Func_0ba0:
+; Advance wListPointer by a bytes.
+AddAToListPointer:
 	push hl
 	ld hl, wListPointer
-Func_0ba4:
+.add_a_to_list_pointer
 	add [hl]
 	ld [hli], a
 	ld a, [hl]
@@ -124,7 +133,8 @@ Func_0ba4:
 	pop hl
 	ret
 
-Func_0bac:
+; Advance wListPointer2 by a bytes.
+AddAToListPointer2:
 	push hl
 	ld hl, wListPointer2
-	jr Func_0ba4
+	jr AddAToListPointer.add_a_to_list_pointer

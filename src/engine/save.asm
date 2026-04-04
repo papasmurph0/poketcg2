@@ -259,7 +259,7 @@ LoadGeneralSaveDataChecksumSeed:
 _SaveGame::
 	ld a, OWMODE_SAVE_PRELOAD
 	call ExecuteOWModeScript
-	farcall Func_10f32
+	farcall SaveNPCStateBuffer
 	xor a ; BANK(sGeneralSaveData)
 	ld [wSaveDataCurBankSRAM], a
 .save
@@ -313,7 +313,7 @@ _SaveGame::
 	jr .save
 
 SaveGame_NoBackup:
-	farcall Func_10f32
+	farcall SaveNPCStateBuffer
 	xor a ; BANK(sGeneralSaveData)
 	ld [wSaveDataCurBankSRAM], a
 	ld a, LOW(WRAMToSRAMMapper_GeneralSave)
@@ -343,7 +343,7 @@ RestoreBackupSave:
 	call LoadBackupSave
 	xor a
 	call BulkCopySRAM
-	farcall Func_10f78
+	farcall LoadNPCStateBuffer
 	ret
 
 LoadBackupSave:
@@ -374,7 +374,7 @@ LoadMainSave:
 	ld [wSaveDataSRAMOffset + 1], a
 	call LoadGeneralSaveDataChecksumSeed
 	call LoadSaveDataFromSRAM
-	farcall Func_10f78
+	farcall LoadNPCStateBuffer
 	ret
 
 InitChallengeMachine:

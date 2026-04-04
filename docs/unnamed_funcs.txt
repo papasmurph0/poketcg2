@@ -262,6 +262,27 @@ Func_110b9 -> SetDuelAnimationsAndSpriteAnimsFrameFunc
 Func_110c2 -> UnsetDuelAnimationsAndSpriteAnimsFrameFunc
 ; pops the queued duel animation frame function after duel animations finish
 
+Func_10f32 -> SaveNPCStateBuffer
+; saves active overworld object ids, flags, directions, and positions into wNPCStateBuffer
+
+Func_10f78 -> LoadNPCStateBuffer
+; reloads overworld objects from wNPCStateBuffer and restores the saved scroll target object
+
+Func_10d40 -> InitOWObjectsAndNPCMovement
+; initializes overworld object slots, sets NPC movement mode, and clears boundary override state
+
+Func_10df3 -> CountOWObjectsWithMovementScript
+; counts overworld objects that still have scripted movement data active
+
+Func_10e3c -> TryStepNPCInDirection
+; attempts to start a one-tile step for the given NPC in the requested direction and speed
+
+Func_1132e -> BeginNPCStep
+; starts sprite movement for an NPC step using the prepared direction, speed, and step distance
+
+Func_11384 -> StepAllScriptedNPCs
+; advances queued packed movement scripts for all overworld objects that are ready to step
+
 Func_3f61 -> ClearCallbackPointer
 ; clears the home-bank callback pointer used by frame functions and other deferred helpers
 
@@ -288,6 +309,42 @@ Func_3588 -> WriteDataBlockToBGMap0_SaveAllRegisters
 
 Func_3594 -> WriteDataBlocksToBGMap0_SaveAllRegisters
 ; calls WriteDataBlocksToBGMap0 while preserving af, bc, de, and hl
+
+Func_212f -> LoadPrinterTextAndCardSymbolTiles
+; loads the printer text, frame, and loaded-card symbol tiles into SRAM gfx buffers
+
+Func_2dc4 -> LoadCardGfxByAttrMap
+; copies loaded card graphics in the order described by wCardAttrMap while refreshing palettes
+
+Func_22ca -> GenerateAndPlaceTextTileIfNeeded
+; requests a text tile for a character pair, generating and placing it according to the current text mode
+
+Func_2325 -> FindTextTileInCacheOrReserveSlot
+; returns an existing text-tile cache entry for a character pair or reserves a slot for a new one
+
+Func_235e -> FindTextTileInCache
+; searches the text-tile cache for a character pair and hoists hits to the head of the linked list
+
+Func_17ed -> WaitForInputAndHandleAfterDamageEffects
+; waits for the damage textbox, clears wDamage, then runs the after-damage effect flow
+
+Func_17fb -> HandleAfterDamageEffects
+; runs after-damage effect commands, queued status effects, and post-damage knockout handling
+
+Func_1bb4 -> RedrawDuelSceneAndShowEffectFailedText
+; redraws the duel scene, prints any failed-effect text, waits for input, and advances RNG
+
+Func_19fd -> LoadCardNameAndAttackNameForEffectFailedText
+; loads the active card name and attack name into TX RAM for unsuccessful-effect messages
+
+Func_189d -> HandleTransparencyIfApplicable
+; checks whether transparency should run for the current target and zeroes damage if it takes effect
+
+Func_138c6 -> SetCreditsFadePaletteMode
+; enables all credits palette fades, then disables the palette groups excluded by the selected fade mode
+
+Func_13ac1 -> UpdateCreditsScrollStep
+; steps the current credits scroll values toward their targets and writes the scroll registers
 
 Func_3c3d -> HandleCoinMenuPageInput_Wrapper
 ; wrapper that forwards to HandleCoinMenuPageInput
@@ -1854,4 +1911,1531 @@ Func_3b14 -> UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper
 
 Func_3b19 -> UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper_2
 ; second wrapper variant for hidden bank07 routine that updates text-box frame color from focused menu item
+
+Func_2c0b4 -> SetIshiharasHouseMusicIfIshiharaHidden
+; sets Ishihara's House music preload to overworld music when Ishihara is hidden
+
+Func_2c0c1 -> ExecuteIshiharasHouseStepEvents
+; runs Ishihara's House coordinate-triggered step-event scripts
+
+Func_2c0c8 -> LoadIshiharasHouseNPCs
+; loads Ishihara's House NPC set
+
+Func_2c0d1 -> HandleIshiharasHouseWarpFadeInPreload
+; handles Ishihara's House warp fade-in preload and relocates Ishihara when needed
+
+Func_2c0f1 -> HandleIshiharasHouseInteractions
+; dispatches Ishihara's House NPC and object interaction scripts
+
+Func_2c101 -> SaveIshiharaHouseEventFlagsForSave
+; stores Ishihara house location/trade flags into temporary save-preload state
+
+Func_2c12f -> ClearIshiharaHouseSavedEventFlags
+; clears temporary Ishihara house save-preload event and var storage
+
+Func_2c13e -> RestoreIshiharaHouseEventFlagsOnContinueOverworld
+; restores Ishihara house location/trade flags from temporary state on continue overworld
+
+Func_2c4db -> SetLightningClubMusicAndMapGfxByPikachuCoinState
+; sets Lightning Club music preload and map gfx variant according to Pikachu coin and temporary event state
+
+Func_2c4fa -> ExecuteLightningClubStepEvents
+; runs Lightning Club coordinate-triggered step-event scripts
+
+Func_2c501 -> LoadLightningClubNPCs
+; loads Lightning Club NPC set
+
+Func_2c50a -> HandleLightningClubWarpFadeInPreload
+; handles Lightning Club warp fade-in preload including first GR4 encounter setup
+
+Func_2c560 -> HandleLightningClubInteractions
+; dispatches Lightning Club NPC interaction scripts
+
+Func_2c568 -> HandleLightningClubAfterDuel
+; dispatches Lightning Club after-duel scripts by current NPC id
+
+Func_2c584 -> RunLightningClubGr4IntroCutscene
+; runs Lightning Club GR4 intro cutscene and switches back to idle overworld mode
+
+Func_2c645 -> ScriptLightningClubIsaac
+; runs Isaac's Lightning Club interaction dialog and duel branch logic
+
+Func_2c6ec -> ScriptLightningClubAfterDuelIsaac
+; handles Isaac's Lightning Club after-duel rewards and GR4 follow-up branch
+
+Func_2c73b -> ScriptLightningClubJennifer
+; runs Jennifer's Lightning Club interaction dialog and duel branch logic
+
+Func_2c781 -> ScriptLightningClubAfterDuelJennifer
+; handles Jennifer's Lightning Club after-duel reward branch
+
+Func_2c79d -> ScriptLightningClubNicholas
+; runs Nicholas's Lightning Club interaction dialog and duel branch logic across progression states
+
+Func_2c847 -> ScriptLightningClubAfterDuelNicholas
+; handles Nicholas's Lightning Club after-duel progression and reward branches
+
+Func_2c897 -> ScriptLightningClubBrandon
+; runs Brandon's Lightning Club interaction dialog and duel branch logic
+
+Func_2c8dd -> ScriptLightningClubAfterDuelBrandon
+; handles Brandon's Lightning Club after-duel reward branch
+
+Func_2c8f9 -> CheckShowLightningClubJenniferOrBrandon
+; returns carry when Jennifer and Brandon should appear in Lightning Club
+
+Func_2c90e -> ScriptLightningClubGr4
+; runs GR4's Lightning Club interaction dialog script
+
+Func_2c929 -> CheckShowLightningClubGr4
+; returns carry when GR4 should appear in Lightning Club before Pikachu coin is obtained
+
+Func_2c9ac -> HandlePsychicClubEntranceIdle
+; runs one Psychic Club Entrance idle-mode frame including Stephanie door-block updates and player input
+
+Func_2c9b8 -> SetPsychicClubEntranceGRMusicIfBottomRightCoinPieceMissing
+; sets GR encounter music preload in Psychic Club Entrance until the bottom-right GR coin piece is obtained
+
+Func_2c9c8 -> PlayPsychicClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Psychic Club Entrance when a Ronald event should appear
+
+Func_2c9d8 -> ExecutePsychicClubEntranceStepEvents
+; runs Psychic Club Entrance coordinate-triggered step-event scripts
+
+Func_2c9df -> LoadPsychicClubEntranceNPCs
+; loads Psychic Club Entrance NPC set
+
+Func_2c9e8 -> HandlePsychicClubEntranceWarpFadeInPreload
+; handles Psychic Club Entrance warp fade-in preload and schedules Ronald event scripts when applicable
+
+Func_2ca14 -> HandlePsychicClubEntranceInteractions
+; dispatches Psychic Club Entrance NPC interaction scripts
+
+Func_2ca1c -> HandlePsychicClubEntranceAfterDuel
+; dispatches Psychic Club Entrance after-duel script handling
+
+Func_2ca22 -> HandlePsychicClubEntranceContinueOverworld
+; resumes Psychic Club Entrance overworld after Ronald event handling and clears temporary state
+
+Func_2ca3e -> HandlePsychicClubEntranceDoorTileTrigger
+; handles Psychic Club Entrance door tile trigger while updating Stephanie's blocking movement
+
+Func_2ca46 -> UpdatePsychicClubEntranceStephanieDoorBlock
+; updates Stephanie's movement to block Psychic Club door approach before the Pikachu coin event
+
+Func_2caa0 -> ScriptPsychicClubEntranceStephanie
+; runs Stephanie's Psychic Club Entrance interaction dialog after Lightning Club progression
+
+Func_2cabb -> CheckShowPsychicClubEntranceStephanie
+; returns carry when Stephanie should appear in Psychic Club Entrance before the Pikachu coin is obtained
+
+Func_2cba8 -> SetPsychicClubLobbyGRMusicIfBottomRightCoinPieceMissing
+; sets GR encounter music preload in Psychic Club Lobby until the bottom-right GR coin piece is obtained
+
+Func_2cbba -> PlayPsychicClubLobbyImakuniBlackThemePostload
+; queues Imakuni Black theme postload in Psychic Club Lobby when the Imakuni event state is active
+
+Func_2cbcf -> ExecutePsychicClubLobbyStepEvents
+; runs Psychic Club Lobby coordinate-triggered step-event scripts
+
+Func_2cbd6 -> LoadPsychicClubLobbyNPCs
+; loads Psychic Club Lobby NPC set
+
+Func_2cbdf -> HandlePsychicClubLobbyInteractions
+; dispatches Psychic Club Lobby NPC and object interaction scripts
+
+Func_2cbef -> HandlePsychicClubLobbyAfterDuel
+; dispatches Psychic Club Lobby after-duel script handling
+
+Func_2cbf5 -> HandlePsychicClubLobbyContinueOverworld
+; resumes Psychic Club Lobby overworld after Imakuni event handling and clears temporary state
+
+Func_2cc11 -> ScriptPsychicClubLobbyGlassesLadTradeAlakazam
+; runs the Psychic Club Lobby card-trade script for Alakazam exchange
+
+Func_2cc7d -> ScriptPsychicClubLobbyLass
+; runs Psychic Club Lobby lass interaction dialog with Imakuni-event branch
+
+Func_2cca8 -> CheckShowPsychicClubLobbyImakuniBlack
+; returns carry when Imakuni Black should appear in Psychic Club Lobby
+
+Func_2ccb7 -> ScriptPsychicClubLobbyCappedLad
+; runs Psychic Club Lobby capped lad dialog branch based on challenge-machine and GR coin progression
+
+Func_2cce8 -> ScriptPsychicClubLobbyGrLass
+; runs Psychic Club Lobby GR lass dialog branch based on challenge-machine progression
+
+Func_2cd0e -> CheckShowPsychicClubLobbyGrLass
+; returns carry when Psychic Club Lobby GR lass should appear
+
+Func_2cd82 -> SetPsychicClubGRMusicIfBottomRightCoinPieceMissing
+; sets GR encounter music preload in Psychic Club until the bottom-right GR coin piece is obtained
+
+Func_2cd92 -> ExecutePsychicClubStepEvents
+; runs Psychic Club coordinate-triggered step-event scripts
+
+Func_2cd99 -> LoadPsychicClubNPCs
+; loads Psychic Club NPC set
+
+Func_2cda2 -> HandlePsychicClubWarpFadeInPreload
+; handles Psychic Club warp fade-in preload including first GR4 encounter setup
+
+Func_2ce11 -> HandlePsychicClubInteractions
+; dispatches Psychic Club NPC interaction scripts
+
+Func_2ce19 -> HandlePsychicClubAfterDuel
+; dispatches Psychic Club after-duel scripts by current NPC id
+
+Func_2ce39 -> RunPsychicClubGr4IntroCutscene
+; runs Psychic Club GR4 intro cutscene and resumes idle overworld mode
+
+Func_2ce88 -> ScriptPsychicClubMurray
+; runs Murray's Psychic Club interaction dialog and duel branch logic
+
+Func_2cf73 -> ScriptPsychicClubAfterDuelMurray
+; handles Murray's Psychic Club after-duel progression and reward branches
+
+Func_2cfcc -> ScriptPsychicClubRobert
+; runs Robert's Psychic Club interaction dialog and duel branch logic
+
+Func_2d02a -> ScriptPsychicClubAfterDuelRobert
+; handles Robert's Psychic Club after-duel reward branch
+
+Func_2d046 -> ScriptPsychicClubDaniel
+; runs Daniel's Psychic Club interaction dialog and duel branch logic
+
+Func_2d097 -> ScriptPsychicClubAfterDuelDaniel
+; handles Daniel's Psychic Club after-duel reward branch
+
+Func_2d0b3 -> ScriptPsychicClubStephanie
+; runs Stephanie's Psychic Club interaction dialog and duel branch logic
+
+Func_2d142 -> ScriptPsychicClubAfterDuelStephanie
+; handles Stephanie's Psychic Club after-duel reward branch
+
+Func_2d190 -> ScriptPsychicClubGr4
+; runs Psychic Club GR4 interaction dialog and duel branch logic
+
+Func_2d20e -> ScriptPsychicClubAfterDuelGr4
+; handles Psychic Club GR4 after-duel progression and reward flow
+
+Func_2d23c -> CheckShowPsychicClubGr4
+; returns carry when Psychic Club GR4 should appear before the bottom-right coin piece is obtained
+
+Func_2d356 -> SetRockClubEntranceMusicIfGr1NotMet
+; sets GR encounter music preload in Rock Club Entrance before first GR1 encounter
+
+Func_2d366 -> PlayRockClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Rock Club Entrance when Ronald event is active
+
+Func_2d376 -> ExecuteRockClubEntranceStepEvents
+; runs Rock Club Entrance coordinate-triggered step-event scripts
+
+Func_2d37d -> HandleRockClubEntranceWarpFadeInPreload
+; handles Rock Club Entrance warp fade-in preload and schedules Ronald card-pop event when applicable
+
+Func_2d399 -> HandleRockClubEntranceContinueOverworld
+; resumes Rock Club Entrance overworld after Ronald event handling and clears temporary state
+
+Func_2d472 -> SetRockClubLobbyMusicByGr1AndImakuniState
+; sets Rock Club Lobby music preload based on GR1 encounter progression and Imakuni state
+
+Func_2d489 -> PlayRockClubLobbyImakuniBlackThemePostload
+; queues Imakuni Black theme postload in Rock Club Lobby when the Imakuni event state is active
+
+Func_2d49e -> ExecuteRockClubLobbyStepEvents
+; runs Rock Club Lobby coordinate-triggered step-event scripts
+
+Func_2d4a5 -> LoadRockClubLobbyNPCs
+; loads Rock Club Lobby NPC set
+
+Func_2d4ae -> HandleRockClubLobbyInteractions
+; dispatches Rock Club Lobby NPC and object interaction scripts
+
+Func_2d4be -> HandleRockClubLobbyAfterDuel
+; dispatches Rock Club Lobby after-duel script handling
+
+Func_2d4c4 -> HandleRockClubLobbyContinueOverworld
+; resumes Rock Club Lobby overworld after Imakuni event handling and clears temporary state
+
+Func_2d4e0 -> ScriptRockClubLobbyLassTradeSnorlax
+; runs the Rock Club Lobby card-trade script for Snorlax exchange
+
+Func_2d546 -> ScriptRockClubLobbyWoman
+; runs Rock Club Lobby woman dialog branch with Imakuni-event variation
+
+Func_2d57c -> CheckShowRockClubLobbyImakuniBlack
+; returns carry when Imakuni Black should appear in Rock Club Lobby
+
+Func_2d58b -> ScriptRockClubLobbyChap
+; runs Rock Club Lobby chap dialog branch based on GR1 and progression state
+
+Func_2d5c7 -> ScriptRockClubLobbyCappedLad
+; runs Rock Club Lobby capped lad dialog branch based on challenge-machine and GR coin progression
+
+Func_2d653 -> SetRockClubMusicIfGr1NotMet
+; sets GR encounter music preload in Rock Club before first GR1 encounter
+
+Func_2d663 -> ExecuteRockClubStepEvents
+; runs Rock Club coordinate-triggered step-event scripts
+
+Func_2d66a -> LoadRockClubNPCs
+; loads Rock Club NPC set
+
+Func_2d673 -> HandleRockClubWarpFadeInPreload
+; handles Rock Club warp fade-in preload and schedules first GR1 intro setup
+
+Func_2d6a6 -> HandleRockClubInteractions
+; dispatches Rock Club NPC interaction scripts
+
+Func_2d6ae -> HandleRockClubAfterDuel
+; dispatches Rock Club after-duel scripts by current NPC id
+
+Func_2d6ca -> RunRockClubGr1IntroCutscene
+; runs Rock Club GR1 intro cutscene and resumes idle overworld mode
+
+Func_2d754 -> ScriptRockClubGene
+; runs Gene's Rock Club interaction with challenge prompt and duel start branch
+
+Func_2d7c3 -> ScriptRockClubAfterDuelGene
+; handles Gene's Rock Club after-duel rewards, deck gift, and Kabuto coin branch
+
+Func_2d7ea -> ScriptRockClubMatthew
+; runs Matthew's Rock Club interaction dialog and duel prompt flow
+
+Func_2d825 -> ScriptRockClubAfterDuelMatthew
+; handles Matthew's Rock Club after-duel booster reward dialog
+
+Func_2d841 -> ScriptRockClubRyan
+; runs Ryan's Rock Club interaction dialog and duel prompt flow
+
+Func_2d87e -> ScriptRockClubAfterDuelRyan
+; handles Ryan's Rock Club after-duel booster reward dialog
+
+Func_2d89c -> ScriptRockClubAndrew
+; runs Andrew's Rock Club interaction dialog and duel prompt flow
+
+Func_2d8d7 -> ScriptRockClubAfterDuelAndrew
+; handles Andrew's Rock Club after-duel booster reward dialog
+
+Func_2d8f3 -> CheckShowRockClubGr1
+; returns carry when GR1 should appear in Rock Club based on first-meeting state
+
+Func_2d97f -> SetFightingClubEntranceGRMusicIfTopLeftCoinPieceMissing
+; sets GR encounter music preload in Fighting Club Entrance until top-left coin piece is obtained
+
+Func_2d98f -> PlayFightingClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Fighting Club Entrance when Ronald should appear
+
+Func_2d99f -> ExecuteFightingClubEntranceStepEvents
+; runs Fighting Club Entrance coordinate-triggered step-event scripts
+
+Func_2d9a6 -> HandleFightingClubEntranceWarpFadeInPreload
+; handles Fighting Club Entrance warp fade-in preload and schedules Ronald event scripts
+
+Func_2d9d2 -> HandleFightingClubEntranceAfterDuel
+; handles Fighting Club Entrance after-duel flow for Ronald GC pieces event
+
+Func_2d9d8 -> HandleFightingClubEntranceContinueOverworld
+; resumes Fighting Club Entrance overworld and clears temporary Ronald event state
+
+Func_2dace -> SetFightingClubLobbyGRMusicIfTopLeftCoinPieceMissing
+; sets GR encounter music preload in Fighting Club Lobby until top-left coin piece is obtained
+
+Func_2dade -> ExecuteFightingClubLobbyStepEvents
+; runs Fighting Club Lobby coordinate-triggered step-event scripts
+
+Func_2dae5 -> LoadFightingClubLobbyNPCs
+; loads Fighting Club Lobby NPC set
+
+Func_2daee -> HandleFightingClubLobbyInteractions
+; dispatches Fighting Club Lobby NPC and object interaction scripts
+
+Func_2dafe -> HandleFightingClubLobbyAfterDuel
+; dispatches Fighting Club Lobby after-duel scripts by current NPC id
+
+Func_2db0e -> ScriptFightingClubLobbyMichael
+; runs Michael's Fighting Club Lobby interaction dialog and duel prompt flow
+
+Func_2db7b -> ScriptFightingClubLobbyAfterDuelMichael
+; handles Michael's Fighting Club Lobby after-duel booster reward dialog
+
+Func_2db97 -> CheckShowFightingClubLobbyMichael
+; returns carry when Michael should appear in Fighting Club Lobby outside temporary map state
+
+Func_2dbac -> ScriptFightingClubLobbyPappyTradeHitmonlee
+; runs the Fighting Club Lobby trade script for Hitmonlee to Mewtwo exchange
+
+Func_2dc17 -> ScriptFightingClubLobbyGlassesKid
+; runs the Fighting Club Lobby glasses kid dialog branch based on challenge progress
+
+Func_2dc48 -> ScriptFightingClubLobbyCappedGuy
+; runs the Fighting Club Lobby capped guy dialog branch based on challenge progress
+
+Func_2dc79 -> ScriptFightingClubLobbyCappedLass
+; runs the Fighting Club Lobby capped lass dialog branch based on challenge-machine state
+
+Func_2dcfe -> SetFightingClubGRMusicIfTopLeftCoinPieceMissing
+; sets GR encounter music preload in Fighting Club until top-left coin piece is obtained
+
+Func_2dd0e -> ExecuteFightingClubStepEvents
+; runs Fighting Club coordinate-triggered step-event scripts
+
+Func_2dd15 -> HandleFightingClubWarpFadeInPreload
+; handles Fighting Club warp fade-in preload and applies post-Goda room state tile updates
+
+Func_2dd31 -> LoadFightingClubNPCs
+; loads Fighting Club NPC set
+
+Func_2dd3a -> HandleFightingClubInteractions
+; dispatches Fighting Club NPC interaction scripts
+
+Func_2dd42 -> HandleFightingClubAfterDuel
+; dispatches Fighting Club after-duel scripts by current NPC id
+
+Func_2dd62 -> ScriptFightingClubMitch
+; runs Mitch's Fighting Club interaction dialog with duel prompt branches
+
+Func_2ddc8 -> ScriptFightingClubAfterDuelMitch
+; handles Mitch's Fighting Club after-duel booster reward dialog
+
+Func_2dde4 -> CheckShowFightingClubMitch
+; returns carry when Mitch should appear in Fighting Club based on Goda room cage state
+
+Func_2ddf1 -> ScriptFightingClubMichael
+; runs Michael's Fighting Club interaction dialog and duel prompt branches by progression
+
+Func_2de75 -> ScriptFightingClubAfterDuelMichael
+; handles Michael's Fighting Club after-duel booster reward dialog by progression state
+
+Func_2dead -> ScriptFightingClubChris
+; runs Chris's Fighting Club interaction dialog and duel prompt branches by progression
+
+Func_2df1e -> ScriptFightingClubAfterDuelChris
+; handles Chris's Fighting Club after-duel booster reward dialog
+
+Func_2df3a -> ScriptFightingClubJessica
+; runs Jessica's Fighting Club interaction dialog and duel prompt flow
+
+Func_2df80 -> ScriptFightingClubAfterDuelJessica
+; handles Jessica's Fighting Club after-duel booster reward dialog
+
+Func_2df9c -> CheckShowFightingClubMembers
+; returns carry when Fighting Club members should appear after top-left coin event without temporary map state
+
+Func_2dfb1 -> ScriptFightingClubGr1
+; runs GR1's Fighting Club interaction dialog and duel prompt flow
+
+Func_2e008 -> ScriptFightingClubAfterDuelGr1
+; handles GR1's Fighting Club after-duel reward and GR coin piece sequence
+
+Func_2e023 -> CheckShowFightingClubGr1
+; returns carry when GR1 should appear in Fighting Club after first Rock Club encounter and before coin-piece reward
+
+Func_2e0bc -> SetGrassClubEntranceGRMusicIfTopRightCoinPieceMissing
+; sets GR encounter music preload in Grass Club Entrance until top-right coin piece is obtained
+
+Func_2e0cc -> PlayGrassClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Grass Club Entrance when Ronald should appear
+
+Func_2e0dc -> ExecuteGrassClubEntranceStepEvents
+; runs Grass Club Entrance coordinate-triggered step-event scripts
+
+Func_2e0e3 -> HandleGrassClubEntranceWarpFadeInPreload
+; handles Grass Club Entrance warp fade-in preload and schedules Ronald event scripts
+
+Func_2e10f -> HandleGrassClubEntranceAfterDuel
+; handles Grass Club Entrance after-duel flow for Ronald GC pieces event
+
+Func_2e115 -> HandleGrassClubEntranceContinueOverworld
+; resumes Grass Club Entrance overworld and clears temporary Ronald event state
+
+Func_2e1c2 -> SetGrassClubGRMusicIfTopRightCoinPieceMissing
+; sets GR encounter music preload in Grass Club until top-right coin piece is obtained
+
+Func_2e1d2 -> ExecuteGrassClubStepEvents
+; runs Grass Club coordinate-triggered step-event scripts
+
+Func_2e1d9 -> HandleGrassClubWarpFadeInPreload
+; handles Grass Club warp fade-in preload and applies post-event tile updates
+
+Func_2e1f5 -> LoadGrassClubNPCs
+; loads Grass Club NPC set
+
+Func_2e1fe -> HandleGrassClubInteractions
+; dispatches Grass Club NPC interaction scripts
+
+Func_2e206 -> HandleGrassClubAfterDuel
+; dispatches Grass Club after-duel scripts by current NPC id
+
+Func_2e226 -> ScriptGrassClubNikki
+; runs Nikki's Grass Club interaction dialog and duel prompt flow
+
+Func_2e26e -> ScriptGrassClubAfterDuelNikki
+; handles Nikki's Grass Club after-duel booster reward dialog
+
+Func_2e28c -> ScriptGrassClubBrittany
+; runs Brittany's Grass Club interaction dialog and duel prompt branches by progression
+
+Func_2e2f6 -> ScriptGrassClubAfterDuelBrittany
+; handles Brittany's Grass Club after-duel booster reward dialog by progression state
+
+Func_2e332 -> ScriptGrassClubKristin
+; runs Kristin's Grass Club interaction dialog and duel prompt flow
+
+Func_2e378 -> ScriptGrassClubAfterDuelKristin
+; handles Kristin's Grass Club after-duel booster reward dialog
+
+Func_2e394 -> ScriptGrassClubHeather
+; runs Heather's Grass Club interaction dialog and duel prompt flow
+
+Func_2e3da -> ScriptGrassClubAfterDuelHeather
+; handles Heather's Grass Club after-duel booster reward dialog
+
+Func_2e3f6 -> CheckShowGrassClubMembers
+; returns carry when Grass Club members should appear after top-right coin event without temporary map state
+
+Func_2e40b -> ScriptGrassClubGr2
+; runs GR2's Grass Club interaction dialog and duel prompt flow
+
+Func_2e449 -> ScriptGrassClubAfterDuelGr2
+; handles GR2's Grass Club after-duel reward and GR coin piece sequence
+
+Func_2e498 -> CheckShowGrassClubGr2
+; returns carry when GR2 should appear in Grass Club for the top-right coin piece encounter
+
+Func_2e518 -> SetScienceClubEntranceGRMusicIfTopRightCoinPieceMissing
+; sets GR encounter music preload in Science Club Entrance until top-right coin piece is obtained
+
+Func_2e528 -> PlayScienceClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Science Club Entrance when Ronald should appear
+
+Func_2e538 -> ExecuteScienceClubEntranceStepEvents
+; runs Science Club Entrance coordinate-triggered step-event scripts
+
+Func_2e53f -> LoadScienceClubEntranceNPCs
+; loads Science Club Entrance NPC set
+
+Func_2e548 -> HandleScienceClubEntranceWarpFadeInPreload
+; handles Science Club Entrance warp fade-in preload and schedules Ronald event scripts
+
+Func_2e574 -> HandleScienceClubEntranceInteractions
+; dispatches Science Club Entrance NPC interaction scripts
+
+Func_2e57c -> HandleScienceClubEntranceAfterDuel
+; handles Science Club Entrance after-duel flow for Ronald GC pieces event
+
+Func_2e582 -> HandleScienceClubEntranceContinueOverworld
+; resumes Science Club Entrance overworld and clears temporary Ronald event state
+
+Func_2e5d0 -> ScriptScienceClubEntranceJoseph
+; runs Joseph's Science Club Entrance interaction dialog with progression-specific branches
+
+Func_2e62a -> CheckShowScienceClubEntranceJoseph
+; returns carry when Joseph should appear in Science Club Entrance after top-right coin event
+
+Func_2e6f7 -> SetScienceClubLobbyGRMusicIfTopRightCoinPieceMissing
+; sets GR encounter music preload in Science Club Lobby until top-right coin piece is obtained
+
+Func_2e709 -> PlayScienceClubLobbyImakuniBlackThemePostload
+; queues Imakuni Black theme postload in Science Club Lobby when Imakuni event state is active
+
+Func_2e71e -> ExecuteScienceClubLobbyStepEvents
+; runs Science Club Lobby coordinate-triggered step-event scripts
+
+Func_2e725 -> LoadScienceClubLobbyNPCs
+; loads Science Club Lobby NPC set
+
+Func_2e72e -> HandleScienceClubLobbyInteractions
+; dispatches Science Club Lobby NPC and object interaction scripts
+
+Func_2e73e -> HandleScienceClubLobbyAfterDuel
+; dispatches Science Club Lobby after-duel scripts by current NPC id
+
+Func_2e752 -> HandleScienceClubLobbyContinueOverworld
+; resumes Science Club Lobby overworld and clears temporary Imakuni event state
+
+Func_2e76e -> ScriptScienceClubLobbyDavid
+; runs David's Science Club Lobby interaction dialog and duel prompt flow
+
+Func_2e7c7 -> ScriptScienceClubLobbyAfterDuelDavid
+; handles David's Science Club Lobby after-duel booster reward dialog
+
+Func_2e7e3 -> ScriptScienceClubLobbyErik
+; runs Erik's Science Club Lobby interaction dialog with progression-based text branch
+
+Func_2e80d -> CheckShowScienceClubLobbyDavidErik
+; returns carry when David and Erik should appear after top-right coin event outside temporary map state
+
+Func_2e822 -> CheckShowScienceClubLobbyImakuniBlack
+; returns carry when Imakuni Black should appear in Science Club Lobby based on VAR_25 state
+
+Func_2e831 -> ScriptScienceClubLobbyMan
+; runs the Science Club Lobby man dialog branch based on challenge-machine and Midori room state
+
+Func_2e862 -> ScriptScienceClubLobbyGlassesKid
+; runs the Science Club Lobby glasses kid dialog branch based on challenge progress and first-talk event
+
+Func_2e8a0 -> ScriptScienceClubLobbyTech
+; runs the Science Club Lobby tech dialog branch based on challenge-machine and GR coin state
+
+Func_2e8d1 -> CheckShowScienceClubLobbyManGlassesKidTech
+; returns carry when the normal Science Club Lobby NPC trio should appear outside temporary map state
+
+Func_2e945 -> SetScienceClubGRMusicIfTopRightCoinPieceMissing
+; sets GR encounter music preload in Science Club until top-right coin piece is obtained
+
+Func_2e955 -> ExecuteScienceClubStepEvents
+; runs Science Club coordinate-triggered step-event scripts
+
+Func_2e95c -> HandleScienceClubWarpFadeInPreload
+; handles Science Club warp fade-in preload and applies post-event tile updates
+
+Func_2e996 -> LoadScienceClubNPCs
+; loads Science Club NPC set
+
+Func_2e99f -> HandleScienceClubInteractions
+; dispatches Science Club NPC interaction scripts
+
+Func_2e9a7 -> HandleScienceClubAfterDuel
+; dispatches Science Club after-duel scripts by current NPC id
+
+Func_2e9c7 -> ScriptScienceClubRick
+; runs Rick's Science Club interaction dialog and duel prompt branches by progression state
+
+Func_2ea4b -> ScriptScienceClubAfterDuelRick
+; handles Rick's Science Club after-duel booster reward dialog by progression state
+
+Func_2ea87 -> CheckShowScienceClubRick
+; returns carry when Rick should appear in Science Club before Midori room cage event
+
+Func_2ea94 -> ScriptScienceClubDavid
+; runs David's Science Club interaction dialog and duel prompt flow
+
+Func_2ead1 -> ScriptScienceClubAfterDuelDavid
+; handles David's Science Club after-duel booster reward dialog
+
+Func_2eaef -> ScriptScienceClubJoseph
+; runs Joseph's Science Club interaction dialog and duel prompt branches by progression state
+
+Func_2eb6d -> ScriptScienceClubAfterDuelJoseph
+; handles Joseph's Science Club after-duel booster reward dialog by progression state
+
+Func_2eba5 -> ScriptScienceClubErik
+; runs Erik's Science Club interaction dialog and duel prompt flow
+
+Func_2ebeb -> ScriptScienceClubAfterDuelErik
+; handles Erik's Science Club after-duel booster reward dialog
+
+Func_2ec07 -> CheckShowScienceClubMembers
+; returns carry when Science Club members should appear after top-right coin event outside temporary map state
+
+Func_2ec1c -> ScriptScienceClubGr2
+; runs GR2's Science Club interaction dialog and duel prompt flow
+
+Func_2ec5a -> ScriptScienceClubAfterDuelGr2
+; handles GR2's Science Club after-duel reward and GR coin piece sequence
+
+Func_2eca9 -> CheckShowScienceClubGr2
+; returns carry when GR2 should appear in Science Club for the top-right coin piece encounter
+
+Func_2ed17 -> SetWaterClubEntranceGRMusicIfStarmieCoinMissing
+; sets GR encounter music preload in Water Club Entrance until the Starmie coin is obtained
+
+Func_2ed27 -> PlayWaterClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Water Club Entrance when Ronald should appear
+
+Func_2ed37 -> ExecuteWaterClubEntranceStepEvents
+; runs Water Club Entrance coordinate-triggered step-event scripts
+
+Func_2ed3e -> HandleWaterClubEntranceWarpFadeInPreload
+; handles Water Club Entrance warp fade-in preload, mailbox trigger, and Ronald event script setup
+
+Func_2ed75 -> HandleWaterClubEntranceWarpFadeOutPreload
+; handles Water Club Entrance warp fade-out preload and clears Sara-talk state when re-entering from overworld
+
+Func_2ed8c -> HandleWaterClubEntranceContinueOverworld
+; resumes Water Club Entrance overworld and clears temporary Ronald event state
+
+Func_2ee73 -> SetWaterClubLobbyGRMusicIfStarmieCoinMissing
+; sets GR encounter music preload in Water Club Lobby until the Starmie coin is obtained
+
+Func_2ee85 -> PlayWaterClubLobbyImakuniBlackThemePostload
+; queues Imakuni Black theme postload in Water Club Lobby when Imakuni event state is active
+
+Func_2ee9a -> ExecuteWaterClubLobbyStepEvents
+; runs Water Club Lobby coordinate-triggered step-event scripts
+
+Func_2eea1 -> LoadWaterClubLobbyNPCs
+; loads Water Club Lobby NPC set
+
+Func_2eeaa -> HandleWaterClubLobbyInteractions
+; dispatches Water Club Lobby NPC and object interaction scripts
+
+Func_2eeba -> HandleWaterClubLobbyAfterDuel
+; dispatches Water Club Lobby after-duel scripts by current NPC id
+
+Func_2eece -> HandleWaterClubLobbyContinueOverworld
+; resumes Water Club Lobby overworld and clears temporary Imakuni event state
+
+Func_2eeea -> ScriptWaterClubLobbyJoshua
+; runs Joshua's Water Club Lobby interaction dialog and duel prompt flow
+
+Func_2ef43 -> ScriptWaterClubLobbyAfterDuelJoshua
+; handles Joshua's Water Club Lobby after-duel booster reward dialog
+
+Func_2ef5f -> CheckShowWaterClubLobbyJoshua
+; returns carry when Joshua should appear in Water Club Lobby after Starmie coin event outside temporary map state
+
+Func_2ef74 -> ScriptWaterClubLobbyLass
+; runs the Water Club Lobby lass dialog branch with Imakuni-event script call variation
+
+Func_2ef9f -> CheckShowWaterClubLobbyImakuniBlack
+; returns carry when Imakuni Black should appear in Water Club Lobby based on VAR_25 state
+
+Func_2efae -> ScriptWaterClubLobbyPappy
+; runs the Water Club Lobby pappy dialog branch based on GR coin and Starmie coin progression
+
+Func_2efe1 -> ScriptWaterClubLobbyLonghairedLass
+; runs the Water Club Lobby longhaired lass dialog branch based on challenge progress
+
+Func_2f085 -> SetWaterClubGRMusicIfStarmieCoinMissing
+; sets GR encounter music preload in Water Club until the Starmie coin is obtained
+
+Func_2f095 -> ExecuteWaterClubStepEvents
+; runs Water Club coordinate-triggered step-event scripts
+
+Func_2f09c -> LoadWaterClubNPCs
+; loads Water Club NPC set
+
+Func_2f0a5 -> HandleWaterClubWarpFadeInPreload
+; handles Water Club warp fade-in preload by loading captured-NPC or post-rescue room state
+
+Func_2f0f7 -> HandleWaterClubInteractions
+; dispatches Water Club NPC and object interaction scripts
+
+Func_2f107 -> HandleWaterClubAfterDuel
+; dispatches Water Club after-duel scripts by current NPC id
+
+Func_2f1d2 -> ScriptWaterClubAmy
+; runs Amy's post-rescue Water Club interaction dialog
+
+Func_2f1ed -> CheckShowWaterClubAmy
+; returns carry when Amy should appear in Water Club after rescue-state transition
+
+Func_2f1fa -> ScriptWaterClubLoungeAmy
+; runs Amy Lounge interaction flow and duel prompt branches based on progression state
+
+Func_2f28a -> ScriptWaterClubAfterDuelAmyLounge
+; handles Amy Lounge Water Club after-duel booster reward dialog by progression state
+
+Func_2f2cf -> ScriptWaterClubJoshua
+; runs Joshua's Water Club interaction dialog and duel prompt branches by progression state
+
+Func_2f335 -> ScriptWaterClubAfterDuelJoshua
+; handles Joshua's Water Club after-duel booster reward dialog by progression state
+
+Func_2f36d -> CheckShowWaterClubAmyLoungeAndJoshua
+; returns carry when Amy Lounge and Joshua should appear in Water Club after Starmie coin event outside temporary map state
+
+Func_2f382 -> ScriptWaterClubSara
+; runs Sara's Water Club interaction dialog and duel prompt branches by progression state
+
+Func_2f3d5 -> ScriptWaterClubAfterDuelSara
+; handles Sara's Water Club after-duel booster reward dialog
+
+Func_2f3f1 -> ScriptWaterClubAmanda
+; runs Amanda's Water Club interaction dialog and duel prompt branches by progression state
+
+Func_2f44f -> ScriptWaterClubAfterDuelAmanda
+; handles Amanda's Water Club after-duel booster reward dialog with first-clear branch
+
+Func_2f478 -> CheckShowWaterClubSaraAmanda
+; returns carry when Sara and Amanda should appear in Water Club before Starmie coin event
+
+Func_2f485 -> ScriptWaterClubGr3
+; runs GR3's Water Club interaction and duel prompt sequence
+
+Func_2f4d9 -> ScriptWaterClubAfterDuelGr3
+; handles GR3's Water Club after-duel reward and rescue coin/cutscene sequence
+
+Func_2f4f2 -> CheckShowWaterClubGr3
+; returns carry when GR3 should appear in Water Club before Starmie coin reward
+
+Func_2f54e -> SetFireClubEntranceGRMusicIfBottomLeftCoinPieceMissing
+; sets GR encounter music preload in Fire Club Entrance until bottom-left coin piece is obtained
+
+Func_2f55e -> PlayFireClubEntranceRonaldThemePostload
+; queues Ronald theme postload in Fire Club Entrance when Ronald should appear
+
+Func_2f56e -> ExecuteFireClubEntranceStepEvents
+; runs Fire Club Entrance coordinate-triggered step-event scripts
+
+Func_2f575 -> HandleFireClubEntranceWarpFadeInPreload
+; handles Fire Club Entrance warp fade-in preload and schedules Ronald event scripts
+
+Func_2f5a8 -> HandleFireClubEntranceAfterDuel
+; handles Fire Club Entrance after-duel flow for Ronald GC pieces event
+
+Func_2f5ae -> HandleFireClubEntranceContinueOverworld
+; resumes Fire Club Entrance overworld and clears temporary Ronald event state
+
+Func_2f6a0 -> SetFireClubLobbyGRMusicIfBottomLeftCoinPieceMissing
+; sets GR encounter music preload in Fire Club Lobby until bottom-left coin piece is obtained
+
+Func_2f6b2 -> PlayFireClubLobbyImakuniBlackThemePostload
+; queues Imakuni Black theme postload in Fire Club Lobby when Imakuni event state is active
+
+Func_2f6c7 -> ExecuteFireClubLobbyStepEvents
+; runs Fire Club Lobby coordinate-triggered step-event scripts
+
+Func_2f6ce -> LoadFireClubLobbyNPCs
+; loads Fire Club Lobby NPC set
+
+Func_2f6d7 -> HandleFireClubLobbyInteractions
+; dispatches Fire Club Lobby NPC and object interaction scripts
+
+Func_2f6e7 -> HandleFireClubLobbyAfterDuel
+; handles Fire Club Lobby after-duel flow for Imakuni Black
+
+Func_2f6ed -> HandleFireClubLobbyContinueOverworld
+; resumes Fire Club Lobby overworld and clears temporary Imakuni event state
+
+Func_2f709 -> ScriptFireClubLobbyPunkGuyTradeFlareon
+; runs the Fire Club Lobby trade script for Flareon to Meowth exchange
+
+Func_2f76f -> CheckShowFireClubLobbyImakuniBlack
+; returns carry when Imakuni Black should appear in Fire Club Lobby based on VAR_25 state
+
+Func_2f77e -> ScriptFireClubLobbyMartialArtist
+; runs the Fire Club Lobby martial artist dialog branch based on GR coin progress
+
+Func_2f7a4 -> ScriptFireClubLobbyGal
+; runs the Fire Club Lobby gal dialog branch based on challenge-machine state
+
+Func_2f84e -> SetFireClubGRMusicIfBottomLeftCoinPieceMissing
+; sets GR encounter music preload in Fire Club until bottom-left coin piece is obtained
+
+Func_2f85e -> ExecuteFireClubStepEvents
+; runs Fire Club coordinate-triggered step-event scripts
+
+Func_2f865 -> LoadFireClubNPCs
+; loads Fire Club NPC set
+
+Func_2f86e -> HandleFireClubWarpFadeInPreload
+; handles Fire Club warp fade-in preload with captured-room or post-rescue NPC/tile state setup
+
+Func_2f8c8 -> HandleFireClubInteractions
+; dispatches Fire Club NPC and object interaction scripts
+
+Func_2f8d8 -> HandleFireClubAfterDuel
+; dispatches Fire Club after-duel scripts by current NPC id
+
+Func_2f926 -> ScriptFireClubKen
+; runs Ken's Fire Club interaction dialog and duel prompt branches by progression state
+
+Func_2f9ed -> ScriptFireClubAfterDuelKen
+; handles Ken's Fire Club after-duel booster reward dialog by progression state
+
+Func_2fa25 -> ScriptFireClubJohn
+; runs John's Fire Club interaction dialog and duel prompt branches by progression state
+
+Func_2fa85 -> ScriptFireClubAfterDuelJohn
+; handles John's Fire Club after-duel booster reward dialog
+
+Func_2faa1 -> ScriptFireClubAdam
+; runs Adam's Fire Club interaction dialog and duel prompt branches by progression state
+
+Func_2fb32 -> ScriptFireClubAfterDuelAdam
+; handles Adam's Fire Club after-duel booster reward dialog
+
+Func_2fb4e -> ScriptFireClubJonathan
+; runs Jonathan's Fire Club interaction dialog and duel prompt branches by progression state
+
+Func_2fbb7 -> ScriptFireClubAfterDuelJonathan
+; handles Jonathan's Fire Club after-duel booster reward dialog
+
+Func_2fbd3 -> ScriptFireClubGr3
+; runs GR3's Fire Club interaction dialog and duel prompt flow
+
+Func_2fc0e -> ScriptFireClubAfterDuelGr3
+; handles GR3's Fire Club after-duel reward and bottom-left coin piece sequence
+
+Func_2fc29 -> CheckShowFireClubGr3
+; returns carry when GR3 should appear in Fire Club after Starmie coin and before Charmander coin reward
+
+Func_2fcad -> ScriptFireClubOWInteractionKen
+; forwards Fire Club floor interaction to Ken script before the Charmander coin event
+
+Func_2fcb7 -> ScriptFireClubOWInteractionJohn
+; forwards Fire Club floor interaction to John script before the Charmander coin event
+
+Func_2fcc1 -> ScriptFireClubOWInteractionAdam
+; forwards Fire Club floor interaction to Adam script before the Charmander coin event
+
+Func_2fccb -> ScriptFireClubOWInteractionJonathan
+; forwards Fire Club floor interaction to Jonathan script before the Charmander coin event
+
+Func_2fd73 -> SetPokemonDomeEntranceGRMusicIfGRCoinMissing
+; sets GR encounter music preload in Pokemon Dome Entrance until the GR coin is obtained
+
+Func_2fd83 -> ExecutePokemonDomeEntranceStepEvents
+; runs Pokemon Dome Entrance coordinate-triggered step-event scripts
+
+Func_2fd8a -> LoadPokemonDomeEntranceNPCs
+; loads Pokemon Dome Entrance NPC set
+
+Func_2fd93 -> HandlePokemonDomeEntranceInteractions
+; dispatches Pokemon Dome Entrance NPC and object interaction scripts
+
+Func_2fe54 -> HandleOverheadIslandsWarpFadeInPreload
+; initializes Overhead Islands blimp object state and starts the blimp flyover script
+
+Func_2fe94 -> NoOpOverheadIslandsWarpFadeOutPreload
+; no-op warp fade-out preload handler for Overhead Islands map scripts
+
+Func_2fe97 -> NoOpOverheadIslandsWarpEndSFX
+; no-op warp-end SFX handler for Overhead Islands map scripts
+
+Func_2fe9a -> RunOverheadIslandsBlimpFlyoverScript
+; runs the bidirectional Overhead Islands blimp flyover transition script between TCG and GR maps
+
+Func_34037 -> RunRonaldSecondMeetingCardPopScene1
+; runs one variant of Ronald's second-meeting card-pop cutscene and save flow
+
+Func_340a4 -> RunRonaldSecondMeetingCardPopScene2
+; runs one variant of Ronald's second-meeting card-pop cutscene and save flow
+
+Func_34111 -> RunRonaldSecondMeetingCardPopScene3
+; runs one variant of Ronald's second-meeting card-pop cutscene and save flow
+
+Func_3417e -> RunRonaldGCPieces2DuelIntroScript
+; runs Ronald's GC pieces 2 encounter intro and starts the duel
+
+Func_341f7 -> RunRonaldGCPieces4GiftScript
+; runs Ronald's GC pieces 4 encounter and gift sequence
+
+Func_342ef -> RunRonaldGRXDuelIntroScript
+; runs Ronald's GRX disguise duel intro cutscene and starts the duel
+
+Func_34323 -> HandleRonaldGRXAfterDuel
+; handles Ronald's GRX disguise post-duel reveal, reward dialog, and exit sequence
+
+Func_34391 -> RunRonaldPowerDeckDuelIntroScript
+; runs Ronald's power deck duel intro cutscene and starts the duel
+
+Func_343ef -> ScriptRonaldPowerDeckAfterDuel
+; handles Ronald's power deck post-duel reward and exit sequence
+
+Func_3442d -> RunRonaldGRXRevealCutscene
+; runs the Ronald/GRX reveal cutscene and updates progression mail/state
+
+Func_3448d -> RunRonaldPsychicDeckDuelIntroScript
+; runs Ronald's psychic deck duel intro cutscene and starts the duel
+
+Func_344da -> ScriptRonaldPsychicDeckAfterDuel
+; handles Ronald's psychic deck post-duel reward and departure sequence
+
+Func_3451d -> RunRonaldWonGR3GiftScript
+; runs Ronald's won-GR3 gift encounter cutscene and booster reward sequence
+
+Func_345f1 -> HandleTcgAirportEntranceIdle
+; handles idle-frame processing in TCG Airport Entrance, including boarding alignment updates
+
+Func_345fd -> SetTcgAirportEntranceGRMusicIfGRCoinMissing
+; sets GR encounter music preload in TCG Airport Entrance until the GR coin is obtained
+
+Func_3460d -> ExecuteTcgAirportEntranceStepEvents
+; runs TCG Airport Entrance coordinate-triggered step-event scripts
+
+Func_34614 -> LoadTcgAirportEntranceNPCs
+; loads TCG Airport Entrance NPC set
+
+Func_3461d -> HandleTcgAirportEntranceInteractions
+; dispatches TCG Airport Entrance NPC and object interaction scripts
+
+Func_3462d -> HandleTcgAirportEntranceBoardingTileTrigger
+; handles TCG Airport Entrance boarding trigger tiles and resumes overworld movement input
+
+Func_34635 -> UpdateTcgAirportEntranceBoardingAlignment
+; updates player and GR5 alignment near TCG Airport Entrance boarding tiles
+
+Func_346bc -> CheckShowTcgAirportEntranceGr5
+; returns carry when GR5 should appear at TCG Airport Entrance based on flyover-state event
+
+Func_347ce -> HandleTcgAirportIdle
+; handles idle-frame processing in TCG Airport including movement/input updates
+
+Func_347da -> ExecuteTcgAirportStepEvents
+; runs TCG Airport coordinate-triggered step-event scripts
+
+Func_347e1 -> LoadTcgAirportNPCs
+; loads TCG Airport NPC set
+
+Func_347ea -> HandleTcgAirportWarpFadeInPreload
+; handles TCG Airport warp fade-in preload and sets up GR5 flight/landing scripts by previous map
+
+Func_34873 -> HandleTcgAirportWarpEndSFX
+; handles TCG Airport warp-end audio sequence when arriving from TCG overworld
+
+Func_3489d -> HandleTcgAirportInteractions
+; dispatches TCG Airport NPC interaction scripts
+
+Func_349cd -> HandleTcgAirportBoardingTileTrigger
+; handles TCG Airport boarding trigger coordinates and resumes overworld movement input
+
+Func_349d5 -> UpdateTcgAirportBoardingAlignment
+; updates player and GR5 alignment near TCG Airport boarding positions
+
+Func_34a7d -> EnsureGr5BoardingX9_TcgAirport
+; moves GR5 toward boarding x-coordinate 9 in TCG Airport when alignment requires it
+
+Func_34a96 -> EnsureGr5BoardingX10_TcgAirport
+; moves GR5 toward boarding x-coordinate 10 in TCG Airport when alignment requires it
+
+Func_34b16 -> ExecuteGrAirportEntranceStepEvents
+; runs GR Airport Entrance coordinate-triggered step-event scripts
+
+Func_34b1d -> LoadGrAirportEntranceNPCs
+; loads GR Airport Entrance NPC set
+
+Func_34b26 -> HandleGrAirportEntranceInteractions
+; dispatches GR Airport Entrance NPC and overworld interaction scripts
+
+Func_34c2c -> ExecuteGameCenter1StepEvents
+; runs Game Center 1 coordinate-triggered step-event scripts
+
+Func_34c33 -> LoadGameCenter1NPCs
+; loads Game Center 1 NPC set
+
+Func_34c3c -> HandleGameCenter1Interactions
+; dispatches Game Center 1 NPC and overworld interaction scripts
+
+Func_34ee7 -> ExecuteGameCenter2StepEvents
+; runs Game Center 2 coordinate-triggered step-event scripts
+
+Func_34eee -> LoadGameCenter2NPCs
+; loads Game Center 2 NPC set
+
+Func_34ef7 -> HandleGameCenter2Interactions
+; dispatches Game Center 2 NPC and overworld interaction scripts
+
+Func_34f07 -> HandleGameCenter2WarpFadeInPreload
+; handles Game Center 2 warp fade-in preload and queues card dungeon exit script when returning from dungeon maps
+
+Func_350e6 -> ExecuteCardDungeonBishopStepEvents
+; runs Card Dungeon Bishop coordinate-triggered step-event scripts
+
+Func_350ed -> LoadCardDungeonBishopNPCs
+; loads Card Dungeon Bishop NPC set
+
+Func_350f6 -> HandleCardDungeonBishopInteractions
+; dispatches Card Dungeon Bishop NPC and overworld interaction scripts
+
+Func_35106 -> HandleCardDungeonBishopWarpFadeInPreload
+; handles Card Dungeon Bishop warp fade-in preload by restoring front-door tiles and starting entry movement script
+
+Func_35127 -> HandleCardDungeonBishopAfterDuel
+; dispatches Card Dungeon Bishop after-duel script handling
+
+Func_3525b -> Script_CardDungeonBishopWarpEntrance
+; runs Card Dungeon Bishop warp-entry movement/door-close sequence and restores idle overworld mode
+
+Func_35308 -> PreloadGrChallengeHallLobbyMusic
+; preloads GR Challenge Hall Cup music in lobby when challenge cup state is active
+
+Func_35322 -> ExecuteGrChallengeHallLobbyStepEvents
+; runs GR Challenge Hall Lobby coordinate-triggered step-event scripts
+
+Func_35329 -> LoadGrChallengeHallLobbyNPCs
+; loads GR Challenge Hall Lobby NPC set
+
+Func_35332 -> HandleGrChallengeHallLobbyInteractions
+; dispatches GR Challenge Hall Lobby NPC and overworld interaction scripts
+
+Func_354d3 -> ExecuteGrassFortMorinoStepEvents
+; runs Grass Fort Morino coordinate-triggered step-event scripts
+
+Func_354da -> LoadGrassFortMorinoNPCs
+; loads Grass Fort Morino NPC set
+
+Func_354e3 -> HandleGrassFortMorinoInteractions
+; dispatches Grass Fort Morino NPC interaction scripts
+
+Func_354eb -> HandleGrassFortMorinoAfterDuel
+; dispatches Grass Fort Morino after-duel script handling
+
+Func_354fb -> Script_Morino
+; runs the Morino NPC interaction script in Grass Fort Morino
+
+Func_35596 -> Script_MorinoAfterDuel
+; runs Morino's Grass Fort after-duel script handling including rewards and progression updates
+
+Func_35624 -> ExecuteWaterFortSentaStepEvents
+; runs Water Fort Senta coordinate-triggered step-event scripts
+
+Func_3562b -> LoadWaterFortSentaNPCs
+; loads Water Fort Senta NPC set
+
+Func_35634 -> HandleWaterFortSentaWarpFadeInPreload
+; handles Water Fort Senta warp fade-in preload by restoring bridge/room tile and Senta positioning state
+
+Func_35661 -> HandleWaterFortSentaInteractions
+; dispatches Water Fort Senta NPC interaction scripts
+
+Func_35669 -> HandleWaterFortSentaAfterDuel
+; dispatches Water Fort Senta after-duel script handling
+
+Func_35679 -> Script_Senta
+; runs the Senta NPC interaction script in Water Fort Senta
+
+Func_356e8 -> Script_SentaAfterDuel
+; runs Senta's Water Fort after-duel script handling including bridge progression and rescue cutscene flow
+
+Func_35855 -> ExecuteWaterFortAiraStepEvents
+; runs Water Fort Aira coordinate-triggered step-event scripts
+
+Func_3585c -> LoadWaterFortAiraNPCs
+; loads Water Fort Aira NPC set
+
+Func_35865 -> HandleWaterFortAiraWarpFadeInPreload
+; handles Water Fort Aira warp fade-in preload by restoring bridge tile/object state when unresolved
+
+Func_35882 -> HandleWaterFortAiraInteractions
+; dispatches Water Fort Aira NPC interaction scripts
+
+Func_3588a -> HandleWaterFortAiraAfterDuel
+; dispatches Water Fort Aira after-duel script handling
+
+Func_3589a -> Script_Aira
+; runs the Aira NPC interaction script in Water Fort Aira
+
+Func_358f3 -> Script_AiraAfterDuel
+; runs Aira's Water Fort after-duel script handling including bridge progression updates
+
+Func_359fd -> ExecuteFightingFortStepEvents
+; runs Fighting Fort coordinate-triggered step-event scripts
+
+Func_35a04 -> LoadFightingFortNPCs
+; loads Fighting Fort NPC set
+
+Func_35a0d -> HandleFightingFortWarpFadeInPreload
+; handles Fighting Fort warp fade-in preload including membership-intro setup and early fort state updates
+
+Func_35a7c -> HandleFightingFortInteractions
+; dispatches Fighting Fort NPC and overworld interaction scripts
+
+Func_35a8c -> HandleFightingFortAfterDuel
+; dispatches Fighting Fort after-duel script handling
+
+Func_35a9c -> Script_FightingFortMeetMembers
+; runs the Fighting Fort member-introduction cutscene script on first entry
+
+Func_35b16 -> Script_Kamiya
+; runs the Kamiya NPC interaction script in Fighting Fort
+
+Func_35b82 -> Script_KamiyaAfterDuel
+; runs Kamiya's Fighting Fort after-duel script handling including rewards and progression updates
+
+Func_35be4 -> HandleFightingFortDoorInteraction
+; handles Fighting Fort front-door interaction and unlock prompt based on progression and coin state
+
+Func_35c68 -> ExecuteFightingFortMaze16StepEvents
+; runs Fighting Fort Maze 16 coordinate-triggered step-event scripts
+
+Func_35c6f -> HandleFightingFortMaze16WarpEndSFX
+; handles Maze 16 warp-end state flag based on whether the previous map was the basement
+
+Func_35c7b -> HandleFightingFortMaze16WarpFadeInPreload
+; handles Maze 16 warp fade-in preload setup for pitfall warp state
+
+Func_35c86 -> HandleFightingFortMaze16PitfallDoor
+; handles Maze 16 pitfall-door trigger and sends the player to the basement warp flow
+
+Func_35d04 -> ExecuteFightingFortMaze18StepEvents
+; runs Fighting Fort Maze 18 coordinate-triggered step-event scripts
+
+Func_35d0b -> HandleFightingFortMaze18WarpEndSFX
+; handles Maze 18 warp-end state flag based on whether the previous map was the basement
+
+Func_35d17 -> HandleFightingFortMaze18WarpFadeInPreload
+; handles Maze 18 warp fade-in preload setup for pitfall warp state
+
+Func_35d22 -> HandleFightingFortMaze18PitfallDoor
+; handles Maze 18 pitfall-door trigger and sends the player to the basement warp flow
+
+Func_35d7a -> ExecuteFightingFortGodaStepEvents
+; runs Fighting Fort Goda coordinate-triggered step-event scripts
+
+Func_35d81 -> LoadFightingFortGodaNPCs
+; loads Fighting Fort Goda NPC set
+
+Func_35d8a -> HandleFightingFortGodaWarpFadeInPreload
+; handles Fighting Fort Goda warp fade-in preload by restoring cage-room tiles before rescue progression
+
+Func_35da0 -> HandleFightingFortGodaInteractions
+; dispatches Fighting Fort Goda NPC and overworld interaction scripts
+
+Func_35db0 -> HandleFightingFortGodaAfterDuel
+; dispatches Fighting Fort Goda after-duel script handling
+
+Func_35dc0 -> Script_FightingFortGodaCagedMitch
+; runs the caged Mitch interaction script in Fighting Fort Goda before cage release
+
+Func_35de2 -> CheckShowFightingFortGodaMitch
+; returns carry when Mitch should be hidden in Fighting Fort Goda after cage release
+
+Func_35def -> Script_Goda
+; runs the Goda NPC interaction script in Fighting Fort Goda
+
+Func_35e5e -> Script_GodaAfterDuel
+; runs Goda's Fighting Fort after-duel script handling including freeing Mitch and reward/cutscene flow
+
+Func_35f59 -> ExecuteFightingFortGraceStepEvents
+; runs Fighting Fort Grace coordinate-triggered step-event scripts
+
+Func_35f60 -> LoadFightingFortGraceNPCs
+; loads Fighting Fort Grace NPC set
+
+Func_35f69 -> HandleFightingFortGraceInteractions
+; dispatches Fighting Fort Grace NPC interaction scripts
+
+Func_35f71 -> HandleFightingFortGraceAfterDuel
+; dispatches Fighting Fort Grace after-duel script handling
+
+Func_35f81 -> Script_Grace
+; runs the Grace NPC interaction script in Fighting Fort Grace
+
+Func_35ffb -> Script_GraceAfterDuel
+; runs Grace's Fighting Fort after-duel script handling and chest-state progression
+
+Func_36049 -> Script_FightingFortGraceClosedChest
+; runs closed-chest interaction in Fighting Fort Grace and grants the reward card
+
+Func_36062 -> CheckShowFightingFortGraceClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Grace
+
+Func_36077 -> Script_FightingFortGraceOpenedChest
+; runs opened-chest interaction in Fighting Fort Grace
+
+Func_36082 -> CheckShowFightingFortGraceOpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Grace
+
+Func_360ef -> PlayPsychicStrongholdEntranceRonaldMusicPostload
+; plays Ronald theme postload in Psychic Stronghold Entrance before Ronald encounter progression completes
+
+Func_36104 -> ExecutePsychicStrongholdEntranceStepEvents
+; runs Psychic Stronghold Entrance coordinate-triggered step-event scripts
+
+Func_3610b -> LoadPsychicStrongholdEntranceNPCs
+; loads Psychic Stronghold Entrance NPC set
+
+Func_36114 -> HandlePsychicStrongholdEntranceWarpFadeInPreload
+; handles Psychic Stronghold Entrance warp fade-in preload including Ronald GRX reveal cutscene setup
+
+Func_36140 -> HandlePsychicStrongholdEntranceInteractions
+; dispatches Psychic Stronghold Entrance NPC interaction scripts
+
+Func_36148 -> Script_PsychicStrongholdEntranceClerk
+; runs the Psychic Stronghold Entrance clerk interaction script
+
+Func_361f9 -> PlayPsychicStrongholdLobbyImakuniRedMusicPostload
+; plays Imakuni Red theme postload in Psychic Stronghold Lobby when the related state var is active
+
+Func_3620e -> ExecutePsychicStrongholdLobbyStepEvents
+; runs Psychic Stronghold Lobby coordinate-triggered step-event scripts
+
+Func_36215 -> LoadPsychicStrongholdLobbyNPCs
+; loads Psychic Stronghold Lobby NPC set
+
+Func_3621e -> HandlePsychicStrongholdLobbyInteractions
+; dispatches Psychic Stronghold Lobby NPC and overworld interaction scripts
+
+Func_3622e -> HandlePsychicStrongholdLobbyAfterDuel
+; dispatches Psychic Stronghold Lobby after-duel script handling
+
+Func_36234 -> HandlePsychicStrongholdLobbyContinueOverworld
+; handles continue-overworld cleanup for temporary Imakuni Red state in Psychic Stronghold Lobby
+
+Func_36250 -> Script_PsychicStrongholdLobbyLady
+; runs the Psychic Stronghold Lobby lady interaction script
+
+Func_362c4 -> Script_PsychicStrongholdLobbyUncappedLad
+; runs the Psychic Stronghold Lobby uncapped lad interaction script
+
+Func_362ea -> Script_PsychicStrongholdLobbyGrLass
+; runs the Psychic Stronghold Lobby GR lass interaction script
+
+Func_36310 -> CheckShowPsychicStrongholdLobbyImakuniRed
+; returns carry when Imakuni Red should be hidden in Psychic Stronghold Lobby based on progression var
+
+Func_3638f -> ExecutePsychicStrongholdStepEvents
+; runs Psychic Stronghold coordinate-triggered step-event scripts
+
+Func_36396 -> LoadPsychicStrongholdNPCs
+; loads Psychic Stronghold NPC set
+
+Func_3639f -> HandlePsychicStrongholdWarpFadeInPreload
+; handles Psychic Stronghold warp fade-in preload including member-state setup and platform-return script dispatch
+
+Func_36434 -> HandlePsychicStrongholdWarpEndSFX
+; handles Psychic Stronghold warp-end state flag based on whether previous map was Mami's room
+
+Func_36440 -> HandlePsychicStrongholdInteractions
+; dispatches Psychic Stronghold NPC interaction scripts
+
+Func_36448 -> HandlePsychicStrongholdPauseMenu
+; handles Psychic Stronghold pause-menu behavior including platform frameset adjustments by player position
+
+Func_36490 -> HandlePsychicStrongholdAfterDuel
+; dispatches Psychic Stronghold after-duel script handling
+
+Func_364ac -> Script_PsychicStrongholdMamiIntro
+; runs the Psychic Stronghold Mami intro/event script that introduces stronghold members
+
+Func_36712 -> Script_Miwa
+; runs the Miwa NPC interaction script in Psychic Stronghold
+
+Func_3678e -> Script_MiwaAfterDuel
+; runs Miwa's Psychic Stronghold after-duel script handling and progression updates
+
+Func_3682a -> Script_Kevin
+; runs the Kevin NPC interaction script in Psychic Stronghold
+
+Func_36887 -> Script_KevinAfterDuel
+; runs Kevin's Psychic Stronghold after-duel script handling and progression updates
+
+Func_36921 -> Script_Yosuke
+; runs the Yosuke NPC interaction script in Psychic Stronghold
+
+Func_36990 -> Script_YosukeAfterDuel
+; runs Yosuke's Psychic Stronghold after-duel script handling and progression updates
+
+Func_36a2a -> Script_Ryoko
+; runs the Ryoko NPC interaction script in Psychic Stronghold
+
+Func_36ad3 -> Script_RyokoAfterDuel
+; runs Ryoko's Psychic Stronghold after-duel script handling and progression updates
+
+Func_36b8f -> CheckShowPsychicStrongholdPlatform
+; returns carry when the Psychic Stronghold platform object should be shown
+
+Func_36bc8 -> HandlePsychicStrongholdLobbyWarp
+; handles lower Psychic Stronghold coordinate warp, running Mami intro if members are not met
+
+Func_36be5 -> HandlePsychicStrongholdMamiRoomWarp
+; handles Psychic Stronghold upper coordinate warp and platform movement script toward Mami room
+
+Func_36c36 -> Script_ReturnFromPsychicStrongholdMami
+; runs return-from-Mami platform descent script and restores idle overworld mode
+
+Func_36ce5 -> ExecutePsychicStrongholdMamiStepEvents
+; runs Psychic Stronghold Mami coordinate-triggered step-event scripts
+
+Func_36cec -> LoadPsychicStrongholdMamiNPCs
+; loads Psychic Stronghold Mami NPC set
+
+Func_36cf5 -> HandlePsychicStrongholdMamiWarpFadeInPreload
+; handles Psychic Stronghold Mami warp fade-in preload and initializes entry script/platform frameset
+
+Func_36d1e -> HandlePsychicStrongholdMamiWarpEndSFX
+; handles Psychic Stronghold Mami warp-end state flag return
+
+Func_36d21 -> HandlePsychicStrongholdMamiInteractions
+; dispatches Psychic Stronghold Mami NPC interaction scripts
+
+Func_36d29 -> HandlePsychicStrongholdMamiPauseMenu
+; handles Psychic Stronghold Mami pause-menu behavior including platform frameset adjustments by player position
+
+Func_36d65 -> HandlePsychicStrongholdMamiAfterDuel
+; dispatches Psychic Stronghold Mami after-duel script handling
+
+Func_36de8 -> Script_PsychicStrongholdMamiRod
+; runs the Rod NPC interaction script in Psychic Stronghold Mami
+
+Func_36e03 -> CheckShowPsychicStrongholdMamiRod
+; returns carry when Rod should be hidden in Psychic Stronghold Mami after rescue progression
+
+Func_36e18 -> Script_Mami
+; runs the Mami NPC interaction script in Psychic Stronghold Mami
+
+Func_36e9b -> Script_MamiAfterDuel
+; runs Mami's Psychic Stronghold after-duel script handling and progression updates
+
+Func_36ed7 -> Script_PsychicStrongholdMamiMeetRod
+; runs the Psychic Stronghold Mami introductory cutscene that introduces Rod
+
+Func_36f43 -> Script_PsychicStrongholdMamiWarpEntry
+; runs Psychic Stronghold Mami warp-entry sequence and dispatches first-meet script if needed
+
+Func_36f7f -> HandlePsychicStrongholdMamiExitWarp
+; handles Psychic Stronghold Mami exit warp after applying platform frameset delay
+
+Func_36fe2 -> ExecuteColorlessAltarStepEvents
+; runs Colorless Altar coordinate-triggered step-event scripts
+
+Func_36fe9 -> LoadColorlessAltarNPCs
+; loads Colorless Altar NPC set
+
+Func_36ff2 -> HandleColorlessAltarWarpFadeInPreload
+; handles Colorless Altar warp fade-in preload by restoring Samejima's entry position before the intro event
+
+Func_37011 -> HandleColorlessAltarInteractions
+; dispatches Colorless Altar NPC interaction scripts
+
+Func_37019 -> HandleColorlessAltarAfterDuel
+; dispatches Colorless Altar after-duel script handling
+
+Func_37082 -> Script_Nishijima
+; runs the Nishijima NPC interaction script in Colorless Altar
+
+Func_3713b -> Script_NishijimaAfterDuel
+; runs Nishijima's Colorless Altar after-duel script handling
+
+Func_37179 -> Script_Ishii
+; runs the Ishii NPC interaction script in Colorless Altar
+
+Func_3724a -> Script_IshiiAfterDuel
+; runs Ishii's Colorless Altar after-duel script handling
+
+Func_3728d -> Script_Samejima
+; runs the Samejima NPC interaction script in Colorless Altar
+
+Func_37329 -> Script_SamejimaAfterDuel
+; runs Samejima's Colorless Altar after-duel script handling
+
+Func_351d4 -> ReturnFromCardDungeonBishop
+; returns the player to the Game Center warp after leaving Card Dungeon Bishop
+
+Func_35342 -> Script_GrChallengeHallLobbyTradeGrGranny
+; runs the GR Challenge Hall Lobby trade granny interaction script
+
+Func_353e5 -> Script_GrChallengeHallLobbyGrChap
+; runs the GR Challenge Hall Lobby GR chap interaction script
+
+Func_35444 -> CheckShowGrChallengeHallLobbyGrChap
+; returns carry when the GR chap should be hidden in GR Challenge Hall Lobby after his exit event
+
+Func_35451 -> Script_GrChallengeHallLobbyGrWoman
+; runs the GR Challenge Hall Lobby GR woman interaction script
+
+Func_373cb -> HandleGrCastleEntranceIdle
+; handles idle overworld logic at GR Castle Entrance, including open-door warp input
+
+Func_3740f -> ExecuteGrCastleEntranceStepEvents
+; runs GR Castle Entrance coordinate-triggered step-event scripts
+
+Func_37416 -> LoadGrCastleEntranceNPCs
+; loads GR Castle Entrance NPC set
+
+Func_3741f -> HandleGrCastleEntranceWarpFadeInPreload
+; handles GR Castle Entrance warp fade-in preload and restores inserted coin objects/door tiles
+
+Func_3746b -> HandleGrCastleEntranceInteractions
+; dispatches GR Castle Entrance NPC and overworld interaction scripts
+
+Func_3747b -> HandleGrCastleEntranceAfterDuel
+; dispatches GR Castle Entrance after-duel handling
+
+Func_37480 -> HandleGrCastleEntranceDoorInteraction
+; handles interaction with the shut GR Castle Entrance door
+
+Func_37493 -> Script_GrCastleEntranceRightClerk
+; runs the right clerk interaction script at GR Castle Entrance
+
+Func_37534 -> Script_GrCastleEntranceLeftClerk
+; runs the left clerk interaction script at GR Castle Entrance
+
+Func_3765c -> ExecuteGrCastleStepEvents
+; runs GR Castle coordinate-triggered step-event scripts
+
+Func_37663 -> LoadGrCastleNPCs
+; loads GR Castle NPC set
+
+Func_3766c -> HandleGrCastleWarpFadeInPreload
+; handles GR Castle warp fade-in preload by restoring Biruritchi and admin positions from progression state
+
+Func_376ed -> HandleGrCastleInteractions
+; dispatches GR Castle NPC interaction scripts
+
+Func_376f5 -> HandleGrCastleAfterDuel
+; dispatches GR Castle after-duel script handling
+
+Func_37709 -> Script_GrCastleMeetBiruritchiAndAdmins
+; runs the GR Castle intro cutscene that introduces Biruritchi, Kanzaki, and Rui
+
+Func_37809 -> Script_Kanzaki
+; runs the Kanzaki NPC interaction script in GR Castle
+
+Func_378cf -> Script_KanzakiAfterDuel
+; runs Kanzaki's GR Castle after-duel script handling
+
+Func_3792d -> Script_Rui
+; runs the Rui NPC interaction script in GR Castle
+
+Func_37a21 -> Script_RuiAfterDuel
+; runs Rui's GR Castle after-duel script handling
+
+Func_37a5f -> HandleGrCastleStairsTrigger
+; handles the GR Castle stair trigger, dispatching intro, roadblock, or normal movement logic
+
+Func_37a76 -> Script_GrCastleStairsRoadblock
+; runs the GR Castle stairs roadblock script and returns the player from blocked stairs
+
+Func_3920b -> CheckUseDiscardOrEnergyBoostAIForSpecialDeckCard
+; returns carry when Rock Blast or Sudden Growth AI should treat the current card as using discard-or-energy-boost attachment logic
+
+Func_3926a -> CheckUseDiscardOrEnergyBoostAIForSelectedAttack
+; returns carry when the selected attack on those special-deck cards should use discard-or-energy-boost surplus-energy scoring
+
+Func_392db -> CheckIfAttachedEnergyIsBelowSpecialDeckCardMax
+; returns carry while attached energy is still below the special per-card target used by Rock Blast and Sudden Growth AI
+
+Func_3934d -> CheckSkipDoubleColorlessForSpecialDeckCard
+; returns carry when Rock Blast or Smash to Mincemeat AI should skip Double Colorless handling for the current card
+
+Func_397c7 -> FindNonTurnDuelistPlayAreaCardWithDoubleColorlessAttached
+; searches the non-turn duelist's Play Area from the given starting location and returns carry when a card has Double Colorless attached
+
+Func_3a441 -> FindPlayerBenchCardWithAtLeastTwoRetreatCostIfDarkMukInPlay
+; returns carry with a player Bench location when Dark Muk is in play and the player's Arena card can still retreat
+
+Func_3a803 -> ChooseGolduckHyperBeamTarget
+; chooses Golduck lv27's Hyper Beam target, preferring a benched card with Double Colorless attached
+
+Func_3a887 -> FindBenchPokemonWeakToArenaCard
+; returns carry with a bench location when a non-turn duelist's Bench Pokémon is weak to the Arena card's color
+
+Func_39a6a -> FindDeckEvolutionIfEvolutionIsInHandAndBasicIsAbsent
+; returns carry when an evolution is still in Deck and Hand while its corresponding basic is absent from Hand and Play Area
+
+Func_39a8b -> FindDeckEvolutionForSplitEvolutionPair
+; returns carry when an evolution in Deck completes a split evolution pair across Deck and Hand or Play Area
+
+Func_0b6e -> GetNextWordOfList
+; reads the next 16-bit element from the list tracked by wListPointer into de and advances the pointer
+
+Func_0b82 -> GetNextWordOfList2
+; reads the next 16-bit element from the list tracked by wListPointer2 into de and advances the pointer
+
+Func_0b89 -> SetNextWordOfList
+; writes de as the next 16-bit element of the list tracked by wListPointer and advances the pointer
+
+Func_0b99 -> SetNextWordOfList2
+; writes de as the next 16-bit element of the list tracked by wListPointer2 and advances the pointer
+
+Func_0ba0 -> AddAToListPointer
+; advances wListPointer by the byte count in a
+
+Func_0bac -> AddAToListPointer2
+; advances wListPointer2 by the byte count in a
+
+Func_2c4b -> PrintTextNoDelayAndZeroAttributes
+; prints the text id at hl at coordinates de without delay and clears the matching attribute span
+
+Func_1dff -> LoadPlayAreaIconTiles
+; loads the play-area icon tiles used by the duel check-play-area screens
+
+Func_1eb1 -> FillDuelBoxMessageRectangle
+; fills the fixed 10x4 duel box message tile rectangle with tile a
 

@@ -7,10 +7,10 @@ _BillsPC:
 	call DrawRegularTextBox
 	lb de, 1, 0
 	ldtx hl, GameCenterBillsPCTitleText
-	call Func_2c4b
+	call PrintTextNoDelayAndZeroAttributes
 	lb de, 13, 0
 	ldtx hl, GameCenterBillsPC20ChipsPerPlayText
-	call Func_2c4b
+	call PrintTextNoDelayAndZeroAttributes
 	lb de, 2, 2
 	ldtx hl, GameCenterBillsPCDescriptionText
 	call InitTextPrinting_ProcessTextFromID
@@ -387,7 +387,7 @@ DrawBillsPCMenu:
 	ld d, 18
 	call InitTextPrinting
 	ldfw de, "枚"
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	ret
 
 ; return a = list size
@@ -416,7 +416,7 @@ ListBillsPCCompatibleCardsInCollection:
 	bit CARD_NOT_OWNED_F, a
 	jr nz, .loop_cards
 	call SetNextElementOfList
-	call Func_0b99
+	call SetNextWordOfList2
 	inc c
 	jr .loop_cards
 

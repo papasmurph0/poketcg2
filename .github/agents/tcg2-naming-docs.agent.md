@@ -47,7 +47,7 @@ You are a naming and documentation specialist for the Pokemon TCG2 disassembly. 
 ## Tool Use
 - Use the memory tool to load relevant prior findings before proposing names or comments.
 - Use the memory tool at the end only for durable, reusable facts with clear evidence.
-- Use `make clean && make DEBUG=1` for manual parity verification after each rename batch.
+- Use `make clean && make DEBUG=1` for manual parity verification after each rename batch. Run parity builds quietly and only report pass/fail status, preventing noisy preview output by redirecting logs to a file and summarizing key errors when present. For example: `make clean >/tmp/tcg2_make.log 2>&1 && make DEBUG=1 >>/tmp/tcg2_make.log 2>&1`.
 - Do not show `make` output previews in chat. Run parity builds quietly and only report pass/fail plus key errors when present (for example: `make clean >/tmp/tcg2_make.log 2>&1 && make DEBUG=1 >>/tmp/tcg2_make.log 2>&1`).
 
 ## Parity Verification

@@ -33,7 +33,7 @@ _PlayCredits::
 	call ClearCallbackPointer ; repeated
 	ret
 
-Func_138c6:
+SetCreditsFadePaletteMode: ; Func_138c6
 	push af
 	push bc
 	push de
@@ -133,7 +133,7 @@ CreditsCmd_FadeOut:
 	ld a, [wCreditsCmdArg2]
 	ld b, a
 	ld a, [wCreditsCmdArg1]
-	call Func_138c6
+	call SetCreditsFadePaletteMode
 	xor a
 	farcall StartPalFadeToBlackOrWhite
 	ret
@@ -142,7 +142,7 @@ CreditsCmd_FadeIn:
 	ld a, [wCreditsCmdArg2]
 	ld b, a
 	ld a, [wCreditsCmdArg1]
-	call Func_138c6
+	call SetCreditsFadePaletteMode
 	farcall SaveTargetFadePals
 	xor a
 	farcall StartPalFadeFromBlackOrWhite
@@ -306,7 +306,7 @@ CreditsCmd_Scroll:
 	call SetCallbackPointer
 	ret
 
-Func_13ac1::
+UpdateCreditsScrollStep:: ; Func_13ac1
 	; current scroll position
 	ld a, [wCreditsScrollYPos]
 	ld b, a

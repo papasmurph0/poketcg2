@@ -7628,7 +7628,7 @@ DetermineAIScoreOfAttackEnergyRequirement:
 	ld a, ATTACK_FLAG2_ADDRESS | DISCARD_ENERGY_F
 	call CheckLoadedAttackFlag
 	jr c, .discard_energy
-	farcall Func_3926a
+	farcall CheckUseDiscardOrEnergyBoostAIForSelectedAttack
 	jr c, .check_surplus_energy
 	jp .check_evolution
 
@@ -7649,7 +7649,7 @@ DetermineAIScoreOfAttackEnergyRequirement:
 	jr c, .asm_166cd
 
 .asm_166c5
-	farcall Func_392db
+	farcall CheckIfAttachedEnergyIsBelowSpecialDeckCardMax
 	jr c, .asm_166cd
 	ld a, 5
 	call AIDiscourage
@@ -7982,7 +7982,7 @@ AITryToPlayEnergyCard:
 	ld a, ATTACK_FLAG2_ADDRESS | DISCARD_ENERGY_F
 	call CheckLoadedAttackFlag
 	jr c, .energy_boost_or_discard_energy
-	farcall Func_3920b
+	farcall CheckUseDiscardOrEnergyBoostAIForSpecialDeckCard
 	jr c, .energy_boost_or_discard_energy
 
 ; if none of the attacks have those flags, do an additional
@@ -8029,7 +8029,7 @@ AITryToPlayEnergyCard:
 
 ; in this case Pokémon just needs colorless (any basic energy card).
 .colorless_energy
-	farcall Func_3934d
+	farcall CheckSkipDoubleColorlessForSpecialDeckCard
 	jr c, .check_recycle_energy
 	ld a, c
 	or a

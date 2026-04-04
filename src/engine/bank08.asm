@@ -435,11 +435,11 @@ Func_209fc:
 	jr .loop_bench
 
 .PoisonMistDeck:
-	farcall Func_3a441
+	farcall FindPlayerBenchCardWithAtLeastTwoRetreatCostIfDarkMukInPlay
 	ret
 
 .UltraRemovalDeck:
-	farcall Func_3a803
+	farcall ChooseGolduckHyperBeamTarget
 	ret
 
 .PsychicBattleDeck:

@@ -1156,7 +1156,7 @@ OverworldLoop::
 	call ExecuteOWModeScript
 	farcall InitScreenTransitionGraphicsState
 	xor a
-	farcall Func_10d40
+	farcall InitOWObjectsAndNPCMovement
 	ld a, $01
 	farcall SetOWScrollState
 	ld b, $00
@@ -3275,7 +3275,7 @@ ScriptCommand_AnimatePlayerMovement:
 	ld a, [wPlayerOWObject]
 	farcall StartOWObjectAnimation
 	farcall ResetOWObjectFlag5_WithID
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 .delay_loop
 	call DoFrame
 	ld a, [wPlayerOWObject]
@@ -3296,7 +3296,7 @@ ScriptCommand_AnimateNPCMovement:
 	ld c, a
 	pop af
 	push af
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 .delay_loop
 	call DoFrame
 	pop af
@@ -3313,7 +3313,7 @@ ScriptCommand_AnimateActiveNPCMovement:
 	ld b, c
 	ld c, a
 	ld a, [wScriptNPC]
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 .delay_loop
 	call DoFrame
 	ld a, [wScriptNPC]
@@ -5066,7 +5066,7 @@ DebugMenuEffectViewer:
 	ld [wAnimationsDisabled], a
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
-	farcall Func_10d40
+	farcall InitOWObjectsAndNPCMovement
 	farcall SetInitialGraphicsConfiguration
 	lb de, 0, 0
 	lb bc, 20, 18

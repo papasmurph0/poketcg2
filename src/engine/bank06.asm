@@ -4098,7 +4098,7 @@ RequestToPrintCard:
 ; or otherwise just the card's name and type symbol
 .DrawTopCardInfoInSRAMGfxBuffer0:
 	call Func_1a025
-	call Func_212f
+	call LoadPrinterTextAndCardSymbolTiles
 
 	; draw empty text box frame
 	ld hl, sGfxBuffer0
@@ -4488,7 +4488,7 @@ PrintDeckConfiguration:
 	call ShowPrinterTransmitting
 	call PrepareForPrinterCommunications
 	call Func_1a025
-	call Func_212f
+	call LoadPrinterTextAndCardSymbolTiles
 	lb de, 0, 64
 	lb bc, 20, 4
 	call DrawRegularTextBoxDMG
@@ -4660,7 +4660,7 @@ PrintCardList:
 	call CopyPlayerName
 	call PrepareForPrinterCommunications
 	call Func_1a025
-	call Func_212f
+	call LoadPrinterTextAndCardSymbolTiles
 
 	lb de, 0, 64
 	lb bc, 20, 4
@@ -4677,7 +4677,7 @@ PrintCardList:
 	or a
 	jr z, .asm_1a2c2
 	lb de, 4, 85
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 .asm_1a2c2
 	ld a, $ff
 	ld [wCurPrinterCardType], a
@@ -5472,7 +5472,7 @@ Func_1adbd:
 	push de
 	ld de, wc000
 	lb bc, $30, TILE_SIZE
-	call Func_2dc4
+	call LoadCardGfxByAttrMap
 	pop de
 	ld hl, wc000
 	ld c, $08

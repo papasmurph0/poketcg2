@@ -207,7 +207,7 @@ LoadCardGfx::
 	call BankswitchROM
 	ret
 
-Func_2dc4::
+LoadCardGfxByAttrMap:: ; Func_2dc4
 	ldh a, [hBankROM]
 	push af
 	call LoadCardPalettes

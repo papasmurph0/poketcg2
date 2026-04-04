@@ -1809,7 +1809,7 @@ AISelectSpecialAttackParameters:
 	jp c, .no_carry
 	farcall AILookForFocusBlastTargetToKO
 	jr c, .got_focus_blast_target
-	farcall Func_3a887
+	farcall FindBenchPokemonWeakToArenaCard
 	jr c, .got_focus_blast_target
 	farcall AIChooseFocusBlastTarget
 	jr c, .got_focus_blast_target
@@ -3438,7 +3438,7 @@ _HandleAutoDeckMenu:
 .machine_2
 	ldtx hl, AutoDeckMachine2Text
 .got_name
-	call Func_2c4b
+	call PrintTextNoDelayAndZeroAttributes
 	ldtx hl, ChooseDeckCategoryText
 	call DrawWideTextBox_PrintText
 	call Func_2bd48

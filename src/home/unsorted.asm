@@ -479,7 +479,7 @@ HandleOverworldPlayerMoveInput::
 	inc c ; MOVE_SPEED_RUN
 .got_speed
 	ld a, [wPlayerOWObject]
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 	or a
 	jr z, .set_carry
 	ld a, OWMODE_MOVE
@@ -508,7 +508,7 @@ WaitPalFading::
 WaitForPlayerAnimation:: ; Func_3340
 .asm_3340
 	call DoFrame
-	farcall Func_10df3
+	farcall CountOWObjectsWithMovementScript
 	jr z, .asm_3361
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectSpriteAnimFlags
@@ -1910,7 +1910,7 @@ FrameFunc_OverworldAndFadePals:: ; Func_3a39
 	and a
 	jr nz, .asm_3a50
 	ld e, $01
-	farcall Func_11384
+	farcall StepAllScriptedNPCs
 	jr .asm_3a56
 .asm_3a50
 	ld e, $10
@@ -2674,7 +2674,7 @@ SetSpriteAnimationAndFadePalsFrameFunc_Wrapper:: ; Func_3e4f
 
 UnsetSpriteAnimationAndFadePalsFrameFunc_InitOWObjects:: ; Func_3e54
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
-	farcall Func_10d40
+	farcall InitOWObjectsAndNPCMovement
 	ret
 
 ; input
@@ -2708,7 +2708,7 @@ UpdateCreditsScrollCallback_SaveAllRegisters:: ; Func_3e7a
 	push bc
 	push de
 	push hl
-	farcall Func_13ac1
+	farcall UpdateCreditsScrollStep
 	pop hl
 	pop de
 	pop bc

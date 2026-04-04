@@ -154,7 +154,7 @@ LoadDeckAndDiscardPileIcons::
 	ld de, $8a00
 	ld b, $0d
 	call CopyFontsOrDuelGraphicsTiles
-Func_1dff::
+LoadPlayAreaIconTiles:: ; Func_1dff
 	ld hl, $4240
 	ld a, [wConsole]
 	cp CONSOLE_CGB
@@ -196,7 +196,7 @@ CopyFontsOrDuelGraphicsTiles::
 	ret
 
 ; this function copies gfx data into sram
-Func_212f::
+LoadPrinterTextAndCardSymbolTiles:: ; Func_212f
 ; loads symbols fonts to sGfxBuffer1
 	ld hl, SymbolsFont - $4000
 	ld de, sGfxBuffer1
@@ -241,7 +241,7 @@ DrawDuelBoxMessage::
 	call BankswitchVRAM1
 	ld a, 2
 	ld hl, 0
-	call Func_1eb1
+	call FillDuelBoxMessageRectangle
 	call BankswitchVRAM0
 	pop af
 	ld l, a
@@ -259,7 +259,7 @@ DrawDuelBoxMessage::
 	lb hl, 1, 10
 ;	fallthrough
 
-Func_1eb1::
+FillDuelBoxMessageRectangle:: ; Func_1eb1
 	lb bc, 10, 4
 	lb de, 5, 4
 	jp FillRectangle

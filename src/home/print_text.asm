@@ -289,7 +289,7 @@ ProcessTextHeader::
 	jr nc, .not_tx_fullwidth
 	inc hl
 .not_tx_fullwidth
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	xor a
 	call ProcessSpecialTextCharacter
 .processed_char
@@ -496,7 +496,7 @@ PrintTextNoDelay::
 
 ; hl = text ID
 ; de = coordinates
-Func_2c4b::
+PrintTextNoDelayAndZeroAttributes:: ; Func_2c4b
 	push hl
 	push de
 	call PrintTextNoDelay_Init

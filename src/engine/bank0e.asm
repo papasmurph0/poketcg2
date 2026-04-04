@@ -2881,7 +2881,9 @@ CheckIfPlayerHasPokemonOfType:
 	or a
 	ret
 
-Func_3920b:
+; returns carry if this special-deck card should use
+; discard-or-energy-boost attachment handling
+CheckUseDiscardOrEnergyBoostAIForSpecialDeckCard: ; Func_3920b
 	ld a, [wOpponentDeckID]
 	cp ROCK_BLAST_DECK_ID
 	jr z, .rock_blast_deck
@@ -2922,7 +2924,9 @@ Func_3920b:
 	jr z, .set_carry
 	jr .no_carry
 
-Func_3926a:
+; returns carry if the selected attack on this special-deck card
+; should use discard-or-energy-boost surplus-energy scoring
+CheckUseDiscardOrEnergyBoostAIForSelectedAttack: ; Func_3926a
 	ld a, [wOpponentDeckID]
 	cp ROCK_BLAST_DECK_ID
 	jr z, .rock_blast_deck
@@ -2973,7 +2977,9 @@ Func_3926a:
 	jr .no_carry
 
 ; a = number of energy cards attached
-Func_392db:
+; returns carry if attached energy is still below this
+; special-deck card's maximum desired count
+CheckIfAttachedEnergyIsBelowSpecialDeckCardMax: ; Func_392db
 	ld [wAITempCardCount], a
 	ld a, [wOpponentDeckID]
 	cp ROCK_BLAST_DECK_ID
@@ -3024,7 +3030,9 @@ Func_392db:
 	jr z, .compare
 	jr .no_carry
 
-Func_3934d:
+; returns carry if this special-deck card should skip
+; Double Colorless Energy handling
+CheckSkipDoubleColorlessForSpecialDeckCard: ; Func_3934d
 	push bc
 	ld a, [wOpponentDeckID]
 	cp ROCK_BLAST_DECK_ID
@@ -3103,7 +3111,9 @@ CountCardIDInTurnDuelistPlayArea:
 
 SECTION "Bank e@57c7", ROMX[$57c7], BANK[$e]
 
-Func_397c7:
+; searches the non-turn duelist's Play Area from b onward
+; and returns carry if any card has Double Colorless attached
+FindNonTurnDuelistPlayAreaCardWithDoubleColorlessAttached: ; Func_397c7
 	call SwapTurn
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
@@ -3334,7 +3344,9 @@ FindUsableEvolutionInDeck:
 	or a
 	ret
 
-Func_39a6a:
+; returns carry if the evolution is in Deck and Hand,
+; while the corresponding basic is absent from hand and play area
+FindDeckEvolutionIfEvolutionIsInHandAndBasicIsAbsent: ; Func_39a6a
 	push bc
 	push de
 	ld a, CARD_LOCATION_DECK
@@ -3359,14 +3371,16 @@ Func_39a6a:
 ; inputs:
 ; - de = card ID to search in Deck
 ; - bc = card ID to look in Hand and Play Area
-Func_39a8b:
+; returns carry if an evolution card in Deck completes a split
+; evolution pair across Deck and Hand or Play Area
+FindDeckEvolutionForSplitEvolutionPair: ; Func_39a8b
 	push bc
 	push de
 	call CheckEvolutionaryLightTarget
 	pop bc
 	pop de
 	ret c
-	call Func_39a6a
+	call FindDeckEvolutionIfEvolutionIsInHandAndBasicIsAbsent
 	ret
 ; 0x39a97
 
@@ -3660,7 +3674,7 @@ SECTION "Bank e@6441", ROMX[$6441], BANK[$e]
 ; if both are true, search player's Bench for card
 ; with at least 2 energy retreat cost
 ; return carry and its Play Area location if found
-Func_3a441:
+FindPlayerBenchCardWithAtLeastTwoRetreatCostIfDarkMukInPlay: ; Func_3a441
 	ld de, DARK_MUK
 	ld b, PLAY_AREA_ARENA
 	farcall FindCardIDInTurnDuelistsPlayArea
@@ -4277,7 +4291,9 @@ UltraRemovalDeckHandCheck:
 
 SECTION "Bank e@6803", ROMX[$6803], BANK[$e]
 
-Func_3a803:
+; chooses a Hyper Beam target for Golduck lv27, preferring
+; a benched card with Double Colorless attached
+ChooseGolduckHyperBeamTarget: ; Func_3a803
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
@@ -4294,7 +4310,7 @@ Func_3a803:
 	farcall CheckIfSelectedAttackIsUnusable
 	jr c, .no_carry
 	ld b, PLAY_AREA_BENCH_1
-	call Func_397c7
+	call FindNonTurnDuelistPlayAreaCardWithDoubleColorlessAttached
 	ld a, b
 	ret c ; found Double Colorless energy
 	call SwapTurn
@@ -4306,7 +4322,9 @@ Func_3a803:
 
 SECTION "Bank e@6887", ROMX[$6887], BANK[$e]
 
-Func_3a887:
+; returns carry with a bench location if any non-turn duelist
+; bench Pokémon is weak to the Arena card's color
+FindBenchPokemonWeakToArenaCard: ; Func_3a887
 	bank1call GetArenaCardColor
 	call TranslateColorToWR
 	ld [wAIArenaCardColor], a
@@ -5191,7 +5209,7 @@ SetDeckMachineTitleText:
 	ld h, [hl]
 	ld l, a
 	lb de, 1, 0
-	call Func_2c4b
+	call PrintTextNoDelayAndZeroAttributes
 	ret
 
 CopyBBytesFromHLToDE_Bank0e:
@@ -5442,7 +5460,7 @@ ENDR
 
 .cannot_build
 	ldfw de, " "
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 
 ; figure out how many cards are being used on the other decks
 	push bc
@@ -5490,7 +5508,7 @@ ENDR
 	ld d, 16
 	call InitTextPrinting
 	ldfw de, "×" ; "missing" symbol
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	ld a, [wNumCardsNeededToBuildSelectedDeckMissingInCardCollection]
 	ld hl, wDefaultText
 	farcall ConvertToNumericalDigits
@@ -5508,7 +5526,7 @@ ENDR
 	ld d, 12
 	call InitTextPrinting
 	ldfw de, "※" ; REF_MARK, "used" symbol
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	ld a, [wNumCardsNeededToBuildSelectedDeckUsedInBuiltDecks]
 	ld hl, wDefaultText
 	farcall ConvertToNumericalDigits
@@ -5522,7 +5540,7 @@ ENDR
 
 ; clear the card-shortfall text area
 .padding
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	pop de
 	ld d, 12
 	inc e
@@ -7310,7 +7328,7 @@ _HandleAutoDeckSelectionMenu:
 	ld h, [hl]
 	ld l, a
 	lb de, 1, 0
-	call Func_2c4b
+	call PrintTextNoDelayAndZeroAttributes
 	farcall ReadAutoDeckConfiguration
 	call CreateAutoDeckPointerList
 	call PrintVisibleAutoDeckMachineEntries

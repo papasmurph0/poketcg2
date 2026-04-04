@@ -34,7 +34,7 @@ SetFightingFortBasementWarpAndPlayPitfallSFX: ; Func_30005
 	ld a, [wPlayerOWObject]
 	ld b, SOUTH | MOVE_BACKWARDS
 	ld c, MOVE_SPEED_RUN
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 	ld a, $05
 	call WaitAFrames
 .asm_30050
@@ -1429,9 +1429,9 @@ HandleGrassFortEntranceWarpFadeInPreload: ; Func_3157e
 	jr nc, .asm_3159d
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_342ef)
+	ld a, BANK(RunRonaldGRXDuelIntroScript)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_342ef
+	ld hl, RunRonaldGRXDuelIntroScript
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -1447,7 +1447,7 @@ HandleGrassFortEntranceInteractions: ; Func_3159f
 	ret
 
 HandleGrassFortEntranceAfterDuel: ; Func_315a7
-	farcall Func_34323
+	farcall HandleRonaldGRXAfterDuel
 	scf
 	ret
 
@@ -3576,9 +3576,9 @@ HandleFireFortEntranceWarpFadeInPreload: ; Func_325cc
 	jr z, .asm_3261a
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34391)
+	ld a, BANK(RunRonaldPowerDeckDuelIntroScript)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_34391
+	ld hl, RunRonaldPowerDeckDuelIntroScript
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -3598,7 +3598,7 @@ HandleFireFortEntranceInteractions: ; Func_3261c
 	ret
 
 HandleFireFortEntranceAfterDuel: ; Func_3262c
-	farcall Func_343ef
+	farcall ScriptRonaldPowerDeckAfterDuel
 	scf
 	ret
 
@@ -4945,9 +4945,9 @@ HandleWaterFortEntranceWarpFadeInPreload: ; Func_32ff6
 	jr z, .asm_33044
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_34391)
+	ld a, BANK(RunRonaldPowerDeckDuelIntroScript)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_34391
+	ld hl, RunRonaldPowerDeckDuelIntroScript
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -4967,7 +4967,7 @@ HandleWaterFortEntranceInteractions: ; Func_33046
 	ret
 
 HandleWaterFortEntranceAfterDuel: ; Func_33056
-	farcall Func_343ef
+	farcall ScriptRonaldPowerDeckAfterDuel
 	scf
 	ret
 
@@ -6585,9 +6585,9 @@ HandleColorlessAltarEntranceWarpFadeInPreload: ; Func_33de8
 	farcall LoadOWObjectInMap
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_3442d)
+	ld a, BANK(RunRonaldGRXRevealCutscene)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_3442d
+	ld hl, RunRonaldGRXRevealCutscene
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h

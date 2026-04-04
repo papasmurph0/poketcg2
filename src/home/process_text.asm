@@ -32,7 +32,7 @@ ProcessText::
 	jr nc, .not_tx_fullwidth
 	inc hl
 .not_tx_fullwidth
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	xor a
 	call ProcessSpecialTextCharacter
 .next_char
@@ -210,14 +210,14 @@ InitTextPrinting::
    ; hffbb == $0: generate and place text tile
    ; hffbb == $2 (bit 1 set): only generate text tile?
    ; hffbb == $1 (bit 0 set): not even generate it, but just update text buffers?
-Func_22ca::
+GenerateAndPlaceTextTileIfNeeded:: ; Func_22ca
 	push hl
 	push de
 	push bc
 	ldh a, [hffbb]
 	and $1
 	jr nz, .asm_22ed
-	call Func_2325
+	call FindTextTileInCacheOrReserveSlot
 	jr c, .tile_already_exists
 	or a
 	jr nz, .done
@@ -234,7 +234,7 @@ Func_22ca::
 	pop hl
 	ret
 .asm_22ed
-	call Func_235e
+	call FindTextTileInCache
 	jr .done
 
 ; writes a to wCurTextTile and to the tile pointed to by hTextBGMap0Address,
@@ -273,14 +273,14 @@ TerminateHalfWidthText::
 	push de
 	push bc
 	ld e, ' '
-	call Func_22ca
+	call GenerateAndPlaceTextTileIfNeeded
 	pop bc
 	pop de
 	pop hl
 	ret
 
-Func_2325::
-	call Func_235e
+FindTextTileInCacheOrReserveSlot:: ; Func_2325
+	call FindTextTileInCache
 	ret c
 	or a
 	ret nz
@@ -730,7 +730,7 @@ GetFullWidthFontTileOffset::
 
 ; search linked-list for text characters e/d (registers), if found hoist
 ; the result to head of list and return it. carry flag denotes success.
-Func_235e::
+FindTextTileInCache:: ; Func_235e
 	ld a, [wFontWidth]
 	or a
 	jr z, .print

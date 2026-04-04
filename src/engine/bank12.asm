@@ -3833,15 +3833,15 @@ AIHandlePkmnPowersWhenPlayingPkmnFromHand:
 .StrangeDeck
 	ld bc, PSYDUCK_LV16
 	ld de, DARK_GOLDUCK
-	farcall Func_39a8b
+	farcall FindDeckEvolutionForSplitEvolutionPair
 	call c, .TryAddCardToList
 	ld bc, SLOWPOKE_LV16
 	ld de, DARK_SLOWBRO
-	farcall Func_39a8b
+	farcall FindDeckEvolutionForSplitEvolutionPair
 	call c, .TryAddCardToList
 	ld bc, DROWZEE_LV10
 	ld de, DARK_HYPNO
-	farcall Func_39a8b
+	farcall FindDeckEvolutionForSplitEvolutionPair
 	call c, .TryAddCardToList
 	ret c
 	ld de, MR_MIME_LV20

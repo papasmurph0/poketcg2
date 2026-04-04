@@ -3474,7 +3474,7 @@ EnsureGr5BoardingX3: ; Func_41e5c
 	ret z
 	ld a, NPC_GR_5
 	lb bc, WEST | MOVE_BACKWARDS, MOVE_SPEED_WALK
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 	ld a, NPC_GR_5
 	call WaitForOWObjectMovement
 	ret
@@ -3487,7 +3487,7 @@ EnsureGr5BoardingX4: ; Func_41e75
 	ret z
 	ld a, NPC_GR_5
 	lb bc, EAST | MOVE_BACKWARDS, MOVE_SPEED_WALK
-	farcall Func_10e3c
+	farcall TryStepNPCInDirection
 	ld a, NPC_GR_5
 	call WaitForOWObjectMovement
 	ret

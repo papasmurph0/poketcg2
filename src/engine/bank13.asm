@@ -468,7 +468,7 @@ Func_4c56b:
 	ret c
 	jr .asm_4c599
 .hitmonchan_or_sandslash
-	farcall Func_3a887
+	farcall FindBenchPokemonWeakToArenaCard
 	ret c
 	jr .asm_4c599
 
