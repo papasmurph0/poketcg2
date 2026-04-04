@@ -8399,7 +8399,7 @@ Func_17356:
 .asm_17442
 	cp $80
 	jr nz, .asm_17453
-	bank1call Func_796b
+	bank1call CheckPoisonMistPkmnPowers
 	jr c, .asm_1743c
 	pop af
 	sub $0a

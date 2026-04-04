@@ -90,7 +90,7 @@ ExecuteGameEvent::
 .Duel:
 	ld a, GAME_EVENT_OVERWORLD_UPDATE
 	ld [wNextGameEvent], a
-	farcall Func_1e5a2
+	farcall RunDuelAndCheckIfLost
 	jr c, .lost
 ; won
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_2
@@ -389,7 +389,7 @@ ExecuteCoordScript::
 ; hl = npc script list (*_NPCInteractions)
 Func_328c::
 	push hl
-	farcall Func_d3e9
+	farcall GetPlayerFacingTilePosition
 	farcall FindNPCAtLocation
 	cp NPC_NONE
 	jr z, .set_carry
@@ -408,7 +408,7 @@ Func_328c::
 ; hl = npc script list (*_NPCInteractions)
 Func_32aa::
 	push hl
-	farcall Func_d3e9
+	farcall GetPlayerFacingTilePosition
 	farcall FindNPCAtLocation
 	cp NPC_NONE
 	jr z, .set_carry
@@ -1052,7 +1052,7 @@ Func_35df::
 	push de
 	ld bc, $c0 tiles
 	ld de, $40 ; number of tiles
-	farcall Func_1c08b
+	farcall FillVRAM0TilesWithFF
 	pop de
 	pop bc
 	ret
@@ -1916,7 +1916,7 @@ Func_3a39::
 	ld e, $10
 	farcall Func_10ea3
 .asm_3a56
-	farcall Func_1f57b
+	farcall ProcessScreenShakeEffect
 	farcall UpdateSpriteAnims
 	call Func_3698
 	call Func_37ce
@@ -1946,7 +1946,7 @@ Func_3a81::
 	push bc
 	push de
 	push hl
-	farcall Func_1e088
+	farcall UpdateDuelAnimations
 	ld a, [wActiveScreenAnim]
 	cp $ff
 	jr nz, .done
@@ -2289,7 +2289,7 @@ Func_3c3d::
 ResetAnimationQueue::
 	push af
 	call FinishQueuedAnimations
-	farcall Func_1dfb9
+	farcall ClearDuelAnimationState
 	farcall Func_110b9
 	ld a, $01
 	ld [wdc57], a
@@ -2307,7 +2307,7 @@ FinishQueuedAnimations::
 	ld [wdc57], a
 	ld [wDuelAnimBufferSize], a
 	ld [wDuelAnimBufferCurPos], a
-	farcall Func_1dfb9
+	farcall ClearDuelAnimationState
 	pop af
 	ret
 

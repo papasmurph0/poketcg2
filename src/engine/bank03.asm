@@ -1,7 +1,7 @@
 ; handles intro, title screen and start menu
 ; as well as the core gameplay loop
 _CoreGameLoop::
-	call Func_c240
+	call ReInitOverworldBeforeIntro
 .intro
 	farcall IntroAndTitleScreen
 	ld a, PLAYER_TURN
@@ -33,7 +33,7 @@ StartMenu_NewGame:
 .no_save_data
 	farcall InitSaveData
 	call ClearSaveData
-	call Func_c24d
+	call ResetGameProgress
 	call ClearChallengeMachineRecords
 	xor a ; FALSE
 	farcall ReadOrInitSaveData
@@ -66,7 +66,7 @@ StartMenu_ContinueFromDiary:
 	ld b, TRUE
 	farcall SetOWObjectAnimStruct1Flag2
 	call Func_33b7
-	call Func_c29d
+	call UpdateGameStateVars_Wrapper
 	call InitSaveDataState
 	ld a, TRUE
 	farcall ReadOrInitSaveData
@@ -90,7 +90,7 @@ StartMenu_ContinueFromDiary:
 	ld b, TRUE
 	farcall SetOWObjectAnimStruct1Flag2
 	call Func_33b7
-	call Func_c29d
+	call UpdateGameStateVars_Wrapper
 	call InitSaveDataState
 	ld a, TRUE
 	farcall ReadOrInitSaveData
@@ -314,7 +314,7 @@ HandleStartMenu:
 	ret
 
 ; called before intro starts
-Func_c240:
+ReInitOverworldBeforeIntro: ; Func_c240
 	xor a
 	ld [wCurMusic], a
 	farcall Func_13dfa
@@ -324,7 +324,7 @@ InitEvents:
 	call ClearEvents
 	ret
 
-Func_c24d:
+ResetGameProgress: ; Func_c24d
 	call ClearEvents
 	; reset play time
 	xor a
@@ -354,11 +354,11 @@ Func_c24d:
 	jr nc, .asm_c299
 	call InitChallengeMachine
 .asm_c299
-	call Func_c2a7
+	call UpdateGameStateVars
 	ret
 
-Func_c29d:
-	call Func_c2a7
+UpdateGameStateVars_Wrapper: ; Func_c29d
+	call UpdateGameStateVars
 	ret
 
 EnablePlayTimeCounter:
@@ -366,16 +366,16 @@ EnablePlayTimeCounter:
 	ld [wPlayTimeCounterEnable], a
 	ret
 
-Func_c2a7:
+UpdateGameStateVars: ; Func_c2a7
 	ld a, TRUE
 	ld [wPlayTimeCounterEnable], a
-	call Func_c2d6
-	call Func_c366
-	call Func_c3d4
-	call Func_c2ff
+	call SetRandomGRCoinPieceLocation
+	call SetRandomTCGIslandClubLocation
+	call SetRandomGRIslandLocation
+	call SetRandomIshiharaLocation
 	call HandleGrandMasterCupState
-	call Func_c439
-	call Func_c477
+	call HandleTCGChallengeCupState
+	call HandleGRChallengeCupState
 	ret
 
 ; clears sSavedDecks
@@ -393,7 +393,7 @@ ClearSavedDecks:
 	call DisableSRAM
 	ret
 
-Func_c2d6:
+SetRandomGRCoinPieceLocation: ; Func_c2d6
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	call GetEventValue
 	jr nz, .done
@@ -416,7 +416,7 @@ Func_c2d6:
 .done
 	ret
 
-Func_c2ff:
+SetRandomIshiharaLocation: ; Func_c2ff
 	ld a, VAR_ISHIHARA_STATE
 	call GetVarValue
 	cp ISHIHARA_TALKED_AT_VILLA
@@ -476,7 +476,7 @@ HandleGrandMasterCupState:
 	call ZeroOutVarValue
 	jr .done
 
-Func_c366:
+SetRandomTCGIslandClubLocation: ; Func_c366
 	ld a, VAR_21
 	call GetVarValue
 	cp $02
@@ -541,7 +541,7 @@ Func_c366:
 .done
 	ret
 
-Func_c3d4:
+SetRandomGRIslandLocation: ; Func_c3d4
 	ld a, [wCurIsland]
 	cp GR_ISLAND
 	jr nz, .randomly_choose_club
@@ -602,7 +602,7 @@ Func_c3d4:
 .done
 	ret
 
-Func_c439:
+HandleTCGChallengeCupState: ; Func_c439
 	ld a, VAR_TCG_CHALLENGE_CUP_STATE
 	call GetVarValue
 	cp CHALLENGE_CUP_3_UNLOCKED
@@ -635,7 +635,7 @@ Func_c439:
 .skip
 	ret
 
-Func_c477:
+HandleGRChallengeCupState: ; Func_c477
 	ld a, VAR_GR_CHALLENGE_CUP_STATE
 	call GetVarValue
 	cp CHALLENGE_CUP_3_UNLOCKED
@@ -946,13 +946,13 @@ ENDR
 	ret
 
 ; de = card id
-Func_c63e:
+ShowReceivedCardWithText: ; Func_c63e
 	call GetReceivedCardText
 	farcall _ShowReceivedCard
 	ret
 
 ; de = card id
-Func_c646:
+AddCardAndShowReceived:: ; Func_c646
 	call AddCardToCollection
 	call GetReceivedCardText
 	farcall _ShowReceivedCard
@@ -1154,7 +1154,7 @@ OverworldLoop::
 	ld [wCurMapScriptsPointer + 1], a
 	ld a, OWMODE_MUSIC_PRELOAD
 	call ExecuteOWModeScript
-	farcall Func_102ef
+	farcall InitScreenTransitionGraphicsState
 	xor a
 	farcall Func_10d40
 	ld a, $01
@@ -1274,7 +1274,7 @@ SetWarpData:
 	ld [wTempPrevMap], a
 	ret
 
-Func_d3e9::
+GetPlayerFacingTilePosition:: ; Func_d3e9
 	ld a, [wPlayerOWObject]
 	push af
 	farcall GetOWObjectTilePosition
@@ -1516,7 +1516,7 @@ MoveOWObjectToTargetPosition:
 	ret
 
 ; de = coordinates
-Func_d56b:
+SetupOWScrollTarget: ; Func_d56b
 	ld a, d
 	ld [wOWObjTargetX], a
 	ld a, e
@@ -1635,7 +1635,7 @@ Func_d56b:
 .done
 	ret
 
-Func_d62a:
+UpdateOWScrollToTarget: ; Func_d62a
 	ld a, [wOWScrollX]
 	ld d, a
 	ld a, [wOWScrollY]
@@ -1696,7 +1696,7 @@ ClearEvents:
 	pop bc
 	ret
 
-Func_d683:
+ClearMapReloadEvents: ; Func_d683
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	call ZeroOutEventValue
 	ld a, EVENT_EE
@@ -3147,9 +3147,9 @@ ScriptCommand_ShowCardReceivedScreen:
 	call Get2ScriptArgs_IncrIndexBy1
 	ld e, c
 	ld d, b
-	farcall Func_1022a
-	call Func_c63e
-	farcall Func_10252
+	farcall BeginScreenTransitionToWhite
+	call ShowReceivedCardWithText
+	farcall EndScreenTransitionFromWhite
 	call WaitPalFading
 	jp IncreaseScriptPointerBy3
 
@@ -4109,7 +4109,7 @@ ScriptCommand_GiveBoosterPacks:
 
 	ld hl, wBoosterPacksToGive
 .give_boosters
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	ld a, [wNumBoosterPacksToGive]
 	ld c, a
 	xor a
@@ -4120,7 +4120,7 @@ ScriptCommand_GiveBoosterPacks:
 	inc b
 	dec c
 	jr nz, .loop_boosters
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	call WaitPalFading
 	jp IncreaseScriptPointerBy3
 
@@ -4207,7 +4207,7 @@ ScriptCommand_ScriptRetfar:
 
 ScriptCommand_CardPop:
 	call Get1ScriptArg_IncrIndexBy1
-	farcall Func_1f7f1
+	farcall HandleIngameCardPopWithFade
 	call WaitPalFading
 	jp IncreaseScriptPointerBy2
 
@@ -4386,9 +4386,9 @@ ScriptCommand_ReceiveCard:
 	call Get2ScriptArgs_IncrIndexBy1
 	ld e, c
 	ld d, b
-	farcall Func_1022a
-	call Func_c646
-	farcall Func_10252
+	farcall BeginScreenTransitionToWhite
+	call AddCardAndShowReceived
+	farcall EndScreenTransitionFromWhite
 	call WaitPalFading
 	jp IncreaseScriptPointerBy3
 
@@ -4465,7 +4465,7 @@ ScriptCommand_LinkDuel:
 	call ZeroOutEventValue
 	ld hl, wScriptFlags
 	res 1, [hl]
-	farcall Func_1d99e
+	farcall PlayLinkDuelAndGetResultWithFade
 	cp $ff
 	jr z, .set
 	or a
@@ -4728,7 +4728,7 @@ DebugBackgroundFontViewerScreen:
 	push bc
 	push de
 	push hl
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall SetFrameFuncAndFadeFromWhite
 	call FlushAllPalettes
 	lb de, 2, 1
@@ -4740,7 +4740,7 @@ DebugBackgroundFontViewerScreen:
 	call .Viewer
 ; exit
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	pop hl
 	pop de
 	pop bc
@@ -4802,7 +4802,7 @@ DebugBGPortraitViewerScreen:
 	push bc
 	push de
 	push hl
-	farcall Func_102a4
+	farcall BeginScreenTransitionToWhiteWithSpriteAnims
 	farcall SetInitialGraphicsConfiguration
 	farcall ZeroObjectPositionsAndEnableOBPFading
 ; player's
@@ -4929,7 +4929,7 @@ DebugBGPortraitViewerScreen:
 	pop af
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
-	farcall Func_102c4
+	farcall EndScreenTransitionFromWhiteWithSpriteAnims
 	pop hl
 	pop de
 	pop bc
@@ -4941,7 +4941,7 @@ DebugObjViewerScreen:
 	push bc
 	push de
 	push hl
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall ClearSpriteAnimsAndSetInitialGraphicsConfiguration
 	ld a, NUM_MAPS_GFX_DEBUG
 	call Random
@@ -4964,7 +4964,7 @@ DebugObjViewerScreen:
 	pop af
 	call ResumeSong_ClearTemp
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	pop hl
 	pop de
 	pop bc
@@ -5051,9 +5051,9 @@ DebugObjViewerScreen:
 	jr .wait_input
 
 DebugMenuEffectViewerScreen:
-	farcall Func_102a4
+	farcall BeginScreenTransitionToWhiteWithSpriteAnims
 	call DebugMenuEffectViewer
-	farcall Func_102c4
+	farcall EndScreenTransitionFromWhiteWithSpriteAnims
 	ret
 
 DebugMenuEffectViewer:
@@ -5283,7 +5283,7 @@ DebugSendMailScreen:
 	push bc
 	push de
 	push hl
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall ClearSpriteAnimsAndSetInitialGraphicsConfiguration
 	lb de, 0, 0
 	ld b, BANK(.menu_params)
@@ -5310,7 +5310,7 @@ DebugSendMailScreen:
 	jr .wait_input
 .exit
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	pop hl
 	pop de
 	pop bc

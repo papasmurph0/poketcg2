@@ -1,9 +1,9 @@
 ; return a = streak
 ; harmless bug: also return bc = wUnusedCoinFlipGamePayout which is garbage but unused
 CoinFlipGameScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call ShowCoinFlipGame
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ; return a = streak

@@ -2529,7 +2529,7 @@ InitSaveData:
 	ld [hli], a ; sLinkDuelCounter
 	ld [hli], a
 
-	farcall Func_8f10
+	farcall InitBoosterPackProgress
 	call DisableSRAM
 	ret
 
@@ -3482,7 +3482,7 @@ ViewCardPopRecords:
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
-	bank1call Func_6079
+	bank1call WriteFiveDigitNumberInTxSymbolFormat
 	ret
 
 .text_items

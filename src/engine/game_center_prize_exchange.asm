@@ -4,9 +4,9 @@ GameCenterPrizeExchange:
 	call .PrintExchangePrompt
 	jr c, .exit
 	farcall ShowNPCAnimsUnderDialogBox
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call .ShowMenu
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	farcall HideNPCAnimsUnderDialogBox
 .exit
 	call .PrintComeAgain

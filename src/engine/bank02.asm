@@ -605,7 +605,7 @@ DrawYourOrOppPlayAreaScreen_EmptiedScreen:
 	ret
 
 ; Func_82b6 in tcg1
-Func_83b3:
+DrawYourOrOppPlayArea_PrizeCards:: ; Func_83b3
 	ld a, [wCheckMenuPlayAreaWhichDuelist]
 	ld b, a
 	ld a, [wCheckMenuPlayAreaWhichLayout]
@@ -2418,7 +2418,7 @@ WriteCardListsTerminatorBytes:
 	ld [hl], a ; terminating byte
 	ret
 
-Func_8f10:
+InitBoosterPackProgress:: ; Func_8f10
 	call EnableSRAM
 	xor a
 	ld hl, sBoosterPacksObtained

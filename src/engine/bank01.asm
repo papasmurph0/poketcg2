@@ -694,7 +694,7 @@ PlayEnergyCard:
 	ld a, OPPACTION_PLAY_ENERGY
 	call SetOppAction_SerialSendDuelData
 	farcall PrintAttachedEnergyToPokemon
-	call Func_6986
+	call ExecutePokemonPowerTrigger
 	jp DuelMainInterface
 
 .rain_dance_active
@@ -3114,7 +3114,7 @@ TurnDuelistTakePrizes:
 	ld h, $00
 	call LoadTxRam3
 .asm_587e
-	farcall Func_83b3
+	farcall DrawYourOrOppPlayArea_PrizeCards
 	ldtx hl, DrewXPrizesText
 	call DrawWideTextBox_WaitForInput
 	jr .return_has_prizes
@@ -5126,7 +5126,7 @@ WriteTwoByteNumberInTxSymbolFormat:
 	pop de
 	ret
 
-Func_6079:
+WriteFiveDigitNumberInTxSymbolFormat: ; Func_6079
 	push de
 	push bc
 	call TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1
@@ -6025,7 +6025,7 @@ HandleBetweenTurnKnockOuts:
 	ret
 
 .Func_6ef6:
-	call Func_6fa5
+	call HandleKnockedOutAndTakePrizes
 	ld hl, wDuelFinishParam
 	rl [hl]
 	ret
@@ -6135,7 +6135,7 @@ ReplaceKnockedOutPokemon:
 	ldh [hTempPlayAreaLocation_ff9d], a
 	jr .replace_pokemon
 
-Func_6fa5:
+HandleKnockedOutAndTakePrizes: ; Func_6fa5
 	call CountKnockedOutPokemon
 	ret nc
 	; at least one Pokemon knocked out
@@ -6351,7 +6351,7 @@ InitVariablesToBeginDuel:
 
 	ld a, [wSelectedCoin]
 	ld [wPlayerCoin], a
-	call Func_6838
+	call LoadDuelSettingsFromSRAM
 
 	ld b, MAX_PLAY_AREA_POKEMON
 	ld a, [wSpecialRule]
@@ -6465,7 +6465,7 @@ InitializeDuelVariables:
 	jr nz, .init_play_area
 	ret
 
-Func_6838:
+LoadDuelSettingsFromSRAM: ; Func_6838
 	call EnableSRAM
 	ld a, [sSkipDelayAllowed]
 	ld [wSkipDelayAllowed], a
@@ -6718,7 +6718,7 @@ LoadNonPokemonCardEffectCommands:
 	ld [wcd15], a
 	ret
 
-Func_6986:
+ExecutePokemonPowerTrigger: ; Func_6986
 	ldh a, [hTempCardIndex_ff98]
 	ldh [hTempCardIndex_ff9f], a
 	call LoadNonPokemonCardEffectCommands
@@ -7509,7 +7509,7 @@ HandleStrikesBackAndPoisonFluid_AgainstDamagingAttack::
 	or a
 	ret z ; is Arena, skip
 
-Func_6dc4:
+HandleStrikesBackAndPoisonFluid: ; Func_6dc4
 	ld hl, wTempNonTurnDuelistCardID
 	cphl MACHAMP_LV67
 	jr z, .strikes_back
@@ -8505,7 +8505,7 @@ ProcessFinalBeam:
 	ld hl, 0 ; at least 0 damage
 .non_negative
 	ldtx de, ReceivedDamageDueToFinalBeamText
-	call Func_7518
+	call DisplayPkmnPowerDamageAndSubtractHP
 	call nc, WaitForWideTextBoxInput
 	ret
 
@@ -8585,7 +8585,7 @@ ProcessEffectsTriggeredByTakingDamage::
 .strikes_back
 	ld hl, 10
 	ldtx de, ReceivedDamageDueToStrikesBackText
-	call Func_7518
+	call DisplayPkmnPowerDamageAndSubtractHP
 	call nc, WaitForWideTextBoxInput
 	ret
 
@@ -8660,7 +8660,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	ld [wTxRam2 + 1], a
 
 	push hl
-	call Func_74ca
+	call CalculateDarkWaveDamage
 	ld a, e
 	or d
 	jr z, .no_mirror_shell_damage ; no damage
@@ -8713,7 +8713,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	call PrintPlayAreaCardKnockedOutIfNoHP
 	call DrawDuelMainScene
 	call DrawDuelHUDs
-	call Func_74ef
+	call CheckAndProcessFinalBeam
 	ret
 
 .Func_74ab:
@@ -8728,12 +8728,12 @@ ProcessEffectsTriggeredByTakingDamage::
 	push af
 	ld a, [wForcedSwitchPlayAreaLocation]
 	ld [wcd0a], a
-	call Func_6dc4
+	call HandleStrikesBackAndPoisonFluid
 	pop af
 	ld [wcd0a], a
 	ret
 
-Func_74ca:
+CalculateDarkWaveDamage: ; Func_74ca
 	call SwapTurn
 	call SetDarkWaveDamageModifiers
 	ld hl, wDealtDamage
@@ -8753,7 +8753,7 @@ Func_74ca:
 	ld de, 0
 	ret
 
-Func_74ef:
+CheckAndProcessFinalBeam: ; Func_74ef
 	ld a, DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	or a
@@ -8782,7 +8782,7 @@ Func_74ef:
 
 ; hl = damage
 ; de = text ID
-Func_7518:
+DisplayPkmnPowerDamageAndSubtractHP: ; Func_7518
 	push hl
 	call LoadTxRam3
 	ld a, e
@@ -9542,7 +9542,7 @@ HandleGasExplosionKnockOut:
 	call SwapTurn
 	ret
 
-Func_796b:
+CheckPoisonMistPkmnPowers: ; Func_796b
 	call CheckGoopGasAttackAndToxicGasActive
 	ccf
 	ret nc
@@ -9839,7 +9839,7 @@ GetDefendingCardType:
 	ret nc
 	ld a, [wccd9]
 ;	fallthrough
-Func_7b0a:
+GetPlayAreaCardColorWrapper: ; Func_7b0a
 	call GetPlayAreaCardColor
 	ret
 
@@ -9849,7 +9849,7 @@ GetAttackingCardType:
 	ret nc
 	; is Venomoth, get its color
 	ld a, [wccd8]
-	jr Func_7b0a
+	jr GetPlayAreaCardColorWrapper
 
 ; gets type of Pokémon with ID given in [hl]
 ; if it's Venomoth lv28, then get its color
@@ -9893,7 +9893,7 @@ GetPoisonDamage:
 	ld a, DBLPSN_DAMAGE
 	ret z
 	push de
-	call Func_796b
+	call CheckPoisonMistPkmnPowers
 	pop de
 	ld a, PSN_DAMAGE
 	ret nc

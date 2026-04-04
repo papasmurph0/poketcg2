@@ -152,7 +152,7 @@ StartDebugDuelVsRandomOpponent:
 	call Random
 	add $05
 	ld [wNPCDuelDeckID], a
-	farcall Func_1e5a2
+	farcall RunDuelAndCheckIfLost
 	call FadeToWhiteAndUnsetFrameFunc
 	ret
 
@@ -283,7 +283,7 @@ WaitForButtonPress:
 	jr z, .loop
 	ret
 
-Func_1022a:
+BeginScreenTransitionToWhite: ; Func_1022a
 	push af
 	push bc
 	push de
@@ -296,20 +296,20 @@ Func_1022a:
 	call Func_10ea7
 	call Func_1059f
 	call Func_10d40
-	call Func_102ef
+	call InitScreenTransitionGraphicsState
 	pop hl
 	pop de
 	pop bc
 	pop af
 	ret
 
-Func_10252:
+EndScreenTransitionFromWhite: ; Func_10252
 	push af
 	push bc
 	push de
 	push hl
 	call Func_10d40
-	call Func_102ef
+	call InitScreenTransitionGraphicsState
 	call Func_10ed3
 	call Func_105de
 	call DisableLCD
@@ -346,7 +346,7 @@ ClearSpriteAnimsAndSetInitialGraphicsConfiguration::
 	call SetInitialGraphicsConfiguration
 	ret
 
-Func_102a4:
+BeginScreenTransitionToWhiteWithSpriteAnims: ; Func_102a4
 	push af
 	push bc
 	push de
@@ -357,20 +357,20 @@ Func_102a4:
 	call Func_1059f
 	call SetSpriteAnimationAndFadePalsFrameFunc
 	call Func_10d40
-	call Func_102ef
+	call InitScreenTransitionGraphicsState
 	pop hl
 	pop de
 	pop bc
 	pop af
 	ret
 
-Func_102c4:
+EndScreenTransitionFromWhiteWithSpriteAnims: ; Func_102c4
 	push af
 	push bc
 	push de
 	push hl
 	call Func_10d40
-	call Func_102ef
+	call InitScreenTransitionGraphicsState
 	call Func_10ed3
 	call Func_105de
 	call DisableLCD
@@ -386,7 +386,7 @@ Func_102c4:
 	pop af
 	ret
 
-Func_102ef:
+InitScreenTransitionGraphicsState: ; Func_102ef
 	push af
 	push bc
 	push de
@@ -409,7 +409,7 @@ Func_102ef:
 	ld bc, $40
 	call WriteBCBytesToHL
 
-	call Func_10327
+	call ResetBGMapCopyState
 
 	xor a
 	ld [wd896 + 0], a
@@ -420,7 +420,7 @@ Func_102ef:
 	pop af
 	ret
 
-Func_10327:
+ResetBGMapCopyState: ; Func_10327
 	ld a, [wWRAMBank]
 	push af
 	ld a, BANK("WRAM3")
@@ -1385,9 +1385,9 @@ HandlePauseMenu:
 	ret
 
 PauseMenuDeckScreen:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call ShowDeckSelectionMenuFromPauseMenu
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 ShowDeckSelectionMenuFromPauseMenu:
@@ -3359,17 +3359,17 @@ _PCMenu:
 	ret
 
 .CardAlbum:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call SetFadePalsFrameFunc
 	farcall CardAlbum
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
 	call UnsetFadePalsFrameFunc
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 .Glossary:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call SetFadePalsFrameFunc
 	call ClearSpriteAnimsAndSetInitialGraphicsConfiguration
 	call FlushAllPalettes
@@ -3377,27 +3377,27 @@ _PCMenu:
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
 	call UnsetFadePalsFrameFunc
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 .Printer:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call SetFadePalsFrameFunc
 	farcall PrinterMenu
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
 	call UnsetFadePalsFrameFunc
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 .DeckDiagnosis:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call SetFadePalsFrameFunc
 	farcall DeckDiagnosis
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
 	call UnsetFadePalsFrameFunc
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 SetPCMenuCursorToShutdown:
@@ -5717,9 +5717,9 @@ HandlePopupMenu:
 
 ; unused
 CoinFlipGameDescriptionScreen:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	farcall ShowCoinFlipGameDescription
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 INCLUDE "engine/slot_machine.asm"
@@ -6110,9 +6110,9 @@ INCLUDE "engine/challenge_machine.asm"
 INCLUDE "engine/credits_commands.asm"
 
 ShowProloguePortraitAndText_WithFade:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call ShowProloguePortraitAndText
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 ShowProloguePortraitAndText:
@@ -6204,9 +6204,9 @@ ShowProloguePortraitAndText:
 	dw $ffff
 
 PlayerNameSelectionScreen:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call PlayerNameSelection
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 PlayerNameSelection:
@@ -6503,7 +6503,7 @@ GetPlayerGender:
 Func_13dfa:
 	call DisableLCD
 	call Func_10d40
-	call Func_102ef
+	call InitScreenTransitionGraphicsState
 	call EnableLCD
 	ld a, BANK("WRAM1")
 	ld [wWRAMBank], a
@@ -6513,6 +6513,6 @@ Func_13dfa:
 	ld a, $ff
 	farcall InitFadePalettes
 	call Func_3f61
-	farcall Func_1dfb9
+	farcall ClearDuelAnimationState
 	farcall EnableAnimations
 	ret

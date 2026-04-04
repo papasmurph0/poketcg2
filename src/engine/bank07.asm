@@ -118,7 +118,7 @@ CalculateDecimalDigits:
 	inc de
 	ret
 
-Func_1c08b::
+FillVRAM0TilesWithFF:: ; Func_1c08b
 	push af
 	push bc
 	push de
@@ -330,9 +330,9 @@ GetDuelistPortrait::
 SECTION "Bank 7@416e", ROMX[$416e], BANK[$7]
 
 PauseMenuConfigScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call ShowConfigMenu
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ShowConfigMenu:
@@ -708,9 +708,9 @@ ConvertTextSpeedToMessageSpeedSetting:
 SECTION "Bank 7@4502", ROMX[$4502], BANK[$7]
 
 PauseMenuDiaryScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call PushRegistersAndShowDiaryScreen
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 PushRegistersAndShowDiaryScreen:
@@ -829,9 +829,9 @@ SaveGamePrompt:
 	ret
 
 PauseMenuStatusScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call PushRegistersAndShowStatusScreen
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 PushRegistersAndShowStatusScreen:
@@ -939,11 +939,11 @@ FadePalettes::
 	dec a
 	jr nz, .asm_1c6e1
 ; wPaletteFadeMode == 1
-	call Func_1c7b6
+	call ApplyPaletteFadeToTarget
 	jr .decrement_counter
 .asm_1c6e1
 ; wPaletteFadeMode != 1
-	call Func_1c799
+	call ApplyPaletteFadeToWhiteOrBlack
 .decrement_counter
 	ld hl, wPaletteFadeCounter
 	ld a, [hl]
@@ -1012,7 +1012,7 @@ FadeOBPalsToWhiteOrBlack:
 	jr nz, .asm_1c71f
 	ret
 
-Func_1c735:
+FadeBGPalsToTarget: ; Func_1c735
 	ld bc, wBGColorFadeConfigList
 	ld hl, wTargetBGPalettes
 	ld de, wBackgroundPalettesCGB
@@ -1055,7 +1055,7 @@ Func_1c735:
 	jr nz, .asm_1c740
 	ret
 
-Func_1c767:
+FadeOBPalsToTarget: ; Func_1c767
 	ld bc, wOBColorFadeConfigList
 	ld hl, wTargetOBPalettes
 	ld de, wObjectPalettesCGB
@@ -1098,7 +1098,7 @@ Func_1c767:
 	jr nz, .asm_1c772
 	ret
 
-Func_1c799:
+ApplyPaletteFadeToWhiteOrBlack: ; Func_1c799
 	ld hl, wPaletteFadeFlags
 	bit 0, [hl]
 	jr z, .asm_1c7a3
@@ -1114,16 +1114,16 @@ Func_1c799:
 	ld [wd9de], a
 	ret
 
-Func_1c7b6:
+ApplyPaletteFadeToTarget: ; Func_1c7b6
 	ld hl, wPaletteFadeFlags
 	bit 0, [hl]
 	jr z, .asm_1c7c0
-	call Func_1c735
+	call FadeBGPalsToTarget
 .asm_1c7c0
 	ld hl, wPaletteFadeFlags
 	bit 7, [hl]
 	jr z, .asm_1c7ca
-	call Func_1c767
+	call FadeOBPalsToTarget
 .asm_1c7ca
 	call FlushAllPalettes
 	ld a, $01
@@ -2179,10 +2179,10 @@ DepositChips:
 	pop af
 	ret
 
-Func_1cd63:
-	farcall Func_1022a
+ShowStartMenuWithFade: ; Func_1cd63
+	farcall BeginScreenTransitionToWhite
 	call ShowStartMenu
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ; outputs in a what option the player chose
@@ -3037,7 +3037,7 @@ Pals_1d50d:
 	rgb 31,  0,  0
 	rgb  1,  0,  5
 
-Func_1d51e:
+RestoreWindowPositionAndDisableWindow: ; Func_1d51e
 	push af
 	ld a, [wBackupWX]
 	ldh [hWX], a
@@ -3048,9 +3048,9 @@ Func_1d51e:
 	ret
 
 ShowReceivedCard:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call _ShowReceivedCard
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 _ShowReceivedCard:
@@ -3077,9 +3077,9 @@ INCLUDE "data/game_center_prizes.asm"
 INCLUDE "engine/coin_flip_game.asm"
 
 OWInteractionSlotMachine:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call SlotMachine
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ; a - chips per bet
@@ -3107,10 +3107,10 @@ SlotMachine:
 	pop af
 	ret
 
-Func_1d99e:
-	farcall Func_1022a
+PlayLinkDuelAndGetResultWithFade: ; Func_1d99e
+	farcall BeginScreenTransitionToWhite
 	call _PlayLinkDuelAndGetResult
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 _PlayLinkDuelAndGetResult:
@@ -3279,7 +3279,7 @@ GiftCenter_ExecuteSelectedOption:
 	db $ff ; end
 
 .SendCards:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall SetFrameFuncAndFadeFromWhite
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
 	xor a ; GIFTCENTERMENU_SEND_CARDS
@@ -3287,11 +3287,11 @@ GiftCenter_ExecuteSelectedOption:
 	farcall HandleGiftCenter
 	farcall SetSpriteAnimationAndFadePalsFrameFunc
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 .ReceiveCards:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall SetFrameFuncAndFadeFromWhite
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
 	ld a, GIFTCENTERMENU_RECEIVE_CARDS
@@ -3299,11 +3299,11 @@ GiftCenter_ExecuteSelectedOption:
 	farcall HandleGiftCenter
 	farcall SetSpriteAnimationAndFadePalsFrameFunc
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 .SendDeckConfiguration:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall SetFrameFuncAndFadeFromWhite
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
 	ld a, GIFTCENTERMENU_SEND_DECK_CONFIGURATION
@@ -3311,11 +3311,11 @@ GiftCenter_ExecuteSelectedOption:
 	farcall HandleGiftCenter
 	farcall SetSpriteAnimationAndFadePalsFrameFunc
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 .ReceiveDeckConfiguration:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall SetFrameFuncAndFadeFromWhite
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
 	ld a, GIFTCENTERMENU_RECEIVE_DECK_CONFIGURATION
@@ -3323,14 +3323,14 @@ GiftCenter_ExecuteSelectedOption:
 	farcall HandleGiftCenter
 	farcall SetSpriteAnimationAndFadePalsFrameFunc
 	farcall FadeToWhiteAndUnsetFrameFunc
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ; a = incoming coin
 GiveCoin:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call _GiveCoin
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ; a = incoming coin
@@ -3485,9 +3485,9 @@ ShowReceivedCoinOnCoinMenu:
 	ret
 
 PauseMenuCoinScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call ShowCoinMenuWithoutIncomingCoin
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ShowCoinMenuWithoutIncomingCoin::
@@ -3977,7 +3977,7 @@ GetSelectedCoin:
 	ld a, [wSelectedCoin]
 	ret
 
-Func_1dfb9::
+ClearDuelAnimationState:: ; Func_1dfb9
 	push af
 	push bc
 	push de
@@ -4112,7 +4112,7 @@ LoadBufferedDuelAnimation:
 	pop af
 	ret
 
-Func_1e088::
+UpdateDuelAnimations:: ; Func_1e088
 	push af
 	push bc
 	push de
@@ -4201,7 +4201,7 @@ Func_1e088::
 .not_special
 	cp DUEL_ANIM_DAMAGE_HUD
 	jr nz, .not_damage_hud
-	call Func_1e279
+	call CreateDamageHudAnimations
 	jr .asm_1e122
 .not_damage_hud
 	cp DUEL_SCREEN_ANIMS
@@ -4209,7 +4209,7 @@ Func_1e088::
 	call InitScreenAnimation
 	jr .asm_1e122
 .not_screen_anim
-	call Func_1e171
+	call CreateDuelAnimationSprite
 .asm_1e122
 	ret
 
@@ -4263,7 +4263,7 @@ GetAnimationData:
 	pop af
 	ret
 
-Func_1e171:
+CreateDuelAnimationSprite: ; Func_1e171
 	push af
 	push bc
 	push de
@@ -4416,7 +4416,7 @@ PlayCoinAnimation:
 	farcall GetSpriteAnimBuffer
 	ret
 
-Func_1e279:
+CreateDamageHudAnimations: ; Func_1e279
 	push af
 	push bc
 	push de
@@ -4425,23 +4425,23 @@ Func_1e279:
 	ld [wCurAnimation], a
 	xor a
 	ld [wdc58], a
-	call Func_1e2b1
+	call CreateDamageNumberAnimations
 	ld a, [wDuelAnimEffectiveness]
 	bit 0, a
 	jr z, .asm_1e293
-	call Func_1e30d
+	call CreateWeaknessAnimationIndicator
 .asm_1e293
 	ld a, $12
 	ld [wdc58], a
 	ld a, [wDuelAnimEffectiveness]
 	bit 1, a
 	jr z, .asm_1e2a2
-	call Func_1e324
+	call CreateResistanceAnimationIndicator
 .asm_1e2a2
 	ld a, [wDuelAnimEffectiveness]
 	bit 2, a
 	jr z, .asm_1e2ac
-	call Func_1e347
+	call CreateNoDamageAnimationIndicator
 .asm_1e2ac
 	pop hl
 	pop de
@@ -4449,7 +4449,7 @@ Func_1e279:
 	pop af
 	ret
 
-Func_1e2b1:
+CreateDamageNumberAnimations: ; Func_1e2b1
 	; check if damage is over 1000
 	ld a, [wDuelAnimDamage + 1]
 	cp HIGH(1000)
@@ -4475,7 +4475,7 @@ Func_1e2b1:
 	jr z, .done
 	push de
 	push bc
-	call Func_1e171
+	call CreateDuelAnimationSprite
 	push hl
 	ld a, [de]
 	ld c, a
@@ -4510,8 +4510,8 @@ Func_1e2b1:
 	;  ones digit, tens digit, hundred digits
 	db        -16,         -8,              0
 
-Func_1e30d:
-	call Func_1e171
+CreateWeaknessAnimationIndicator: ; Func_1e30d
+	call CreateDuelAnimationSprite
 	ld bc, FRAMESET_014
 	farcall SetAndInitSpriteAnimFrameset
 	farcall GetSpriteAnimPosition
@@ -4521,8 +4521,8 @@ Func_1e30d:
 	farcall SetSpriteAnimPosition
 	ret
 
-Func_1e324:
-	call Func_1e171
+CreateResistanceAnimationIndicator: ; Func_1e324
+	call CreateDuelAnimationSprite
 	ld bc, FRAMESET_013
 	farcall SetAndInitSpriteAnimFrameset
 	farcall GetSpriteAnimPosition
@@ -4536,8 +4536,8 @@ Func_1e324:
 	ld [wdc58], a
 	ret
 
-Func_1e347:
-	call Func_1e171
+CreateNoDamageAnimationIndicator: ; Func_1e347
+	call CreateDuelAnimationSprite
 	ld bc, FRAMESET_012
 	farcall SetAndInitSpriteAnimFrameset
 	farcall GetSpriteAnimPosition
@@ -4931,7 +4931,7 @@ DistortScreen:
 	db 4, 3, 2, 1, 1, 1, 1, 2
 
 ; returns carry if player lost
-Func_1e5a2::
+RunDuelAndCheckIfLost:: ; Func_1e5a2
 	push bc
 	push de
 	push hl
@@ -4956,19 +4956,19 @@ Func_1e5a2::
 	ret
 
 .RunDuel:
-	farcall Func_1022a
-	call Func_1e73a
+	farcall BeginScreenTransitionToWhite
+	call LoadNPCDuelDeckDataForDuel
 	ld a, EVENT_EB
 	farcall GetEventValue
 	jr nz, .start_duel
-	call Func_1e60c
+	call ShowDuelistIntroScreen
 	ld a, [wSpecialRule]
 	and a
 	jr z, .start_duel
 	call ShowSpecialRuleDescription
 .start_duel
 	bank1call StartDuel_VSAIOpp
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 ; 0x1e5e5
 
@@ -4977,12 +4977,12 @@ SECTION "Bank 7@65f8", ROMX[$65f8], BANK[$7]
 RunDuelFromSRAM:
 	farcall Stub_10cfe
 	farcall Func_1109f
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	bank1call StartDuelFromSRAM
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
-Func_1e60c:
+ShowDuelistIntroScreen: ; Func_1e60c
 	push af
 	push bc
 	push de
@@ -5145,7 +5145,7 @@ ShowSpecialRuleDescription:
 	tx SpecialRuleToughEscapeTitleText,   SpecialRuleToughEscapeDescriptionText
 	tx SpecialRuleBlackHoleTitleText,     SpecialRuleBlackHoleDescriptionText
 
-Func_1e73a:
+LoadNPCDuelDeckDataForDuel: ; Func_1e73a
 	push af
 	push bc
 	push de
@@ -5162,9 +5162,9 @@ Func_1e73a:
 	ret
 
 PauseMenuMinicomScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call PushRegistersAndShowMinicomScreen
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 PushRegistersAndShowMinicomScreen:
@@ -5290,17 +5290,17 @@ MinicomCardAlbum:
 	farcall HandlePlayersCardsScreen
 	ret
 
-Func_1e849:
-	farcall Func_1022a
+OpenMinicomDeckSaveMachineWithFade: ; Func_1e849
+	farcall BeginScreenTransitionToWhite
 	call MinicomDeckSaveMachine
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 AutoDeckMachine:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	farcall ClearSpriteAnimsAndSetInitialGraphicsConfiguration
 	farcall HandleAutoDeckMenu
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 LoadBoosterPackScene:
@@ -5335,10 +5335,10 @@ LoadBoosterPackScene:
 	db SCENE_INTRO_FOSSIL
 	db SCENE_INTRO_TEAM_ROCKET
 
-Func_1e889:
-	farcall Func_1022a
+GiveBoosterPacksWithFade: ; Func_1e889
+	farcall BeginScreenTransitionToWhite
 	call GiveBoosterPacks
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ; a = BOOSTER_* constant, b = has-another flag
@@ -5459,9 +5459,9 @@ _GiveBoosterPack:
 	ret
 
 GrandMasterCupBracketScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call ShowGrandMasterCupBracket
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 ShowGrandMasterCupBracket:
@@ -5964,9 +5964,9 @@ REPT 3
 ENDR
 
 MinicomMailboxScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call MinicomMailbox
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 MinicomMailbox:
@@ -6018,7 +6018,7 @@ MinicomMailboxNewMailScreen:
 	call DisableLCD
 	farcall ClearSpriteAnimsAndSetInitialGraphicsConfiguration
 	call CalculateMailboxStatus
-	call Func_1ed2d
+	call DrawMailboxStatusScreenLayout
 	call FlushAllPalettes
 	call EnableLCD
 	ld a, [wNewMail]
@@ -6029,7 +6029,7 @@ MinicomMailboxNewMailScreen:
 	call CallPlaySFX
 	pop af
 .asm_1ed04
-	call Func_1ed57
+	call PrintMailboxStatusText
 	call DisableLCD
 	xor a
 	ld [wNewMail], a
@@ -6053,7 +6053,7 @@ CalculateMailboxStatus:
 	ld [wMailboxStatus], a
 	ret
 
-Func_1ed2d:
+DrawMailboxStatusScreenLayout: ; Func_1ed2d
 	lb de, 0, 0
 	lb bc, 20, 4
 	call DrawRegularTextBoxVRAM0
@@ -6063,7 +6063,7 @@ Func_1ed2d:
 	lb de, 0, 12
 	lb bc, 20, 6
 	call DrawRegularTextBoxVRAM0
-	call Func_1ed5e
+	call GetMailboxSceneDataForStatus
 	call LoadMailboxScene
 	ret
 
@@ -6074,14 +6074,14 @@ LoadMailboxScene:
 	ret
 
 ; hl - text
-Func_1ed57:
+PrintMailboxStatusText: ; Func_1ed57
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
 	farcall PrintScrollableText_NoTextBoxLabelVRAM0
 ;	fallthrough
 
-Func_1ed5e:
+GetMailboxSceneDataForStatus: ; Func_1ed5e
 	ld a, [wMailboxStatus]
 	add a
 	ld c, a
@@ -6120,7 +6120,7 @@ MinicomMailboxMainScreen:
 	call EnableLCD
 .loop
 	call MailboxMainScreen
-	call Func_1eef8
+	call HandleMailboxMainScreenMenuInput
 	jr c, .done
 	call MailboxSelectedMail_LoadMenuBoxParams
 	call MailboxSelectedMail_HandleMenuBox
@@ -6188,7 +6188,7 @@ MailboxMainScreen:
 	inc a
 .done
 	call SetMenuBoxNumItems
-	call Func_1ee97
+	call DrawMailboxPageArrows
 	pop hl
 	pop de
 	pop bc
@@ -6254,7 +6254,7 @@ PrintMailSenderAndSubjectToScreen:
 	pop bc
 	ret
 
-Func_1ee97:
+DrawMailboxPageArrows: ; Func_1ee97
 	lb bc, 1, 17
 	ld d, $1d
 	ld e, $01
@@ -6296,7 +6296,7 @@ MailboxMainScreenMenuBoxParams:
 	textitem 1, 10, SingleSpaceText
 	textitems_end
 
-Func_1eef8:
+HandleMailboxMainScreenMenuInput: ; Func_1eef8
 	ld a, [wSelectedMailCursorPosition]
 	call HandleMenuBox
 	ld [wSelectedMailCursorPosition], a
@@ -6313,7 +6313,7 @@ Func_1eef8:
 	ld a, SFX_DENIED
 	call CallPlaySFX
 	pop af
-	jr Func_1eef8
+	jr HandleMailboxMainScreenMenuInput
 .asm_1ef1a
 	push af
 	ld a, SFX_CONFIRM
@@ -6730,7 +6730,7 @@ DeleteMail:
 	ld [wMailCount], a
 	call DeleteGameCenterMailedCard
 	call DrawMailDeletedTextBox
-	call Func_1f210
+	call AdjustMailboxCursorAfterMailListChange
 .asm_1f1ad
 	pop hl
 	pop de
@@ -6786,7 +6786,7 @@ MailboxYesNoPrompt:
 	textitem 11, 3, PlayerDiaryPromptNoText
 	textitems_end
 
-Func_1f210:
+AdjustMailboxCursorAfterMailListChange: ; Func_1f210
 	ld a, [wSelectedMailCursorPosition]
 	and a
 	jr nz, .asm_1f225
@@ -7062,7 +7062,7 @@ GetSelectedMailPosition:
 
 INCLUDE "data/mail.asm"
 
-Func_1f57b::
+ProcessScreenShakeEffect:: ; Func_1f57b
 	push af
 	push bc
 	push de
@@ -7199,9 +7199,9 @@ GetwDD75:
 
 ; return b = item1, c = item2
 SelectGrandMasterCupPrizes:
-	farcall Func_102a4
+	farcall BeginScreenTransitionToWhiteWithSpriteAnims
 	call _SelectGrandMasterCupPrizes
-	farcall Func_102c4
+	farcall EndScreenTransitionFromWhiteWithSpriteAnims
 	ret
 
 ; return b = item1, c = item2
@@ -7484,10 +7484,10 @@ LoadGrandMasterCupPrizeCardData:
 	pop af
 	ret
 
-Func_1f7f1:
-	farcall Func_102a4
+HandleIngameCardPopWithFade: ; Func_1f7f1
+	farcall BeginScreenTransitionToWhiteWithSpriteAnims
 	call HandleIngameCardPop
-	farcall Func_102c4
+	farcall EndScreenTransitionFromWhiteWithSpriteAnims
 	ret
 
 HandleIngameCardPop:
@@ -7511,11 +7511,11 @@ HandleIngameCardPop:
 	key_func SCRIPTED_RARE_CARD_POP_IMAKUNI, IngameCardPop.Imakuni_rare
 	db $ff
 
-; dupe of Func_1f7f1
-Func_1f81f:
-	farcall Func_102a4
+; dupe of HandleIngameCardPopWithFade
+HandleIngameCardPopWithFade_2: ; Func_1f81f
+	farcall BeginScreenTransitionToWhiteWithSpriteAnims
 	call HandleIngameCardPop
-	farcall Func_102c4
+	farcall EndScreenTransitionFromWhiteWithSpriteAnims
 	ret
 
 CardPopMenu:
@@ -7538,9 +7538,9 @@ CardPopMenu:
 
 ; a = is-playable flag
 CardDungeonDescriptionScreen:
-	farcall Func_102a4
+	farcall BeginScreenTransitionToWhiteWithSpriteAnims
 	call ShowCardDungeonDescriptionScreen
-	farcall Func_102c4
+	farcall EndScreenTransitionFromWhiteWithSpriteAnims
 	ret
 
 ; a = is-playable flag
@@ -7618,9 +7618,9 @@ PlayerGenderAndNameSelection::
 	ret
 
 BillsPCScreen:
-	farcall Func_1022a
+	farcall BeginScreenTransitionToWhite
 	call BillsPC
-	farcall Func_10252
+	farcall EndScreenTransitionFromWhite
 	ret
 
 BillsPC:

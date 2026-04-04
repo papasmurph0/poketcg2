@@ -156,7 +156,7 @@ Func_300a8:
 	ret
 
 .asm_3012c
-	farcall Func_1d51e
+	farcall RestoreWindowPositionAndDisableWindow
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(DoGRBlimpMovement_GRIsland)
@@ -201,7 +201,7 @@ Func_300a8:
 	ret
 
 Func_3018b:
-	farcall Func_1d51e
+	farcall RestoreWindowPositionAndDisableWindow
 	scf
 	ccf
 	ret
@@ -233,7 +233,7 @@ Func_30192:
 	ret
 
 Func_301c0:
-	farcall Func_d683
+	farcall ClearMapReloadEvents
 	farcall DeliverMailFromQueue
 	call WaitPalFading
 .loop
@@ -511,7 +511,7 @@ Func_3035f:
 	ld d, a
 	ld a, [hl]
 	ld e, a
-	farcall Func_d56b
+	farcall SetupOWScrollTarget
 
 .loop_frame
 	call DoFrame
@@ -521,11 +521,11 @@ Func_3035f:
 	cp 1
 	jr z, .speed_1
 ; speed 3
-	farcall Func_d62a
+	farcall UpdateOWScrollToTarget
 .speed_2
-	farcall Func_d62a
+	farcall UpdateOWScrollToTarget
 .speed_1
-	farcall Func_d62a
+	farcall UpdateOWScrollToTarget
 	jr c, .loop_frame
 	ret
 
@@ -689,7 +689,7 @@ Func_30452:
 	ld a, [hli]
 	ld e, [hl]
 	ld d, a
-	farcall Func_d56b
+	farcall SetupOWScrollTarget
 .loop_wait_camera
 	call DoFrame
 	ld hl, wOverworldTransition
@@ -703,7 +703,7 @@ Func_30452:
 	ld b, $00
 	farcall StartPalFadeToBlackOrWhite
 .asm_304ed
-	farcall Func_d62a
+	farcall UpdateOWScrollToTarget
 	jr c, .asm_304f6
 	pop hl
 	jr .loop_commands

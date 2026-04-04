@@ -1,7 +1,7 @@
 BlackBoxScreen:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call BlackBox
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 BlackBox:

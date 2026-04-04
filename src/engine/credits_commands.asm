@@ -1,7 +1,7 @@
 CreditsScreen:
-	call Func_1022a
+	call BeginScreenTransitionToWhite
 	call _PlayCredits
-	call Func_10252
+	call EndScreenTransitionFromWhite
 	ret
 
 _PlayCredits::

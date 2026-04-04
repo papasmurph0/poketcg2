@@ -113,7 +113,7 @@ LoadSavedDuelData:
 	jr .loop
 .done
 	call DisableSRAM
-	bank1call Func_6838
+	bank1call LoadDuelSettingsFromSRAM
 	ret
 
 DuelDataToSave:

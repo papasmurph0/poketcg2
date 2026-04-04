@@ -65,7 +65,7 @@ _BillsPC:
 
 .confirmed
 	call EmptyScreen
-	farcall Func_10327
+	farcall ResetBGMapCopyState
 	farcall TurnOnCurChipsHUD
 	ldtx hl, GameCenterBillsPCChipsPaidText
 	call DrawWideTextBox_WaitForInput
