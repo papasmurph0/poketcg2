@@ -3393,7 +3393,7 @@ Func_35a0d:
 	ld a, EVENT_CAN_TRAVEL_PAST_FIGHTING_FORT
 	farcall GetEventValue
 	jr z, .asm_35a37
-	farcall Func_30056
+	farcall SetAaronStep1IfEnteringFightingFortFromGROverworld
 	scf
 	ret
 .asm_35a2e

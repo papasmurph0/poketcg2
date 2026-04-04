@@ -7432,7 +7432,7 @@ ScriptFightingFortBasementOpenedChest: ; Func_3f932
 	end_dialog
 	end_script
 	ld a, $02
-	farcall Func_30065
+	farcall AdvanceAaronStepOrReset
 	ld a, [wPrevMap]
 	cp MAP_FIGHTING_FORT
 	ret z

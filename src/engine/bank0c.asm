@@ -42,16 +42,16 @@ SetFightingFortBasementWarpAndPlayPitfallSFX: ; Func_30005
 	call PlaySFX
 	ret
 
-Func_30056:
+SetAaronStep1IfEnteringFightingFortFromGROverworld: ; Func_30056
 	ld a, [wPrevMap]
 	cp OVERWORLD_MAP_GR
 	ret nz
 	ld a, VAR_3B
-	ld c, $01
+	ld c, AARON_STEP_1
 	farcall SetVarValue
 	ret
 
-Func_30065:
+AdvanceAaronStepOrReset: ; Func_30065
 	ld c, a
 	ld a, VAR_3B
 	farcall GetVarValue
@@ -5511,7 +5511,7 @@ ScriptFightingFortEntranceClerk: ; Func_33434
 	end_dialog
 	end_script
 	ld a, $01
-	call Func_30065
+	call AdvanceAaronStepOrReset
 	ret
 
 ScriptFightingFortEntranceLeftDoorInteraction: ; Func_33470

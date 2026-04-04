@@ -1678,3 +1678,12 @@ Func_315a7 -> HandleGrassFortEntranceAfterDuel
 Func_315ad -> ScriptGrassFortEntranceClerk
 ; handles Grass Fort Entrance clerk interaction script
 
+Func_2827 -> ReloadCardListItemsWithoutPrintingNames
+; reloads the current card list while suppressing card-name text rendering
+
+Func_30056 -> SetAaronStep1IfEnteringFightingFortFromGROverworld
+; sets Aaron step 1 when entering Fighting Fort directly from the GR overworld map
+
+Func_30065 -> AdvanceAaronStepOrReset
+; advances Aaron's Fighting Fort step state when the expected step matches, otherwise clears it
+
