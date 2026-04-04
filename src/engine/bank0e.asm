@@ -1624,13 +1624,13 @@ HandleAIEvolutionaryLight:
 
 .power_of_darkness
 	ld de, DARK_CLEFABLE
-	farcall Func_4b9f4
+	farcall FindEvolutionInDeckNotInHandForEvolutionaryLight
 	jp c, .use_evolutionary_light
 	ld de, DARK_GOLDUCK
-	farcall Func_4b9f4
+	farcall FindEvolutionInDeckNotInHandForEvolutionaryLight
 	jp c, .use_evolutionary_light
 	ld de, DARK_DRAGONAIR
-	farcall Func_4b9f4
+	farcall FindEvolutionInDeckNotInHandForEvolutionaryLight
 	jp c, .use_evolutionary_light
 	ret
 
@@ -4299,7 +4299,7 @@ Func_3a803:
 	ret c ; found Double Colorless energy
 	call SwapTurn
 	ld e, PLAY_AREA_BENCH_1
-	farcall Func_4a3dc
+	farcall FindPlayAreaCardWithMostEnergiesAndHP
 	call SwapTurn
 	ret
 ; 0x3a837

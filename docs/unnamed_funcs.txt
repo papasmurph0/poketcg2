@@ -271,6 +271,72 @@ Func_3f6b -> SetCallbackPointer
 Func_3f78 -> CallCallbackPointerIfSet
 ; jumps to the stored callback function only when wCallbackPointer is non-zero
 
+Func_35a0 -> SetupTextWithDefaultTileRange
+; wraps SetupText with the default reserved tile range used by menu and screen setup flows
+
+Func_35df -> PrintTextIDVRAM0AndClearTileRange
+; prints text in VRAM0 and clears a fixed VRAM0 tile range used for text rendering
+
+Func_365b -> ReadBankedTilemapHeader
+; reads width, height, and tilemap data pointer from a banked tilemap header
+
+Func_3473 -> ReadByteFromBankedHL
+; reads one byte from banked address a:hl and restores the previous ROM bank
+
+Func_3588 -> WriteDataBlockToBGMap0_SaveAllRegisters
+; calls WriteDataBlockToBGMap0 while preserving af, bc, de, and hl
+
+Func_3594 -> WriteDataBlocksToBGMap0_SaveAllRegisters
+; calls WriteDataBlocksToBGMap0 while preserving af, bc, de, and hl
+
+Func_3c3d -> HandleCoinMenuPageInput_Wrapper
+; wrapper that forwards to HandleCoinMenuPageInput
+
+Func_3c8e -> DispatchSpecialDuelAnimation
+; dispatches DUEL_SPECIAL_ANIMS callbacks and executes them in the stored return bank
+
+Func_3cc3 -> ExecuteDuelAnimationCallbackInReturnBank
+; executes callback in hl using wDuelAnimReturnBank while toggling wDuelAnimCallbackActive
+
+Func_3cdd -> ClearTempActiveMusicAndState
+; clears temporary music id and temporary music state
+
+Func_3d02 -> StopSFX
+; plays SFX id 0 to stop currently playing sound effects
+
+Func_3e4f -> SetSpriteAnimationAndFadePalsFrameFunc_Wrapper
+; wrapper that enables the sprite-animation-and-fade-palettes frame function
+
+Func_3e54 -> UnsetSpriteAnimationAndFadePalsFrameFunc_InitOWObjects
+; unsets the sprite-animation-and-fade-palettes frame function and reinitializes overworld object state
+
+Func_3e7a -> UpdateCreditsScrollCallback_SaveAllRegisters
+; callback wrapper for credits scroll updates that preserves af, bc, de, and hl
+
+Func_383b -> WriteTileAndAttrToBGMap_AdjustedByScroll
+; writes a tile id and VRAM1 attribute byte to BG map at scroll-adjusted coordinates
+
+Func_3924 -> RenderSpriteAnimFrame
+; renders one sprite-animation frame's OAM objects using frame data from banked animation tables
+
+Func_3bc1 -> GetOWSpriteIDFromNPCID
+; returns the OW sprite id for an NPC id using the Data_13005b mapping table
+
+Func_3698 -> UpdateOWAnimatedTiles
+; updates active overworld animated tiles by advancing per-tile frame state and copying current frame tiles into VRAM
+
+Func_372d -> CopyLoadedTilesetTileToVRAM
+; copies one tile from the currently loaded tileset to a destination VRAM bank/tile index
+
+Func_3792 -> LoadTilesetToVRAM1AndVRAM0IfCGB
+; loads the current tileset to VRAM1 and optionally VRAM0 when CGB dual-bank data is present
+
+Func_37ce -> UpdatePaletteAnimationFrame
+; advances palette animation timing and loads the next palette frame when active
+
+Func_3828 -> CopyPaletteFrameToBGPalBufferAndFlush
+; copies one 8-byte palette animation frame to the BG palette buffer and flushes palettes
+
 Func_41603 -> HandleTcgChallengeHallWarpFadeInPreload
 ; prepares challenge hall cup-opponent NPC placement during warp fade-in preload
 
@@ -1749,4 +1815,37 @@ Func_336d -> WaitForOWObjectMovement
 
 Func_33b7 -> LoadCurrentMapHeaderAndScriptPointers
 ; loads current map header data and refreshes current/next map script pointers
+
+Func_495dd -> TryUseEvolutionaryLightForAnyEvolution
+; uses Dark Dragonair's Evolutionary Light to fetch any evolution card from deck
+
+Func_49603 -> ChooseStopLifeDeckTarget
+; chooses Stop Life deck target when Dark Venusaur can use its first attack or power
+
+Func_49a73 -> ChooseKnockoutCapableBenchWithAtLeastArenaEnergies
+; finds a bench target that can KO and has at least as many energies as the arena card
+
+Func_49af6 -> ChooseKnockoutCapableEvolvedBench
+; finds a non-basic bench target that can KO when promoted to arena
+
+Func_49b69 -> ChooseTsunamiStarterDeckTarget
+; chooses Tsunami Starter deck target when Dark Blastoise can use Hydrocannon
+
+Func_49c04 -> ChooseSmashToMincemeatDeckTarget
+; chooses Smash to Mincemeat deck target when Dark Machamp's attack conditions are met
+
+Func_4a3dc -> FindPlayAreaCardWithMostEnergiesAndHP
+; returns the play area location with the most attached energies, breaking ties by remaining HP
+
+Func_4b9f4 -> FindEvolutionInDeckNotInHandForEvolutionaryLight
+; finds an evolution card in deck (but not hand) that Evolutionary Light can apply to current play area
+
+Func_4bd72 -> FindDarkDragonairThatCanUseEvolutionaryLight
+; finds a Dark Dragonair in play that can currently use Evolutionary Light
+
+Func_3be0 -> ReadPackedNPCMovementEntry
+; reads a packed NPC movement entry and decodes direction, speed bits, and duration
+
+Func_3f87 -> NoOpRet
+; no-op helper that immediately returns
 

@@ -1015,7 +1015,7 @@ SetInitialGraphicsConfiguration:
 	ld [wTileMapFill], a
 	bank1call SetOneLineSeparation
 	call LoadSymbolsFont
-	call Func_35a0
+	call SetupTextWithDefaultTileRange
 	call SetZeroScroll
 	call SafeClearBGMap
 	ld a, $01
@@ -1321,7 +1321,7 @@ HandlePauseMenu:
 	lb bc, 18, 8
 	ld d, SYM_REF_MARK
 	ld e, $00 ; priority
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 .done_show_menu
 	pop hl
 	pop de
@@ -1377,7 +1377,7 @@ HandlePauseMenu:
 .RestoreNPCs:
 	farcall ShowNPCAnimsUnderMenuBox
 	call LoadSymbolsFont
-	call Func_35a0
+	call SetupTextWithDefaultTileRange
 	ret
 
 ; unreferenced?
@@ -3770,7 +3770,7 @@ ENDR
 	ld a, [hli] ;  LOW(OWOBJSTRUCT_MOVEMENT_PTR)
 	ld h, [hl]  ; HIGH(OWOBJSTRUCT_MOVEMENT_PTR)
 	ld l, a
-	call Func_3be0
+	call ReadPackedNPCMovementEntry
 	pop hl
 	inc [hl] ; OWOBJSTRUCT_4
 	ld a, b
@@ -4264,7 +4264,7 @@ IntroAndTitleScreen:
 	call FadeInTitleScreen
 
 .title_screen_idle
-	call Func_3d02
+	call StopSFX
 	push af
 	ld a, MUSIC_TITLE_SCREEN
 	call SetMusic
@@ -6508,7 +6508,7 @@ Func_13dfa:
 	ld a, BANK("WRAM1")
 	ld [wWRAMBank], a
 	call ResetFrameFunctionStack
-	call Func_3cdd
+	call ClearTempActiveMusicAndState
 	farcall SetAllPaletteFadeConfigsToEnabled
 	ld a, $ff
 	farcall InitFadePalettes

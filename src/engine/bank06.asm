@@ -2415,13 +2415,13 @@ SetSpriteAnimationsAsVBlankFunction:
 	ld de, wVBlankFunctionTrampolineBackup
 	call BackupVBlankFunctionTrampoline
 	di
-	call Func_3e4f
+	call SetSpriteAnimationAndFadePalsFrameFunc_Wrapper
 	ei
 	ret
 
 ; sets backup VBlank function as wVBlankFunctionTrampoline
 RestoreVBlankFunction:
-	call Func_3e54
+	call UnsetSpriteAnimationAndFadePalsFrameFunc_InitOWObjects
 	ld hl, wVBlankFunctionTrampolineBackup
 	ld de, wVBlankFunctionTrampoline + 1
 	call BackupVBlankFunctionTrampoline

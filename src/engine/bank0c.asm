@@ -412,7 +412,7 @@ HandleGROverworldDPadNavigation: ; Func_30242
 PrintGRIslandLocationName:
 	lb de, 1, 33
 	ldtx hl, EmptyLocationNameText
-	call Func_35df
+	call PrintTextIDVRAM0AndClearTileRange
 	ld a, [wCurOWLocation]
 	sla a
 	sla a ; *4
@@ -425,7 +425,7 @@ PrintGRIslandLocationName:
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
-	call Func_35df
+	call PrintTextIDVRAM0AndClearTileRange
 	ret
 
 .data

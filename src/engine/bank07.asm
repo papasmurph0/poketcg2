@@ -3662,13 +3662,13 @@ ShowCoinMenuPage:
 	inc hl
 	ld e, [hl]
 	lb bc, 0, 8
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	inc hl
 	ld d, [hl]
 	inc hl
 	ld e, [hl]
 	lb bc, 19, 8
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	pop bc
 
 ; prepare highlight box
@@ -4196,7 +4196,7 @@ UpdateDuelAnimations:: ; Func_1e088
 	ld [wDuelAnimDispatchID], a
 	cp DUEL_SPECIAL_ANIMS
 	jr c, .not_special
-	call Func_3c8e
+	call DispatchSpecialDuelAnimation
 	jr .asm_1e122
 .not_special
 	cp DUEL_ANIM_DAMAGE_HUD
@@ -5677,7 +5677,7 @@ DrawGrandMasterCupBracketAdvancementLines:
 	inc hl
 	ld e, [hl]
 	inc hl
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	jr .Draw
 	ret
 
@@ -6258,18 +6258,18 @@ DrawMailboxPageArrows: ; Func_1ee97
 	lb bc, 1, 17
 	ld d, $1d
 	ld e, $01
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	ld a, [wMailboxPage]
 	cp $01
 	jr nz, .asm_1eebd
 	lb bc, 1, 4
 	ld d, $2f
 	ld e, $41
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	lb bc, 1, 17
 	ld d, $1d
 	ld e, $01
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	ret
 .asm_1eebd
 	ld a, [wMailCount]
@@ -6278,11 +6278,11 @@ DrawMailboxPageArrows: ; Func_1ee97
 	lb bc, 1, 17
 	ld d, $2f
 	ld e, $01
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	lb bc, 1, 4
 	ld d, $1d
 	ld e, $01
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	ret
 
 ; a menu box with blank text items that line up with mail items on screen
@@ -6466,7 +6466,7 @@ _ReadMail:
 	lb bc, 1, 17
 	ld d, $1d
 	ld e, $01
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	call GetSelectedMailPosition
 	ld c, a
 	ld b, $00
@@ -7382,7 +7382,7 @@ _SelectGrandMasterCupPrizes:
 	add 4
 	ld c, a
 	ld b, 3 ; x coord
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	pop af
 	ret
 

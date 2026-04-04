@@ -2503,9 +2503,9 @@ HandleAIDarkPokemonSearchStrategies:
 	jp nz, .try_search_for_evolutions_5 ; has Basic Pokémon card(s) in Hand
 	call FindUnusableEvolutionCardInHand
 	jr c, .asm_494d0 ; has an unusable Evolution card in Hand
-	call Func_4bd72
+	call FindDarkDragonairThatCanUseEvolutionaryLight
 	jr nc, .find_any_evolution_card_to_trade
-	call Func_495dd
+	call TryUseEvolutionaryLightForAnyEvolution
 	jr nc, .asm_494d0
 .find_any_evolution_card_to_trade
 	; try to search for an evolution card with The Boss' Way
@@ -2519,7 +2519,7 @@ HandleAIDarkPokemonSearchStrategies:
 	ld a, b
 .asm_494d0
 	push af
-	call Func_4bd72
+	call FindDarkDragonairThatCanUseEvolutionaryLight
 	pop bc
 	ld a, b
 	ldh [hTemp_ffa0], a
@@ -2650,8 +2650,8 @@ AIUseTrainerCardToSearchCard:
 	or a
 	ret
 
-Func_495dd:
-	call Func_4bd72
+TryUseEvolutionaryLightForAnyEvolution: ; Func_495dd
+	call FindDarkDragonairThatCanUseEvolutionaryLight
 	ccf
 	ret c
 	ldh [hTempCardIndex_ff9f], a
@@ -2670,7 +2670,7 @@ Func_495dd:
 	ldh a, [hTempPlayAreaLocation_ffa1]
 	ret
 
-Func_49603:
+ChooseStopLifeDeckTarget: ; Func_49603
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
@@ -3025,7 +3025,7 @@ FindDarkCharizardToAttachEnergy:
 
 SECTION "Bank 12@5a73", ROMX[$5a73], BANK[$12]
 
-Func_49a73:
+ChooseKnockoutCapableBenchWithAtLeastArenaEnergies: ; Func_49a73
 	ld e, PLAY_AREA_ARENA
 	call SwapTurn
 	call GetPlayAreaCardAttachedEnergies
@@ -3103,7 +3103,7 @@ Func_49a73:
 	scf
 	ret
 
-Func_49af6:
+ChooseKnockoutCapableEvolvedBench: ; Func_49af6
 	ld a, DUELVARS_BENCH
 	call GetNonTurnDuelistVariable
 	ld e, PLAY_AREA_BENCH_1
@@ -3178,7 +3178,7 @@ Func_49af6:
 	scf
 	ret
 
-Func_49b69:
+ChooseTsunamiStarterDeckTarget: ; Func_49b69
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
@@ -3193,9 +3193,9 @@ Func_49b69:
 	farcall CheckIfSelectedAttackIsUnusable
 	ccf
 	ret nc ; Hydrocannon not usable
-	call Func_49a73
+	call ChooseKnockoutCapableBenchWithAtLeastArenaEnergies
 	ret c
-	call Func_49af6
+	call ChooseKnockoutCapableEvolvedBench
 	ret c
 	farcall FindBenchCardThatCanBeKnockedOut
 	ret
@@ -3203,7 +3203,7 @@ Func_49b69:
 
 SECTION "Bank 12@5c04", ROMX[$5c04], BANK[$12]
 
-Func_49c04:
+ChooseSmashToMincemeatDeckTarget: ; Func_49c04
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
@@ -3231,7 +3231,7 @@ Func_49c04:
 .asm_49c3a
 	xor a
 	call SwapTurn
-	call Func_49603.CheckIfItsStage2
+	call ChooseStopLifeDeckTarget.CheckIfItsStage2
 	call SwapTurn
 	ccf
 	ret nc
@@ -3243,7 +3243,7 @@ Func_49c04:
 .asm_49c4f
 	ld a, e
 	push de
-	call Func_49603.CheckIfItsStage2
+	call ChooseStopLifeDeckTarget.CheckIfItsStage2
 	pop de
 	jr c, .asm_49c61
 	inc e
@@ -3771,7 +3771,7 @@ AIHandlePkmnPowersWhenPlayingPkmnFromHand:
 	ldh [hTemp_ffa0], a
 	call SwapTurn
 	ld e, PLAY_AREA_ARENA
-	call Func_4a3dc
+	call FindPlayAreaCardWithMostEnergiesAndHP
 	call SwapTurn
 	ldh [hTempPlayAreaLocation_ffa1], a
 	ret
@@ -3902,7 +3902,7 @@ AIHandlePkmnPowersWhenPlayingPkmnFromHand:
 ; - e = PLAY_AREA_* constant to start looking from
 ; output:
 ; - a = PLAY_AREA_* constant chosen
-Func_4a3dc:
+FindPlayAreaCardWithMostEnergiesAndHP: ; Func_4a3dc
 	xor a
 	ld d, MAX_PLAY_AREA_POKEMON * 2
 	ld hl, wCurDeckCards
@@ -4386,7 +4386,7 @@ SECTION "Bank 12@79f4", ROMX[$79f4], BANK[$12]
 
 ; input:
 ; - de = card ID
-Func_4b9f4:
+FindEvolutionInDeckNotInHandForEvolutionaryLight: ; Func_4b9f4
 	push de
 	farcall LookForCardIDInHandList
 	pop de
@@ -4573,7 +4573,7 @@ CountNumberOfNonRecycleEnergyCardsAttached:
 
 SECTION "Bank 12@7d72", ROMX[$7d72], BANK[$12]
 
-Func_4bd72:
+FindDarkDragonairThatCanUseEvolutionaryLight: ; Func_4bd72
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	ld b, a

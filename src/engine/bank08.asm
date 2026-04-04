@@ -451,15 +451,15 @@ Func_209fc:
 	ret
 
 .StopLifeDeck:
-	farcall Func_49603
+	farcall ChooseStopLifeDeckTarget
 	ret
 
 .TsunamiStarterDeck:
-	farcall Func_49b69
+	farcall ChooseTsunamiStarterDeckTarget
 	ret
 
 .SmashToMincemeatDeck:
-	farcall Func_49c04
+	farcall ChooseSmashToMincemeatDeckTarget
 	ret
 
 ; returns nc if Arena card can potentially damage

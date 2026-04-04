@@ -302,7 +302,7 @@ CreditsCmd_Scroll:
 	ld [wCreditsScrollXTarget], a
 	; this won't work since the frame function
 	; doesn't actually call wCallbackPointer
-	ld hl, Func_3e7a
+	ld hl, UpdateCreditsScrollCallback_SaveAllRegisters
 	call SetCallbackPointer
 	ret
 
@@ -447,5 +447,5 @@ CreditsCmd_ShowTile:
 	ld d, a
 	ld a, [wCreditsCmdArg5]
 	ld e, a
-	call Func_383b
+	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	ret

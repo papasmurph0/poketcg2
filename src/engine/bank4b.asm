@@ -243,7 +243,7 @@ LoadTilemap::
 	push de
 	push bc
 	push hl
-	call Func_365b
+	call ReadBankedTilemapHeader
 	ld a, b
 	ld [wBGMapWidth], a
 	ld a, c
@@ -444,7 +444,7 @@ LoadOWMap::
 	ld [wLoadedTilesetPtr + 0], a
 	ld a, h
 	ld [wLoadedTilesetPtr + 1], a
-	call Func_3792
+	call LoadTilesetToVRAM1AndVRAM0IfCGB
 	pop hl
 
 	ld c, [hl] ; palette
@@ -597,7 +597,7 @@ UpdateSpriteAnim::
 	ld a, [wCurSpriteAnimYPos]
 	ld e, a
 	ld a, [wCurSpriteAnimTileOffset]
-	call Func_3924
+	call RenderSpriteAnimFrame
 .apply_changes
 	pop hl
 	call WriteCurSpriteAnim
@@ -702,7 +702,7 @@ WriteCurSpriteAnim:
 	ret
 
 Func_12c3dc:
-	call Func_3bc1
+	call GetOWSpriteIDFromNPCID
 	ret
 
 ; input:
@@ -772,7 +772,7 @@ _LoadOWObject::
 	ld a, [wLoadOWObjectDirection]
 	farcall SetSpriteAnimDirection
 	ld a, [wLoadOWObjectNPCID]
-	call Func_3bc1
+	call GetOWSpriteIDFromNPCID
 	push hl
 	ld h, b
 	ld l, c

@@ -693,7 +693,7 @@ ExecuteNPCScript::
 	scf
 	ret
 
-Func_3473::
+ReadByteFromBankedHL:: ; Func_3473
 	push bc
 	ld b, a
 	ldh a, [hBankROM]
@@ -956,7 +956,7 @@ DivideBCbyDE::
 	jr nz, .asm_3568
 	ret
 
-Func_3588::
+WriteDataBlockToBGMap0_SaveAllRegisters:: ; Func_3588
 	push af
 	push bc
 	push de
@@ -968,7 +968,7 @@ Func_3588::
 	pop af
 	ret
 
-Func_3594::
+WriteDataBlocksToBGMap0_SaveAllRegisters:: ; Func_3594
 	push af
 	push bc
 	push de
@@ -980,7 +980,7 @@ Func_3594::
 	pop af
 	ret
 
-Func_35a0::
+SetupTextWithDefaultTileRange:: ; Func_35a0
 	push af
 	push bc
 	push de
@@ -1046,7 +1046,7 @@ PlaceTextItemsVRAM0::
 
 ; hl = text ID
 ; de = coordinates
-Func_35df::
+PrintTextIDVRAM0AndClearTileRange:: ; Func_35df
 	call InitTextPrinting_ProcessTextFromIDVRAM0
 	push bc
 	push de
@@ -1146,7 +1146,7 @@ CopyTilesToTiles0::
 
 ; input:
 ; b:hl = tilemap pointer
-Func_365b::
+ReadBankedTilemapHeader:: ; Func_365b
 	ldh a, [hBankROM]
 	push af
 	ld a, b
@@ -1200,7 +1200,7 @@ DecompressDataFromBank::
 	pop bc
 	ret
 
-Func_3698::
+UpdateOWAnimatedTiles:: ; Func_3698
 	push af
 	push bc
 	push de
@@ -1275,7 +1275,7 @@ Func_3698::
 	ld a, [hli] ;
 	ld d, a
 	push hl
-	call Func_372d
+	call CopyLoadedTilesetTileToVRAM
 	pop hl
 	pop de
 	ld a, [de]
@@ -1314,7 +1314,7 @@ Func_3698::
 ; de = tile index
 ; b = $0 if VRAM1, $1 if VRAM0
 ; c = destination tile number in VRAM
-Func_372d::
+CopyLoadedTilesetTileToVRAM:: ; Func_372d
 	ldh a, [hBankROM]
 	push af
 	ld a, [wLoadedTilesetBank]
@@ -1382,7 +1382,7 @@ CopyCGBBGPalsFromSource_BeginWithPal2::
 	call CopyCGBBGPalsFromSource_WithPalOffset
 	ret
 
-Func_3792::
+LoadTilesetToVRAM1AndVRAM0IfCGB:: ; Func_3792
 	push af
 	push bc
 	push de
@@ -1425,7 +1425,7 @@ Func_3792::
 	pop af
 	ret
 
-Func_37ce::
+UpdatePaletteAnimationFrame:: ; Func_37ce
 	push af
 	push bc
 	push de
@@ -1467,7 +1467,7 @@ Func_37ce::
 	sla c
 	ld b, $00
 	add hl, bc
-	call Func_3828
+	call CopyPaletteFrameToBGPalBufferAndFlush
 	pop af
 	call BankswitchROM
 .asm_3823
@@ -1477,7 +1477,7 @@ Func_37ce::
 	pop af
 	ret
 
-Func_3828::
+CopyPaletteFrameToBGPalBufferAndFlush:: ; Func_3828
 	ld de, $cb26
 	ld b, $08
 .asm_382d
@@ -1497,7 +1497,7 @@ BankswitchVRAM::
 ; bc = coordinates
 ; d = VRAM0 tile index
 ; e = VRAM1 tile attributes
-Func_383b::
+WriteTileAndAttrToBGMap_AdjustedByScroll:: ; Func_383b
 	push af
 	push de
 	ld d, b
@@ -1682,7 +1682,7 @@ LoadGfxFromTileset::
 ; c = frame number
 ; d = x position
 ; e = y position
-Func_3924::
+RenderSpriteAnimFrame:: ; Func_3924
 	push af
 	push bc
 	push de
@@ -1918,8 +1918,8 @@ FrameFunc_OverworldAndFadePals:: ; Func_3a39
 .asm_3a56
 	farcall ProcessScreenShakeEffect
 	farcall UpdateSpriteAnims
-	call Func_3698
-	call Func_37ce
+	call UpdateOWAnimatedTiles
+	call UpdatePaletteAnimationFrame
 	farcall FadePalettes
 	pop hl
 	pop de
@@ -2180,7 +2180,7 @@ LoadMenuBoxParams::
 	ret
 
 ; a = ?
-Func_3bc1::
+GetOWSpriteIDFromNPCID:: ; Func_3bc1
 	push af
 	push hl
 	ld c, a
@@ -2202,8 +2202,15 @@ Func_3bc1::
 	pop af
 	ret
 
-; e = ?
-Func_3be0::
+; b = movement data bank
+; hl = movement data pointer table
+; c = movement step index
+; e = movement speed divisor selector
+; output:
+; - b = movement direction byte
+; - c = speed bits (low 2 bits)
+; - e = duration derived from packed movement entry
+ReadPackedNPCMovementEntry:: ; Func_3be0
 	push af
 	push hl
 	ldh a, [hBankROM]
@@ -2282,7 +2289,7 @@ CopyCurPaletteToPal2::
 StubbedPlayDefaultSong::
 	ret
 
-Func_3c3d::
+HandleCoinMenuPageInput_Wrapper:: ; Func_3c3d
 	farcall HandleCoinMenuPageInput
 	ret
 
@@ -2338,7 +2345,7 @@ CheckAnyAnimationPlaying::
 	ccf
 	ret
 
-Func_3c8e::
+DispatchSpecialDuelAnimation:: ; Func_3c8e
 	ld a, [wCurAnimation]
 	cp DUEL_ANIM_158_UNUSED
 	jr z, .asm_3ca8
@@ -2352,14 +2359,14 @@ Func_3c8e::
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
-	jp Func_3cc3
+	jp ExecuteDuelAnimationCallbackInReturnBank
 
 .asm_3ca8
 	ld a, [wDuelAnimDamage]
 	ld l, a
 	ld a, [wDuelAnimDamage + 1]
 	ld h, a
-	jp Func_3cc3
+	jp ExecuteDuelAnimationCallbackInReturnBank
 
 .pointer_table
 	dw SetScreenForDuelAnimation ; DUEL_ANIM_SET_SCREEN
@@ -2371,7 +2378,7 @@ Func_3c8e::
 	dw DuelAnim156        ; DUEL_ANIM_156_UNUSED
 	dw DuelAnim157        ; DUEL_ANIM_157_UNUSED
 
-Func_3cc3::
+ExecuteDuelAnimationCallbackInReturnBank:: ; Func_3cc3
 	ld a, $ff
 	ld [wDuelAnimCallbackActive], a
 	ldh a, [hBankROM]
@@ -2385,7 +2392,7 @@ Func_3cc3::
 	ld [wDuelAnimCallbackActive], a
 	ret
 
-Func_3cdd::
+ClearTempActiveMusicAndState:: ; Func_3cdd
 	xor a
 	ld [wTempActiveMusic], a
 	ld [wTempActiveMusicState], a
@@ -2417,7 +2424,7 @@ CallPlaySFX::
 	call PlaySFX
 	ret
 
-Func_3d02::
+StopSFX:: ; Func_3d02
 	push af
 	xor a
 	call CallPlaySFX
@@ -2661,11 +2668,11 @@ CreateSpriteAnim::
 	pop af
 	ret
 
-Func_3e4f::
+SetSpriteAnimationAndFadePalsFrameFunc_Wrapper:: ; Func_3e4f
 	farcall SetSpriteAnimationAndFadePalsFrameFunc
 	ret
 
-Func_3e54::
+UnsetSpriteAnimationAndFadePalsFrameFunc_InitOWObjects:: ; Func_3e54
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
 	farcall Func_10d40
 	ret
@@ -2696,7 +2703,7 @@ UpdateMailboxPage::
 	farcall _UpdateMailboxPage
 	ret
 
-Func_3e7a::
+UpdateCreditsScrollCallback_SaveAllRegisters:: ; Func_3e7a
 	push af
 	push bc
 	push de
@@ -2863,5 +2870,5 @@ CallCallbackPointerIfSet:: ; Func_3f78
 	pop af
 	jp hl
 
-Func_3f87::
+NoOpRet:: ; Func_3f87
 	ret
