@@ -1491,7 +1491,7 @@ PsychicClubLobby_NPCs:
 PsychicClubLobby_NPCInteractions:
 	npc_script NPC_PSYCHIC_CLUB_GLASSES_LAD, Func_2cc11
 	npc_script NPC_PSYCHIC_CLUB_LASS, Func_2cc7d
-	npc_script NPC_IMAKUNI_BLACK, Func_3c30c
+	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
 	npc_script NPC_PSYCHIC_CLUB_CAPPED_LAD, Func_2ccb7
 	npc_script NPC_PSYCHIC_CLUB_GR_LASS, Func_2cce8
 	db $ff
@@ -2645,7 +2645,7 @@ RockClubLobby_NPCs:
 RockClubLobby_NPCInteractions:
 	npc_script NPC_ROCK_CLUB_LASS, Func_2d4e0
 	npc_script NPC_ROCK_CLUB_WOMAN, Func_2d546
-	npc_script NPC_IMAKUNI_BLACK, Func_3c30c
+	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
 	npc_script NPC_ROCK_CLUB_CHAP, Func_2d58b
 	npc_script NPC_ROCK_CLUB_CAPPED_LAD, Func_2d5c7
 	db $ff
@@ -5129,7 +5129,7 @@ ScienceClubLobby_NPCs:
 ScienceClubLobby_NPCInteractions:
 	npc_script NPC_DAVID, Func_2e76e
 	npc_script NPC_ERIK, Func_2e7e3
-	npc_script NPC_IMAKUNI_BLACK, Func_3c30c
+	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
 	npc_script NPC_SCIENCE_CLUB_MAN, Func_2e831
 	npc_script NPC_SCIENCE_CLUB_GLASSES_KID, Func_2e862
 	npc_script NPC_SCIENCE_CLUB_TECH, Func_2e8a0
@@ -6132,7 +6132,7 @@ WaterClubLobby_NPCs:
 WaterClubLobby_NPCInteractions:
 	npc_script NPC_JOSHUA, Func_2eeea
 	npc_script NPC_WATER_CLUB_LASS, Func_2ef74
-	npc_script NPC_IMAKUNI_BLACK, Func_3c30c
+	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
 	npc_script NPC_WATER_CLUB_PAPPY, Func_2efae
 	npc_script NPC_WATER_CLUB_LONGHAIRED_LASS, Func_2efe1
 	db $ff
@@ -7234,7 +7234,7 @@ FireClubLobby_NPCs:
 
 FireClubLobby_NPCInteractions:
 	npc_script NPC_FIRE_CLUB_PUNK_GUY, Func_2f709
-	npc_script NPC_IMAKUNI_BLACK, Func_3c30c
+	npc_script NPC_IMAKUNI_BLACK, ScriptImakuniBlack
 	npc_script NPC_FIRE_CLUB_MARTIAL_ARTIST, Func_2f77e
 	npc_script NPC_FIRE_CLUB_GAL, Func_2f7a4
 	db $ff

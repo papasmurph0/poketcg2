@@ -763,3 +763,918 @@ Func_3f0b3 -> HandleCardDungeonPawnWarpFadeInPreload
 Func_3f0d4 -> HandleCardDungeonPawnAfterDuel
 ; dispatches Card Dungeon Pawn room after-duel script
 
+Func_3f1c6 -> ScriptCardDungeonPawnCloseFrontDoorsOnEntry
+; runs Card Dungeon Pawn entry script that closes front doors after warp-in movement
+
+Func_3f239 -> ExecuteCardDungeonKnightStepEvents
+; runs Card Dungeon Knight room coordinate-triggered step-event scripts
+
+Func_3f240 -> LoadCardDungeonKnightNPCs
+; loads Card Dungeon Knight room NPC set
+
+Func_3f249 -> HandleCardDungeonKnightInteractions
+; dispatches Card Dungeon Knight room NPC and object interaction scripts
+
+Func_3f259 -> HandleCardDungeonKnightWarpFadeInPreload
+; handles Card Dungeon Knight room warp fade-in preload and queues door setup script
+
+Func_3f27a -> HandleCardDungeonKnightAfterDuel
+; dispatches Card Dungeon Knight room after-duel script
+
+Func_3f395 -> ScriptCardDungeonKnightCloseFrontDoorsOnEntry
+; runs Card Dungeon Knight entry script that closes front doors after warp-in movement
+
+Func_3f409 -> ExecuteCardDungeonRookStepEvents
+; runs Card Dungeon Rook room coordinate-triggered step-event scripts
+
+Func_3f410 -> LoadCardDungeonRookNPCs
+; loads Card Dungeon Rook room NPC set
+
+Func_3f419 -> HandleCardDungeonRookInteractions
+; dispatches Card Dungeon Rook room NPC and object interaction scripts
+
+Func_3f429 -> HandleCardDungeonRookWarpFadeInPreload
+; handles Card Dungeon Rook room warp fade-in preload and queues door setup script
+
+Func_3f44a -> HandleCardDungeonRookAfterDuel
+; dispatches Card Dungeon Rook room after-duel script
+
+Func_3f572 -> CardDungeonRook_SetWarp
+; sets warp destination for exiting Card Dungeon Rook room back to Game Center 2
+
+Func_3f57e -> ScriptCardDungeonRookCloseFrontDoorsOnEntry
+; runs Card Dungeon Rook entry script that closes front doors after warp-in movement
+
+Func_3f63b -> PlayWaterFortLobbyImakuniRedThemePostload
+; plays Imakuni Red theme on Water Fort Lobby music postload when event state var is set
+
+Func_3f650 -> ExecuteWaterFortLobbyStepEvents
+; runs Water Fort Lobby coordinate-triggered step-event scripts
+
+Func_3f657 -> LoadWaterFortLobbyNPCs
+; loads Water Fort Lobby NPC set
+
+Func_3f660 -> HandleWaterFortLobbyInteractions
+; dispatches Water Fort Lobby NPC and object interaction scripts
+
+Func_3f670 -> HandleWaterFortLobbyAfterDuel
+; dispatches Water Fort Lobby after-duel handling
+
+Func_3f675 -> HandleWaterFortLobbyContinueOverworld
+; resumes Water Fort Lobby overworld state after temporary Imakuni Red event handling
+
+Func_3f691 -> ScriptWaterFortLobbyTradeNpc
+; runs Water Fort Lobby trade NPC script shared by glasses kid and GR lad variants
+
+Func_3f718 -> CheckShowWaterFortLobbyGlassesKid
+; returns carry when the glasses kid variant should be hidden after trade completion and event progression
+
+Func_3f735 -> CheckShowWaterFortLobbyGrLad
+; returns carry when the GR lad variant should be shown after trade completion and event progression
+
+Func_3f752 -> ScriptWaterFortLobbyGrGranny
+; runs Water Fort Lobby GR granny dialog script based on coin/event state
+
+Func_3f780 -> ScriptWaterFortLobbyGrGal
+; runs Water Fort Lobby GR gal dialog script based on postgame state
+
+Func_3f7a6 -> CheckShowWaterFortLobbyImakuniRed
+; returns carry when Imakuni Red should appear in Water Fort Lobby based on event state var
+
+Func_3f7ff -> ExecuteFightingFortMaze19StepEvents
+; runs Fighting Fort Maze 19 coordinate-triggered step-event scripts
+
+Func_3f806 -> LoadFightingFortMaze19NPCs
+; loads Fighting Fort Maze 19 NPC set
+
+Func_3f80f -> HandleFightingFortMaze19Interactions
+; dispatches Fighting Fort Maze 19 NPC interaction scripts
+
+Func_3f817 -> ScriptFightingFortMaze19ClosedChest
+; handles opening the closed chest in Fighting Fort Maze 19 and granting booster packs
+
+Func_3f830 -> CheckShowFightingFortMaze19ClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Maze 19
+
+Func_3f83d -> ScriptFightingFortMaze19OpenedChest
+; handles interaction with the opened chest in Fighting Fort Maze 19
+
+Func_3f84b -> CheckShowFightingFortMaze19OpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Maze 19
+
+Func_3f858 -> HandleFightingFortMaze19OpenedChestPostInteraction
+; applies post-interaction state handling after reading the opened chest in Fighting Fort Maze 19
+
+Func_3f8b6 -> ExecuteFightingFortBasementStepEvents
+; runs Fighting Fort Basement coordinate-triggered step-event scripts
+
+Func_3f8bd -> LoadFightingFortBasementNPCs
+; loads Fighting Fort Basement NPC set
+
+Func_3f8c6 -> HandleFightingFortBasementWarpFadeInPreload
+; handles Fighting Fort Basement warp fade-in preload and queues entry movement script from non-fort maps
+
+Func_3f904 -> HandleFightingFortBasementInteractions
+; dispatches Fighting Fort Basement NPC interaction scripts
+
+Func_3f90c -> ScriptFightingFortBasementClosedChest
+; handles opening the closed chest in Fighting Fort Basement and granting Fighting Energy
+
+Func_3f925 -> CheckShowFightingFortBasementClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Basement
+
+Func_3f932 -> ScriptFightingFortBasementOpenedChest
+; handles interaction with the opened chest in Fighting Fort Basement
+
+Func_3f951 -> CheckShowFightingFortBasementOpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Basement
+
+Func_3f95e -> ScriptFightingFortBasementWarpEntrance
+; runs Fighting Fort Basement entry movement/scroll script before returning to idle overworld mode
+
+Func_3c30c -> ScriptImakuniBlack
+; runs Imakuni Black encounter script, including Card Pop/save flow and duel prompt branches
+
+Func_3c4e0 -> ScriptImakuniRed
+; runs Imakuni Red encounter script, including rare Card Pop branch and duel prompt
+
+Func_3c52d -> ScriptImakuniRedAfterDuel
+; handles Imakuni Red post-duel rewards/progression branches and exit movement
+
+Func_3eef4 -> SetOverworldModeIdle_Unreferenced
+; unreferenced helper that sets overworld mode to idle and returns
+
+Func_3165e -> PlayGrassFortLobbyImakuniRedThemePostload
+; plays Imakuni Red theme on Grass Fort Lobby music postload when event state var is set
+
+Func_31673 -> ExecuteGrassFortLobbyStepEvents
+; runs Grass Fort Lobby coordinate-triggered step-event scripts
+
+Func_3167a -> LoadGrassFortLobbyNPCs
+; loads Grass Fort Lobby NPC set
+
+Func_31683 -> HandleGrassFortLobbyInteractions
+; dispatches Grass Fort Lobby NPC and object interaction scripts
+
+Func_31693 -> HandleGrassFortLobbyAfterDuel
+; dispatches Grass Fort Lobby after-duel handling
+
+Func_31699 -> HandleGrassFortLobbyContinueOverworld
+; resumes Grass Fort Lobby overworld state after temporary Imakuni Red event handling
+
+Func_316b5 -> ScriptGrassFortLobbyTradeGrunt
+; runs the Grass Fort Lobby trade grunt card-trade script
+
+Func_3171f -> ScriptGrassFortLobbyGrPappy
+; runs Grass Fort Lobby GR pappy dialog script
+
+Func_31745 -> ScriptGrassFortLobbyGrLass
+; runs Grass Fort Lobby GR lass dialog script based on sealed fort and Rick progression
+
+Func_31776 -> CheckShowGrassFortLobbyImakuniRed
+; returns carry when Imakuni Red should appear in Grass Fort Lobby based on event state var
+
+Func_317db -> ExecuteGrassFortMidoriStepEvents
+; runs Grass Fort Midori coordinate-triggered step-event scripts
+
+Func_317e2 -> LoadGrassFortMidoriNPCs
+; loads Grass Fort Midori NPC set
+
+Func_317eb -> HandleGrassFortMidoriWarpFadeInPreload
+; handles Grass Fort Midori warp fade-in preload including mail delivery and cage tilemap setup
+
+Func_31815 -> HandleGrassFortMidoriInteractions
+; dispatches Grass Fort Midori NPC and object interaction scripts
+
+Func_31825 -> HandleGrassFortMidoriAfterDuel
+; dispatches Grass Fort Midori after-duel scripts by current NPC id
+
+Func_31835 -> ScriptGrassFortMidoriRickCageInteraction
+; runs the Grass Fort Midori cage-side Rick interaction script before cage release
+
+Func_31864 -> CheckShowGrassFortMidoriRick
+; returns carry when Rick should be shown in Grass Fort Midori based on cage state
+
+Func_31871 -> ScriptGrassFortMidori
+; runs Midori's Grass Fort room interaction and duel prompt branches
+
+Func_318e2 -> ScriptGrassFortMidoriAfterDuel
+; handles Midori's Grass Fort after-duel flow including freeing Rick and reward sequence
+
+Func_319cc -> ExecuteGrassFortYutaStepEvents
+; runs Grass Fort Yuta coordinate-triggered step-event scripts
+
+Func_319d3 -> LoadGrassFortYutaNPCs
+; loads Grass Fort Yuta NPC set
+
+Func_319dc -> HandleGrassFortYutaWarpFadeInPreload
+; handles Grass Fort Yuta warp fade-in preload and door tilemap setup
+
+Func_319f2 -> HandleGrassFortYutaInteractions
+; dispatches Grass Fort Yuta NPC and object interaction scripts
+
+Func_31a02 -> HandleGrassFortYutaAfterDuel
+; dispatches Grass Fort Yuta after-duel scripts by current NPC id
+
+Func_31a12 -> ScriptGrassFortYuta
+; runs Yuta's room interaction and duel prompt branches
+
+Func_31aa7 -> ScriptGrassFortYutaAfterDuel
+; handles Yuta's after-duel flow including room door unlock progression
+
+Func_31ae1 -> ScriptGrassFortYutaDoorInteraction
+; handles interaction with Yuta room doors when they are still locked
+
+Func_31b82 -> ExecuteGrassFortMiyukiStepEvents
+; runs Grass Fort Miyuki coordinate-triggered step-event scripts
+
+Func_31b89 -> LoadGrassFortMiyukiNPCs
+; loads Grass Fort Miyuki NPC set
+
+Func_31b92 -> HandleGrassFortMiyukiWarpFadeInPreload
+; handles Grass Fort Miyuki warp fade-in preload and door tilemap setup
+
+Func_31ba8 -> HandleGrassFortMiyukiInteractions
+; dispatches Grass Fort Miyuki NPC and object interaction scripts
+
+Func_31bb8 -> HandleGrassFortMiyukiAfterDuel
+; dispatches Grass Fort Miyuki after-duel scripts by current NPC id
+
+Func_31bc8 -> ScriptGrassFortMiyuki
+; runs Miyuki room interaction and duel requirement branches
+
+Func_31c37 -> ScriptGrassFortMiyukiAfterDuel
+; handles Miyuki after-duel flow including room door unlock progression
+
+Func_31ca8 -> ScriptGrassFortMiyukiDoorInteraction
+; handles interaction with Miyuki room doors when they are still locked
+
+Func_31d27 -> ExecuteLightningFortEntranceStepEvents
+; runs Lightning Fort Entrance coordinate-triggered step-event scripts
+
+Func_31d2e -> LoadLightningFortEntranceNPCs
+; loads Lightning Fort Entrance NPC set
+
+Func_31d37 -> HandleLightningFortEntranceWarpFadeInPreload
+; handles Lightning Fort Entrance warp fade-in preload and entrance door tilemap/clerk positioning
+
+Func_31d5e -> HandleLightningFortEntranceInteractions
+; dispatches Lightning Fort Entrance NPC and object interaction scripts
+
+Func_31d6e -> ScriptLightningFortEntranceClerk
+; runs the Lightning Fort Entrance clerk dialog and door-unlock hint branch
+
+Func_31da0 -> ScriptLightningFortEntranceDoorInteraction
+; handles interaction with Lightning Fort Entrance doors including unlock mail flow
+
+Func_31e52 -> ExecuteLightningFortLobbyStepEvents
+; runs Lightning Fort Lobby coordinate-triggered step-event scripts
+
+Func_31e59 -> LoadLightningFortLobbyNPCs
+; loads Lightning Fort Lobby NPC set
+
+Func_31e62 -> HandleLightningFortLobbyInteractions
+; dispatches Lightning Fort Lobby NPC and object interaction scripts
+
+Func_31e72 -> HandleLightningFortLobbyAfterDuel
+; dispatches Lightning Fort Lobby after-duel scripts by current NPC id
+
+Func_31e82 -> ScriptLightningFortLobbyTradeLass
+; runs the Lightning Fort Lobby trade lass card-trade script
+
+Func_31ee8 -> ScriptLightningFortLobbyGrWoman
+; runs Lightning Fort Lobby GR woman dialog script based on progression and coin state
+
+Func_31f2c -> ScriptLightningFortLobbyChubbyKid
+; runs Lightning Fort Lobby chubby kid dialog script based on trade progression
+
+Func_31f52 -> ScriptLightningFortLobbyTap
+; runs Tap's Lightning Fort Lobby interaction and duel prompt script
+
+Func_31f8f -> ScriptLightningFortLobbyAfterDuelTap
+; handles Tap's Lightning Fort Lobby after-duel reward script
+
+Func_32006 -> ExecuteLightningFortRennaStepEvents
+; runs Lightning Fort Renna coordinate-triggered step-event scripts
+
+Func_3200d -> LoadLightningFortRennaNPCs
+; loads Lightning Fort Renna NPC set
+
+Func_32016 -> HandleLightningFortRennaWarpFadeInPreload
+; handles Lightning Fort Renna warp fade-in preload including mail delivery and door tilemap setup
+
+Func_32037 -> HandleLightningFortRennaInteractions
+; dispatches Lightning Fort Renna NPC and object interaction scripts
+
+Func_32047 -> HandleLightningFortRennaAfterDuel
+; dispatches Lightning Fort Renna after-duel scripts by current NPC id
+
+Func_32057 -> ScriptLightningFortRenna
+; runs Renna room interaction and duel requirement branches
+
+Func_320bb -> ScriptLightningFortRennaAfterDuel
+; handles Renna after-duel flow including room door unlock progression
+
+Func_320f5 -> ScriptLightningFortRennaDoorInteraction
+; handles interaction with Renna room doors when they are still locked
+
+Func_321aa -> ExecuteLightningFortIchikawaStepEvents
+; runs Lightning Fort Ichikawa coordinate-triggered step-event scripts
+
+Func_321b1 -> LoadLightningFortIchikawaNPCs
+; loads Lightning Fort Ichikawa NPC set
+
+Func_321ba -> HandleLightningFortIchikawaWarpFadeInPreload
+; handles Lightning Fort Ichikawa warp fade-in preload and room door tilemap setup
+
+Func_321e4 -> HandleLightningFortIchikawaInteractions
+; dispatches Lightning Fort Ichikawa NPC and object interaction scripts
+
+Func_321f4 -> HandleLightningFortIchikawaAfterDuel
+; dispatches Lightning Fort Ichikawa after-duel scripts by current NPC id
+
+Func_32204 -> ScriptLightningFortIchikawa
+; runs Ichikawa room interaction and duel requirement branches
+
+Func_322a1 -> ScriptLightningFortIchikawaAfterDuel
+; handles Ichikawa after-duel flow including room door unlock and Steve release progression
+
+Func_323f0 -> ScriptLightningFortIchikawaDoorInteraction
+; handles interaction with Ichikawa room doors when they are still locked
+
+Func_32407 -> ScriptLightningFortIchikawaStevePodInteraction
+; handles interaction with Ichikawa room Steve pod gate before Steve is freed
+
+Func_3244f -> ExecuteLightningFortCatherineStepEvents
+; runs Lightning Fort Catherine coordinate-triggered step-event scripts
+
+Func_32456 -> LoadLightningFortCatherineNPCs
+; loads Lightning Fort Catherine NPC set
+
+Func_3245f -> HandleLightningFortCatherineInteractions
+; dispatches Lightning Fort Catherine NPC interaction scripts
+
+Func_32467 -> HandleLightningFortCatherineAfterDuel
+; dispatches Lightning Fort Catherine after-duel scripts by current NPC id
+
+Func_32477 -> ScriptLightningFortCatherine
+; runs Catherine room interaction and duel prompt branches
+
+Func_324e1 -> ScriptLightningFortCatherineAfterDuel
+; handles Catherine after-duel flow including beat flag, GR challenge cup state, and rewards
+
+Func_3259f -> PlayFireFortEntranceRonaldThemePostload
+; plays Ronald theme on Fire Fort Entrance music postload during the Ronald encounter window
+
+Func_325bc -> ExecuteFireFortEntranceStepEvents
+; runs Fire Fort Entrance coordinate-triggered step-event scripts
+
+Func_325c3 -> LoadFireFortEntranceNPCs
+; loads Fire Fort Entrance NPC set
+
+Func_325cc -> HandleFireFortEntranceWarpFadeInPreload
+; handles Fire Fort Entrance warp fade-in preload and entrance door/clerk setup including Ronald branch
+
+Func_3261c -> HandleFireFortEntranceInteractions
+; dispatches Fire Fort Entrance NPC and object interaction scripts
+
+Func_3262c -> HandleFireFortEntranceAfterDuel
+; dispatches Fire Fort Entrance after-duel handling
+
+Func_32632 -> ScriptFireFortEntranceClerk
+; runs the Fire Fort Entrance clerk dialog and door-unlock hint branch
+
+Func_32664 -> ScriptFireFortEntranceDoorInteraction
+; handles interaction with Fire Fort Entrance doors including unlock mail flow
+
+Func_32712 -> PlayFireFortLobbyImakuniRedThemePostload
+; plays Imakuni Red theme on Fire Fort Lobby music postload when event state var is set
+
+Func_32727 -> ExecuteFireFortLobbyStepEvents
+; runs Fire Fort Lobby coordinate-triggered step-event scripts
+
+Func_3272e -> LoadFireFortLobbyNPCs
+; loads Fire Fort Lobby NPC set
+
+Func_32737 -> HandleFireFortLobbyInteractions
+; dispatches Fire Fort Lobby NPC and object interaction scripts
+
+Func_32747 -> HandleFireFortLobbyAfterDuel
+; dispatches Fire Fort Lobby after-duel handling
+
+Func_3274d -> HandleFireFortLobbyContinueOverworld
+; resumes Fire Fort Lobby overworld state after temporary Imakuni Red event handling
+
+Func_32769 -> ScriptFireFortLobbyTradeGrampy
+; runs the Fire Fort Lobby trade grampy card-trade script
+
+Func_327cf -> ScriptFireFortLobbyYoungster
+; runs Fire Fort Lobby youngster dialog script
+
+Func_327f5 -> CheckShowFireFortLobbyImakuniRed
+; returns carry when Imakuni Red should appear in Fire Fort Lobby based on event state var
+
+Func_3285d -> ExecuteFireFortJesStepEvents
+; runs Fire Fort Jes coordinate-triggered step-event scripts
+
+Func_32864 -> LoadFireFortJesNPCs
+; loads Fire Fort Jes NPC set
+
+Func_3286d -> HandleFireFortJesWarpFadeInPreload
+; handles Fire Fort Jes warp fade-in preload including mail delivery and door tilemap setup
+
+Func_3288e -> HandleFireFortJesInteractions
+; dispatches Fire Fort Jes NPC and object interaction scripts
+
+Func_3289e -> HandleFireFortJesAfterDuel
+; dispatches Fire Fort Jes after-duel scripts by current NPC id
+
+Func_328ae -> ScriptFireFortJes
+; runs Jes room interaction and duel prompt branches
+
+Func_32907 -> ScriptFireFortJesAfterDuel
+; handles Jes after-duel flow including room door unlock progression
+
+Func_32956 -> ScriptFireFortJesDoorInteraction
+; handles interaction with Jes room doors when they are still locked
+
+Func_329c6 -> ExecuteFireFortYukiStepEvents
+; runs Fire Fort Yuki coordinate-triggered step-event scripts
+
+Func_329cd -> LoadFireFortYukiNPCs
+; loads Fire Fort Yuki NPC set
+
+Func_329d6 -> HandleFireFortYukiWarpFadeInPreload
+; handles Fire Fort Yuki warp fade-in preload including first-meeting intro setup and door tilemap
+
+Func_32a18 -> HandleFireFortYukiInteractions
+; dispatches Fire Fort Yuki NPC and object interaction scripts
+
+Func_32a28 -> HandleFireFortYukiAfterDuel
+; dispatches Fire Fort Yuki after-duel scripts by current NPC id
+
+Func_32a38 -> ScriptFireFortYukiFirstMeeting
+; runs the scripted first-meeting intro sequence for Yuki's room
+
+Func_32a76 -> ScriptFireFortYuki
+; runs Yuki room interaction and duel requirement branches
+
+Func_32b43 -> ScriptFireFortYukiAfterDuel
+; handles Yuki after-duel flow including room door unlock progression
+
+Func_32bd4 -> ScriptFireFortYukiDoorInteraction
+; handles interaction with Yuki room doors when they are still locked
+
+Func_32c4a -> ExecuteFireFortShokoStepEvents
+; runs Fire Fort Shoko coordinate-triggered step-event scripts
+
+Func_32c51 -> LoadFireFortShokoNPCs
+; loads Fire Fort Shoko NPC set
+
+Func_32c5a -> HandleFireFortShokoWarpFadeInPreload
+; handles Fire Fort Shoko warp fade-in preload and room door/courtesy tilemap setup
+
+Func_32c7a -> HandleFireFortShokoInteractions
+; dispatches Fire Fort Shoko NPC and object interaction scripts
+
+Func_32c8a -> HandleFireFortShokoAfterDuel
+; dispatches Fire Fort Shoko after-duel scripts by current NPC id
+
+Func_32c9a -> ScriptFireFortShoko
+; runs Shoko room interaction and duel requirement branches
+
+Func_32d1f -> ScriptFireFortShokoAfterDuel
+; handles Shoko after-duel flow including room door unlock and Courtney release progression
+
+Func_32d59 -> ScriptFireFortShokoDoorInteraction
+; handles interaction with Shoko room doors when they are still locked
+
+Func_32d82 -> CheckShowFireFortShokoCourtney
+; returns carry when Courtney should appear in Shoko room before release event
+
+Func_32e51 -> ExecuteFireFortHideroStepEvents
+; runs Fire Fort Hidero coordinate-triggered step-event scripts
+
+Func_32e58 -> LoadFireFortHideroNPCs
+; loads Fire Fort Hidero NPC set
+
+Func_32e61 -> HandleFireFortHideroInteractions
+; dispatches Fire Fort Hidero NPC interaction scripts
+
+Func_32e69 -> HandleFireFortHideroAfterDuel
+; dispatches Fire Fort Hidero after-duel scripts by current NPC id
+
+Func_32e79 -> ScriptFireFortHidero
+; runs Hidero room interaction and duel prompt branches
+
+Func_32efd -> ScriptFireFortHideroAfterDuel
+; handles Hidero after-duel flow including beat flag, challenge cup state, and coin reward
+
+Func_32fc9 -> PlayWaterFortEntranceRonaldThemePostload
+; plays Ronald theme on Water Fort Entrance music postload during the Ronald encounter window
+
+Func_32fe6 -> ExecuteWaterFortEntranceStepEvents
+; runs Water Fort Entrance coordinate-triggered step-event scripts
+
+Func_32fed -> LoadWaterFortEntranceNPCs
+; loads Water Fort Entrance NPC set
+
+Func_32ff6 -> HandleWaterFortEntranceWarpFadeInPreload
+; handles Water Fort Entrance warp fade-in preload and entrance door/clerk setup including Ronald branch
+
+Func_33046 -> HandleWaterFortEntranceInteractions
+; dispatches Water Fort Entrance NPC and object interaction scripts
+
+Func_33056 -> HandleWaterFortEntranceAfterDuel
+; dispatches Water Fort Entrance after-duel handling
+
+Func_3305c -> ScriptWaterFortEntranceClerk
+; runs the Water Fort Entrance clerk dialog and door-unlock hint branch
+
+Func_3308e -> ScriptWaterFortEntranceDoorInteraction
+; handles interaction with Water Fort Entrance doors including unlock mail flow
+
+Func_33119 -> ExecuteWaterFortMiyajimaStepEvents
+; runs Water Fort Miyajima coordinate-triggered step-event scripts
+
+Func_33120 -> LoadWaterFortMiyajimaNPCs
+; loads Water Fort Miyajima NPC set
+
+Func_33129 -> HandleWaterFortMiyajimaWarpFadeInPreload
+; handles Water Fort Miyajima warp fade-in preload including mail delivery and door tilemap setup
+
+Func_3314a -> HandleWaterFortMiyajimaInteractions
+; dispatches Water Fort Miyajima NPC and object interaction scripts
+
+Func_3315a -> HandleWaterFortMiyajimaAfterDuel
+; dispatches Water Fort Miyajima after-duel scripts by current NPC id
+
+Func_3316a -> ScriptWaterFortMiyajima
+; runs Miyajima room interaction and duel requirement branches
+
+Func_331d9 -> ScriptWaterFortMiyajimaAfterDuel
+; handles Miyajima after-duel flow including room door unlock progression
+
+Func_33236 -> ScriptWaterFortMiyajimaDoorInteraction
+; handles interaction with Miyajima room doors when they are still locked
+
+Func_3327e -> ExecuteWaterFortKanokoStepEvents
+; runs Water Fort Kanoko coordinate-triggered step-event scripts
+
+Func_33285 -> LoadWaterFortKanokoNPCs
+; loads Water Fort Kanoko NPC set
+
+Func_3328e -> HandleWaterFortKanokoInteractions
+; dispatches Water Fort Kanoko NPC interaction scripts
+
+Func_33296 -> HandleWaterFortKanokoAfterDuel
+; dispatches Water Fort Kanoko after-duel scripts by current NPC id
+
+Func_332a6 -> ScriptWaterFortKanoko
+; runs Kanoko room interaction and duel prompt branches
+
+Func_332ff -> ScriptWaterFortKanokoAfterDuel
+; handles Kanoko after-duel flow including beat flag, challenge cup state, and coin reward
+
+Func_333ad -> ExecuteFightingFortEntranceStepEvents
+; runs Fighting Fort Entrance coordinate-triggered step-event scripts
+
+Func_333b4 -> LoadFightingFortEntranceNPCs
+; loads Fighting Fort Entrance NPC set
+
+Func_333bd -> HandleFightingFortEntranceWarpFadeInPreload
+; handles Fighting Fort Entrance warp fade-in preload, coin-door state visuals, and clerk placement
+
+Func_33424 -> HandleFightingFortEntranceInteractions
+; dispatches Fighting Fort Entrance NPC and object interaction scripts
+
+Func_33434 -> ScriptFightingFortEntranceClerk
+; runs the Fighting Fort Entrance clerk dialog and coin-door hint branches
+
+Func_33470 -> ScriptFightingFortEntranceLeftDoorInteraction
+; handles left coin-slot door interaction flow in Fighting Fort Entrance
+
+Func_334b3 -> ScriptFightingFortEntranceRightDoorInteraction
+; handles right coin-slot door interaction flow in Fighting Fort Entrance
+
+Func_33565 -> ExecuteFightingFortMaze2StepEvents
+; runs Fighting Fort Maze 2 coordinate-triggered step-event scripts
+
+Func_3356c -> HandleFightingFortMaze2WarpEndSFX
+; suppresses warp-end SFX in Fighting Fort Maze 2 when arriving from basement
+
+Func_33578 -> LoadFightingFortMaze2NPCs
+; loads Fighting Fort Maze 2 NPC set
+
+Func_33581 -> HandleFightingFortMaze2Interactions
+; dispatches Fighting Fort Maze 2 NPC interaction scripts
+
+Func_33589 -> ScriptFightingFortMaze2ClosedChest
+; handles opening the closed chest in Fighting Fort Maze 2 and granting booster packs
+
+Func_335a2 -> CheckShowFightingFortMaze2ClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Maze 2
+
+Func_335af -> ScriptFightingFortMaze2OpenedChest
+; handles interaction with the opened chest in Fighting Fort Maze 2
+
+Func_335ba -> CheckShowFightingFortMaze2OpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Maze 2
+
+Func_335c7 -> ScriptFightingFortMaze2OpenGateAt3x3
+; handles Fighting Fort Maze 2 coordinate-triggered gate opening at tile 3,3
+
+Func_3361d -> ExecuteFightingFortMaze3StepEvents
+; runs Fighting Fort Maze 3 coordinate-triggered step-event scripts
+
+Func_33624 -> HandleFightingFortMaze3WarpFadeInPreload
+; handles Fighting Fort Maze 3 warp fade-in preload setup
+
+Func_336a3 -> ExecuteFightingFortMaze4StepEvents
+; runs Fighting Fort Maze 4 coordinate-triggered step-event scripts
+
+Func_336aa -> HandleFightingFortMaze4WarpEndSFX
+; suppresses warp-end SFX in Fighting Fort Maze 4 when arriving from basement
+
+Func_336b6 -> HandleFightingFortMaze4WarpFadeInPreload
+; handles Fighting Fort Maze 4 warp fade-in preload setup
+
+Func_336c1 -> LoadFightingFortMaze4NPCs
+; loads Fighting Fort Maze 4 NPC set
+
+Func_336ca -> HandleFightingFortMaze4Interactions
+; dispatches Fighting Fort Maze 4 NPC interaction scripts
+
+Func_336d2 -> ScriptFightingFortMaze4ClosedChest
+; handles opening the closed chest in Fighting Fort Maze 4 and granting booster packs
+
+Func_336eb -> CheckShowFightingFortMaze4ClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Maze 4
+
+Func_336f8 -> ScriptFightingFortMaze4OpenedChest
+; handles interaction with the opened chest in Fighting Fort Maze 4
+
+Func_33703 -> CheckShowFightingFortMaze4OpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Maze 4
+
+Func_33710 -> ScriptFightingFortMaze4OpenGateAt2x3
+; handles Fighting Fort Maze 4 coordinate-triggered gate opening at tile 2,3
+
+Func_33754 -> ExecuteFightingFortMaze5StepEvents
+; runs Fighting Fort Maze 5 coordinate-triggered step-event scripts
+
+Func_3375b -> HandleFightingFortMaze5WarpFadeInPreload
+; handles Fighting Fort Maze 5 warp fade-in preload setup
+
+Func_337a9 -> ExecuteFightingFortMaze6StepEvents
+; runs Fighting Fort Maze 6 coordinate-triggered step-event scripts
+
+Func_337b0 -> HandleFightingFortMaze6WarpFadeInPreload
+; handles Fighting Fort Maze 6 warp fade-in preload setup
+
+Func_33810 -> ExecuteFightingFortMaze7StepEvents
+; runs Fighting Fort Maze 7 coordinate-triggered step-event scripts
+
+Func_33817 -> HandleFightingFortMaze7WarpFadeInPreload
+; handles Fighting Fort Maze 7 warp fade-in preload setup
+
+Func_338a8 -> ExecuteFightingFortMaze8StepEvents
+; runs Fighting Fort Maze 8 coordinate-triggered step-event scripts
+
+Func_338af -> HandleFightingFortMaze8WarpEndSFX
+; suppresses warp-end SFX in Fighting Fort Maze 8 when arriving from basement
+
+Func_338bb -> HandleFightingFortMaze8WarpFadeInPreload
+; handles Fighting Fort Maze 8 warp fade-in preload setup
+
+Func_338c6 -> LoadFightingFortMaze8NPCs
+; loads Fighting Fort Maze 8 NPC set
+
+Func_338cf -> HandleFightingFortMaze8Interactions
+; dispatches Fighting Fort Maze 8 NPC interaction scripts
+
+Func_338d7 -> ScriptFightingFortMaze8ClosedChest
+; handles opening the closed chest in Fighting Fort Maze 8 and granting booster packs
+
+Func_338f0 -> CheckShowFightingFortMaze8ClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Maze 8
+
+Func_338fd -> ScriptFightingFortMaze8OpenedChest
+; handles interaction with the opened chest in Fighting Fort Maze 8
+
+Func_33908 -> CheckShowFightingFortMaze8OpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Maze 8
+
+Func_33915 -> ScriptFightingFortMaze8OpenGateAt3x3
+; handles Fighting Fort Maze 8 coordinate-triggered gate opening at tile 3,3
+
+Func_3396b -> ExecuteFightingFortMaze9StepEvents
+; runs Fighting Fort Maze 9 coordinate-triggered step-event scripts
+
+Func_33972 -> HandleFightingFortMaze9WarpFadeInPreload
+; handles Fighting Fort Maze 9 warp fade-in preload setup
+
+Func_339ab -> ExecuteFightingFortMaze10StepEvents
+; runs Fighting Fort Maze 10 coordinate-triggered step-event scripts
+
+Func_33a07 -> ExecuteFightingFortMaze11StepEvents
+; runs Fighting Fort Maze 11 coordinate-triggered step-event scripts
+
+Func_33a0e -> HandleFightingFortMaze11WarpFadeInPreload
+; handles Fighting Fort Maze 11 warp fade-in preload setup
+
+Func_33a83 -> ExecuteFightingFortMaze12StepEvents
+; runs Fighting Fort Maze 12 coordinate-triggered step-event scripts
+
+Func_33a8a -> HandleFightingFortMaze12WarpEndSFX
+; suppresses warp-end SFX in Fighting Fort Maze 12 when arriving from basement
+
+Func_33a96 -> HandleFightingFortMaze12WarpFadeInPreload
+; handles Fighting Fort Maze 12 warp fade-in preload setup
+
+Func_33aa1 -> ScriptFightingFortMaze12OpenGateAt4x6
+; handles Fighting Fort Maze 12 coordinate-triggered gate opening at tile 4,6
+
+Func_33b09 -> ExecuteFightingFortMaze13StepEvents
+; runs Fighting Fort Maze 13 coordinate-triggered step-event scripts
+
+Func_33b10 -> HandleFightingFortMaze13WarpFadeInPreload
+; handles Fighting Fort Maze 13 warp fade-in preload setup
+
+Func_33b73 -> ExecuteFightingFortMaze14StepEvents
+; runs Fighting Fort Maze 14 coordinate-triggered step-event scripts
+
+Func_33b7a -> HandleFightingFortMaze14WarpEndSFX
+; suppresses warp-end SFX in Fighting Fort Maze 14 when arriving from basement
+
+Func_33b86 -> HandleFightingFortMaze14WarpFadeInPreload
+; handles Fighting Fort Maze 14 warp fade-in preload setup
+
+Func_33b91 -> ScriptFightingFortMaze14OpenGateAt2x3
+; handles Fighting Fort Maze 14 coordinate-triggered gate opening at tile 2,3
+
+Func_33be7 -> ExecuteFightingFortMaze15StepEvents
+; runs Fighting Fort Maze 15 coordinate-triggered step-event scripts
+
+Func_33bee -> HandleFightingFortMaze15WarpFadeInPreload
+; handles Fighting Fort Maze 15 warp fade-in preload setup
+
+Func_33c6d -> ExecuteFightingFortMaze17StepEvents
+; runs Fighting Fort Maze 17 coordinate-triggered step-event scripts
+
+Func_33c74 -> HandleFightingFortMaze17WarpFadeInPreload
+; handles Fighting Fort Maze 17 warp fade-in preload and entry gate script setup from Maze 18
+
+Func_33c9d -> HandleFightingFortMaze17WarpEndSFX
+; suppresses warp-end SFX in Fighting Fort Maze 17 when arriving from basement
+
+Func_33ca9 -> LoadFightingFortMaze17NPCs
+; loads Fighting Fort Maze 17 NPC set
+
+Func_33cb2 -> HandleFightingFortMaze17Interactions
+; dispatches Fighting Fort Maze 17 NPC interaction scripts
+
+Func_33cba -> ScriptFightingFortMaze17ClosedChest
+; handles opening the closed chest in Fighting Fort Maze 17 and granting Diglett Lv16
+
+Func_33cd3 -> CheckShowFightingFortMaze17ClosedChest
+; returns carry when the closed chest should be shown in Fighting Fort Maze 17
+
+Func_33ce0 -> ScriptFightingFortMaze17OpenedChest
+; handles interaction with the opened chest in Fighting Fort Maze 17
+
+Func_33ceb -> CheckShowFightingFortMaze17OpenedChest
+; returns carry when the opened chest should be shown in Fighting Fort Maze 17
+
+Func_33cf8 -> ScriptFightingFortMaze17OpenSideGateAt8x3
+; handles Fighting Fort Maze 17 side-gate opening at tile 8,3 with directional continuation
+
+Func_33d1b -> ScriptFightingFortMaze17OpenTopGateAt4x6
+; handles Fighting Fort Maze 17 top-gate opening at tile 4,6
+
+Func_33d5c -> ExecuteFightingFortMaze20StepEvents
+; runs Fighting Fort Maze 20 coordinate-triggered step-event scripts
+
+Func_33d91 -> ExecuteFightingFortMaze22StepEvents
+; runs Fighting Fort Maze 22 coordinate-triggered step-event scripts
+
+Func_33dcc -> PlayColorlessAltarEntranceRonaldThemePostload
+; plays Ronald theme on Colorless Altar Entrance music postload during early encounter state
+
+Func_33de1 -> ExecuteColorlessAltarEntranceStepEvents
+; runs Colorless Altar Entrance coordinate-triggered step-event scripts
+
+Func_33de8 -> HandleColorlessAltarEntranceWarpFadeInPreload
+; handles Colorless Altar Entrance warp fade-in preload and early Ronald encounter setup
+
+Func_30000 -> SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep
+; sets Fighting Fort basement warp, plays pitfall SFX, and applies a backward step adjustment
+
+Func_30005 -> SetFightingFortBasementWarpAndPlayPitfallSFX
+; sets Fighting Fort basement warp and plays pitfall SFX with optional backstep based on carry
+
+Func_30092 -> SetGROverworldBlimpMusicIfArrivingFromBlimpRoute
+; preloads GR overworld blimp music when entering from blimp-related routes
+
+Func_300a8 -> InitGROverworldMapState
+; initializes GR overworld map object state, script pointers, and initial navigation mode
+
+Func_3018b -> HandleGROverworldWarpFadeOutPreload
+; handles GR overworld warp fade-out preload by restoring and disabling the window layer
+
+Func_30192 -> HandleGROverworldWarpEndSFX
+; handles GR overworld warp-end SFX for standard movement and blimp-route arrivals
+
+Func_301c0 -> RunGROverworldMapLoop
+; runs the GR overworld cursor movement loop and confirms travel to selected locations
+
+Func_30202 -> UpdateGROverworldCursorAndCross
+; updates GR overworld cursor and cross markers based on selected location and lock status
+
+Func_30242 -> HandleGROverworldDPadNavigation
+; handles D-pad location selection and camera scrolling in GR overworld navigation
+
+Func_3030a -> CheckIfGROverworldLocationIsLocked
+; returns carry when the selected GR overworld location is locked by progress
+
+Func_30343 -> LoadGROverworldScrollStateForCurrentLocation
+; loads current and target scroll state from selected GR overworld location data
+
+Func_3035f -> ScrollGROverworldCameraToLocation
+; updates GR overworld camera scroll toward a target location and records completion state
+
+Func_30398 -> ScrollGROverworldCameraForCurrentLocation
+; applies location-dependent camera scroll updates while navigating the GR overworld map
+
+Func_303c7 -> SetWarpFromCurrentGROverworldLocation
+; writes warp destination map and spawn coordinates for the selected GR overworld location
+
+Func_30452 -> MovePlayerAcrossGROverworldPath
+; executes scripted player movement along GR overworld path data and map transitions
+
+Func_311a8 -> LoadCardDungeonQueenNPCs
+; loads Card Dungeon Queen NPC set according to event and card ownership state
+
+Func_311b1 -> HandleCardDungeonQueenInteractions
+; dispatches Card Dungeon Queen NPC and object interaction scripts
+
+Func_311b9 -> HandleCardDungeonQueenWarpFadeInPreload
+; handles Card Dungeon Queen warp fade-in preload and entry-door closure script setup
+
+Func_311d0 -> HandleCardDungeonQueenAfterDuel
+; runs Card Dungeon Queen after-duel script handling
+
+Func_31281 -> JumpToCardDungeonQueenSetWarp
+; jumps to Card Dungeon Queen warp destination setup helper
+
+Func_312d2 -> ScriptCardDungeonQueenCloseFrontDoorsOnEntry
+; closes Card Dungeon Queen front doors on first-entry state and starts overworld script flow
+
+Func_31386 -> ExecuteSealedFortEntranceStepEvents
+; runs Sealed Fort Entrance coordinate-triggered step-event scripts
+
+Func_3138d -> HandleSealedFortEntranceInteractions
+; dispatches Sealed Fort Entrance NPC and object interaction scripts
+
+Func_313a8 -> HandleSealedFortEntranceWarpFadeInPreload
+; handles Sealed Fort Entrance warp fade-in preload setup
+
+Func_313bc -> ScriptSealedFortEntranceDoorInteraction
+; handles Sealed Fort Entrance door interaction and scripted entry branch
+
+Func_31426 -> ExecuteGrChallengeHallEntranceStepEvents
+; runs GR Challenge Hall Entrance coordinate-triggered step-event scripts
+
+Func_3142d -> SetGrChallengeHallEntranceMusicIfCupActive
+; preloads challenge hall music at GR Challenge Hall Entrance while cup events are active
+
+Func_31447 -> HandleGrChallengeHallEntranceWarpFadeOutPreload
+; handles GR Challenge Hall Entrance warp fade-out preload and music transition setup
+
+Func_31490 -> LoadGrChallengeHallEntranceNPCs
+; loads GR Challenge Hall Entrance NPC set
+
+Func_31499 -> HandleGrChallengeHallEntranceInteractions
+; dispatches GR Challenge Hall Entrance NPC interaction scripts
+
+Func_31559 -> PlayGrassFortEntranceRonaldThemePostload
+; plays Ronald theme on Grass Fort Entrance music postload during early encounter state
+
+Func_3156e -> ExecuteGrassFortEntranceStepEvents
+; runs Grass Fort Entrance coordinate-triggered step-event scripts
+
+Func_31575 -> LoadGrassFortEntranceNPCs
+; loads Grass Fort Entrance NPC set
+
+Func_3157e -> HandleGrassFortEntranceWarpFadeInPreload
+; handles Grass Fort Entrance warp fade-in preload and early Ronald encounter setup
+
+Func_3159f -> HandleGrassFortEntranceInteractions
+; dispatches Grass Fort Entrance NPC and object interaction scripts
+
+Func_315a7 -> HandleGrassFortEntranceAfterDuel
+; runs Grass Fort Entrance after-duel script handling
+
+Func_315ad -> ScriptGrassFortEntranceClerk
+; handles Grass Fort Entrance clerk interaction script
+

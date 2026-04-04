@@ -3703,7 +3703,7 @@ Func_35c86:
 	ld bc, TILEMAP_0C7
 	lb de, 4, 6
 	farcall Func_12c0ce
-	farcall Func_30005
+	farcall SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 
 FightingFortMaze18_MapHeader:
@@ -3759,7 +3759,7 @@ Func_35d22:
 	ld bc, TILEMAP_0CC
 	lb de, 4, 6
 	farcall Func_12c0ce
-	farcall Func_30005
+	farcall SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 
 FightingFortGoda_MapHeader:
@@ -4368,7 +4368,7 @@ PsychicStrongholdLobby_NPCInteractions:
 	npc_script NPC_PSYCHIC_STRONGHOLD_LADY, Func_36250
 	npc_script NPC_PSYCHIC_STRONGHOLD_UNCAPPED_LAD, Func_362c4
 	npc_script NPC_GR_PSYCHIC_STRONGHOLD_GR_LASS, Func_362ea
-	npc_script NPC_IMAKUNI_RED, Func_3c4e0
+	npc_script NPC_IMAKUNI_RED, ScriptImakuniRed
 	db $ff
 
 PsychicStrongholdLobby_OWInteractions:
@@ -4424,7 +4424,7 @@ Func_3621e:
 	ret
 
 Func_3622e:
-	farcall Func_3c52d
+	farcall ScriptImakuniRedAfterDuel
 	scf
 	ret
 

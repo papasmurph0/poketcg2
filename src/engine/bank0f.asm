@@ -366,7 +366,7 @@ Script_3c2f0:
 .ows_3c30b
 	script_retfar
 
-Func_3c30c:
+ScriptImakuniBlack: ; Func_3c30c
 	ld a, NPC_IMAKUNI_BLACK
 	ld [wScriptNPC], a
 	ldtx hl, DialogImakuniText
@@ -610,7 +610,7 @@ Script_3c497:
 	farcall PlayAfterCurrentSong
 	ret
 
-Func_3c4e0:
+ScriptImakuniRed: ; Func_3c4e0
 	ld a, NPC_IMAKUNI_RED
 	ld [wScriptNPC], a
 	ldtx hl, DialogImakuniText
@@ -650,7 +650,7 @@ Func_3c4e0:
 	end_script
 	ret
 
-Func_3c52d:
+ScriptImakuniRedAfterDuel: ; Func_3c52d
 	xor a
 	start_script
 	start_dialog
@@ -6073,7 +6073,7 @@ Script_GameCenterChipSecurity_HaltForDeposit:
 	ret
 
 ; unreferenced resumption
-Func_3eef4:
+SetOverworldModeIdle_Unreferenced: ; Func_3eef4
 	ld a, OWMODE_IDLE
 	ld [wOverworldMode], a
 	ret
@@ -6101,7 +6101,7 @@ GameCenterLobby_NPCInteractions:
 	npc_script NPC_GAME_CENTER_TECH, Script_GameCenterLobbyTech
 	npc_script NPC_GAME_CENTER_GR_LASS, Script_GameCenterLobbyGRLass
 	npc_script NPC_GAME_CENTER_GR_PAPPY, Script_GameCenterLobbyGRPappy
-	npc_script NPC_IMAKUNI_RED, Func_3c4e0
+	npc_script NPC_IMAKUNI_RED, ScriptImakuniRed
 	db $ff
 
 GameCenterLobby_OWInteractions:
@@ -6157,7 +6157,7 @@ HandleGameCenterLobbyInteractions: ; Func_3efa5
 	ret
 
 HandleGameCenterLobbyAfterDuel: ; Func_3efb5
-	call Func_3c52d
+	call ScriptImakuniRedAfterDuel
 	scf
 	ret
 
@@ -6306,9 +6306,9 @@ HandleCardDungeonPawnWarpFadeInPreload: ; Func_3f0b3
 	farcall Func_12c0ce
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_3f1c6)
+	ld a, BANK(ScriptCardDungeonPawnCloseFrontDoorsOnEntry)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_3f1c6
+	ld hl, ScriptCardDungeonPawnCloseFrontDoorsOnEntry
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -6440,7 +6440,7 @@ CardDungeonPawn_SetWarp:
 	farcall SetWarpData
 	ret
 
-Func_3f1c6:
+ScriptCardDungeonPawnCloseFrontDoorsOnEntry: ; Func_3f1c6
 	xor a
 	start_script
 	animate_player_movement $00, $01
@@ -6490,26 +6490,26 @@ CardDungeonKnight_OWInteractions:
 	db $ff
 
 CardDungeonKnight_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_3f239
-	dbw OWMODE_INTERACT, Func_3f249
-	dbw OWMODE_AFTER_DUEL, Func_3f27a
-	dbw OWMODE_NPC_POSITION, Func_3f240
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_3f259
+	dbw OWMODE_STEP_EVENT, ExecuteCardDungeonKnightStepEvents
+	dbw OWMODE_INTERACT, HandleCardDungeonKnightInteractions
+	dbw OWMODE_AFTER_DUEL, HandleCardDungeonKnightAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadCardDungeonKnightNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleCardDungeonKnightWarpFadeInPreload
 	db $ff
 
-Func_3f239:
+ExecuteCardDungeonKnightStepEvents: ; Func_3f239
 	ld hl, CardDungeonKnight_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_3f240:
+LoadCardDungeonKnightNPCs: ; Func_3f240
 	ld hl, CardDungeonKnight_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_3f249:
+HandleCardDungeonKnightInteractions: ; Func_3f249
 	ld hl, CardDungeonKnight_NPCInteractions
 	call Func_328c
 	jr nc, .asm_3f257
@@ -6519,15 +6519,15 @@ Func_3f249:
 	scf
 	ret
 
-Func_3f259:
+HandleCardDungeonKnightWarpFadeInPreload: ; Func_3f259
 	ld bc, TILEMAP_CARD_DUNGEON_KNIGHT_FRONT_DOORS_SHUT
 	lb de, 4, 0
 	farcall Func_12c0ce
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_3f395)
+	ld a, BANK(ScriptCardDungeonKnightCloseFrontDoorsOnEntry)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_3f395
+	ld hl, ScriptCardDungeonKnightCloseFrontDoorsOnEntry
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -6535,7 +6535,7 @@ Func_3f259:
 	scf
 	ret
 
-Func_3f27a:
+HandleCardDungeonKnightAfterDuel: ; Func_3f27a
 	call Script_KnightAfterDuel
 	scf
 	ret
@@ -6681,7 +6681,7 @@ CardDungeonKnight_SetWarp:
 	farcall SetWarpData
 	ret
 
-Func_3f395:
+ScriptCardDungeonKnightCloseFrontDoorsOnEntry: ; Func_3f395
 	xor a
 	start_script
 	animate_player_movement $00, $01
@@ -6731,26 +6731,26 @@ CardDungeonRook_OWInteractions:
 	db $ff
 
 CardDungeonRook_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_3f409
-	dbw OWMODE_INTERACT, Func_3f419
-	dbw OWMODE_AFTER_DUEL, Func_3f44a
-	dbw OWMODE_NPC_POSITION, Func_3f410
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_3f429
+	dbw OWMODE_STEP_EVENT, ExecuteCardDungeonRookStepEvents
+	dbw OWMODE_INTERACT, HandleCardDungeonRookInteractions
+	dbw OWMODE_AFTER_DUEL, HandleCardDungeonRookAfterDuel
+	dbw OWMODE_NPC_POSITION, LoadCardDungeonRookNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleCardDungeonRookWarpFadeInPreload
 	db $ff
 
-Func_3f409:
+ExecuteCardDungeonRookStepEvents: ; Func_3f409
 	ld hl, CardDungeonRook_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_3f410:
+LoadCardDungeonRookNPCs: ; Func_3f410
 	ld hl, CardDungeonRook_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_3f419:
+HandleCardDungeonRookInteractions: ; Func_3f419
 	ld hl, CardDungeonRook_NPCInteractions
 	call Func_328c
 	jr nc, .asm_3f427
@@ -6760,15 +6760,15 @@ Func_3f419:
 	scf
 	ret
 
-Func_3f429:
+HandleCardDungeonRookWarpFadeInPreload: ; Func_3f429
 	ld bc, TILEMAP_CARD_DUNGEON_ROOK_FRONT_DOORS_SHUT
 	lb de, 4, 0
 	farcall Func_12c0ce
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_3f57e)
+	ld a, BANK(ScriptCardDungeonRookCloseFrontDoorsOnEntry)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_3f57e
+	ld hl, ScriptCardDungeonRookCloseFrontDoorsOnEntry
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -6776,7 +6776,7 @@ Func_3f429:
 	scf
 	ret
 
-Func_3f44a:
+HandleCardDungeonRookAfterDuel: ; Func_3f44a
 	call Script_RookAfterDuel
 	scf
 	ret
@@ -6863,7 +6863,7 @@ Script_Rook:
 	hide_chips_hud
 	end_dialog
 	end_script
-	jp Func_3f572
+	jp CardDungeonRook_SetWarp
 .proceed_repeat
 	print_npc_text RookProceedRepeatText
 	end_dialog
@@ -6899,7 +6899,7 @@ Script_RookAfterDuel:
 	print_npc_text RookPlayerLostText
 	end_dialog
 	end_script
-	jp Func_3f572
+	jp CardDungeonRook_SetWarp
 .proceed
 	ask_question RookProceedWithCardDungeonPromptText, TRUE
 	script_jump_if_b0z .declined
@@ -6918,20 +6918,20 @@ Script_RookAfterDuel:
 	print_npc_text RookPlayerWithdrewText
 	end_dialog
 	end_script
-	jp Func_3f572
+	jp CardDungeonRook_SetWarp
 .done
 	end_dialog
 	end_script
 	ret
 
-Func_3f572:
+CardDungeonRook_SetWarp: ; Func_3f572
 	ld a, MAP_GAME_CENTER_2
 	lb de, 6, 3
 	ld b, SOUTH
 	farcall SetWarpData
 	ret
 
-Func_3f57e:
+ScriptCardDungeonRookCloseFrontDoorsOnEntry: ; Func_3f57e
 	xor a
 	start_script
 	animate_player_movement $00, $01
@@ -6968,21 +6968,21 @@ WaterFortLobby_StepEvents:
 	db $ff
 
 WaterFortLobby_NPCs:
-	npc NPC_WATER_FORT_GLASSES_KID, 10, 10, WEST, Func_3f718
-	npc NPC_WATER_FORT_GR_LAD, 10, 10, WEST, Func_3f735
+	npc NPC_WATER_FORT_GLASSES_KID, 10, 10, WEST, CheckShowWaterFortLobbyGlassesKid
+	npc NPC_WATER_FORT_GR_LAD, 10, 10, WEST, CheckShowWaterFortLobbyGrLad
 	npc NPC_WATER_FORT_GR_GRANNY, 2, 7, SOUTH, NULL
 	npc NPC_WATER_FORT_GR_GAL, 5, 9, NORTH, NULL
-	npc NPC_IMAKUNI_RED, 12, 1, NORTH, Func_3f7a6
+	npc NPC_IMAKUNI_RED, 12, 1, NORTH, CheckShowWaterFortLobbyImakuniRed
 	npc NPC_GR_CLERK_BATTLE_CENTER, 5, 2, SOUTH, NULL
 	npc NPC_GR_CLERK_GIFT_CENTER, 8, 2, SOUTH, NULL
 	db $ff
 
 WaterFortLobby_NPCInteractions:
-	npc_script NPC_WATER_FORT_GLASSES_KID, Func_3f691
-	npc_script NPC_WATER_FORT_GR_LAD, Func_3f691
-	npc_script NPC_WATER_FORT_GR_GRANNY, Func_3f752
-	npc_script NPC_WATER_FORT_GR_GAL, Func_3f780
-	npc_script NPC_IMAKUNI_RED, Func_3c4e0
+	npc_script NPC_WATER_FORT_GLASSES_KID, ScriptWaterFortLobbyTradeNpc
+	npc_script NPC_WATER_FORT_GR_LAD, ScriptWaterFortLobbyTradeNpc
+	npc_script NPC_WATER_FORT_GR_GRANNY, ScriptWaterFortLobbyGrGranny
+	npc_script NPC_WATER_FORT_GR_GAL, ScriptWaterFortLobbyGrGal
+	npc_script NPC_IMAKUNI_RED, ScriptImakuniRed
 	db $ff
 
 WaterFortLobby_OWInteractions:
@@ -6993,15 +6993,15 @@ WaterFortLobby_OWInteractions:
 	db $ff
 
 WaterFortLobby_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_3f650
-	dbw OWMODE_INTERACT, Func_3f660
-	dbw OWMODE_AFTER_DUEL, Func_3f670
-	dbw OWMODE_CONTINUE_OW, Func_3f675
-	dbw OWMODE_NPC_POSITION, Func_3f657
-	dbw OWMODE_MUSIC_POSTLOAD, Func_3f63b
+	dbw OWMODE_STEP_EVENT, ExecuteWaterFortLobbyStepEvents
+	dbw OWMODE_INTERACT, HandleWaterFortLobbyInteractions
+	dbw OWMODE_AFTER_DUEL, HandleWaterFortLobbyAfterDuel
+	dbw OWMODE_CONTINUE_OW, HandleWaterFortLobbyContinueOverworld
+	dbw OWMODE_NPC_POSITION, LoadWaterFortLobbyNPCs
+	dbw OWMODE_MUSIC_POSTLOAD, PlayWaterFortLobbyImakuniRedThemePostload
 	db $ff
 
-Func_3f63b:
+PlayWaterFortLobbyImakuniRedThemePostload: ; Func_3f63b
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $08
@@ -7015,19 +7015,19 @@ Func_3f63b:
 	ccf
 	ret
 
-Func_3f650:
+ExecuteWaterFortLobbyStepEvents: ; Func_3f650
 	ld hl, WaterFortLobby_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_3f657:
+LoadWaterFortLobbyNPCs: ; Func_3f657
 	ld hl, WaterFortLobby_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_3f660:
+HandleWaterFortLobbyInteractions: ; Func_3f660
 	ld hl, WaterFortLobby_NPCInteractions
 	call Func_328c
 	jr nc, .asm_3f66e
@@ -7037,12 +7037,12 @@ Func_3f660:
 	scf
 	ret
 
-Func_3f670:
-	call Func_3c52d
+HandleWaterFortLobbyAfterDuel: ; Func_3f670
+	call ScriptImakuniRedAfterDuel
 	scf
 	ret
 
-Func_3f675:
+HandleWaterFortLobbyContinueOverworld: ; Func_3f675
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
 	jr z, .asm_3f68f
@@ -7056,7 +7056,7 @@ Func_3f675:
 	scf
 	ret
 
-Func_3f691:
+ScriptWaterFortLobbyTradeNpc: ; Func_3f691
 	ld a, NPC_WATER_FORT_GLASSES_KID
 	ld [wScriptNPC], a
 	ldtx hl, DialogGlassesKid1Text
@@ -7121,7 +7121,7 @@ Func_3f691:
 	end_script
 	ret
 
-Func_3f718:
+CheckShowWaterFortLobbyGlassesKid: ; Func_3f718
 	ld a, EVENT_TRADED_CARDS_WATER_FORT
 	farcall GetEventValue
 	jr z, .asm_3f732
@@ -7138,7 +7138,7 @@ Func_3f718:
 	ccf
 	ret
 
-Func_3f735:
+CheckShowWaterFortLobbyGrLad: ; Func_3f735
 	ld a, EVENT_TRADED_CARDS_WATER_FORT
 	farcall GetEventValue
 	jr z, .asm_3f74d
@@ -7156,7 +7156,7 @@ Func_3f735:
 	ccf
 	ret
 
-Func_3f752:
+ScriptWaterFortLobbyGrGranny: ; Func_3f752
 	ld a, NPC_WATER_FORT_GR_GRANNY
 	ld [wScriptNPC], a
 	ldtx hl, DialogGrannyText
@@ -7182,7 +7182,7 @@ Func_3f752:
 	end_script
 	ret
 
-Func_3f780:
+ScriptWaterFortLobbyGrGal: ; Func_3f780
 	ld a, NPC_WATER_FORT_GR_GAL
 	ld [wScriptNPC], a
 	ldtx hl, DialogGal2Text
@@ -7204,7 +7204,7 @@ Func_3f780:
 	end_script
 	ret
 
-Func_3f7a6:
+CheckShowWaterFortLobbyImakuniRed: ; Func_3f7a6
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $08
@@ -7229,40 +7229,40 @@ FightingFortMaze19_StepEvents:
 	db $ff
 
 FightingFortMaze19_NPCs:
-	npc NPC_CHEST_CLOSED, 5, 3, SOUTH, Func_3f830
-	npc NPC_CHEST_OPENED, 5, 3, SOUTH, Func_3f84b
+	npc NPC_CHEST_CLOSED, 5, 3, SOUTH, CheckShowFightingFortMaze19ClosedChest
+	npc NPC_CHEST_OPENED, 5, 3, SOUTH, CheckShowFightingFortMaze19OpenedChest
 	db $ff
 
 FightingFortMaze19_NPCInteractions:
-	npc_script NPC_CHEST_CLOSED, Func_3f817
-	npc_script NPC_CHEST_OPENED, Func_3f83d
+	npc_script NPC_CHEST_CLOSED, ScriptFightingFortMaze19ClosedChest
+	npc_script NPC_CHEST_OPENED, ScriptFightingFortMaze19OpenedChest
 	db $ff
 
 FightingFortMaze19_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_3f7ff
-	dbw OWMODE_INTERACT, Func_3f80f
-	dbw OWMODE_NPC_POSITION, Func_3f806
+	dbw OWMODE_STEP_EVENT, ExecuteFightingFortMaze19StepEvents
+	dbw OWMODE_INTERACT, HandleFightingFortMaze19Interactions
+	dbw OWMODE_NPC_POSITION, LoadFightingFortMaze19NPCs
 	db $ff
 
-Func_3f7ff:
+ExecuteFightingFortMaze19StepEvents: ; Func_3f7ff
 	ld hl, FightingFortMaze19_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_3f806:
+LoadFightingFortMaze19NPCs: ; Func_3f806
 	ld hl, FightingFortMaze19_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_3f80f:
+HandleFightingFortMaze19Interactions: ; Func_3f80f
 	ld hl, FightingFortMaze19_NPCInteractions
 	call Func_328c
 	scf
 	ret
 
-Func_3f817:
+ScriptFightingFortMaze19ClosedChest: ; Func_3f817
 	xor a
 	start_script
 	start_dialog
@@ -7276,7 +7276,7 @@ Func_3f817:
 	end_script
 	ret
 
-Func_3f830:
+CheckShowFightingFortMaze19ClosedChest: ; Func_3f830
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_5
 	farcall GetEventValue
 	jr nz, .asm_3f83b
@@ -7287,17 +7287,17 @@ Func_3f830:
 	scf
 	ret
 
-Func_3f83d:
+ScriptFightingFortMaze19OpenedChest: ; Func_3f83d
 	xor a
 	start_script
 	start_dialog
 	print_text TreasureBoxWasEmptyText
 	end_dialog
 	end_script
-	call Func_3f858
+	call HandleFightingFortMaze19OpenedChestPostInteraction
 	ret
 
-Func_3f84b:
+CheckShowFightingFortMaze19OpenedChest: ; Func_3f84b
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_5
 	farcall GetEventValue
 	jr z, .asm_3f856
@@ -7308,7 +7308,7 @@ Func_3f84b:
 	scf
 	ret
 
-Func_3f858:
+HandleFightingFortMaze19OpenedChestPostInteraction: ; Func_3f858
 	ld a, VAR_3B
 	farcall GetVarValue
 	cp $03
@@ -7337,35 +7337,35 @@ FightingFortBasement_StepEvents:
 	db $ff
 
 FightingFortBasement_NPCs:
-	npc NPC_CHEST_CLOSED, 1, 1, SOUTH, Func_3f925
-	npc NPC_CHEST_OPENED, 1, 1, SOUTH, Func_3f951
+	npc NPC_CHEST_CLOSED, 1, 1, SOUTH, CheckShowFightingFortBasementClosedChest
+	npc NPC_CHEST_OPENED, 1, 1, SOUTH, CheckShowFightingFortBasementOpenedChest
 	db $ff
 
 FightingFortBasement_NPCInteractions:
-	npc_script NPC_CHEST_CLOSED, Func_3f90c
-	npc_script NPC_CHEST_OPENED, Func_3f932
+	npc_script NPC_CHEST_CLOSED, ScriptFightingFortBasementClosedChest
+	npc_script NPC_CHEST_OPENED, ScriptFightingFortBasementOpenedChest
 	db $ff
 
 FightingFortBasement_MapScripts:
-	dbw OWMODE_STEP_EVENT, Func_3f8b6
-	dbw OWMODE_INTERACT, Func_3f904
-	dbw OWMODE_NPC_POSITION, Func_3f8bd
-	dbw OWMODE_WARP_FADE_IN_PRELOAD, Func_3f8c6
+	dbw OWMODE_STEP_EVENT, ExecuteFightingFortBasementStepEvents
+	dbw OWMODE_INTERACT, HandleFightingFortBasementInteractions
+	dbw OWMODE_NPC_POSITION, LoadFightingFortBasementNPCs
+	dbw OWMODE_WARP_FADE_IN_PRELOAD, HandleFightingFortBasementWarpFadeInPreload
 	db $ff
 
-Func_3f8b6:
+ExecuteFightingFortBasementStepEvents: ; Func_3f8b6
 	ld hl, FightingFortBasement_StepEvents
 	call ExecutePlayerCoordScript
 	ret
 
-Func_3f8bd:
+LoadFightingFortBasementNPCs: ; Func_3f8bd
 	ld hl, FightingFortBasement_NPCs
 	call LoadNPCs
 	scf
 	ccf
 	ret
 
-Func_3f8c6:
+HandleFightingFortBasementWarpFadeInPreload: ; Func_3f8c6
 	ld bc, $53
 	ld a, $05
 	farcall SetwD896
@@ -7377,9 +7377,9 @@ Func_3f8c6:
 .asm_3f8d8
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
-	ld a, BANK(Func_3f95e)
+	ld a, BANK(ScriptFightingFortBasementWarpEntrance)
 	ld [wOverworldScriptBank], a
-	ld hl, Func_3f95e
+	ld hl, ScriptFightingFortBasementWarpEntrance
 	ld a, l
 	ld [wOverworldScriptPointer], a
 	ld a, h
@@ -7393,13 +7393,13 @@ Func_3f8c6:
 	scf
 	ret
 
-Func_3f904:
+HandleFightingFortBasementInteractions: ; Func_3f904
 	ld hl, FightingFortBasement_NPCInteractions
 	call Func_328c
 	scf
 	ret
 
-Func_3f90c:
+ScriptFightingFortBasementClosedChest: ; Func_3f90c
 	xor a
 	start_script
 	start_dialog
@@ -7413,7 +7413,7 @@ Func_3f90c:
 	end_script
 	ret
 
-Func_3f925:
+CheckShowFightingFortBasementClosedChest: ; Func_3f925
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_BASEMENT
 	farcall GetEventValue
 	jr nz, .asm_3f930
@@ -7424,7 +7424,7 @@ Func_3f925:
 	scf
 	ret
 
-Func_3f932:
+ScriptFightingFortBasementOpenedChest: ; Func_3f932
 	xor a
 	start_script
 	start_dialog
@@ -7441,7 +7441,7 @@ Func_3f932:
 	farcall SetVarValue
 	ret
 
-Func_3f951:
+CheckShowFightingFortBasementOpenedChest: ; Func_3f951
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_BASEMENT
 	farcall GetEventValue
 	jr z, .asm_3f95c
@@ -7452,7 +7452,7 @@ Func_3f951:
 	scf
 	ret
 
-Func_3f95e:
+ScriptFightingFortBasementWarpEntrance: ; Func_3f95e
 	ld a, [wPlayerOWObject]
 	ld b, BANK(.NPCMovement_3f980)
 	ld hl, .NPCMovement_3f980
