@@ -1849,3 +1849,9 @@ Func_3be0 -> ReadPackedNPCMovementEntry
 Func_3f87 -> NoOpRet
 ; no-op helper that immediately returns
 
+Func_3b14 -> UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper
+; wrapper for hidden bank07 routine that updates text-box frame color from focused menu item
+
+Func_3b19 -> UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper_2
+; second wrapper variant for hidden bank07 routine that updates text-box frame color from focused menu item
+

@@ -2060,11 +2060,11 @@ LoadPortraitPalettes::
 	pop af
 	ret
 
-Func_3b14::
+UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper:: ; Func_3b14
 	farcall $7, $4379
 	ret
 
-Func_3b19::
+UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper_2:: ; Func_3b19
 	farcall $7, $445a
 	ret
 
