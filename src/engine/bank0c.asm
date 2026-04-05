@@ -4570,7 +4570,7 @@ ScriptFireFortShokoAfterDuel: ; Func_32d1f
 ScriptFireFortShokoDoorInteraction: ; Func_32d59
 	ld a, EVENT_SHOKOS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_32d7d
+	jr nz, .done
 	ld a, NPC_SHOKO
 	ld [wScriptNPC], a
 	ldtx hl, DialogShokoText
@@ -4585,17 +4585,17 @@ ScriptFireFortShokoDoorInteraction: ; Func_32d59
 	print_npc_text Text0cb4
 	end_dialog
 	end_script
-.asm_32d7d
+.done
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
 CheckShowFireFortShokoCourtney: ; Func_32d82
 	ld a, EVENT_FREED_COURTNEY
 	farcall GetEventValue
-	jr z, .asm_32d8c
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_32d8c
+.return_clear_carry
 	scf
 	ccf
 	ret

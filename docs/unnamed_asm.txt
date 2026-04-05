@@ -1726,3 +1726,9 @@ In HandleFireFortShokoWarpFadeInPreload, branch that applies closed-door overlay
 src/engine/bank0c.asm .asm_32c88 -> .done
 Common successful return path for HandleFireFortShokoInteractions after NPC and optional OW interaction handling.
 
+src/engine/bank0c.asm .asm_32d7d -> .done
+Common return path for ScriptFireFortShokoDoorInteraction before resuming overworld input handling.
+
+src/engine/bank0c.asm .asm_32d8c -> .return_clear_carry
+In CheckShowFireFortShokoCourtney, branch that returns carry clear (show) when EVENT_FREED_COURTNEY is unset.
+
