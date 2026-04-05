@@ -94,9 +94,160 @@ sGeneralSaveDataHeader:: ; b800
 	ds $1
 
 ; see WRAMToSRAMMapper_GeneralSave
-; TODO: break down into each segment (after fully labelling wram?)
 sGeneralSaveDataMain:: ; b801
-	ds $1b9
+
+sGeneralSavePlayTimeCounterFrames:: ; b801
+	ds $1
+
+sGeneralSavePlayTimeCounterSeconds:: ; b802
+	ds $1
+
+sGeneralSavePlayTimeCounterMinutes:: ; b803
+	ds $1
+
+sGeneralSavePlayTimeCounterHours:: ; b804
+	ds $2
+
+sGeneralSaveCurMusic:: ; b806
+	ds $1
+
+sGeneralSaveNextGameEvent:: ; b807
+	ds $1
+
+sGeneralSaveNextWarpMap:: ; b808
+	ds $1
+
+sGeneralSaveNextWarpPlayerCoords:: ; b809
+	ds $2
+
+sGeneralSavePlayerOWObject:: ; b80b
+	ds $1
+
+sGeneralSaveCurMapScriptsBank:: ; b80c
+	ds $1
+
+sGeneralSaveCurMapScriptsPointer:: ; b80d
+	ds $2
+
+sGeneralSaveOverworldMode:: ; b80f
+	ds $1
+
+sGeneralSaveOverworldTransition:: ; b810
+	ds $1
+
+sGeneralSavePrevMap:: ; b811
+	ds $1
+
+sGeneralSaveTempPrevMap:: ; b812
+	ds $1
+
+sGeneralSaveCurMap:: ; b813
+	ds $1
+
+sGeneralSaveCurOWLocation:: ; b814
+	ds $1
+
+sGeneralSaveCurIsland:: ; b815
+	ds $1
+
+sGeneralSavePlayerOWLocation:: ; b816
+	ds $1
+
+sGeneralSaveNextMapHeaderData:: ; b817
+	ds MAPHEADERSTRUCT_LENGTH
+
+sGeneralSaveNextWarpPlayerData:: ; b81c
+	ds $3
+
+sGeneralSaveScriptNPC:: ; b81f
+	ds $1
+
+sGeneralSaveScriptNPCName:: ; b820
+	ds $2
+
+sGeneralSaveSentMailBitfield:: ; b822
+	ds $4
+
+sGeneralSaveTempCardDungeonBet:: ; b826
+	ds $1
+
+sGeneralSaveEventVars:: ; b827
+	ds EVENT_VAR_BYTES - 2
+
+sGeneralSaveGeneralVars:: ; b859
+	ds GENERAL_VAR_BYTES - 2
+
+sGeneralSaveOWData:: ; b877
+	ds 177
+
+sGeneralSaveNPCStateBuffer:: ; b928
+	ds 5 * MAX_NUM_OW_OBJECTS
+
+sGeneralSaveScrollTargetObject:: ; b95a
+	ds $1
+
+sGeneralSaveSelectedCoin:: ; b95b
+	ds $1
+
+sGeneralSaveCoinPage:: ; b95c
+	ds $1
+
+sGeneralSavePauseMenuCursorPosition:: ; b95d
+	ds $1
+
+sGeneralSaveMinicomMenuCursorPosition:: ; b95e
+	ds $1
+
+sGeneralSaveGiftCenterMenuCursorPosition:: ; b95f
+	ds $1
+
+sGeneralSaveNumMailInQueue:: ; b960
+	ds $1
+
+sGeneralSaveMailQueue:: ; b961
+	ds MAIL_QUEUE_BUFFER_SIZE
+
+sGeneralSaveMailCount:: ; b97a
+	ds $1
+
+sGeneralSaveMailList:: ; b97b
+	ds MAIL_BUFFER_SIZE
+
+sGeneralSaveNewMail:: ; b984
+	ds $1
+
+sGeneralSaveTempNumMailInQueue:: ; b985
+	ds $1
+
+sGeneralSaveMailboxPage:: ; b986
+	ds $1
+
+sGeneralSaveSelectedMailCursorPosition:: ; b987
+	ds $1
+
+sGeneralSaveMailOptionSelected:: ; b988
+	ds $1
+
+sGeneralSaveBlackBoxCardReceived:: ; b989
+	ds BLACK_BOX_OUTPUT_BYTES
+
+sGeneralSaveBillsPCCardReceived:: ; b99d
+	ds $2
+
+sGeneralSavePCMenuCursorPosition:: ; b99f
+	ds $1
+
+sGeneralSaveGameCenterChips:: ; b9a0
+	ds $2
+
+sGeneralSaveGameCenterBankedChips:: ; b9a2
+	ds $2
+
+sGeneralSaveClaimedJigglypuffCoin:: ; b9a4
+	ds $1
+
+sGeneralSaveOWObj1Flags:: ; b9a5
+	ds $1
 
 sGeneralSaveDataEnd::
 
@@ -200,7 +351,159 @@ sBackupGeneralSaveDataHeader:: ; b800
 	ds $1
 
 sBackupGeneralSaveDataMain:: ; b801
-	ds $1b9
+
+sBackupGeneralSavePlayTimeCounterFrames:: ; b801
+	ds $1
+
+sBackupGeneralSavePlayTimeCounterSeconds:: ; b802
+	ds $1
+
+sBackupGeneralSavePlayTimeCounterMinutes:: ; b803
+	ds $1
+
+sBackupGeneralSavePlayTimeCounterHours:: ; b804
+	ds $2
+
+sBackupGeneralSaveCurMusic:: ; b806
+	ds $1
+
+sBackupGeneralSaveNextGameEvent:: ; b807
+	ds $1
+
+sBackupGeneralSaveNextWarpMap:: ; b808
+	ds $1
+
+sBackupGeneralSaveNextWarpPlayerCoords:: ; b809
+	ds $2
+
+sBackupGeneralSavePlayerOWObject:: ; b80b
+	ds $1
+
+sBackupGeneralSaveCurMapScriptsBank:: ; b80c
+	ds $1
+
+sBackupGeneralSaveCurMapScriptsPointer:: ; b80d
+	ds $2
+
+sBackupGeneralSaveOverworldMode:: ; b80f
+	ds $1
+
+sBackupGeneralSaveOverworldTransition:: ; b810
+	ds $1
+
+sBackupGeneralSavePrevMap:: ; b811
+	ds $1
+
+sBackupGeneralSaveTempPrevMap:: ; b812
+	ds $1
+
+sBackupGeneralSaveCurMap:: ; b813
+	ds $1
+
+sBackupGeneralSaveCurOWLocation:: ; b814
+	ds $1
+
+sBackupGeneralSaveCurIsland:: ; b815
+	ds $1
+
+sBackupGeneralSavePlayerOWLocation:: ; b816
+	ds $1
+
+sBackupGeneralSaveNextMapHeaderData:: ; b817
+	ds MAPHEADERSTRUCT_LENGTH
+
+sBackupGeneralSaveNextWarpPlayerData:: ; b81c
+	ds $3
+
+sBackupGeneralSaveScriptNPC:: ; b81f
+	ds $1
+
+sBackupGeneralSaveScriptNPCName:: ; b820
+	ds $2
+
+sBackupGeneralSaveSentMailBitfield:: ; b822
+	ds $4
+
+sBackupGeneralSaveTempCardDungeonBet:: ; b826
+	ds $1
+
+sBackupGeneralSaveEventVars:: ; b827
+	ds EVENT_VAR_BYTES - 2
+
+sBackupGeneralSaveGeneralVars:: ; b859
+	ds GENERAL_VAR_BYTES - 2
+
+sBackupGeneralSaveOWData:: ; b877
+	ds 177
+
+sBackupGeneralSaveNPCStateBuffer:: ; b928
+	ds 5 * MAX_NUM_OW_OBJECTS
+
+sBackupGeneralSaveScrollTargetObject:: ; b95a
+	ds $1
+
+sBackupGeneralSaveSelectedCoin:: ; b95b
+	ds $1
+
+sBackupGeneralSaveCoinPage:: ; b95c
+	ds $1
+
+sBackupGeneralSavePauseMenuCursorPosition:: ; b95d
+	ds $1
+
+sBackupGeneralSaveMinicomMenuCursorPosition:: ; b95e
+	ds $1
+
+sBackupGeneralSaveGiftCenterMenuCursorPosition:: ; b95f
+	ds $1
+
+sBackupGeneralSaveNumMailInQueue:: ; b960
+	ds $1
+
+sBackupGeneralSaveMailQueue:: ; b961
+	ds MAIL_QUEUE_BUFFER_SIZE
+
+sBackupGeneralSaveMailCount:: ; b97a
+	ds $1
+
+sBackupGeneralSaveMailList:: ; b97b
+	ds MAIL_BUFFER_SIZE
+
+sBackupGeneralSaveNewMail:: ; b984
+	ds $1
+
+sBackupGeneralSaveTempNumMailInQueue:: ; b985
+	ds $1
+
+sBackupGeneralSaveMailboxPage:: ; b986
+	ds $1
+
+sBackupGeneralSaveSelectedMailCursorPosition:: ; b987
+	ds $1
+
+sBackupGeneralSaveMailOptionSelected:: ; b988
+	ds $1
+
+sBackupGeneralSaveBlackBoxCardReceived:: ; b989
+	ds BLACK_BOX_OUTPUT_BYTES
+
+sBackupGeneralSaveBillsPCCardReceived:: ; b99d
+	ds $2
+
+sBackupGeneralSavePCMenuCursorPosition:: ; b99f
+	ds $1
+
+sBackupGeneralSaveGameCenterChips:: ; b9a0
+	ds $2
+
+sBackupGeneralSaveGameCenterBankedChips:: ; b9a2
+	ds $2
+
+sBackupGeneralSaveClaimedJigglypuffCoin:: ; b9a4
+	ds $1
+
+sBackupGeneralSaveOWObj1Flags:: ; b9a5
+	ds $1
 
 sBackupGeneralSaveDataEnd::
 
