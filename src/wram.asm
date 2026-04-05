@@ -153,13 +153,16 @@ wOAM:: ; ca00
 wStringBuffer:: ; caa0
 	ds $10
 
-wcab0:: ; cab0
+; cleared at startup in SetupRegisters; no confirmed consumer yet
+wUnusedStartupByte0:: ; cab0
 	ds $1
 
-wcab1:: ; cab1
+; cleared at startup in SetupRegisters; no confirmed consumer yet
+wUnusedStartupByte1:: ; cab1
 	ds $1
 
-wcab2:: ; cab2
+; cleared at startup in SetupRegisters; no confirmed consumer yet
+wUnusedStartupByte2:: ; cab2
 	ds $1
 
 ; initial value of the A register. used to tell the console when reset
@@ -625,7 +628,8 @@ wDuelistType:: ; cc08
 wOpponentDeckID:: ; cc09
 	ds $1
 
-wcc0f:: ; cc0a
+; set to $ff at duel init; no confirmed consumer yet
+wUnusedDuelInitByte_ff:: ; cc0a
 	ds $1
 
 ; index (0-1) of the attack or Pokemon Power being used by the player's arena card
@@ -727,7 +731,7 @@ wAIMaxDamage:: ; cccc
 	ds $1
 
 ; only written, never read
-wccbd:: ; cccd
+wUnusedHPRecoveryAmount:: ; cccd
 	ds $2
 
 ; damage dealt by an attack to a target
@@ -796,7 +800,8 @@ wEffectFunctionsFeedback:: ; cce3
 wIsDamageToSelf:: ; ccfb
 	ds $1
 
-wccfc:: ; ccfc
+; cleared at duel init; no confirmed consumer yet
+wUnusedDuelInitByte_00:: ; ccfc
 	ds $1
 
 wDuelFinishParam:: ; cce8
@@ -1649,7 +1654,8 @@ wAIRetreatFlags:: ; d049
 wAITriedAttack:: ; d04a
 	ds $1
 
-wcddc:: ; d04b
+; cleared at AI turn init; no confirmed consumer yet
+wUnusedAITurnInitByte0:: ; d04b
 	ds $1
 
 ; used to temporarily backup wPlayAreaAIScore values.
@@ -1762,7 +1768,8 @@ wAIEnergyTransVenusaurLocation:: ; d07f
 wAIRetreatConsiderStatus:: ; d080
 	ds $1
 
-wd081:: ; d081
+; cleared at AI turn init; no confirmed consumer yet
+wUnusedAITurnInitByte1:: ; d081
 	ds $1
 
 ; number of Basic Pokemon cards when
@@ -2299,7 +2306,8 @@ wNamingScreenCursorRow:: ; d3ef
 
 	ds $1e
 
-wd40e:: ; d40e
+; temporary/unknown deck-machine scratch region; no confirmed direct consumer yet
+wUnknown_d40e:: ; d40e
 	ds $8
 
 ; pointers to all decks of current deck machine
@@ -2477,7 +2485,8 @@ wRemainingIntroCards:: ; d577
 
 	ds $1
 
-wd579:: ; d579
+; title-intro union byte pair at d579-d57a; no confirmed symbolic role yet
+wUnknown_d579:: ; d579
 	ds $2
 
 wIntroCardsRepeatsAllowed:: ; d57b

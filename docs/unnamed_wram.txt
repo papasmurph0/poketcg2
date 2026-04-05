@@ -208,3 +208,33 @@ wce9d -> wUnusedPrinterStubValue
 wce9f -> wUnusedPrinterGfxClearState
 ; byte cleared by ClearPrinterGfxBuffer with no confirmed consumer in current code paths.
 
+wcab0 -> wUnusedStartupByte0
+; cleared during SetupRegisters startup initialization; no confirmed consumer.
+
+wcab1 -> wUnusedStartupByte1
+; cleared during SetupRegisters startup initialization; no confirmed consumer.
+
+wcab2 -> wUnusedStartupByte2
+; cleared during SetupRegisters startup initialization; no confirmed consumer.
+
+wcc0f -> wUnusedDuelInitByte_ff
+; set to $ff in InitVariablesToBeginDuel and not currently read elsewhere.
+
+wccbd -> wUnusedHPRecoveryAmount
+; two-byte scratch write in ApplyAndAnimateHPRecovery that is never read.
+
+wccfc -> wUnusedDuelInitByte_00
+; cleared to $00 in InitVariablesToBeginDuel and not currently read elsewhere.
+
+wcddc -> wUnusedAITurnInitByte0
+; cleared in InitAITurnVars at turn start with no confirmed consumer.
+
+wd081 -> wUnusedAITurnInitByte1
+; cleared in InitAITurnVars at turn start with no confirmed consumer.
+
+wd40e -> wUnknown_d40e
+; 8-byte deck-machine-adjacent unknown scratch region with no direct references yet.
+
+wd579 -> wUnknown_d579
+; unknown two-byte field in the title-intro/challenge-cup union at d579-d57a.
+

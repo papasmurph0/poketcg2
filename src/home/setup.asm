@@ -6,9 +6,9 @@ SetupRegisters:
 	ldh [rSCX], a
 	ldh [rWY], a
 	ldh [rWX], a
-	ld [wcab0], a
-	ld [wcab1], a
-	ld [wcab2], a
+	ld [wUnusedStartupByte0], a
+	ld [wUnusedStartupByte1], a
+	ld [wUnusedStartupByte2], a
 	ldh [hSCX], a
 	ldh [hSCY], a
 	ldh [hWX], a

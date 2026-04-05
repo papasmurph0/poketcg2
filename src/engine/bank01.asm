@@ -6340,12 +6340,12 @@ InitVariablesToBeginDuel:
 	xor a
 	ld [wDuelFinished], a
 	ld [wDuelTurns], a
-	ld [wccfc], a
+	ld [wUnusedDuelInitByte_00], a
 	ld [wGoopGasAttackActiveTurns], a
 	ld [wPrizeCardsFaceUp], a
 
 	ld a, $ff
-	ld [wcc0f], a
+	ld [wUnusedDuelInitByte_ff], a
 	ld [wPlayerAttackingCardIndex], a
 	ld [wPlayerAttackingAttackIndex], a
 
