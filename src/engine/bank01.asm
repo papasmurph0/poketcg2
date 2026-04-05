@@ -137,7 +137,7 @@ MainDuelLoop:
 	cp TURN_PLAYER_WON
 	jr z, .turn_player_won
 	cp TURN_PLAYER_LOST
-	jr z, .asm_41b3
+	jr z, .player_lost
 	ld b, DUEL_ANIM_DUEL_DRAW
 	ld c, MUSIC_MATCH_DRAW
 	ldtx hl, DuelWasADrawText
@@ -146,8 +146,8 @@ MainDuelLoop:
 .turn_player_won
 	ldh a, [hWhoseTurn]
 	cp PLAYER_TURN
-	jr nz, .asm_41b9
-.asm_4192
+	jr nz, .initial_player_loses
+.initial_player_wins
 	ld a, DUELVARS_DUELIST_TYPE
 	call GetNonTurnDuelistVariable
 	cp DUELIST_TYPE_LINK_OPP
@@ -169,11 +169,11 @@ MainDuelLoop:
 	ldtx hl, WonDuelText
 	xor a
 	jr .set_duel_result
-.asm_41b3
+.player_lost
 	ldh a, [hWhoseTurn]
 	cp PLAYER_TURN
-	jr nz, .asm_4192
-.asm_41b9
+	jr nz, .initial_player_wins
+.initial_player_loses
 	ld b, DUEL_ANIM_DUEL_LOSS
 	ld c, MUSIC_MATCH_LOSS
 	ldtx hl, LostDuelText
@@ -1895,7 +1895,7 @@ DisplayPracticeDuelPlayerHandScreen:
 DrawDuelMainScene::
 	ld a, [wDuelType]
 	cp $00
-	jr nz, .asm_4ced
+	jr nz, .non_single_player_duel
 	ldh a, [hWhoseTurn]
 	push af
 	ld a, [wWhoseTurn]
@@ -1905,7 +1905,7 @@ DrawDuelMainScene::
 	ldh [hWhoseTurn], a
 	ret
 
-.asm_4ced
+.non_single_player_duel
 	ldh a, [hWhoseTurn]
 	push af
 	ld a, PLAYER_TURN
@@ -1985,10 +1985,10 @@ DrawDuelHUDs::
 	ld e, PLAYER_TURN
 	ld a, [wDuelType]
 	cp $00
-	jr nz, .asm_4d95
+	jr nz, .skip_load_whose_turn
 	ld a, [wWhoseTurn]
 	ld e, a
-.asm_4d95
+.skip_load_whose_turn
 	ldh a, [hWhoseTurn]
 	push af
 	ld a, e
@@ -2045,9 +2045,9 @@ DrawDuelHUD:
 	ld d, 1 ; x
 	ld a, e
 	or a
-	jr z, .asm_4e05
+	jr z, .got_hud_x
 	ld d, 15 ; x
-.asm_4e05
+.got_hud_x
 	push de
 	pop bc
 
@@ -3092,7 +3092,7 @@ TurnDuelistTakePrizes:
 	dec c
 	jr nz, .delay_loop
 	call AIDoAction_TakePrize
-	jr .asm_586f
+	jr .check_remaining_prizes
 
 .link_opponent
 	call SerialRecv8Bytes
@@ -3101,19 +3101,19 @@ TurnDuelistTakePrizes:
 	ld [hl], d
 	ld a, e
 	cp $ff
-	jr z, .asm_586f
+	jr z, .check_remaining_prizes
 	call AddCardToHand
 	call .OpenCardPageIfFaceUp
 
-.asm_586f
+.check_remaining_prizes
 	ld a, [wTempNumRemainingPrizeCards]
 	ld hl, wNumberPrizeCardsToTake
 	cp [hl]
-	jr nc, .asm_587e
+	jr nc, .draw_prize_area
 	ld l, a
 	ld h, $00
 	call LoadTxRam3
-.asm_587e
+.draw_prize_area
 	farcall DrawYourOrOppPlayArea_PrizeCards
 	ldtx hl, DrewXPrizesText
 	call DrawWideTextBox_WaitForInput
@@ -3499,7 +3499,7 @@ CopyCGBCardPalette:
 	; de = wCardAttrMap
 	push de
 	ld b, $30
-.asm_56e4
+.loop_attr_map
 	ld a, [de]
 	rlca
 	rlca
@@ -3508,7 +3508,7 @@ CopyCGBCardPalette:
 	ld [de], a
 	inc de
 	dec b
-	jr nz, .asm_56e4
+	jr nz, .loop_attr_map
 	pop hl
 	ret
 
@@ -4155,7 +4155,7 @@ DisplayPlayAreaScreen:
 	ld [wSelectedDuelSubMenuItem], a
 	ld a, $01
 	ld [wPlayAreaScreenLoaded], a
-.asm_6022
+.reload_screen
 	call ZeroObjectPositionsAndToggleOAMCopy
 	call EmptyScreen
 	call LoadSymbolsFont
@@ -4175,20 +4175,20 @@ DisplayPlayAreaScreen:
 	call InitializeMenuParameters
 	ld a, [wNumPlayAreaItems]
 	ld [wNumScrollMenuItems], a
-.asm_604c
+.main_loop
 	call DoFrame
 	call SelectingBenchPokemonMenu
-	jr nc, .asm_6061
+	jr nc, .check_menu_input
 	cp $02
-	jp z, .asm_60ac
+	jp z, .return_slot
 	cp $03
-	jr z, .asm_6022
+	jr z, .reload_screen
 	pop af
 	ldh [hTempCardIndex_ff98], a
 	jr OpenPlayAreaScreenForSelection
-.asm_6061
+.check_menu_input
 	call HandleMenuInput
-	jr nc, .asm_604c
+	jr nc, .main_loop
 	ld a, e
 	ld [wSelectedDuelSubMenuItem], a
 	ld a, [wExcludeArenaPokemon]
@@ -4198,17 +4198,17 @@ DisplayPlayAreaScreen:
 	ld b, a
 	ldh a, [hKeysPressed]
 	and b
-	jr z, .asm_6091
+	jr z, .process_selection
 	ld a, [wCurPlayAreaSlot]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	cp -1
-	jr z, .asm_6022
+	jr z, .reload_screen
 	call GetCardIDFromDeckIndex
 	call LoadCardDataToBuffer1_FromCardID
 	call OpenCardPage_FromCheckPlayArea
-	jr .asm_6022
-.asm_6091
+	jr .reload_screen
+.process_selection
 	ld a, [wExcludeArenaPokemon]
 	ld c, a
 	ldh a, [hCurScrollMenuItem]
@@ -4216,21 +4216,21 @@ DisplayPlayAreaScreen:
 	ldh [hTempPlayAreaLocation_ff9d], a
 	ldh a, [hCurScrollMenuItem]
 	cp $ff
-	jr z, .asm_60b5
+	jr z, .return_cancel
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	or a
-	jr nz, .asm_60ac
+	jr nz, .return_slot
 	jr .skip_ahead
-.asm_60ac
+.return_slot
 	pop af
 	ldh [hTempCardIndex_ff98], a
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	ldh [hCurScrollMenuItem], a
 	or a
 	ret
-.asm_60b5
+.return_cancel
 	pop af
 	ldh [hTempCardIndex_ff98], a
 	ldh a, [hTempPlayAreaLocation_ff9d]
@@ -4262,7 +4262,7 @@ SelectingBenchPokemonMenu:
 	ret z ; Select not pressed
 	ld a, [wPlayAreaSelectAction]
 	or a
-	jr nz, .asm_5b76
+	jr nz, .handle_select_action
 
 	; get the energy cards attached to
 	; selected Play Area Pokémon
@@ -4285,7 +4285,7 @@ SelectingBenchPokemonMenu:
 	scf
 	ret
 
-.asm_5b76
+.handle_select_action
 	ld a, [wPlayAreaSelectAction]
 	cp $02
 	jr z, .return_carry
@@ -4911,25 +4911,25 @@ DisplayPlayAreaScreenToUsePkmnPower:
 	xor a
 	ld [wSelectedDuelSubMenuItem], a
 
-.asm_6435
+.reload_screen
 	call .DrawScreen
 	ld hl, PlayAreaScreenMenuParameters_ActivePokemonIncluded
 	ld a, [wSelectedDuelSubMenuItem]
 	call InitializeMenuParameters
 	ld a, [wNumPlayAreaItems]
 	ld [wNumScrollMenuItems], a
-.asm_6447
+.main_loop
 	call DoFrame
 	call HandleMenuInput
 	ldh [hTempPlayAreaLocation_ff9d], a
 	ld [wHUDEnergyAndHPBarsX], a
-	jr nc, .asm_6447
+	jr nc, .main_loop
 	cp $ff
-	jr z, .asm_649b
+	jr z, .return_cancel
 	ld [wSelectedDuelSubMenuItem], a
 	ldh a, [hKeysPressed]
 	and PAD_START
-	jr nz, .asm_649d
+	jr nz, .view_card_page
 	ldh a, [hCurScrollMenuItem]
 	add a
 	ld e, a
@@ -4938,7 +4938,7 @@ DisplayPlayAreaScreenToUsePkmnPower:
 	add hl, de
 	ld a, [hld]
 	cp $04
-	jr nz, .asm_6447
+	jr nz, .main_loop
 	ld a, [hl]
 	ldh [hTempCardIndex_ff98], a
 	ld d, a
@@ -4946,31 +4946,31 @@ DisplayPlayAreaScreenToUsePkmnPower:
 	call CopyAttackDataAndDamage_FromDeckIndex
 	ld a, EFFECTCMDTYPE_INITIAL_EFFECT_1
 	call TryExecuteEffectCommandFunction
-	jr nc, .asm_648c
+	jr nc, .confirm_pkmn_power
 	ldtx hl, PokemonPowerSelectNotRequiredText
 	farcall DisplayUsePokemonPowerScreen
 	call WaitForWideTextBoxInput
-	jp .asm_6435
-.asm_648c
+	jp .reload_screen
+.confirm_pkmn_power
 	ldtx hl, UseThisPokemonPowerPromptText
 	farcall DisplayUsePokemonPowerScreen
 	call YesOrNoMenu
-	jp c, .asm_6435
+	jp c, .reload_screen
 	ldh a, [hTempCardIndex_ff98]
 	ldh [hTemp_ffa0], a
 	or a
 	ret
-.asm_649b
+.return_cancel
 	scf
 	ret
-.asm_649d
+.view_card_page
 	ldh a, [hCurScrollMenuItem]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	call LoadCardDataToBuffer1_FromCardID
 	call OpenCardPage_FromCheckPlayArea
-	jp .asm_6435
+	jp .reload_screen
 
 .DrawScreen:
 	call ZeroObjectPositionsAndToggleOAMCopy
@@ -4983,7 +4983,7 @@ DisplayPlayAreaScreenToUsePkmnPower:
 	get_turn_duelist_var
 	ld c, a
 	ld b, $00
-.asm_64ca
+.loop_play_area_items
 	push hl
 	push bc
 	ld a, b
@@ -5005,7 +5005,7 @@ DisplayPlayAreaScreenToUsePkmnPower:
 	pop hl
 	inc b
 	dec c
-	jr nz, .asm_64ca
+	jr nz, .loop_play_area_items
 	ld a, b
 	ld [wNumPlayAreaItems], a
 	call EnableLCD
@@ -5077,11 +5077,11 @@ AttemptRetreat:
 .discard_loop
 	ld a, [hli]
 	cp $ff
-	jr z, .asm_6033
+	jr z, .check_confusion
 	call DiscardCard
 	jr .discard_loop
 
-.asm_6033
+.check_confusion
 	ldh a, [hTemp_ffa0]
 	and CNF_SLP_PRZ
 	cp CONFUSED
@@ -5413,9 +5413,9 @@ ProcessPlayedPokemonCard:
 	jr nc, .use_pokemon_power
 	ldtx hl, HavePokemonPowerButUnableDueToToxicGasText
 	dec a
-	jr nz, .asm_622b
+	jr nz, .show_unable_text
 	ldtx hl, HavePokemonPowerButUnableDueToGoopGasAttackText
-.asm_622b
+.show_unable_text
 	call DrawWideTextBox_WaitForInput
 
 .not_using_pkmn_power
@@ -5532,11 +5532,11 @@ HandleBetweenTurnsEvents:
 	ld l, DUELVARS_ARENA_CARD_STATUS
 	ld a, [hl]
 	or a
-	jr z, .asm_6c3a
+	jr z, .post_status_effects
 	call HandlePoisonDamage
-	jr c, .asm_6c3a
+	jr c, .post_status_effects
 	call HandleSleepCheck
-.asm_6c3a
+.post_status_effects
 	call DiscardAttachedDefenders
 	call SwapTurn
 	call HandleBetweenTurnKnockOuts
@@ -5626,13 +5626,13 @@ PlayBetweenTurnsAnimation:
 	ldh a, [hWhoseTurn]
 	ld [wDuelAnimDuelistSide], a
 	call SwapTurn
-	jr .asm_6ccb
+	jr .play_animation
 
 .store_duelist_turn
 	ldh a, [hWhoseTurn]
 	ld [wDuelAnimDuelistSide], a
 
-.asm_6ccb
+.play_animation
 	xor a
 	ld [wDuelAnimLocationParam], a
 	ld a, DUEL_ANIM_SCREEN_MAIN_SCENE
@@ -5945,9 +5945,9 @@ HandleBetweenTurnKnockOuts:
 	call SwapTurn
 	ld a, [wDuelFinishParam]
 	or a
-	jr z, .asm_6e86
+	jr z, .check_opp_ko
 	call CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut
-	jr c, .asm_6e86
+	jr c, .check_opp_ko
 	call CountKnockedOutPokemon
 	ld c, a
 	call SwapTurn
@@ -5955,34 +5955,34 @@ HandleBetweenTurnKnockOuts:
 	call SwapTurn
 	dec a
 	cp c
-	jr c, .asm_6e86
+	jr c, .check_opp_ko
 	ld a, c
 	call SwapTurn
 	call TakeAPrizes
 	call SwapTurn
 	ld a, TURN_PLAYER_WON
 	jr .set_duel_finished
-.asm_6e86
+.check_opp_ko
 	call .HandleKOAndRollFinishParam
 	ld a, [wDuelFinishParam]
 	cp TRUE
-	jr nz, .asm_6e9f
+	jr nz, .check_replaceable_ko
 	call SwapTurn
 	call CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut
 	call SwapTurn
-	jr c, .asm_6e9f
+	jr c, .check_replaceable_ko
 	ld a, TURN_PLAYER_LOST
 	jr .set_duel_finished
-.asm_6e9f
+.check_replaceable_ko
 	call SwapTurn
 	call .ReplaceKOAndRollFinishParam
 	call SwapTurn
 	call .ReplaceKOAndRollFinishParam
 	ld a, [wDuelFinishParam]
 	or a
-	jr nz, .asm_6ec4
+	jr nz, .lookup_duel_outcome
 	xor a
-.asm_6eb2
+.move_ko_to_discard
 	push af
 	call MoveAllTurnHolderKnockedOutPokemonToDiscardPile
 	call SwapTurn
@@ -5993,7 +5993,7 @@ HandleBetweenTurnKnockOuts:
 	pop af
 	ret
 
-.asm_6ec4
+.lookup_duel_outcome
 	ld e, a
 	ld d, $00
 	ld hl, .Data_6ed2
@@ -6002,7 +6002,7 @@ HandleBetweenTurnKnockOuts:
 .set_duel_finished
 	ld [wDuelFinished], a
 	scf
-	jr .asm_6eb2
+	jr .move_ko_to_discard
 
 .Data_6ed2:
 	db DUEL_NOT_FINISHED, TURN_PLAYER_LOST, TURN_PLAYER_WON,  TURN_PLAYER_TIED
@@ -6935,9 +6935,9 @@ SortCardsInDuelTempListByID:
 	ld [hl], LOW(wDuelTempList)
 	inc hl
 	ld [hl], HIGH(wDuelTempList)
-	jr .asm_6ae2
+	jr .outer_loop
 
-.asm_6aa0
+.start_inner_scan
 	ld hl, hTempListPtr_ff99
 	ld a, [hli]
 	ld h, [hl]
@@ -6951,7 +6951,7 @@ SortCardsInDuelTempListByID:
 	ld a, b
 	ldh [hTempCardID_ff9b + 1], a
 	inc hl
-	jr .asm_6acc
+	jr .inner_loop
 
 .compare_card_ids
 	ld a, [hl]
@@ -6971,7 +6971,7 @@ SortCardsInDuelTempListByID:
 	ldh [hTempCardID_ff9b + 1], a
 .sorted
 	inc hl
-.asm_6acc
+.inner_loop
 	bit 7, [hl]
 	jr z, .compare_card_ids
 	ld hl, hTempListPtr_ff99
@@ -6986,16 +6986,16 @@ SortCardsInDuelTempListByID:
 	ld [de], a
 	pop hl
 	inc [hl]
-	jr nz, .asm_6ae2
+	jr nz, .outer_loop
 	inc hl
 	inc [hl]
-.asm_6ae2
+.outer_loop
 	ld hl, hTempListPtr_ff99
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
 	bit 7, [hl]
-	jr z, .asm_6aa0
+	jr z, .start_inner_scan
 	ret
 
 .GetCardID:
@@ -7832,7 +7832,7 @@ HandlePlayAreaCardNoDamageOrEffect_SkipSubstatus:
 	call CheckIsIncapableOfUsingPkmnPower
 	jr c, .no_carry
 	call CheckArticunoAuroraVeil
-	jr c, .asm_6fbb
+	jr c, .show_blocking_message
 	ld a, [wTempPlayAreaLocation_cceb]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -7854,7 +7854,7 @@ HandlePlayAreaCardNoDamageOrEffect_SkipSubstatus:
 	ld a, NO_DAMAGE_OR_EFFECT_NSHIELD
 	ld [wNoDamageOrEffect], a
 	ldtx hl, NoDamageOrEffectDueToNShieldText
-.asm_6fbb
+.show_blocking_message
 	call DrawWideTextBox_WaitForInput
 	pop de
 	scf
@@ -7960,7 +7960,7 @@ CheckHaunterTransparency:
 	add DUELVARS_ARENA_CARD_FLAGS
 	get_turn_duelist_var
 	bit PLAY_AREA_FLAG_UNK_2_F, [hl]
-	jr nz, .asm_707e
+	jr nz, .already_set
 	set PLAY_AREA_FLAG_UNK_2_F, [hl]
 	res PLAY_AREA_FLAG_UNK_1_F, [hl]
 	push hl
@@ -7975,7 +7975,7 @@ CheckHaunterTransparency:
 	ldtx hl, NoDamageOrEffectDueToTransparencyText
 	scf
 	ret
-.asm_707e
+.already_set
 	bit PLAY_AREA_FLAG_UNK_1_F, [hl]
 	jr nz, .no_damage_or_effect
 	or a
