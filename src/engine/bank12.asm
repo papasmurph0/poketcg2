@@ -436,7 +436,7 @@ AIAaronStep3PerformScriptedTurn:
 	jr c, .unscripted ; player used Professor Oak
 	farcall HandleAIDamageSwap
 	call CheckIfAnyPlayAreaPokemonHasDamage
-	jr nc, .asm_4839b
+	jr nc, .attach_psychic_then_use_second_attack
 	ld de, SCOOP_UP
 	farcall LookForCardIDInHandList
 	ldh [hTempCardIndex_ff9f], a
@@ -460,7 +460,7 @@ AIAaronStep3PerformScriptedTurn:
 	ld a, OPPACTION_UNK_18
 	farcall AIMakeDecision
 	farcall HandleAIDamageSwap
-.asm_4839b
+.attach_psychic_then_use_second_attack
 	ld de, ALAKAZAM_LV42
 	ld bc, PSYCHIC_ENERGY
 	farcall AIAttachEnergyInHandToCardInPlayArea
@@ -769,12 +769,12 @@ AIProcessRetreat:
 
 	ld a, [wPreviousAIFlags]
 	and AI_FLAG_UNK_5
-	jr nz, .asm_48632
+	jr nz, .evaluate_retreat_and_execute
 	ld a, [wPreviousAIFlags]
 	and AI_FLAG_USED_SWITCH
-	jr nz, .asm_4865c
+	jr nz, .handle_switch_retreat_followup
 
-.asm_48632
+.evaluate_retreat_and_execute
 	bank1call CheckUnableToRetreatDueToEffect
 	ret c ; unable to retreat
 	farcall AIDecideWhetherToRetreat_ConsiderStatus
@@ -783,7 +783,7 @@ AIProcessRetreat:
 	ld [wAIRetreatedThisTurn], a
 	ld a, [wPreviousAIFlags]
 	and AI_FLAG_UNK_5
-	jr nz, .asm_48670
+	jr nz, .reselect_bench_and_retreat
 	ld a, AI_TRAINER_CARD_PHASE_09
 	farcall AIProcessHandTrainerCards
 	ld a, [wPreviousAIFlags]
@@ -793,7 +793,7 @@ AIProcessRetreat:
 	farcall AIDecideAndExecuteRetreat
 	ret
 
-.asm_4865c
+.handle_switch_retreat_followup
 	ld a, TRUE
 	ld [wAIRetreatedThisTurn], a
 .used_switch
@@ -806,7 +806,7 @@ AIProcessRetreat:
 	farcall HandleAIEnergyTrans
 	ret
 
-.asm_48670
+.reselect_bench_and_retreat
 	farcall AIDecideBenchPokemonToSwitchTo
 	ret c ; no Bench Pokémon
 	farcall AIDecideAndExecuteRetreat
@@ -1058,23 +1058,23 @@ AIDeckSpecificEnergyLogic:
 
 .kangaskhan_lv40_awesome_fossil
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48958
+	jr c, .set_score_85_awesome_fossil
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48958
+	jr z, .set_score_85_awesome_fossil
 	farcall CountNumberOfSetUpBenchPokemon
 	cp 2
-	jp c, .asm_4895d ; can be jr
+	jp c, .set_score_6c_awesome_fossil ; can be jr
 	; at least 2 set up bench Pokémon
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48958
+.set_score_85_awesome_fossil
 	ld b, $85
 	jp .got_score
 
-.asm_4895d
+.set_score_6c_awesome_fossil
 	ld b, $6c
 	jp .got_score
 
@@ -1107,51 +1107,51 @@ AIDeckSpecificEnergyLogic:
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_489bc ; has no energy cards
+	jr z, .set_score_85_glittering_scales ; has no energy cards
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	or a
-	jr nz, .asm_489c1
+	jr nz, .set_score_64_glittering_scales
 	; is Arena card
 	ld de, VENOMOTH_LV28
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jr c, .asm_489bc
+	jr c, .set_score_85_glittering_scales
 	ld de, IVYSAUR_LV26
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jp nc, .asm_489c1 ; can be jr
+	jp nc, .set_score_64_glittering_scales ; can be jr
 	; Venomoth and Ivysaur can already use
 	; all their attacks
-.asm_489bc
+.set_score_85_glittering_scales
 	ld b, $85
 	jp .got_score
 
-.asm_489c1
+.set_score_64_glittering_scales
 	ld b, $64
 	jp .got_score
 
 .kangaskhan_lv40_glittering_scales
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_489bc
+	jr c, .set_score_85_glittering_scales
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	ld e, a
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_489bc
+	jr z, .set_score_85_glittering_scales
 	; at least 1 energy card
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	or a
-	jr nz, .asm_489c1
+	jr nz, .set_score_64_glittering_scales
 	; is Arena card
 	ld de, VENOMOTH_LV28
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jr nc, .asm_489c1 ; Venomoth still needs energy
+	jr nc, .set_score_64_glittering_scales ; Venomoth still needs energy
 	farcall CountNumberOfSetUpBenchPokemon
 	cp 2
-	jr c, .asm_489c1
+	jr c, .set_score_64_glittering_scales
 	; at least 2 set up bench Pokémon
 	xor a
 	ld [wAIAttackNonDamageCount], a
-	jr .asm_489bc
+	jr .set_score_85_glittering_scales
 
 .DarkScienceDeck:
 	ldh a, [hTempPlayAreaLocation_ff9d]
@@ -1187,22 +1187,22 @@ AIDeckSpecificEnergyLogic:
 
 ; kangaskhan lv40
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48a56
+	jr c, .set_score_8d_immortal_flame
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48a56 ; no energy cards
+	jr z, .set_score_8d_immortal_flame ; no energy cards
 	ld de, ARCANINE_LV35
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jp nc, .asm_48a5b ; Arcanine still needs energy
+	jp nc, .set_score_64_immortal_flame ; Arcanine still needs energy
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48a56
+.set_score_8d_immortal_flame
 	ld b, $8d
 	jp .got_score
 
-.asm_48a5b
+.set_score_64_immortal_flame
 	ld b, $64
 	jp .got_score
 
@@ -1219,23 +1219,23 @@ AIDeckSpecificEnergyLogic:
 
 ; kangaskhan lv40
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48a9d
+	jr c, .set_score_8d_great_dragon
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48a9d
+	jr z, .set_score_8d_great_dragon
 	; at least 1 energy
 	ld de, CHARIZARD_LV76
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jr c, .asm_48a9d
+	jr c, .set_score_8d_great_dragon
 	ld de, CHARIZARD_ALT_LV76
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp nc, .default_score
 	; Charizard can already use all attacks
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48a9d
+.set_score_8d_great_dragon
 	ld b, $8d
 	jp .got_score
 
@@ -1251,23 +1251,23 @@ AIDeckSpecificEnergyLogic:
 
 ; kangaskhan lv40
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48adf
+	jr c, .set_score_8d_mad_petals
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48adf
+	jr z, .set_score_8d_mad_petals
 	; at least 1 energy
 	ld de, VILEPLUME
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jr c, .asm_48adf
+	jr c, .set_score_8d_mad_petals
 	ld de, DARK_VILEPLUME
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp c, .default_score
 	; Vileplume can already use all attacks
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48adf
+.set_score_8d_mad_petals
 	ld b, $8d
 	jp .got_score
 
@@ -1287,21 +1287,21 @@ AIDeckSpecificEnergyLogic:
 
 ; kangaskhan lv40
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48b18
+	jr c, .set_score_8d_multi_deck_kangaskhan
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48b18
+	jr z, .set_score_8d_multi_deck_kangaskhan
 	farcall CountNumberOfSetUpBenchPokemon
 	cp 2
-	jr c, .asm_48b1d
+	jr c, .set_score_78_multi_deck_kangaskhan
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48b18
+.set_score_8d_multi_deck_kangaskhan
 	ld b, $8d
 	jp .got_score
-.asm_48b1d
+.set_score_78_multi_deck_kangaskhan
 	ld b, $78
 	jp .got_score
 
@@ -1318,18 +1318,18 @@ AIDeckSpecificEnergyLogic:
 
 ; kangaskhan lv40
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48b57
+	jr c, .set_score_8d_running_wild
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48b57
+	jr z, .set_score_8d_running_wild
 	ld de, DARK_MAROWAK
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp nc, .default_score
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48b57
+.set_score_8d_running_wild
 	ld b, $8d
 	jp .got_score
 
@@ -1348,21 +1348,21 @@ AIDeckSpecificEnergyLogic:
 
 .kangaskhan_lv40_or_psyduck_lv16
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48b9a
+	jr c, .set_score_8d_direct_hit
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48b9a
+	jr z, .set_score_8d_direct_hit
 	farcall CountNumberOfSetUpBenchPokemon
 	cp 2
-	jr c, .asm_48b9f
+	jr c, .set_score_78_direct_hit
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48b9a
+.set_score_8d_direct_hit
 	ld b, $8d
 	jp .got_score
-.asm_48b9f
+.set_score_78_direct_hit
 	ld b, $78
 	jp .got_score
 
@@ -1383,20 +1383,20 @@ AIDeckSpecificEnergyLogic:
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48be0
+	jr z, .set_score_8d_bad_dream_unused
 	ld de, HAUNTER_LV22
 	call CheckIfPokemonInBenchHasEnoughEnergy
-	jr nc, .asm_48be5
+	jr nc, .set_score_78_bad_dream_unused
 	ld b, PLAY_AREA_BENCH_1
 	ld de, DROWZEE_LV10
 	farcall FindCardIDInTurnDuelistsPlayArea
-	jr nc, .asm_48be5
+	jr nc, .set_score_78_bad_dream_unused
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48be0
+.set_score_8d_bad_dream_unused
 	ld b, $8d
 	jp .got_score
-.asm_48be5
+.set_score_78_bad_dream_unused
 	ld b, $78
 	jp .got_score
 
@@ -1410,18 +1410,18 @@ AIDeckSpecificEnergyLogic:
 	cp16 KANGASKHAN_LV40
 	jp nz, .default_score
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48c1f
+	jr c, .set_score_8d_spirited_away
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48c1f
+	jr z, .set_score_8d_spirited_away
 	ld de, DARK_HAUNTER
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp nc, .default_score
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48c1f
+.set_score_8d_spirited_away
 	ld b, $8d
 	jp .got_score
 
@@ -1450,18 +1450,18 @@ AIDeckSpecificEnergyLogic:
 	cp16 KANGASKHAN_LV40
 	jp nz, .default_score
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48c75
+	jr c, .set_score_8d_stop_life_kangaskhan
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48c75
+	jr z, .set_score_8d_stop_life_kangaskhan
 	ld de, DARK_VENUSAUR
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp nc, .default_score
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48c75
+.set_score_8d_stop_life_kangaskhan
 	ld b, $8d
 	jp .got_score
 
@@ -1488,15 +1488,15 @@ AIDeckSpecificEnergyLogic:
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48cc1
+	jr z, .set_score_8d_scorcher_kangaskhan
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48cc1
+	jr c, .set_score_8d_scorcher_kangaskhan
 	ld de, DARK_CHARIZARD
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp nc, .default_score
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48cc1
+.set_score_8d_scorcher_kangaskhan
 	ld b, $8d
 	jp .got_score
 
@@ -1506,10 +1506,10 @@ AIDeckSpecificEnergyLogic:
 	ld b, a
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	cp b
-	jr z, .asm_48cd7
+	jr z, .set_score_83_scorcher_dark_charizard
 	ld b, $64
 	jp .got_score
-.asm_48cd7
+.set_score_83_scorcher_dark_charizard
 	ld b, $83
 	jp .got_score
 
@@ -1541,18 +1541,18 @@ AIDeckSpecificEnergyLogic:
 	or a
 	jp nz, .default_score
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48d3e
+	jr c, .set_score_8d_smash_to_mincemeat_kangaskhan
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48d3e
+	jr z, .set_score_8d_smash_to_mincemeat_kangaskhan
 	ld de, DARK_MACHAMP
 	call CheckIfPokemonInBenchHasEnoughEnergy
 	jp nc, .default_score
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48d3e
+.set_score_8d_smash_to_mincemeat_kangaskhan
 	ld b, $8d
 	jp .got_score
 
@@ -1594,28 +1594,28 @@ AIDeckSpecificEnergyLogic:
 
 ; jynx lv27
 	ld de, PSYCHIC_ENERGY
-	jr .asm_48db1
+	jr .check_required_energy_in_hand_powerful_pokemon
 
 .electabuzz_lv35
 	ld de, LIGHTNING_ENERGY
-	jr .asm_48db1
+	jr .check_required_energy_in_hand_powerful_pokemon
 
 .hitmonchan_lv33
 	ld de, FIGHTING_ENERGY
-	jr .asm_48db1 ; useless jump
+	jr .check_required_energy_in_hand_powerful_pokemon ; useless jump
 
-.asm_48db1
+.check_required_energy_in_hand_powerful_pokemon
 	farcall LookForCardIDInHandList
 	jp c, .default_score
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	cp 40
-	jr c, .asm_48dcb
+	jr c, .set_score_64_powerful_pokemon
 	ld de, RAINBOW_ENERGY
 	farcall LookForCardIDInHandList
 	jp c, .default_score
-.asm_48dcb
+.set_score_64_powerful_pokemon
 	ld a, $64
 	jp .got_score
 
@@ -1635,13 +1635,13 @@ AIDeckSpecificEnergyLogic:
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	cp 2
-	jr c, .asm_48e00
+	jr c, .set_score_8d_ronalds_uncool
 	farcall CountNumberOfSetUpBenchPokemon
 	cp 2
-	jr nc, .asm_48e00
+	jr nc, .set_score_8d_ronalds_uncool
 	ld b, $64
 	jp .got_score
-.asm_48e00
+.set_score_8d_ronalds_uncool
 	ld b, $8d
 	jp .got_score
 
@@ -1710,13 +1710,13 @@ AIDeckSpecificEnergyLogic:
 
 ; chansey lv55
 	call CheckIfHasDittoWithLessThan3Energies
-	jr c, .asm_48ea2
+	jr c, .set_score_64_big_thunder
 .ditto
 	call CheckIfHasZapdosLv68WithLessThan3Energies
-	jr c, .asm_48ea2
+	jr c, .set_score_64_big_thunder
 	ld b, $8d
 	jp .got_score
-.asm_48ea2
+.set_score_64_big_thunder
 	ld b, $64
 	jp .got_score
 
@@ -1730,26 +1730,26 @@ AIDeckSpecificEnergyLogic:
 	cp16 KANGASKHAN_LV40
 	jr z, .kangaskhan_lv40_power_of_darkness
 	cp16 GRS_MEWTWO
-	jr z, .asm_48ee7
+	jr z, .set_score_8d_power_of_darkness
 	jp .default_score
 
 .kangaskhan_lv40_power_of_darkness
 	farcall AICheckShouldSwitchFromFirstAttack
-	jr c, .asm_48ee7
+	jr c, .set_score_8d_power_of_darkness
 	ld e, PLAY_AREA_ARENA
 	call GetPlayAreaCardAttachedEnergies
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_48ee7
+	jr z, .set_score_8d_power_of_darkness
 	farcall CountNumberOfSetUpBenchPokemon
 	cp 2
-	jr c, .asm_48eec
+	jr c, .set_score_78_power_of_darkness
 	xor a
 	ld [wAIAttackNonDamageCount], a
-.asm_48ee7
+.set_score_8d_power_of_darkness
 	ld b, $8d
 	jp .got_score
-.asm_48eec
+.set_score_78_power_of_darkness
 	ld b, $78
 	jp .got_score
 
@@ -1824,17 +1824,17 @@ AIDeckSpecificRetreatLogic:
 	call SwapTurn
 	xor a
 	call CheckIfPokemonHasDamage
-	jr c, .asm_48f7b ; defending card has damage
+	jr c, .set_score_80_psychic_battle ; defending card has damage
 	xor a ; PLAY_AREA_ARENA
 	farcall CheckIfCanDamageDefendingPokemon
-	jr nc, .asm_48f7b ; can't damage Mr. Mime
+	jr nc, .set_score_80_psychic_battle ; can't damage Mr. Mime
 	farcall CheckIfPokemonCanUseNonResidualAttack
-	jr c, .asm_48f81 ; can use non-Residual
-.asm_48f7b
+	jr c, .set_score_8a_psychic_battle ; can use non-Residual
+.set_score_80_psychic_battle
 	call SwapTurn
 	ld a, $80
 	ret
-.asm_48f81
+.set_score_8a_psychic_battle
 	call SwapTurn
 	ld a, $8a
 	ret
@@ -2041,12 +2041,12 @@ HandleAIDarkPokemonSearchStrategies:
 	ld de, KANGASKHAN_LV40
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_490ff
+	jr c, .set_trade_target_kangaskhan_or_scyther
 	ld de, SCYTHER_LV25
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
 	jr nc, .try_search_for_evolutions_1
-.asm_490ff
+.set_trade_target_kangaskhan_or_scyther
 	ldh [hTempPlayAreaLocation_ffa1], a
 	jp AITryUsePokemonTraderToSearchCard_GotCardToTrade
 
@@ -2175,16 +2175,16 @@ HandleAIDarkPokemonSearchStrategies:
 	ld de, KANGASKHAN_LV40
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49219
+	jr c, .set_trade_target_kangaskhan_magmar_or_mr_mime
 	ld de, MAGMAR_LV31
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49219
+	jr c, .set_trade_target_kangaskhan_magmar_or_mr_mime
 	ld de, MR_MIME_LV20
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
 	jr nc, .try_search_for_evolutions_2
-.asm_49219
+.set_trade_target_kangaskhan_magmar_or_mr_mime
 	ldh [hTempPlayAreaLocation_ffa1], a
 	jp AITryUsePokemonTraderToSearchCard_GotCardToTrade
 
@@ -2307,16 +2307,16 @@ HandleAIDarkPokemonSearchStrategies:
 	ld de, SCYTHER_LV25
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49329
+	jr c, .set_trade_target_scyther_mr_mime_or_lapras
 	ld de, MR_MIME_LV20
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49329
+	jr c, .set_trade_target_scyther_mr_mime_or_lapras
 	ld de, LAPRAS_LV31
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
 	jr nc, .try_search_for_evolutions_3
-.asm_49329
+.set_trade_target_scyther_mr_mime_or_lapras
 	ldh [hTempPlayAreaLocation_ffa1], a
 	jp AITryUsePokemonTraderToSearchCard_GotCardToTrade
 
@@ -2443,12 +2443,12 @@ HandleAIDarkPokemonSearchStrategies:
 	ld de, KANGASKHAN_LV40
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49436
+	jr c, .set_trade_target_kangaskhan_or_chansey
 	ld de, CHANSEY_LV55
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
 	jr nc, .try_search_for_evolutions_4
-.asm_49436
+.set_trade_target_kangaskhan_or_chansey
 	ldh [hTempPlayAreaLocation_ffa1], a
 	jp AITryUsePokemonTraderToSearchCard_GotCardToTrade
 
@@ -2502,11 +2502,11 @@ HandleAIDarkPokemonSearchStrategies:
 	or a
 	jp nz, .try_search_for_evolutions_5 ; has Basic Pokémon card(s) in Hand
 	call FindUnusableEvolutionCardInHand
-	jr c, .asm_494d0 ; has an unusable Evolution card in Hand
+	jr c, .select_trade_target_power_of_darkness ; has an unusable Evolution card in Hand
 	call FindDarkDragonairThatCanUseEvolutionaryLight
 	jr nc, .find_any_evolution_card_to_trade
 	call TryUseEvolutionaryLightForAnyEvolution
-	jr nc, .asm_494d0
+	jr nc, .select_trade_target_power_of_darkness
 .find_any_evolution_card_to_trade
 	; try to search for an evolution card with The Boss' Way
 	; to then trade for a specific Basic card
@@ -2517,49 +2517,49 @@ HandleAIDarkPokemonSearchStrategies:
 	pop bc
 	ret c
 	ld a, b
-.asm_494d0
+.select_trade_target_power_of_darkness
 	push af
 	call FindDarkDragonairThatCanUseEvolutionaryLight
 	pop bc
 	ld a, b
 	ldh [hTemp_ffa0], a
-	jr nc, .asm_49508
+	jr nc, .select_trade_target_without_evolutionary_light
 	ld de, GRS_MEWTWO
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	ld de, PSYDUCK_LV16
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	ld de, CLEFAIRY_LV15
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	ld de, DRATINI_LV12
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	jr .try_search_for_evolutions_5
 
-.asm_49508
+.select_trade_target_without_evolutionary_light
 	ld de, GRS_MEWTWO
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	ld de, DRATINI_LV12
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	ld de, PSYDUCK_LV16
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
-	jr c, .asm_49534
+	jr c, .set_trade_target_power_of_darkness
 	ld de, CLEFAIRY_LV15
 	ld a, CARD_LOCATION_DECK
 	farcall FindCardIDInLocation
 	jr nc, .try_search_for_evolutions_5
-.asm_49534
+.set_trade_target_power_of_darkness
 	ldh [hTempPlayAreaLocation_ffa1], a
 	jp AITryUsePokemonTraderToSearchCard_GotCardToTrade
 
@@ -2722,7 +2722,7 @@ ChooseStopLifeDeckTarget: ; Func_49603
 	call SwapTurn
 	xor a ; PLAY_AREA_ARENA
 	call .CheckIfItsStage2
-	jr c, .asm_49672
+	jr c, .find_bench_knockout_target
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	ld d, a
@@ -2743,7 +2743,7 @@ ChooseStopLifeDeckTarget: ; Func_49603
 	cp d
 	jr nz, .loop_bench_2
 
-.asm_49672
+.find_bench_knockout_target
 	call SwapTurn
 	farcall FindBenchCardThatCanBeKnockedOut
 	ret
@@ -3225,10 +3225,10 @@ ChooseSmashToMincemeatDeckTarget: ; Func_49c04
 	call SwapTurn
 	ld a, [wTotalAttachedEnergies]
 	cp 3
-	jr nc, .asm_49c3a
+	jr nc, .check_stage2_targets
 	farcall AIFindGustOfWindTargetForArenaCard.FindBenchCardWithAtLeast3AttachedEnergies
 	ret c
-.asm_49c3a
+.check_stage2_targets
 	xor a
 	call SwapTurn
 	call ChooseStopLifeDeckTarget.CheckIfItsStage2
@@ -3240,20 +3240,20 @@ ChooseSmashToMincemeatDeckTarget: ; Func_49c04
 	get_turn_duelist_var
 	ld d, a
 	ld e, PLAY_AREA_BENCH_1
-.asm_49c4f
+.loop_stage2_bench_search
 	ld a, e
 	push de
 	call ChooseStopLifeDeckTarget.CheckIfItsStage2
 	pop de
-	jr c, .asm_49c61
+	jr c, .select_stage2_bench_target
 	inc e
 	ld a, e
 	cp d
-	jr nz, .asm_49c4f
+	jr nz, .loop_stage2_bench_search
 	call SwapTurn
 	or a
 	ret
-.asm_49c61
+.select_stage2_bench_target
 	call SwapTurn
 	ld a, e
 	scf
@@ -3308,7 +3308,7 @@ InitAITurnVars:
 	inc a
 	ld [wAIBarrierFlagCounter], a
 	cp 3
-	jr c, .asm_49daf
+	jr c, .decrement_skip_counter_and_update_arena_streak
 
 ; this means that the Player used Barrier
 ; at least 3 turns in a row.
@@ -3327,12 +3327,12 @@ InitAITurnVars:
 ; reset wAIBarrierFlagCounter
 	xor a
 	ld [wAIBarrierFlagCounter], a
-	jr .asm_49daf
+	jr .decrement_skip_counter_and_update_arena_streak
 
 .set_flag
 	ld a, AI_MEWTWO_MILL
 	ld [wAIBarrierFlagCounter], a
-	jr .asm_49daf
+	jr .decrement_skip_counter_and_update_arena_streak
 
 .check_flag
 ; increase counter by 1 if flag is set
@@ -3341,30 +3341,30 @@ InitAITurnVars:
 	jr z, .reset_2
 	inc a
 	ld [wAIBarrierFlagCounter], a
-	jr .asm_49daf
+	jr .decrement_skip_counter_and_update_arena_streak
 
 .reset_2
 ; reset wAIBarrierFlagCounter
 	xor a
 	ld [wAIBarrierFlagCounter], a
 
-.asm_49daf
+.decrement_skip_counter_and_update_arena_streak
 	ld a, [wAISkipAttackCounter]
 	or a
-	jr z, .asm_49db9
+	jr z, .check_arena_card_streak
 	dec a
 	ld [wAISkipAttackCounter], a
-.asm_49db9
+.check_arena_card_streak
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	ld hl, wAIPrevArenaCard
 	cp [hl]
-	jr z, .asm_49dc9
+	jr z, .increment_arena_card_streak
 	ld [hl], a
 	xor a
 	ld [wAIArenaCardStreakCount], a
 	jr .done
-.asm_49dc9
+.increment_arena_card_streak
 	ld hl, wAIArenaCardStreakCount
 	inc [hl]
 .done
@@ -3869,25 +3869,25 @@ AIHandlePkmnPowersWhenPlayingPkmnFromHand:
 	ld b, a
 	ld c, 0
 	ld hl, hTemp_ffa0
-.asm_4a3bf
+.advance_reel_in_temp_slot
 	ld a, [hl]
 	cp $ff
-	jr nz, .asm_4a3cc
+	jr nz, .write_reel_in_candidate_slot
 	inc hl
 	inc c
 	cp 3
-	jr nz, .asm_4a3bf
+	jr nz, .advance_reel_in_temp_slot
 	scf
 	ret
-.asm_4a3cc
+.write_reel_in_candidate_slot
 	ld a, b
 	ld [hli], a
 	inc c
 	cp 3
-	jr nz, .asm_4a3d5
+	jr nz, .finish_try_add_card_to_list
 	scf
 	ret
-.asm_4a3d5
+.finish_try_add_card_to_list
 	or a
 	ret
 
@@ -3914,10 +3914,10 @@ FindPlayAreaCardWithMostEnergiesAndHP: ; Func_4a3dc
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	cp e
-	jr nz, .asm_4a3ee
+	jr nz, .scan_play_area_for_max_energy
 	xor a
 	ret
-.asm_4a3ee
+.scan_play_area_for_max_energy
 	ld d, a ; number of Pokémon in Play Area
 	ld b, 0
 .loop_play_area
@@ -4172,25 +4172,25 @@ AIChoosePlayerBenchPkmnWithNotEnoughEnergiesOrHighRetreatCost:
 	xor a ; FIRST_ATTACK_OR_PKMN_POWER
 	ld [wSelectedAttack], a
 	farcall CheckEnergyNeededForAttack
-	jr nc, .asm_4b09b ; enough energy
+	jr nc, .enough_or_low_missing_energy ; enough energy
 	ld a, b
 	add c
 	cp 2
-	jr c, .asm_4b09b ; only needs 1 energy
+	jr c, .enough_or_low_missing_energy ; only needs 1 energy
 	ld a, SECOND_ATTACK
 	ld [wSelectedAttack], a
 	farcall CheckEnergyNeededForAttack
-	jr nc, .asm_4b09b ; enough energy
+	jr nc, .enough_or_low_missing_energy ; enough energy
 	ld a, b
 	add c
 	cp 2
-	jr c, .asm_4b09b ; only needs 1 energy
+	jr c, .enough_or_low_missing_energy ; only needs 1 energy
 	; neither attack has enough energy
 	; and both need at least 2 more energies
 	scf
 	ret
 
-.asm_4b09b
+.enough_or_low_missing_energy
 	or a
 	ret
 ; 0x4b09d
@@ -4685,7 +4685,7 @@ CreateEnergyCardListFromHand_OnlyBasic:
 .loop_cards
 	ld a, [hli]
 	cp $ff
-	jr z, .asm_4bf5f
+	jr z, .check_filtered_energy_list_nonempty
 	push hl
 	call GetCardIDFromDeckIndex
 	pop hl
@@ -4711,7 +4711,7 @@ CreateEnergyCardListFromHand_OnlyBasic:
 	pop hl
 	dec hl
 	jr .loop_cards
-.asm_4bf5f
+.check_filtered_energy_list_nonempty
 	pop bc
 	pop de
 	pop hl

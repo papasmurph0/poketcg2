@@ -453,7 +453,7 @@ AIFindGustOfWindTargetForArenaCard: ; Func_4c56b
 	jr z, .hitmonchan_or_sandslash
 	cp16 SANDSLASH_LV33
 	jr z, .hitmonchan_or_sandslash
-.asm_4c599
+.check_arena_immunity_fallback
 	farcall IsPlayerArenaCardImmune
 	ret nc
 	ld a, $ff
@@ -462,15 +462,15 @@ AIFindGustOfWindTargetForArenaCard: ; Func_4c56b
 .mr_mime
 	call .FindBenchCardWithAtLeastHalfHP
 	ret c
-	jr .asm_4c599
+	jr .check_arena_immunity_fallback
 .mewtwo
 	call .FindBenchCardWithAtLeast3AttachedEnergies
 	ret c
-	jr .asm_4c599
+	jr .check_arena_immunity_fallback
 .hitmonchan_or_sandslash
 	farcall FindBenchPokemonWeakToArenaCard
 	ret c
-	jr .asm_4c599
+	jr .check_arena_immunity_fallback
 
 .FindBenchCardWithAtLeastHalfHP:
 	call SwapTurn
@@ -544,29 +544,29 @@ AICheckShouldSwitchFromFirstAttack: ; Func_4c605
 	ld b, $05
 	ld a, [wOpponentDeckID]
 	cp GLITTERING_SCALES_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp GREAT_DRAGON_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp MAD_PETALS_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp RUNNING_WILD_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp SPIRITED_AWAY_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp STOP_LIFE_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp SCORCHER_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	cp SMASH_TO_MINCEMEAT_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 	ld b, $08
 	cp DIRECT_HIT_DECK_ID
-	jr z, .asm_4c640
+	jr z, .check_repeat_attack_threshold
 .no_carry
 	or a
 	ret
 
-.asm_4c640
+.check_repeat_attack_threshold
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	ld hl, wAILastAttackArenaCard
@@ -589,17 +589,17 @@ AITrackAttackRepeatCount: ; Func_4c65b
 	get_turn_duelist_var
 	ld hl, wAILastAttackArenaCard
 	cp [hl]
-	jr nz, .asm_4c66e
+	jr nz, .store_last_attack_arena_card
 	inc hl
 	ld a, [wSelectedAttack]
 	cp [hl] ; wAILastAttackIndex
-	jr nz, .asm_4c66f
+	jr nz, .store_selected_attack_and_reset_repeat
 	inc hl
 	inc [hl] ; wAIAttackRepeatCount
 	ret
-.asm_4c66e
+.store_last_attack_arena_card
 	ld [hli], a
-.asm_4c66f
+.store_selected_attack_and_reset_repeat
 	ld a, [wSelectedAttack]
 	ld [hli], a ; wAILastAttackIndex
 	ld [hl], 1 ; wAIAttackRepeatCount

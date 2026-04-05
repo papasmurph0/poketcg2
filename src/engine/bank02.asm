@@ -3965,7 +3965,7 @@ HandleDeckCardsBreakdown:
 	call ZeroAttributesAtDE
 .got_name
 	ld hl, wCurDeckCards
-	farcall CheckDeck.asm_25461
+	farcall CheckDeck.clear_deck_check_counts
 	lb de, 2, 8
 	call InitTextPrinting
 	ldtx hl, DeckDiagnosisBreakdownText

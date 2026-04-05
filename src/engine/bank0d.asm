@@ -4391,10 +4391,10 @@ PlayPsychicStrongholdLobbyImakuniRedMusicPostload: ; Func_361f9
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $0a
-	jr z, .asm_36205
+	jr z, .play_imakuni_red_music
 	scf
 	ret
-.asm_36205
+.play_imakuni_red_music
 	ld a, MUSIC_IMAKUNI_RED
 	farcall PlayAfterCurrentSong
 	scf
@@ -4416,10 +4416,10 @@ LoadPsychicStrongholdLobbyNPCs: ; Func_36215
 HandlePsychicStrongholdLobbyInteractions: ; Func_3621e
 	ld hl, PsychicStrongholdLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3622c
+	jr nc, .done_interactions
 	ld hl, PsychicStrongholdLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3622c
+.done_interactions
 	scf
 	ret
 
@@ -4431,14 +4431,14 @@ HandlePsychicStrongholdLobbyAfterDuel: ; Func_3622e
 HandlePsychicStrongholdLobbyContinueOverworld: ; Func_36234
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_3624e
+	jr z, .done
 	ld a, NPC_IMAKUNI_RED
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_3624e
+.done
 	scf
 	ret
 
@@ -4543,10 +4543,10 @@ CheckShowPsychicStrongholdLobbyImakuniRed: ; Func_36310
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $0a
-	jr z, .asm_3631c
+	jr z, .show_imakuni_red
 	scf
 	ret
-.asm_3631c
+.show_imakuni_red
 	scf
 	ccf
 	ret
@@ -4603,9 +4603,9 @@ LoadPsychicStrongholdNPCs: ; Func_36396
 HandlePsychicStrongholdWarpFadeInPreload: ; Func_3639f
 	ld a, [wPrevMap]
 	cp MAP_PSYCHIC_STRONGHOLD_ENTRANCE
-	jr nz, .asm_363aa
+	jr nz, .begin_preload_script
 	farcall DeliverMailFromQueue
-.asm_363aa
+.begin_preload_script
 	xor a
 	start_script
 	check_event EVENT_MET_PSYCHIC_STRONGHOLD_MEMBERS
@@ -4629,10 +4629,10 @@ HandlePsychicStrongholdWarpFadeInPreload: ; Func_3639f
 	end_script
 	ld a, [wPrevMap]
 	cp MAP_PSYCHIC_STRONGHOLD_MAMI
-	jr z, .asm_363e4
+	jr z, .return_from_mami
 	scf
 	ret
-.asm_363e4
+.return_from_mami
 	ld a, [wPlayerOWObject]
 	farcall ResetOWObjectSpriteAnimFlag6
 	ld a, NPC_STRONGHOLD_PLATFORM
@@ -4669,10 +4669,10 @@ HandlePsychicStrongholdWarpFadeInPreload: ; Func_3639f
 HandlePsychicStrongholdWarpEndSFX: ; Func_36434
 	ld a, [wTempPrevMap]
 	cp MAP_PSYCHIC_STRONGHOLD_MAMI
-	jr z, .asm_3643d
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_3643d
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -4687,29 +4687,29 @@ HandlePsychicStrongholdPauseMenu: ; Func_36448
 	ld a, VAR_03
 	farcall GetVarValue
 	cp $03
-	jr nc, .asm_36454
+	jr nc, .check_player_tile
 	scf
 	ret
-.asm_36454
+.check_player_tile
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectTilePosition
 	ld a, e
 	cp $08
-	jr nc, .asm_3647c
+	jr nc, .open_pause_menu
 	ld a, d
 	cp $05
-	jr c, .asm_3647c
-	jr z, .asm_36476
+	jr c, .open_pause_menu
+	jr z, .reset_platform_anim_flag
 	cp $07
-	jr nc, .asm_3647c
+	jr nc, .open_pause_menu
 	ld a, $e8
 	ld bc, $157
 	farcall SetOWObjectFrameset
-	jr .asm_3647c
-.asm_36476
+	jr .open_pause_menu
+.reset_platform_anim_flag
 	ld a, NPC_STRONGHOLD_PLATFORM
 	farcall ResetOWObjectSpriteAnimFlag6
-.asm_3647c
+.open_pause_menu
 	farcall PauseMenu
 	ld a, NPC_STRONGHOLD_PLATFORM
 	ld bc, FRAMESET_155
@@ -5611,15 +5611,15 @@ Script_36b76:
 CheckShowPsychicStrongholdPlatform: ; Func_36b8f
 	ld a, EVENT_MET_PSYCHIC_STRONGHOLD_MEMBERS
 	farcall GetEventValue
-	jr z, .asm_36ba4
+	jr z, .return_carry
 	ld a, VAR_03
 	farcall GetVarValue
 	cp $03
-	jr c, .asm_36ba4
+	jr c, .return_carry
 	scf
 	ccf
 	ret
-.asm_36ba4
+.return_carry
 	scf
 	ret
 
@@ -5643,14 +5643,14 @@ HandlePsychicStrongholdLobbyWarp: ; Func_36bc8
 	push hl
 	ld a, EVENT_MET_PSYCHIC_STRONGHOLD_MEMBERS
 	farcall GetEventValue
-	jr nz, .asm_36bdc
+	jr nz, .set_warp_data
 	pop hl
 	pop de
 	pop bc
 	pop af
 	call Script_PsychicStrongholdMamiIntro
 	ret
-.asm_36bdc
+.set_warp_data
 	pop hl
 	pop de
 	pop bc
@@ -5666,14 +5666,14 @@ HandlePsychicStrongholdMamiRoomWarp: ; Func_36be5
 	ld a, VAR_03
 	farcall GetVarValue
 	cp $03
-	jr nc, .asm_36bfc
+	jr nc, .start_mami_room_platform_sequence
 	pop hl
 	pop de
 	pop bc
 	pop af
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
-.asm_36bfc
+.start_mami_room_platform_sequence
 	pop hl
 	pop de
 	pop bc
@@ -5822,21 +5822,21 @@ HandlePsychicStrongholdMamiPauseMenu: ; Func_36d29
 	farcall GetOWObjectTilePosition
 	ld a, e
 	cp $07
-	jr c, .asm_36d51
+	jr c, .open_pause_menu
 	ld a, d
 	cp $05
-	jr c, .asm_36d51
-	jr z, .asm_36d4b
+	jr c, .open_pause_menu
+	jr z, .reset_platform_anim_flag
 	cp $07
-	jr nc, .asm_36d51
+	jr nc, .open_pause_menu
 	ld a, $e8
 	ld bc, $157
 	farcall SetOWObjectFrameset
-	jr .asm_36d51
-.asm_36d4b
+	jr .open_pause_menu
+.reset_platform_anim_flag
 	ld a, NPC_STRONGHOLD_PLATFORM
 	farcall ResetOWObjectSpriteAnimFlag6
-.asm_36d51
+.open_pause_menu
 	farcall PauseMenu
 	ld a, NPC_STRONGHOLD_PLATFORM
 	ld bc, FRAMESET_155
@@ -5932,14 +5932,14 @@ Script_PsychicStrongholdMamiRod: ; Func_36de8
 CheckShowPsychicStrongholdMamiRod: ; Func_36e03
 	ld a, EVENT_MET_MAMI_AND_ROD
 	farcall GetEventValue
-	jr z, .asm_36e16
+	jr z, .return_carry
 	ld a, EVENT_FREED_ROD
 	farcall GetEventValue
-	jr nz, .asm_36e16
+	jr nz, .return_carry
 	scf
 	ccf
 	ret
-.asm_36e16
+.return_carry
 	scf
 	ret
 
@@ -6105,11 +6105,11 @@ Script_PsychicStrongholdMamiWarpEntry: ; Func_36f43
 	farcall StartOWObjectAnimation
 	ld a, EVENT_MET_MAMI_AND_ROD
 	farcall GetEventValue
-	jr z, .asm_36f69
+	jr z, .start_meet_rod_script
 	ld a, OWMODE_IDLE
 	ld [wOverworldMode], a
 	ret
-.asm_36f69
+.start_meet_rod_script
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(Script_PsychicStrongholdMamiMeetRod)
@@ -6184,14 +6184,14 @@ HandleColorlessAltarWarpFadeInPreload: ; Func_36ff2
 	farcall DeliverMailFromQueue
 	ld a, EVENT_MET_COLORLESS_ALTAR_MEMBERS
 	farcall GetEventValue
-	jr nz, .asm_3700f
+	jr nz, .done
 	ld a, NPC_SAMEJIMA
 	lb de, 5, 6
 	farcall SetOWObjectTilePosition
 	ld a, NPC_SAMEJIMA
 	ld b, NORTH
 	farcall SetOWObjectDirection
-.asm_3700f
+.done
 	scf
 	ret
 
@@ -6688,15 +6688,15 @@ HandleGrCastleEntranceIdle: ; Func_373cb
 	call DoOverworldFrame
 	ld a, EVENT_GR_CASTLE_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_37409
+	jr z, .handle_player_input
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectTilePosition
 	ld a, $03
 	cp e
-	jr nz, .asm_37409
+	jr nz, .handle_player_input
 	ldh a, [hKeysHeld]
 	bit B_PAD_UP, a
-	jr z, .asm_37409
+	jr z, .handle_player_input
 	inc d
 	inc d
 	ld e, 14
@@ -6709,10 +6709,10 @@ HandleGrCastleEntranceIdle: ; Func_373cb
 	ld b, NORTH
 	ld c, MOVE_SPEED_WALK
 	farcall TryStepNPCInDirection
-	jr .asm_3740c
-.asm_37409
+	jr .done
+.handle_player_input
 	call HandleOverworldPlayerInput
-.asm_3740c
+.done
 	scf
 	ccf
 	ret
@@ -6732,42 +6732,42 @@ LoadGrCastleEntranceNPCs: ; Func_37416
 HandleGrCastleEntranceWarpFadeInPreload: ; Func_3741f
 	ld a, EVENT_GR_CASTLE_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_37469
+	jr nz, .done
 	ld bc, TILEMAP_0B4
 	lb de, 4, 2
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_INSERTED_RIGHT_COIN_IN_GR_CASTLE_DOOR
 	farcall GetEventValue
-	jr z, .asm_3744d
+	jr z, .check_left_coin_inserted
 	ld bc, PALETTE_188
 	farcall GetPalettesWithID
 	ld a, NPC_WHITE_CASTLE_COIN
 	lb de, 4, 2
 	ld b, SOUTH
 	farcall LoadOWObjectInMap
-	jr .asm_37469
-.asm_3744d
+	jr .done
+.check_left_coin_inserted
 	ld a, EVENT_INSERTED_LEFT_COIN_IN_GR_CASTLE_DOOR
 	farcall GetEventValue
-	jr z, .asm_37469
+	jr z, .done
 	ld bc, PALETTE_189
 	farcall GetPalettesWithID
 	ld a, NPC_PURPLE_CASTLE_COIN
 	lb de, 6, 2
 	ld b, SOUTH
 	farcall LoadOWObjectInMap
-	jr .asm_37469
-.asm_37469
+	jr .done
+.done
 	scf
 	ret
 
 HandleGrCastleEntranceInteractions: ; Func_3746b
 	ld hl, GrCastleEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_37479
+	jr nc, .done
 	ld hl, GrCastleEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_37479
+.done
 	scf
 	ret
 
@@ -6779,12 +6779,12 @@ HandleGrCastleEntranceAfterDuel: ; Func_3747b
 HandleGrCastleEntranceDoorInteraction: ; Func_37480
 	ld a, EVENT_GR_CASTLE_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_37490 ; this jump target is likely a bug. should jump to 'ret'
+	jr nz, .end_dialog_and_script ; this jump target is likely a bug. should jump to 'ret'
 	xor a
 	start_script
 	start_dialog
 	print_text DoorsAreShutText
-.asm_37490
+.end_dialog_and_script
 	end_dialog
 	end_script
 	ret
@@ -7019,20 +7019,20 @@ LoadGrCastleNPCs: ; Func_37663
 HandleGrCastleWarpFadeInPreload: ; Func_3766c
 	ld a, [wPrevMap]
 	cp MAP_GR_CASTLE_ENTRANCE
-	jr nz, .asm_37677
+	jr nz, .update_gr_castle_npcs
 	farcall DeliverMailFromQueue
-.asm_37677
+.update_gr_castle_npcs
 	ld a, EVENT_MET_BIRURITCHI_AND_ADMINS
 	farcall GetEventValue
-	jr z, .asm_37691
+	jr z, .setup_intro_npc_layout
 	ld a, EVENT_BEAT_KANZAKI
 	farcall GetEventValue
-	jr z, .asm_376bc
+	jr z, .setup_rui_roadblock_layout
 	ld a, EVENT_BEAT_RUI
 	farcall GetEventValue
-	jr z, .asm_376cd
-	jr .asm_376eb
-.asm_37691
+	jr z, .setup_kanzaki_roadblock_layout
+	jr .done
+.setup_intro_npc_layout
 	ld a, NPC_KANZAKI
 	lb de, 8, 3
 	farcall SetOWObjectTilePosition
@@ -7047,15 +7047,15 @@ HandleGrCastleWarpFadeInPreload: ; Func_3766c
 	lb de, 7, 2
 	ld b, SOUTH
 	farcall LoadOWObjectInMap
-	jr .asm_376eb
-.asm_376bc
+	jr .done
+.setup_rui_roadblock_layout
 	ld a, NPC_RUI
 	lb de, 7, 7
 	farcall SetOWObjectTilePosition
 	ld b, SOUTH
 	farcall SetOWObjectDirection
-	jr .asm_376eb
-.asm_376cd
+	jr .done
+.setup_kanzaki_roadblock_layout
 	ld a, NPC_KANZAKI
 	lb de, 7, 7
 	farcall SetOWObjectTilePosition
@@ -7066,7 +7066,7 @@ HandleGrCastleWarpFadeInPreload: ; Func_3766c
 	farcall SetOWObjectTilePosition
 	ld b, WEST
 	farcall SetOWObjectDirection
-.asm_376eb
+.done
 	scf
 	ret
 
@@ -7543,7 +7543,7 @@ HandleGrCastleStairsTrigger: ; Func_37a5f
 Script_GrCastleStairsRoadblock: ; Func_37a76
 	ld a, EVENT_BEAT_KANZAKI
 	farcall GetEventValue
-	jr nz, .asm_37a9b
+	jr nz, .use_kanzaki_dialog
 	ld a, NPC_RUI
 	ld [wScriptNPC], a
 	ldtx hl, DialogRuiText
@@ -7557,7 +7557,7 @@ Script_GrCastleStairsRoadblock: ; Func_37a76
 	set_active_npc_direction NORTH
 	print_npc_text Text0925
 	script_jump .ows_37ab5
-.asm_37a9b
+.use_kanzaki_dialog
 	ld a, NPC_KANZAKI
 	ld [wScriptNPC], a
 	ldtx hl, DialogKanzakiText

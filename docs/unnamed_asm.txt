@@ -871,3 +871,726 @@ In Psychic Stronghold Entrance music postload, branch that queues Ronald music w
 .asm_3613e -> .done
 Common successful return path in HandlePsychicStrongholdEntranceWarpFadeInPreload after optional Ronald/GRX reveal setup.
 
+.asm_36205 -> .play_imakuni_red_music
+In Psychic Stronghold Lobby music postload, branch that queues Imakuni Red music when VAR_26 reaches the reveal state.
+
+.asm_3622c -> .done_interactions
+Shared return branch in HandlePsychicStrongholdLobbyInteractions after NPC interaction handling and optional OW script processing.
+
+.asm_3624e -> .done
+Common successful return path in HandlePsychicStrongholdLobbyContinueOverworld after optional Imakuni cleanup and music restore.
+
+.asm_3631c -> .show_imakuni_red
+Carry-clear branch in CheckShowPsychicStrongholdLobbyImakuniRed that keeps Imakuni Red visible when VAR_26 matches the reveal state.
+
+.asm_363aa -> .begin_preload_script
+In HandlePsychicStrongholdWarpFadeInPreload, branch that begins preload script setup after optional entrance mail delivery.
+
+.asm_363e4 -> .return_from_mami
+Branch in HandlePsychicStrongholdWarpFadeInPreload that resets player/platform flags and sets return script when entering from Mami's room.
+
+.asm_3643d -> .return_clear_carry
+In HandlePsychicStrongholdWarpEndSFX, returns carry clear when coming from Mami's room to trigger alternate warp-end handling.
+
+.asm_36454 -> .check_player_tile
+In HandlePsychicStrongholdPauseMenu, branch that validates player tile position before platform animation adjustments and pause-menu flow.
+
+.asm_36476 -> .reset_platform_anim_flag
+Branch in HandlePsychicStrongholdPauseMenu that clears the platform sprite animation flag for the center tile case.
+
+.asm_3647c -> .open_pause_menu
+Common pause-menu execution branch in HandlePsychicStrongholdPauseMenu before restoring platform frameset/animation state.
+
+src/engine/bank0d.asm .asm_36ba4 -> .return_carry
+Carry-set branch in CheckShowPsychicStrongholdPlatform used when members are not met or VAR_03 is below platform-visibility threshold.
+
+src/engine/bank0d.asm .asm_36bdc -> .set_warp_data
+Branch in HandlePsychicStrongholdLobbyWarp that skips intro script setup and directly applies warp data after members were already met.
+
+src/engine/bank0d.asm .asm_36bfc -> .start_mami_room_platform_sequence
+Branch in HandlePsychicStrongholdMamiRoomWarp that runs warp data setup plus platform movement script when VAR_03 reached the room-transition state.
+
+src/engine/bank0d.asm .asm_36d4b -> .reset_platform_anim_flag
+Center-tile branch in HandlePsychicStrongholdMamiPauseMenu that clears the platform sprite animation flag before opening the pause menu.
+
+src/engine/bank0d.asm .asm_36d51 -> .open_pause_menu
+Common pause-menu execution branch in HandlePsychicStrongholdMamiPauseMenu before restoring platform frameset/animation state.
+
+src/engine/bank0d.asm .asm_36e16 -> .return_carry
+Carry-set branch in CheckShowPsychicStrongholdMamiRod used when Mami/Rod intro was not met or Rod was already freed.
+
+src/engine/bank0d.asm .asm_36f69 -> .start_meet_rod_script
+Branch in Script_PsychicStrongholdMamiWarpEntry that switches to script mode and queues Script_PsychicStrongholdMamiMeetRod for first-time entry.
+
+src/engine/bank0d.asm .asm_3700f -> .done
+Common successful return path in HandleColorlessAltarWarpFadeInPreload after optional Samejima repositioning.
+
+src/engine/bank0d.asm .asm_37409 -> .handle_player_input
+Fallback branch in HandleGrCastleEntranceIdle that routes to normal overworld input handling when auto-door-entry conditions are not met.
+
+src/engine/bank0d.asm .asm_3740c -> .done
+Common return path in HandleGrCastleEntranceIdle after either auto-door step setup or normal player-input handling.
+
+src/engine/bank0d.asm .asm_3744d -> .check_left_coin_inserted
+Branch in HandleGrCastleEntranceWarpFadeInPreload that checks left-coin insertion state when right-coin insertion is not set.
+
+src/engine/bank0d.asm .asm_37469 -> .done
+Common successful return path in HandleGrCastleEntranceWarpFadeInPreload after optional door-overlay and coin-object setup.
+
+src/engine/bank0d.asm .asm_37479 -> .done
+Shared return branch in HandleGrCastleEntranceInteractions after NPC interaction handling and optional door-tile interaction dispatch.
+
+src/engine/bank0d.asm .asm_37490 -> .end_dialog_and_script
+Shared script-close branch in HandleGrCastleEntranceDoorInteraction that ends dialog/script regardless of whether the door-closed text was shown.
+
+src/engine/bank0d.asm .asm_37677 -> .update_gr_castle_npcs
+Branch in HandleGrCastleWarpFadeInPreload that begins NPC layout updates after optional mail delivery when entering from map transitions.
+
+src/engine/bank0d.asm .asm_37691 -> .setup_intro_npc_layout
+In HandleGrCastleWarpFadeInPreload, branch that positions Kanzaki/Rui and loads Biruritchi for the pre-intro meeting layout.
+
+src/engine/bank0d.asm .asm_376bc -> .setup_rui_roadblock_layout
+In HandleGrCastleWarpFadeInPreload, branch that repositions Rui as the staircase roadblock before Kanzaki is beaten.
+
+src/engine/bank0d.asm .asm_376cd -> .setup_kanzaki_roadblock_layout
+In HandleGrCastleWarpFadeInPreload, branch that repositions Kanzaki for the staircase roadblock after Kanzaki duel and before Rui duel completion.
+
+src/engine/bank0d.asm .asm_376eb -> .done
+Common successful return path in HandleGrCastleWarpFadeInPreload after all NPC layout branches complete.
+
+src/engine/bank0d.asm .asm_37a9b -> .use_kanzaki_dialog
+In Script_GrCastleStairsRoadblock, branch that switches script speaker/text to Kanzaki when EVENT_BEAT_KANZAKI is set.
+
+src/engine/bank09.asm .asm_6932 -> .continue_turn_loop
+In DoLinkOpponentTurn, common loop continuation branch after optional waiting-menu text setup.
+
+src/engine/bank09.asm .asm_2534d -> .print_diagnosis_text
+Common branch in DiagnoseDeck that prints the selected Dr. Mason diagnosis text (including the trainer-present OK case).
+
+src/engine/bank09.asm .asm_25352 -> .print_diagnosis_with_result_list
+In DiagnoseDeck, branch that prints diagnosis text and then invokes DeckDiagnosisResult with the paired list text.
+
+src/engine/bank09.asm .asm_25390 -> .print_pokemon_count_message
+In DiagnoseNumberOfPkmnAndEnergyCards, branch that prints too-many/too-few Pokemon count feedback.
+
+src/engine/bank09.asm .asm_25393 -> .check_energy_count
+In DiagnoseNumberOfPkmnAndEnergyCards, branch that proceeds into energy-count diagnosis after Pokemon-count checks.
+
+src/engine/bank09.asm .asm_253aa -> .print_energy_count_message
+In DiagnoseNumberOfPkmnAndEnergyCards, branch that prints no/too-few/too-many energy diagnostics.
+
+src/engine/bank09.asm .asm_253ad -> .return_if_any_message_printed
+In DiagnoseNumberOfPkmnAndEnergyCards, final branch that returns carry when at least one diagnosis message was printed.
+
+src/engine/bank09.asm .asm_25461 -> .clear_deck_check_counts
+In GetDeckCardCounts, branch that clears the DECKCHECKSTRUCT counters before iterating deck cards.
+
+src/engine/bank09.asm .asm_256f4 -> .check_energy_surplus_by_type
+In CheckEnergyAmountVsPkmnCards, branch that continues into per-type energy-surplus checks after optional global imbalance warning.
+
+src/engine/bank09.asm .asm_25733 -> .print_type_energy_message
+In CheckEnergyAmountVsPkmnCards, branch that prints per-type too-many/too-few energy feedback after optional summary warning.
+
+src/engine/bank09.asm .asm_25737 -> .skip_type_energy_message
+In CheckEnergyAmountVsPkmnCards, branch that skips message output for a type when no surplus/deficit was detected.
+
+src/engine/bank09.asm .asm_257d2 -> .store_total_energy_surplus
+In CalculateEnergySurplus, branch that stores total energy surplus value after clamping low totals to zero.
+
+src/engine/bank03.asm .asm_c1d7 -> .load_backup_and_check_saved_duel
+In HandleStartMenu, branch that loads backup save data and checks duel checksum after backup validation succeeds.
+
+src/engine/bank03.asm .asm_c20f -> .restore_backup_from_main_save
+In HandleStartMenu, recovery branch that rebuilds backup save from validated main save before retrying backup-load checks.
+
+src/engine/bank03.asm .asm_c299 -> .update_game_state_vars
+In ResetGameProgress, branch that reaches final UpdateGameStateVars call after optional challenge-machine initialization.
+
+src/engine/bank03.asm .asm_c2f7 -> .set_science_club_location
+In SetRandomGRCoinPieceLocation, branch that writes Science Club as the random coin-piece location when RNG carry is set.
+
+src/engine/bank03.asm .asm_d4d3 -> .y_axis_dominant
+In SetupOWObjectTargetMovement, branch that computes movement velocities for cases where Y distance exceeds X distance.
+
+src/engine/bank03.asm .asm_d562 -> .set_object_position
+In MoveOWObjectToTargetPosition, branch that commits updated object coordinates after optional Y-axis movement.
+
+src/engine/bank03.asm .asm_d58a -> .got_abs_x_distance
+In SetupOWScrollTarget, branch after converting signed X delta to absolute magnitude.
+
+src/engine/bank03.asm .asm_d593 -> .got_abs_y_distance
+In SetupOWScrollTarget, branch after converting signed Y delta to absolute magnitude.
+
+src/engine/bank03.asm .asm_d5ad -> .got_x_velocity
+In SetupOWScrollTarget, branch reached after choosing X scroll velocity direction for X-dominant movement.
+
+src/engine/bank03.asm .asm_d5bd -> .got_y_velocity
+In SetupOWScrollTarget, branch reached after choosing Y scroll velocity direction for X-dominant movement.
+
+src/engine/bank03.asm .asm_d5d8 -> .store_y_velocity
+In SetupOWScrollTarget, branch that stores final Y fractional/integer velocity for X-dominant movement.
+
+src/engine/bank03.asm .asm_d5e2 -> .y_axis_dominant
+In SetupOWScrollTarget, branch that computes scroll velocities for cases where Y distance exceeds X distance.
+
+src/engine/bank03.asm .asm_d5f7 -> .got_y_velocity_2
+In SetupOWScrollTarget, branch reached after choosing Y velocity direction for Y-dominant movement.
+
+src/engine/bank03.asm .asm_d607 -> .got_x_velocity_2
+In SetupOWScrollTarget, branch reached after choosing X velocity direction for Y-dominant movement.
+
+src/engine/bank03.asm .asm_d621 -> .store_x_velocity
+In SetupOWScrollTarget, branch that stores final X fractional/integer velocity for Y-dominant movement.
+
+src/engine/bank03.asm .asm_d641 -> .update_x_scroll
+In UpdateOWScrollToTarget, branch that advances X scroll/subpixel state when X has not yet reached target.
+
+src/engine/bank03.asm .asm_d651 -> .update_y_scroll
+In UpdateOWScrollToTarget, branch that advances Y scroll/subpixel state when Y has not yet reached target.
+
+src/engine/bank03.asm .asm_d667 -> .store_scroll_coords
+In UpdateOWScrollToTarget, branch that writes updated scroll coordinates back to WRAM.
+
+src/engine/bank03.asm .asm_f361 -> .apply_side_settings
+In ChangeAnimationPlayerSideOnStartPress, branch that applies chosen duelist side/screen state after toggle decision.
+
+src/engine/bank03.asm .asm_f3fd -> .print_state_text
+In ChangeDebugViewerStateText, branch that prints the selected playing/stopped state text at fixed coordinates.
+
+src/engine/bank12.asm .asm_48632 -> .evaluate_retreat_and_execute
+In AIProcessRetreat, main branch that checks retreat lock/status and executes the standard retreat flow when conditions allow.
+
+src/engine/bank12.asm .asm_4865c -> .handle_switch_retreat_followup
+In AIProcessRetreat, branch used when Switch was already consumed, marking retreat state, clearing the Switch flag, and running Energy Trans follow-up.
+
+src/engine/bank12.asm .asm_48670 -> .reselect_bench_and_retreat
+In AIProcessRetreat, branch for the special retreat flag path that reselects a Bench target and executes retreat directly.
+
+src/engine/bank12.asm .asm_48958 -> .set_score_85_awesome_fossil
+In the Awesome Fossil deck branch, sets attack score `$85` for Kangaskhan Lv40 when switch/energy/setup checks do not trigger the lower-score path.
+
+src/engine/bank12.asm .asm_4895d -> .set_score_6c_awesome_fossil
+In the Awesome Fossil deck branch, sets lower attack score `$6c` for Kangaskhan Lv40 when fewer than two Bench Pokemon are set up.
+
+src/engine/bank12.asm .asm_489bc -> .set_score_85_glittering_scales
+In the Glittering Scales deck branch, sets attack score `$85` for Chansey/Kangaskhan evaluation outcomes that prefer maintaining current attack setup.
+
+src/engine/bank12.asm .asm_489c1 -> .set_score_64_glittering_scales
+In the Glittering Scales deck branch, sets lower attack score `$64` when Arena/Bench energy checks favor the alternate branch.
+
+src/engine/bank12.asm .asm_48a56 -> .set_score_8d_immortal_flame
+In the Immortal Flame deck branch (Kangaskhan Lv40), sets score `$8d` when switch/energy and Arcanine-energy checks keep the preferred attack path.
+
+src/engine/bank12.asm .asm_48a5b -> .set_score_64_immortal_flame
+In the Immortal Flame deck branch, sets lower score `$64` when Arcanine still needs energy and the fallback path is chosen.
+
+src/engine/bank12.asm .asm_48a9d -> .set_score_8d_great_dragon
+In the Great Dragon deck branch, sets score `$8d` for Kangaskhan Lv40 when switch/energy checks and Charizard setup conditions keep the preferred path.
+
+src/engine/bank12.asm .asm_48adf -> .set_score_8d_mad_petals
+In the Mad Petals deck branch, sets score `$8d` for Kangaskhan Lv40 when switch/energy checks and Vileplume setup conditions keep the preferred path.
+
+src/engine/bank12.asm .asm_48b18 -> .set_score_8d_multi_deck_kangaskhan
+Shared score branch used by Complete Combustion, Ronald's Power, Ronald's Psychic, and Poison Storm Kangaskhan Lv40 logic to set score `$8d`.
+
+src/engine/bank12.asm .asm_48b1d -> .set_score_78_multi_deck_kangaskhan
+Shared fallback branch for the same multi-deck Kangaskhan path that sets lower score `$78` when fewer than two Bench Pokemon are set up.
+
+src/engine/bank12.asm .asm_48b57 -> .set_score_8d_running_wild
+In the Running Wild deck branch, sets score `$8d` for Kangaskhan Lv40 after switch/energy checks and Dark Marowak energy validation.
+
+src/engine/bank12.asm .asm_48b9a -> .set_score_8d_direct_hit
+In the Direct Hit deck branch for Kangaskhan Lv40/Psyduck Lv16 handling, sets score `$8d` on the preferred path.
+
+src/engine/bank12.asm .asm_48b9f -> .set_score_78_direct_hit
+In the Direct Hit deck branch, sets lower score `$78` when fewer than two Bench Pokemon are set up.
+
+src/engine/bank12.asm .asm_48c1f -> .set_score_8d_spirited_away
+In the Spirited Away deck branch, sets score `$8d` for Kangaskhan Lv40 after switch/energy and Dark Haunter setup checks.
+
+src/engine/bank12.asm .asm_48c75 -> .set_score_8d_stop_life_kangaskhan
+In the Stop Life deck branch Kangaskhan path, sets score `$8d` after switch/energy checks and Dark Venusaur setup validation.
+
+src/engine/bank12.asm .asm_48cc1 -> .set_score_8d_scorcher_kangaskhan
+In the Scorcher deck Kangaskhan Lv40 path, sets score `$8d` after switch/energy checks and Dark Charizard Bench setup validation.
+
+src/engine/bank12.asm .asm_48cd7 -> .set_score_83_scorcher_dark_charizard
+In the Scorcher deck Dark Charizard path, sets score `$83` when the selected attacker is the same slot chosen for next energy attachment.
+
+src/engine/bank12.asm .asm_48d3e -> .set_score_8d_smash_to_mincemeat_kangaskhan
+In the Smash to Mincemeat deck Kangaskhan Lv40 path, sets score `$8d` after switch/energy checks and Dark Machamp Bench setup validation.
+
+src/engine/bank12.asm .asm_48db1 -> .check_required_energy_in_hand_powerful_pokemon
+Shared Powerful Pokemon deck branch that checks the required type energy (or Rainbow fallback) in hand before applying the score.
+
+src/engine/bank12.asm .asm_48dcb -> .set_score_64_powerful_pokemon
+In the Powerful Pokemon deck branch, sets score `$64` after required hand-energy checks pass.
+
+src/engine/bank12.asm .asm_48e00 -> .set_score_8d_ronalds_uncool
+In Ronald's Uncool deck Chansey Lv55 logic, sets score `$8d` for low-energy or sufficiently set-up Bench conditions.
+
+src/engine/bank12.asm .asm_48ea2 -> .set_score_64_big_thunder
+In Big Thunder deck Ditto/Chansey checks, sets score `$64` when Ditto or Zapdos energy-shortage conditions are detected.
+
+src/engine/bank12.asm .asm_48ee7 -> .set_score_8d_power_of_darkness
+In Power of Darkness deck Kangaskhan/GR's Mewtwo path, sets score `$8d` for preferred non-fallback conditions.
+
+src/engine/bank12.asm .asm_48eec -> .set_score_78_power_of_darkness
+In Power of Darkness deck Kangaskhan path, sets fallback score `$78` when fewer than two Bench Pokemon are set up.
+
+src/engine/bank12.asm .asm_48f7b -> .set_score_80_psychic_battle
+In Psychic Battle deck Mr. Mime Lv28 handling, sets score `$80` when the defender already has damage or cannot damage Mr. Mime.
+
+src/engine/bank12.asm .asm_48f81 -> .set_score_8a_psychic_battle
+In Psychic Battle deck Mr. Mime Lv28 handling, sets score `$8a` when the opponent can use a non-residual attack.
+
+src/engine/bank12.asm .asm_490ff -> .set_trade_target_kangaskhan_or_scyther
+In the first deck-specific Pokémon Trader branch, stores the found Kangaskhan/Scyther deck index as the trade target and commits the trade action.
+
+src/engine/bank12.asm .asm_49219 -> .set_trade_target_kangaskhan_magmar_or_mr_mime
+In the Scorcher deck Pokémon Trader branch, stores the found Kangaskhan/Magmar/Mr. Mime deck index as the trade target and commits the trade action.
+
+src/engine/bank12.asm .asm_49329 -> .set_trade_target_scyther_mr_mime_or_lapras
+In the Tsunami Starter deck Pokémon Trader branch, stores the found Scyther/Mr. Mime/Lapras deck index as the trade target and commits the trade action.
+
+src/engine/bank12.asm .asm_49436 -> .set_trade_target_kangaskhan_or_chansey
+In the Smash to Mincemeat deck Pokémon Trader branch, stores the found Kangaskhan/Chansey deck index as the trade target and commits the trade action.
+
+src/engine/bank12.asm .asm_494d0 -> .select_trade_target_power_of_darkness
+In the Power of Darkness deck Pokémon Trader path, initializes trade-target selection after choosing a card to trade from hand.
+
+src/engine/bank12.asm .asm_49508 -> .select_trade_target_without_evolutionary_light
+In the Power of Darkness deck branch where Evolutionary Light support is unavailable, checks fallback Basic targets in priority order.
+
+src/engine/bank12.asm .asm_49534 -> .set_trade_target_power_of_darkness
+In the Power of Darkness deck Pokémon Trader branch, stores the found Basic card deck index as the trade target and commits the trade action.
+
+src/engine/bank12.asm .asm_49672 -> .find_bench_knockout_target
+In the Stop Life deck target chooser, falls back to selecting an opponent Bench card that can be knocked out when no Stage 2 preference applies.
+
+src/engine/bank12.asm .asm_49c3a -> .check_stage2_targets
+In Smash to Mincemeat deck target selection, enters Stage 2 preference checks after energy-threshold filtering.
+
+src/engine/bank12.asm .asm_49c4f -> .loop_stage2_bench_search
+Iterates opponent Bench positions while searching for a valid Stage 2 target.
+
+src/engine/bank12.asm .asm_49c61 -> .select_stage2_bench_target
+Returns the current Bench position as the selected Stage 2 target.
+
+src/engine/bank12.asm .asm_49daf -> .decrement_skip_counter_and_update_arena_streak
+Shared tail of InitAITurnVars that decrements skip-attack counter when set and then updates arena-card streak tracking.
+
+src/engine/bank12.asm .asm_49db9 -> .check_arena_card_streak
+Compares current arena card index against the previous-turn arena card to decide whether streak count resets or increments.
+
+src/engine/bank12.asm .asm_49dc9 -> .increment_arena_card_streak
+Increases the consecutive-turn arena-card streak count when the same arena card remains active.
+
+src/engine/bank12.asm .asm_4a3ee -> .scan_play_area_for_max_energy
+Begins iterating play-area cards to record attached-energy counts and track the maximum for tie-broken target selection.
+
+src/engine/bank12.asm .asm_4b09b -> .enough_or_low_missing_energy
+Returns non-carry when either an attack is already usable or the missing energy amount is only one card.
+
+src/engine/bank12.asm .asm_4bf5f -> .check_filtered_energy_list_nonempty
+Finalizes filtered hand energy list construction and returns carry when all entries were removed.
+
+src/engine/bank12.asm .asm_4839b -> .attach_psychic_then_use_second_attack
+Shared Aaron turn-5 branch that attaches Psychic Energy to Alakazam Lv42, verifies damage is possible, and selects the second attack.
+
+src/engine/bank12.asm .asm_48be0 -> .set_score_8d_bad_dream_unused
+Unreachable Bad Dream deck remnant branch that sets score `$8d` in the old Kangaskhan-focused scoring path.
+
+src/engine/bank12.asm .asm_48be5 -> .set_score_78_bad_dream_unused
+Unreachable Bad Dream deck remnant fallback branch that sets score `$78` in the old Kangaskhan-focused scoring path.
+
+src/engine/bank12.asm .asm_4a3bf -> .advance_reel_in_temp_slot
+In Strange deck Reel In candidate collection, advances through temporary slots before choosing where to write the next candidate.
+
+src/engine/bank12.asm .asm_4a3cc -> .write_reel_in_candidate_slot
+Writes the current candidate card index into the selected temporary Reel In slot and checks capacity.
+
+src/engine/bank12.asm .asm_4a3d5 -> .finish_try_add_card_to_list
+Successful return path for TryAddCardToList when capacity checks do not trigger carry.
+
+src/engine/bank10.asm .asm_40482 -> .set_gr_blimp_music
+In TCG Island music preload, sets GR blimp music when arriving from Overhead Islands or TCG Airport.
+
+src/engine/bank10.asm .asm_40528 -> .load_blimp_from_overhead_islands
+In TCG Island warp-fade preload, loads the GR blimp in the Overhead Islands arrival position and direction.
+
+src/engine/bank10.asm .asm_4054b -> .play_tcg_airport_blimp_hatch_sfx
+In TCG Island warp-end SFX handling, runs the TCG Airport-specific music fade and blimp hatch SFX sequence.
+
+src/engine/bank10.asm .asm_40569 -> .return_success
+Common successful return path for HandleTCGIslandWarpEndBlimpSFX.
+
+src/engine/bank10.asm .asm_40746 -> .continue_movement_step
+In GR blimp movement command playback, continues per-frame object movement after optional fade-trigger checks.
+
+src/engine/bank10.asm .asm_4074f -> .check_transition_fade_after_movement
+After movement reaches target, checks whether transition fade was requested and waits for fade completion when needed.
+
+src/engine/bank10.asm .asm_40cfa -> .set_overhead_islands_destination
+In DoGRBlimpMovement_TCGIsland, selects Overhead Islands as warp destination when coming from TCG Airport.
+
+src/engine/bank10.asm .asm_40e80 -> .return_success
+In SetMasonLaboratoryMainMusicForFirstRonaldMeeting, common successful return path after optional Ronald music setup.
+
+src/engine/bank10.asm .asm_40ead -> .setup_first_ronald_meeting_cutscene
+In HandleMasonLaboratoryMainWarpFadeInPreload, initializes Ronald NPC placement and script pointer for the first-meeting cutscene.
+
+src/engine/bank10.asm .asm_40ee8 -> .restore_challenge_machine_and_fade_in
+In HandleMasonLaboratoryMainWarpFadeInPreload, clears the deferred challenge-machine flag, redraws tilemap state, and runs fade-in.
+
+src/engine/bank10.asm .asm_40f12 -> .return_success
+Common successful return path for HandleMasonLaboratoryMainInteractions after NPC and optional coordinate interaction handling.
+
+src/engine/bank10.asm .asm_40f1e -> .return_no_preload
+In CheckMasonLaboratoryMainAfterDuelPreload, carry-clear return path when EVENT_EB indicates no preload script should run.
+
+src/engine/bank10.asm .asm_40f34 -> .load_challenge_machine_after_duel
+In HandleMasonLaboratoryMainAfterDuel, branch that reloads challenge-machine save data and processes post-duel state.
+
+src/engine/bank10.asm .asm_40d71 -> .fade_out_before_finish
+In DoGRBlimpMovement_TCGIsland, calls FadeOut before final fade wait and cleanup once movement script reaches the end marker.
+
+src/engine/bank10.asm .asm_41013 -> .run_return_script_then_clear_reload_flag
+In HandleMasonLaboratoryChallengeMachineTileTrigger, clears EVENT_SET_UNTIL_MAP_RELOAD_1 and runs the challenge-machine return script path.
+
+src/engine/bank10.asm .asm_41230 -> .hide_ronald
+In CheckShowMasonLaboratoryMainRonald, carry-clear return path used when Ronald should be hidden.
+
+src/engine/bank10.asm .asm_41264 -> .cancel_practice_deck_selection
+In ScriptMasonLaboratoryMainSam, menu-cancel branch that skips duel setup and exits through the common dialog end path.
+
+src/engine/bank10.asm .asm_4126b -> .start_first_practice_deck_duel
+In ScriptMasonLaboratoryMainSam, first menu option branch that asks for confirmation and starts Sam's practice deck duel.
+
+src/engine/bank10.asm .asm_4128d -> .start_second_practice_deck_duel
+In ScriptMasonLaboratoryMainSam, second menu option branch that asks for confirmation and starts the alternate practice duel.
+
+src/engine/bank10.asm .asm_412b2 -> .show_practice_deck_explanation
+In ScriptMasonLaboratoryMainSam, third menu option branch that runs explanation script text without starting a duel.
+
+src/engine/bank10.asm .asm_41645 -> .resume_challenge_machine_round
+In HandleTcgChallengeHallContinueOverworld, resumes overworld music/state and starts the pending TCG Cup round from challenge-machine state.
+
+src/engine/bank10.asm .asm_41c9f -> .return_success
+Common successful return path for HandleGrAirportWarpFadeInPreload after optional GR-origin landed-script setup.
+
+src/engine/bank10.asm .asm_41caa -> .play_gr_blimp_hatch_close_sfx
+In HandleGrAirportWarpEndSFX, GR-origin branch that runs music fade and GR blimp hatch-close SFX sequence.
+
+src/engine/bank10.asm .asm_41ded -> .align_from_tile_5_8
+In UpdateGrAirportBoardingAlignment, tile (5,8) branch that handles left-input alignment and GR5 facing/position sync.
+
+src/engine/bank10.asm .asm_41e09 -> .align_from_tile_4_9
+In UpdateGrAirportBoardingAlignment, tile (4,9) branch that handles up-input alignment and GR5 facing/position sync.
+
+src/engine/bank10.asm .asm_41e25 -> .align_from_tile_3_9
+In UpdateGrAirportBoardingAlignment, tile (3,9) branch that handles up-input alignment with the west-side GR5 position rule.
+
+src/engine/bank10.asm .asm_41e41 -> .align_from_tile_2_8
+In UpdateGrAirportBoardingAlignment, tile (2,8) branch that handles right-input alignment and GR5 facing/position sync.
+
+src/engine/bank10.asm .asm_41e5b -> .done
+Common return path for UpdateGrAirportBoardingAlignment after optional tile-specific alignment handling.
+
+src/engine/bank10.asm .asm_426c7 -> .return_success
+Common successful return path for HandleGrChallengeHallInteractions after NPC and optional coordinate interaction handling.
+
+src/engine/bank10.asm .asm_426d3 -> .return_no_preload
+In CheckGrChallengeHallAfterDuelPreload, carry-clear return path when EVENT_EB indicates no preload script should run.
+
+src/engine/bank10.asm .asm_426ef -> .load_challenge_machine_after_duel
+In HandleGrChallengeHallAfterDuel, branch that reloads challenge-machine save data and processes post-duel state.
+
+src/engine/bank10.asm .asm_42702 -> .resume_challenge_machine_round
+In HandleGrChallengeHallContinueOverworld, resumes overworld state and starts the pending GR Cup round from challenge-machine state.
+
+src/engine/bank10.asm .asm_42f84 -> .return_success
+Common successful return path for HandleGrCastleBiruritchiWarpFadeInPreload after optional roadblock cutscene setup.
+
+src/engine/bank10.asm .asm_42f8f -> .fade_out_for_credits
+In HandleGrCastleBiruritchiWarpFadeOutPreload, credits-event branch that runs fade-out and clears carry.
+
+src/engine/bank10.asm .asm_42faa -> .return_no_warp_end_sfx_for_credits
+In HandleGrCastleBiruritchiWarpEndSFX, credits-event branch that returns with carry clear to skip warp-end SFX.
+
+src/engine/bank10.asm .asm_42fbb -> .return_success
+Common successful return path for HandleGrCastleBiruritchiInteractions after NPC and optional coordinate interaction handling.
+
+src/engine/bank10.asm .asm_42fd7 -> .resume_biruritchi_continue_script
+In HandleGrCastleBiruritchiContinueOverworld, resumes overworld music/state and runs the pending continue-overworld script.
+
+src/engine/bank10.asm .asm_41f34 -> .return_success
+Common successful return path for HandleSealedFortInteractions after optional coordinate-script processing.
+
+src/engine/bank10.asm .asm_431cd -> .pick_unused_exec_deck
+In Script_431ca, loop head that picks one of four GR executive decks while skipping already-used deck bits in VAR_08.
+
+src/engine/bank10.asm .asm_431f7 -> .try_choose_scorcher_deck
+In Script_431ca, branch that attempts to reserve bit 1 in VAR_08 and start the Scorcher deck duel.
+
+src/engine/bank10.asm .asm_43213 -> .try_choose_tsunami_starter_deck
+In Script_431ca, branch that attempts to reserve bit 2 in VAR_08 and start the Tsunami Starter deck duel.
+
+src/engine/bank10.asm .asm_4322f -> .try_choose_smash_to_mincemeat_deck
+In Script_431ca, branch that attempts to reserve bit 3 in VAR_08 and start the Smash to Mincemeat deck duel.
+
+src/engine/bank10.asm .asm_4140c -> .menu_loop
+In Script_41408, main popup-menu loop that dispatches selection to one of seven explanation-text branches.
+
+src/engine/bank10.asm .asm_41428 -> .cancel_or_invalid_selection
+In Script_41408, cancel/invalid-selection branch that returns from the popup flow.
+
+src/engine/bank10.asm .asm_4142f -> .show_option_1_text
+In Script_41408, first menu-option branch that prints Text0f33 and loops back to the menu.
+
+src/engine/bank10.asm .asm_4143e -> .show_option_2_text
+In Script_41408, second menu-option branch that prints Text0f34 and loops back to the menu.
+
+src/engine/bank10.asm .asm_4144d -> .show_option_3_text
+In Script_41408, third menu-option branch that prints Text0f35 and loops back to the menu.
+
+src/engine/bank10.asm .asm_4145c -> .show_option_4_text
+In Script_41408, fourth menu-option branch that prints Text0f36 and loops back to the menu.
+
+src/engine/bank10.asm .asm_4146b -> .show_option_5_text
+In Script_41408, fifth menu-option branch that prints Text0f37 and loops back to the menu.
+
+src/engine/bank10.asm .asm_4147a -> .show_option_6_text
+In Script_41408, sixth menu-option branch that prints Text0f38 and loops back to the menu.
+
+src/engine/bank10.asm .asm_41489 -> .show_option_7_text
+In Script_41408, seventh menu-option branch that prints Text0f39 and loops back to the menu.
+
+src/engine/bank04.asm .asm_10589 -> .loop_restore_tilemap_overlays
+In LoadOWMapAndRestoreAnimatedTiles, loops through buffered overlay entries and reapplies each map tile overlay after loading the map.
+
+src/engine/bank04.asm .asm_1059a -> .done
+Common return path for LoadOWMapAndRestoreAnimatedTiles after optional overlay restoration.
+
+src/engine/bank04.asm .asm_10e7f -> .check_npc_and_tile_collision
+In TryStepNPCInDirection, checks destination tile occupancy and permission after optional boundary checks.
+
+src/engine/bank04.asm .asm_10e8f -> .set_step_result
+In TryStepNPCInDirection, writes the step-result flag (`$10`) for an allowed movement step before BeginNPCStep.
+
+src/engine/bank04.asm .asm_11355 -> .got_step_distance
+In BeginNPCStep, continues once movement distance scaling for the selected speed has been resolved.
+
+src/engine/bank04.asm .asm_113cb -> .clear_movement_script_flag
+In StepAllScriptedNPCs.ReadAndBeginNPCMovementStep, clears OBJ_FLAG6 when movement data returns `$ff` (no further scripted movement).
+
+src/engine/bank04.asm .asm_134f8 -> .loop_apply_attrmap_palette
+In ApplyAttrmap, loops over the 0x30 card tiles to merge base attrmap palette bits with the selected attrmap offset.
+
+src/engine/bank04.asm .asm_11af2 -> .wait_stat_and_copy_subtitle_palettes
+In LoadSubtitlePals, waits for a safe STAT phase and copies subtitle palette bytes to BG palette data registers.
+
+src/engine/bank04.asm .asm_11b31 -> .enable_all_bg_fades_and_return
+In AnimateTrademark, common branch that re-enables BG palette fade configs and exits.
+
+src/engine/bank04.asm .asm_11b46 -> .fade_out_to_white
+In AnimateSubtitleExit, branch that performs fade-to-white cleanup before returning.
+
+src/engine/bank04.asm .asm_11b65 -> .loop_clear_subtitle_bands
+In AnimateSubtitleExit.Animate, loops through paired top/bottom clear-box parameters while applying subtitle distortion effect each step.
+
+src/engine/bank04.asm .asm_11c90 -> .return
+Common return path for AnimateEntrance after optional card draw step when scrolling is still in progress.
+
+src/engine/bank04.asm .asm_11cbc -> .scroll_step_loop
+In ScrollIntroCard, per-step loop that updates SCX timing slices and handles skip input.
+
+src/engine/bank04.asm .asm_11cc6 -> .wait_until_ly_below_91
+In ScrollIntroCard, waits until LY drops below `$91` before the next synchronized SCX write window.
+
+src/engine/bank04.asm .asm_11ccc -> .wait_until_ly_at_least_20
+In ScrollIntroCard, waits until LY reaches `$20` to enter the safe scanline range for timed updates.
+
+src/engine/bank04.asm .asm_11cd3 -> .wait_until_ly_at_least_36
+In ScrollIntroCard, waits until LY reaches `$36` before the first timed SCX update.
+
+src/engine/bank04.asm .asm_11ce2 -> .wait_until_ly_at_least_50
+In ScrollIntroCard, waits until LY reaches `$50` before beginning the second timed SCX update window.
+
+src/engine/bank04.asm .asm_11ce9 -> .wait_until_ly_at_least_68
+In ScrollIntroCard, waits until LY reaches `$68` before finalizing the second timed SCX update.
+
+src/engine/bank04.asm .asm_11976 -> .expand_frame_loop
+In AnimateTitle.Expand, per-frame loop that advances the title vertical scanline distortion step until completion or skip input.
+
+src/engine/bank04.asm .asm_11987 -> .wait_until_ly_below_91
+In AnimateTitle.Expand, waits until LY drops below `$91` before entering the timed SCY update range.
+
+src/engine/bank04.asm .asm_1198d -> .wait_until_ly_at_least_04
+In AnimateTitle.Expand, waits until LY reaches `$04` before beginning the first timed SCY update.
+
+src/engine/bank04.asm .asm_1199b -> .wait_until_ly_reaches_threshold
+In AnimateTitle.Expand, waits until LY reaches the dynamic threshold derived from `wIntroStateCounter`.
+
+src/engine/bank04.asm .asm_119a1 -> .update_scy_until_ly_30
+In AnimateTitle.Expand, repeatedly updates SCY by scanline while LY is below `$30` and changing.
+
+src/engine/bank04.asm .asm_119bb -> .finish_scanline_updates
+In AnimateTitle.Expand, finalizes scanline updates, restores SCY, and advances expansion state.
+
+src/engine/bank04.asm .asm_11a3c -> .distort_frame_loop
+In Distort, per-frame loop that applies subtitle scanline distortion until counters expire or skip input occurs.
+
+src/engine/bank04.asm .asm_11a49 -> .wait_until_ly_below_91
+In Distort, waits until LY drops below `$91` before entering the scanline distortion write range.
+
+src/engine/bank04.asm .asm_11a4f -> .wait_until_ly_at_least_30
+In Distort, waits until LY reaches `$30` before beginning scanline-by-scanline SCX writes.
+
+src/engine/bank04.asm .asm_11a5a -> .loop_scanline_distortion
+In Distort, iterates scanlines while LY < `$68`, computing per-line distortion and writing SCX.
+
+src/engine/bank04.asm .asm_11a7c -> .finish_scanline_distortion
+In Distort, exits the scanline loop, restores interrupts, updates counters, and decides whether to continue.
+
+src/engine/bank04.asm .asm_11aa5 -> .loop_calc_line_distortion
+In CalcIntroLineSCXDistortion, loops over the 0x20 distortion table entries to generate line SCX offsets.
+
+src/engine/bank04.asm .asm_1354b -> .input_loop
+In ShowHiddenCardGallery, main per-frame loop that waits for A/B exit or D-pad card cycling input.
+
+src/engine/bank04.asm .asm_13559 -> .restore_bgmap_and_exit
+In ShowHiddenCardGallery, exit branch that restores background/sprite state before returning.
+
+src/engine/bank04.asm .asm_13561 -> .handle_dpad_card_cycle
+In ShowHiddenCardGallery, handles D-pad left/right input to cycle the displayed hidden card.
+
+src/engine/bank04.asm .asm_1356e -> .cycle_previous_card
+In ShowHiddenCardGallery, branch that moves to the previous hidden card index with wraparound.
+
+src/engine/bank04.asm .asm_13579 -> .decrement_card_index
+In ShowHiddenCardGallery, decrements the current hidden card index and redraws.
+
+src/engine/bank04.asm .asm_1357c -> .cycle_next_card
+In ShowHiddenCardGallery, branch that moves to the next hidden card index with wraparound.
+
+src/engine/bank04.asm .asm_13587 -> .increment_card_index
+In ShowHiddenCardGallery, increments the current hidden card index and redraws.
+
+src/engine/bank04.asm .asm_1358a -> .setup_gallery_window
+In ShowHiddenCardGallery, saves the covered BG region, clears sprite flags there, and draws the hidden-card gallery text box area.
+
+src/engine/bank04.asm .asm_135ac -> .restore_bgmap_and_sprites
+In ShowHiddenCardGallery, restores the saved BG region and re-enables sprite flags within the gallery area.
+
+src/engine/bank04.asm .asm_11bd2 -> .effect_frame_loop
+In ApplyEffect, per-frame loop that applies subtitle SCX timing effect while checking for skip input.
+
+src/engine/bank04.asm .asm_11bdb -> .wait_until_ly_below_91
+In ApplyEffect, waits until LY drops below `$91` before entering the timed SCX update range.
+
+src/engine/bank04.asm .asm_11be1 -> .wait_until_ly_at_least_20
+In ApplyEffect, waits until LY reaches `$20` before the first timed SCX segment.
+
+src/engine/bank04.asm .asm_11be8 -> .wait_until_ly_at_least_2f
+In ApplyEffect, waits until LY reaches `$2f` before writing the upper SCX slice.
+
+src/engine/bank04.asm .asm_11bf7 -> .wait_until_ly_at_least_3c
+In ApplyEffect, waits until LY reaches `$3c` before entering the middle SCX write window.
+
+src/engine/bank04.asm .asm_11bfe -> .wait_until_ly_at_least_48
+In ApplyEffect, waits until LY reaches `$48` before writing the middle SCX slice.
+
+src/engine/bank04.asm .asm_11c0d -> .wait_until_ly_at_least_58
+In ApplyEffect, waits until LY reaches `$58` before entering the final SCX write window.
+
+src/engine/bank04.asm .asm_11c14 -> .wait_until_ly_at_least_68
+In ApplyEffect, waits until LY reaches `$68` before restoring SCX to zero for the frame.
+
+src/engine/bank0e.asm .asm_391e1 -> .clear_temp_slot_and_return
+In the deck-specific candidate-collection helper, clears the selected temp slot marker to `$ff` and returns.
+
+src/engine/bank0e.asm .asm_39a89 -> .return_no_carry
+In FindDeckEvolutionIfEvolutionIsInHandAndBasicIsAbsent, no-carry return path when the corresponding basic is already present.
+
+src/engine/bank0e.asm .asm_3aa6f -> .check_dark_gloom_target
+In the non-turn Play Area target-selection routine, proceeds to Dark Gloom checks when Charmander Lv9 Arena-only criteria are not met.
+
+src/engine/bank0e.asm .asm_3ac12 -> .confirm_selection
+In the menu input handler, confirms the current selection, plays confirm SFX, and returns carry with selected indices.
+
+src/engine/bank13.asm .asm_4c599 -> .check_arena_immunity_fallback
+In AIFindGustOfWindTargetForArenaCard, fallback branch that checks player Arena immunity and returns `$ff` target only when immunity is active.
+
+src/engine/bank13.asm .asm_4c640 -> .check_repeat_attack_threshold
+In AICheckShouldSwitchFromFirstAttack, branch that applies repeat-attack threshold checks for specific deck IDs.
+
+src/engine/bank13.asm .asm_4c66e -> .store_last_attack_arena_card
+In AITrackAttackRepeatCount, branch that updates the stored Arena card before resetting repeat tracking.
+
+src/engine/bank13.asm .asm_4c66f -> .store_selected_attack_and_reset_repeat
+In AITrackAttackRepeatCount, writes selected attack index and resets repeat count to 1.
+
+src/engine/bank07.asm .asm_1e122 -> .done_dispatch
+Common return path in ClearAndDispatchDuelAnimation after dispatching special, damage-HUD, screen, or sprite animation setup.
+
+src/engine/bank07.asm .asm_1e1d7 -> .flush_palettes
+In CreateDuelAnimationSprite, branch that flushes palettes after either coin-animation setup or full sprite-animation resource initialization.
+
+src/engine/bank07.asm .asm_1e233 -> .restore_flags_after_y_flip_adjust
+In CreateDuelAnimationSprite, branch that restores animation flags after optional Y-flip position adjustment.
+
+src/engine/bank07.asm .asm_1e234 -> .check_x_flip
+In CreateDuelAnimationSprite, branch that evaluates X-flip position correction after Y-flip handling.
+
+src/engine/bank07.asm .asm_1e23e -> .apply_coord_inversion_flags
+In CreateDuelAnimationSprite, branch that applies inverted coordinate flags and commits sprite animation position.
+
+src/engine/bank07.asm .asm_1e293 -> .check_resistance_indicator
+In CreateDamageHudAnimations, branch that advances from optional weakness indicator creation to resistance indicator checks.
+
+src/engine/bank07.asm .asm_1e2a2 -> .check_no_damage_indicator
+In CreateDamageHudAnimations, branch that advances from optional resistance indicator creation to no-damage indicator checks.
+
+src/engine/bank07.asm .asm_1e2ac -> .done
+Common return path for CreateDamageHudAnimations after processing effectiveness indicator branches.
+
+src/engine/bank07.asm .asm_1ed04 -> .print_status_text
+In MinicomMailboxNewMailScreen, branch that proceeds to mailbox status text rendering after optional new-mail SFX.
+
+src/engine/bank07.asm .asm_1ed28 -> .store_status
+In CalculateMailboxStatus, shared branch that stores computed mailbox status after queue/new-mail checks.
+
+src/engine/bank07.asm .asm_1ee0e -> .print_main_prompt
+In MailboxMainScreen, branch that prints either the choose-mail prompt or empty-mailbox text.
+
+src/engine/bank07.asm .asm_1ee68 -> .load_mail_text_pointers
+In PrintMailSenderAndSubjectToScreen, branch that loads sender/subject text pointers after optional unread marker rendering.
+
+src/engine/bank07.asm .asm_1eebd -> .check_next_page_arrow
+In DrawMailboxPageArrows, branch that checks mail count and draws the next-page arrow when on the first page.
+
+src/engine/bank07.asm .asm_1ef1a -> .play_confirm_sfx
+In HandleMailboxMainScreenMenuInput, branch that plays confirm SFX and returns after selecting a valid mail entry.
+
+src/engine/bank07.asm .asm_1ef22 -> .play_cancel_sfx_and_return
+In HandleMailboxMainScreenMenuInput, branch that plays cancel SFX and returns when menu cancel is requested.
+
+src/engine/bank07.asm .asm_1e42f -> .return_with_flags
+In _CheckAnyAnimationPlaying, shared return path that preserves flags from either duel-animation buffer position comparison or active-animation count check.
+
+src/engine/bank07.asm .asm_1f074 -> .process_mail_page_attachments
+In _ReadMail, branch that processes card/booster attachments for the current mail page after optional body-page text/wait handling.
+
+src/engine/bank07.asm .asm_1f187 -> .delete_selected_mail
+In DeleteMail, entry branch that clears the selected mail slot after delete confirmation checks pass.
+
+src/engine/bank07.asm .asm_1f193 -> .shift_mail_entries_left
+In DeleteMail, loop that compacts following mail-list entries leftward after clearing a selected slot.
+
+src/engine/bank07.asm .asm_1f19d -> .post_delete_updates
+In DeleteMail, branch that decrements mail count, updates mailed-card state, and refreshes cursor/screen after deletion.
+
+src/engine/bank07.asm .asm_1f1ad -> .done
+Common return path for DeleteMail used by cancel/decline branches and the completed delete flow.
+

@@ -2816,7 +2816,7 @@ AIChooseSummonMinionsCards:
 	ld de, DRATINI_LV12
 	call CheckIfCardIDIsNotInHandOrPlayAreaAndIsInDeck
 	call c, .AddCardToList
-	jr .asm_391e1
+	jr .clear_temp_slot_and_return
 
 .RonaldsPsychicDeck
 	ld de, GASTLY_LV13
@@ -2834,7 +2834,7 @@ AIChooseSummonMinionsCards:
 	ld de, KANGASKHAN_LV40
 	call CheckIfCardIDIsNotInHandOrPlayAreaAndIsInDeck
 	call c, .AddCardToList
-	jr .asm_391e1
+	jr .clear_temp_slot_and_return
 
 .AddCardToList:
 	push af
@@ -2848,7 +2848,7 @@ AIChooseSummonMinionsCards:
 	pop af
 	ldh [hTempPlayAreaLocation_ffa1], a
 	add sp, $02
-.asm_391e1
+.clear_temp_slot_and_return
 	pop af
 	ld c, a
 	ld b, $00
@@ -3358,13 +3358,13 @@ FindDeckEvolutionIfEvolutionIsInHandAndBasicIsAbsent: ; Func_39a6a
 	push bc
 	call CheckIfCardIDIsInHandOrPlayArea
 	pop de
-	jr c, .asm_39a89
+	jr c, .return_no_carry
 	farcall LookForCardIDInHandList
 	ret nc
 	ld a, [wAITempFoundDeckIndex]
 	scf
 	ret
-.asm_39a89
+.return_no_carry
 	or a
 	ret
 
@@ -4525,12 +4525,12 @@ AIChooseStareTarget:
 	; only select Charmander lv9 if it's Arena card
 	ld de, CHARMANDER_LV9
 	farcall FindCardIDInNonTurnDuelistsPlayArea
-	jr nc, .asm_3aa6f
+	jr nc, .check_dark_gloom_target
 	or a
 	scf
 	ret z
 
-.asm_3aa6f
+.check_dark_gloom_target
 	; only select Dark Gloom if AI's Arena card is not confused
 	ld a, DUELVARS_ARENA_CARD_STATUS
 	get_turn_duelist_var
@@ -4741,7 +4741,7 @@ HandleScrollMenu:
 	call CallHL
 	jr nc, .blink_cursor
 
-.asm_3ac12
+.confirm_selection
 	call .draw_visible_cursor
 	ld a, MENU_CONFIRM
 	farcall PlaySFXConfirmOrCancel
@@ -4756,7 +4756,7 @@ HandleScrollMenu:
 	and PAD_A | PAD_B
 	jr z, .play_menu_input_sfx
 	and PAD_A
-	jr nz, .asm_3ac12
+	jr nz, .confirm_selection
 ; b button
 	ld a, -1
 	ld [hCurMenuItem], a

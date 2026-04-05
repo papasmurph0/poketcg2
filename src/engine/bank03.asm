@@ -253,8 +253,8 @@ HandleStartMenu:
 	call CheckIfHasBackupSave
 	jr c, .menu_config0
 	call ValidateBackupGeneralSaveData
-	jr c, .asm_c20f
-.asm_c1d7
+	jr c, .restore_backup_from_main_save
+.load_backup_and_check_saved_duel
 	ld hl, wSaveDataFlags
 	set 0, [hl]
 	call LoadBackupSave
@@ -282,12 +282,12 @@ HandleStartMenu:
 	jr c, .menu_config1
 	jr .menu_config2
 
-.asm_c20f
+.restore_backup_from_main_save
 	debug_nop
 	call ValidateGeneralSaveData
 	jr c, .menu_config0
 	call BackupMainSave
-	jr .asm_c1d7
+	jr .load_backup_and_check_saved_duel
 
 .menu_config0
 	xor a ; STARTMENU_CONFIG_0
@@ -351,9 +351,9 @@ ResetGameProgress: ; Func_c24d
 	ld [wSentMailBitfield + 2], a
 	ld [wSentMailBitfield + 3], a
 	call ValidateChallengeMachineSaveData
-	jr nc, .asm_c299
+	jr nc, .update_game_state_vars
 	call InitChallengeMachine
-.asm_c299
+.update_game_state_vars
 	call UpdateGameStateVars
 	ret
 
@@ -404,12 +404,12 @@ SetRandomGRCoinPieceLocation: ; Func_c2d6
 	jr z, .done
 	call UpdateRNGSources
 	rrca
-	jr c, .asm_c2f7
+	jr c, .set_science_club_location
 	ld a, VAR_0F
 	ld c, OWMAP_GRASS_CLUB
 	call SetVarValue
 	jr .done
-.asm_c2f7
+.set_science_club_location
 	ld a, VAR_0F
 	ld c, OWMAP_SCIENCE_CLUB
 	call SetVarValue
@@ -1371,7 +1371,7 @@ SetOWObjectTargetPosition:
 	ld c, a ; y distance
 	ld a, b
 	cp c
-	jr c, .asm_d4d3
+	jr c, .y_axis_dominant
 
 ; x distance >= y distance
 	push bc
@@ -1423,7 +1423,7 @@ SetOWObjectTargetPosition:
 	ld [wOWObjYVelocity], a
 	jr .done
 
-.asm_d4d3
+.y_axis_dominant
 ; x distance < y distance
 	push bc
 	xor a
@@ -1500,7 +1500,7 @@ MoveOWObjectToTargetPosition:
 .change_y
 	ld a, [wOWObjTargetY]
 	cp e
-	jr z, .asm_d562
+	jr z, .set_object_position
 	ld a, [wOWObjYSubPixel]
 	ld b, a
 	ld a, [wOWObjYVelocityFract]
@@ -1509,7 +1509,7 @@ MoveOWObjectToTargetPosition:
 	ld a, [wOWObjYVelocity]
 	adc e
 	ld e, a
-.asm_d562
+.set_object_position
 	ld a, [wOWObjNPCID]
 	farcall SetOWObjectPosition
 	scf
@@ -1531,22 +1531,22 @@ SetupOWScrollTarget: ; Func_d56b
 	ld a, d
 	sub b
 	bit 7, a
-	jr z, .asm_d58a
+	jr z, .got_abs_x_distance
 	cpl
 	inc a
-.asm_d58a
+.got_abs_x_distance
 	ld b, a
 	ld a, e
 	sub c
 	bit 7, a
-	jr z, .asm_d593
+	jr z, .got_abs_y_distance
 	cpl
 	inc a
-.asm_d593
+.got_abs_y_distance
 	ld c, a
 	ld a, b
 	cp c
-	jr c, .asm_d5e2
+	jr c, .y_axis_dominant
 
 	push bc
 	xor a
@@ -1555,18 +1555,18 @@ SetupOWScrollTarget: ; Func_d56b
 	ld [wOWObjXVelocity], a
 	ld a, [wOWScrollX]
 	cp d
-	jr c, .asm_d5ad
+	jr c, .got_x_velocity
 	ld a, -1
 	ld [wOWObjXVelocity], a
-.asm_d5ad
+.got_x_velocity
 	ld a, 1
 	ld [wOWObjYVelocity], a
 	ld a, [wOWScrollY]
 	cp e
-	jr c, .asm_d5bd
+	jr c, .got_y_velocity
 	ld a, -1
 	ld [wOWObjYVelocity], a
-.asm_d5bd
+.got_y_velocity
 	pop bc
 	ld d, c
 	ld e, $00
@@ -1575,7 +1575,7 @@ SetupOWScrollTarget: ; Func_d56b
 	call DivideDEByBC
 	ld a, [wOWObjYVelocity]
 	bit 7, a
-	jr z, .asm_d5d8
+	jr z, .store_y_velocity
 	ld a, e
 	cpl
 	add 1
@@ -1584,14 +1584,14 @@ SetupOWScrollTarget: ; Func_d56b
 	cpl
 	adc 0
 	ld d, a
-.asm_d5d8
+.store_y_velocity
 	ld a, e
 	ld [wOWObjYVelocityFract], a
 	ld a, d
 	ld [wOWObjYVelocity], a
 	jr .done
 
-.asm_d5e2
+.y_axis_dominant
 	push bc
 	xor a
 	ld [wOWObjYVelocityFract], a
@@ -1599,18 +1599,18 @@ SetupOWScrollTarget: ; Func_d56b
 	ld [wOWObjYVelocity], a
 	ld a, [wOWScrollY]
 	cp e
-	jr c, .asm_d5f7
+	jr c, .got_y_velocity_2
 	ld a, -1
 	ld [wOWObjYVelocity], a
-.asm_d5f7
+.got_y_velocity_2
 	ld a, 1
 	ld [wOWObjXVelocity], a
 	ld a, [wOWScrollX]
 	cp d
-	jr c, .asm_d607
+	jr c, .got_x_velocity_2
 	ld a, -1
 	ld [wOWObjXVelocity], a
-.asm_d607
+.got_x_velocity_2
 	pop bc
 	ld d, b
 	ld e, $00
@@ -1618,7 +1618,7 @@ SetupOWScrollTarget: ; Func_d56b
 	call DivideDEByBC
 	ld a, [wOWObjXVelocity]
 	bit 7, a
-	jr z, .asm_d621
+	jr z, .store_x_velocity
 	ld a, e
 	cpl
 	add 1
@@ -1627,7 +1627,7 @@ SetupOWScrollTarget: ; Func_d56b
 	cpl
 	adc 0
 	ld d, a
-.asm_d621
+.store_x_velocity
 	ld a, e
 	ld [wOWObjXVelocityFract], a
 	ld a, d
@@ -1642,15 +1642,15 @@ UpdateOWScrollToTarget: ; Func_d62a
 	ld e, a
 	ld a, [wOWObjTargetX]
 	cp d
-	jr nz, .asm_d641
+	jr nz, .update_x_scroll
 	ld a, [wOWObjTargetY]
 	cp e
-	jr nz, .asm_d651
+	jr nz, .update_y_scroll
 	scf
 	ccf
 	ret
 
-.asm_d641
+.update_x_scroll
 	ld a, [wOWObjXSubPixel]
 	ld b, a
 	ld a, [wOWObjXVelocityFract]
@@ -1659,10 +1659,10 @@ UpdateOWScrollToTarget: ; Func_d62a
 	ld a, [wOWObjXVelocity]
 	adc d
 	ld d, a
-.asm_d651
+.update_y_scroll
 	ld a, [wOWObjTargetY]
 	cp e
-	jr z, .asm_d667
+	jr z, .store_scroll_coords
 	ld a, [wOWObjYSubPixel]
 	ld b, a
 	ld a, [wOWObjYVelocityFract]
@@ -1671,7 +1671,7 @@ UpdateOWScrollToTarget: ; Func_d62a
 	ld a, [wOWObjYVelocity]
 	adc e
 	ld e, a
-.asm_d667
+.store_scroll_coords
 	ld a, d
 	ld [wOWScrollX], a
 	ld a, e
@@ -5171,12 +5171,12 @@ ChangeAnimationPlayerSideOnStartPress:
 	ldtx hl, DebugEffectViewerRightToLeftText
 	ld a, [wDebugAnimDuelistSide]
 	cp PLAYER_TURN
-	jr z, .asm_f361
+	jr z, .apply_side_settings
 .initialize
 	ld b, PLAYER_TURN
 	ld c, DUEL_ANIM_SCREEN_MAIN_SCENE
 	ldtx hl, DebugEffectViewerLeftToRightText
-.asm_f361
+.apply_side_settings
 	ld a, b
 	ld [wDebugAnimDuelistSide], a
 	ld a, c
@@ -5267,9 +5267,9 @@ ChangeDebugViewerStateText:
 	push hl
 	call CheckAnyAnimationPlaying
 	ldtx hl, DebugEffectViewerPlayingStateText
-	jr c, .asm_f3fd
+	jr c, .print_state_text
 	ldtx hl, DebugEffectViewerStopStateText
-.asm_f3fd
+.print_state_text
 	lb de, 13, 13
 	call InitTextPrinting_ProcessTextFromIDVRAM0
 	pop hl

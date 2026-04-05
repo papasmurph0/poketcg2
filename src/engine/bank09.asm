@@ -664,15 +664,15 @@ DoLinkOpponentTurn:
 .link_opp_turn_loop
 	ld a, [wSkipDuelistIsThinkingDelay]
 	or a
-	jr nz, .asm_6932
+	jr nz, .continue_turn_loop
 	call SetLinkDuelTransmissionFrameFunction
 	call HandleWaitingLinkOpponentMenu
 	ld a, [wDuelDisplayedScreen]
 	cp CHECK_PLAY_AREA
-	jr nz, .asm_6932
+	jr nz, .continue_turn_loop
 	lb de, $38, $9f
 	call SetupText
-.asm_6932
+.continue_turn_loop
 	call ResetDoFrameFunction_Bank9
 	call SerialRecvDuelData
 	ld a, OPPONENT_TURN
@@ -2524,21 +2524,21 @@ CheckDeck:
 	jr nc, .check_mismatched_evos
 	ldtx hl, DeckDiagnosisEvolutionMismatchedText
 	ldtx de, DeckDiagnosisEvolutionMismatchedListText
-	jp .asm_25352
+	jp .print_diagnosis_with_result_list
 
 .check_mismatched_evos
 	call .LookForBasicCardsWithMismatchedEvolutionCounts
 	jr nc, .check_mismatched_energy
 	ldtx hl, DeckDiagnosisEvolutionUnbalancedText
 	ldtx de, DeckDiagnosisEvolutionUnbalancedListText
-	jp .asm_25352
+	jp .print_diagnosis_with_result_list
 
 .check_mismatched_energy
 	call .CheckIfAllEnergyCardsMatchPkmnColors
 	jr c, .check_amount_energy_cards
 	ldtx hl, DeckDiagnosisPokemonEnergyMismatchedText
 	ldtx de, DeckDiagnosisPokemonEnergyMismatchedListText
-	jp .asm_25352
+	jp .print_diagnosis_with_result_list
 
 .check_amount_energy_cards
 	call .CheckEnergyAmountVsPkmnCards
@@ -2546,14 +2546,14 @@ CheckDeck:
 	ldtx hl, DeckDiagnosisOKText
 	ld a, [wDeckCheckTrainerCount]
 	or a
-	jr nz, .asm_2534d
+	jr nz, .print_diagnosis_text
 	ldtx hl, DeckDiagnosisOKButNoTrainerText
-.asm_2534d
+.print_diagnosis_text
 	call .PrintDrMasonText
 	or a
 	ret
 
-.asm_25352
+.print_diagnosis_with_result_list
 	push de
 	call .PrintDrMasonText
 	pop hl
@@ -2598,28 +2598,28 @@ CheckDeck:
 	add [hl]
 	ldtx hl, DeckDiagnosisTooManyPokemonText
 	cp 31
-	jr nc, .asm_25390
+	jr nc, .print_pokemon_count_message
 	ldtx hl, DeckDiagnosisTooFewPokemonText
 	cp 18
-	jr nc, .asm_25393
-.asm_25390
+	jr nc, .check_energy_count
+.print_pokemon_count_message
 	call .PrintDrMasonText
 
-.asm_25393
+.check_energy_count
 	ld a, [wDeckCheckEnergyCount]
 	ldtx hl, DeckDiagnosisNoEnergyText
 	or a
-	jr z, .asm_253aa
+	jr z, .print_energy_count_message
 	ldtx hl, DeckDiagnosisTooFewEnergyText
 	cp 20
-	jr c, .asm_253aa
+	jr c, .print_energy_count_message
 	ldtx hl, DeckDiagnosisTooManyEnergyText
 	cp 31
-	jr c, .asm_253ad
-.asm_253aa
+	jr c, .return_if_any_message_printed
+.print_energy_count_message
 	call .PrintDrMasonText
 
-.asm_253ad
+.return_if_any_message_printed
 	ld a, [wDeckDiagnosisNumMessagesPrinted]
 	or a
 	ret z
@@ -2729,7 +2729,7 @@ CheckDeck:
 	call DisableSRAM
 	pop hl
 
-.asm_25461
+.clear_deck_check_counts
 	push hl
 	ld hl, wDeckCheckCardCounts
 	ld c, DECKCHECKSTRUCT_LENGTH
@@ -3201,13 +3201,13 @@ CheckDeck:
 	ld hl, wDeckCheckNumPkmnTypesForEnergyCalc
 	sub [hl]
 	sub c
-	jr z, .asm_256f4
-	jr c, .asm_256f4
+	jr z, .check_energy_surplus_by_type
+	jr c, .check_energy_surplus_by_type
 	; total Pkmn cards > wDeckCheckNumPkmnTypesForEnergyCalc + total energy
 	ldtx hl, DeckDiagnosisPokemonEnergyUnbalancedText
 	call .PrintDrMasonText
 
-.asm_256f4
+.check_energy_surplus_by_type
 	call .CalculateEnergySurplus
 	ld hl, wDeckCheckEnergySurplus
 	ld c, FIRE
@@ -3217,7 +3217,7 @@ CheckDeck:
 	push hl
 	push bc
 	or a
-	jr z, .asm_25737
+	jr z, .skip_type_energy_message
 	bit 7, a
 	jr nz, .negative
 	; surplus of energy cards
@@ -3248,13 +3248,13 @@ CheckDeck:
 	ld [hl], d
 	ld a, [wDeckDiagnosisNumMessagesPrinted]
 	or a
-	jr nz, .asm_25733
+	jr nz, .print_type_energy_message
 	ldtx hl, DeckDiagnosisEnergyUnbalancedText
 	call .PrintDrMasonText
-.asm_25733
+.print_type_energy_message
 	pop hl
 	call .PrintDrMasonText
-.asm_25737
+.skip_type_energy_message
 	pop bc
 	pop hl
 	inc c
@@ -3368,10 +3368,10 @@ CheckDeck:
 	ld hl, wDeckCheckTotalEnergySurplus
 	add [hl]
 	cp 31
-	jr nc, .asm_257d2
+	jr nc, .store_total_energy_surplus
 	; less than 31, set to 0
 	xor a
-.asm_257d2
+.store_total_energy_surplus
 	ld [hl], a
 	ret
 

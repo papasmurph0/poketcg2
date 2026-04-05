@@ -727,14 +727,14 @@ OverworldTcg_MapScripts:
 SetTCGIslandBlimpMusicIfNeeded: ; Func_40474
 	ld a, [wPrevMap]
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_40482
+	jr z, .set_gr_blimp_music
 	cp MAP_TCG_AIRPORT
-	jr z, .asm_40482
+	jr z, .set_gr_blimp_music
 	scf
 	ccf
 	ret
 
-.asm_40482
+.set_gr_blimp_music
 	ld a, MUSIC_GR_BLIMP
 	ld [wNextMusic], a
 	scf
@@ -809,14 +809,14 @@ InitTCGIslandOverworldState: ; Func_4048a
 
 	ld a, [wPrevMap]
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_40528
+	jr z, .load_blimp_from_overhead_islands
 	ld a, NPC_GR_BLIMP
 	lb de, 80, 120
 	ld b, EAST
 	farcall LoadOWObject
 	scf
 	ret
-.asm_40528
+.load_blimp_from_overhead_islands
 	ld a, NPC_GR_BLIMP
 	lb de, 144, 96
 	ld b, WEST
@@ -835,13 +835,13 @@ NoOpTCGIslandWarpFadeOutPreload: ; Func_4053b
 HandleTCGIslandWarpEndBlimpSFX: ; Func_4053e
 	ld a, [wTempPrevMap]
 	cp MAP_TCG_AIRPORT
-	jr z, .asm_4054b
+	jr z, .play_tcg_airport_blimp_hatch_sfx
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_40569
+	jr z, .return_success
 	scf
 	ret
 
-.asm_4054b
+.play_tcg_airport_blimp_hatch_sfx
 	ld a, 10
 	ld c, 7
 	farcall InitMusicFadeOut
@@ -853,7 +853,7 @@ HandleTCGIslandWarpEndBlimpSFX: ; Func_4053e
 	ld a, SFX_GR_BLIMP_HATCH_OPEN
 	call PlaySFX
 	farcall WaitForSFXToFinish
-.asm_40569
+.return_success
 	scf
 	ccf
 	ret
@@ -1132,20 +1132,20 @@ MovePlayerToSelectedTCGIslandLocation: ; Func_406d1
 	call DoFrame
 	ld hl, wOverworldTransition
 	bit 2, [hl]
-	jr nz, .asm_40746
+	jr nz, .continue_movement_step
 	ldh a, [hKeysPressed]
 	bit B_PAD_B, a
-	jr z, .asm_40746
+	jr z, .continue_movement_step
 	set 2, [hl]
 	ld a, $01
 	ld b, $00
 	farcall StartPalFadeToBlackOrWhite
-.asm_40746
+.continue_movement_step
 	farcall MoveOWObjectToTargetPosition
-	jr c, .asm_4074f
+	jr c, .check_transition_fade_after_movement
 	pop hl
 	jr .loop_commands
-.asm_4074f
+.check_transition_fade_after_movement
 	ld a, [wOverworldTransition]
 	bit 2, a
 	jr z, .loop_wait_movement
@@ -1184,7 +1184,7 @@ INCLUDE "data/tcg_island_paths.asm"
 DoGRBlimpMovement_TCGIsland:
 	ld a, [wPrevMap]
 	cp MAP_TCG_AIRPORT
-	jr z, .asm_40cfa
+	jr z, .set_overhead_islands_destination
 
 	ld a, MAP_TCG_AIRPORT
 	lb de, 0, 0
@@ -1192,7 +1192,7 @@ DoGRBlimpMovement_TCGIsland:
 	farcall SetWarpData
 	ld hl, .movement_3
 	jr .start_movement
-.asm_40cfa
+.set_overhead_islands_destination
 	ld a, MAP_OVERHEAD_ISLANDS
 	lb de, 0, 0
 	ld b, NORTH
@@ -1259,8 +1259,8 @@ DoGRBlimpMovement_TCGIsland:
 .done_movement
 	ld a, [wTempPrevMap]
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_40d71 ; unnecessary cp
-.asm_40d71
+	jr z, .fade_out_before_finish ; unnecessary cp
+.fade_out_before_finish
 	call .FadeOut
 .finish
 	call WaitPalFading
@@ -1359,10 +1359,10 @@ SetMasonLaboratoryMainMusicForFirstRonaldMeeting: ; Func_40e72
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	or a
-	jr nz, .asm_40e80
+	jr nz, .return_success
 	ld a, MUSIC_RONALD
 	ld [wNextMusic], a
-.asm_40e80
+.return_success
 	scf
 	ccf
 	ret
@@ -1381,16 +1381,16 @@ HandleMasonLaboratoryMainWarpFadeInPreload: ; Func_40e91
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	or a
-	jr z, .asm_40ead
+	jr z, .setup_first_ronald_meeting_cutscene
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr nz, .asm_40ee8
+	jr nz, .restore_challenge_machine_and_fade_in
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
 	call nz, DrawMasonLaboratoryMainChallengeMachineTilemap
 	scf
 	ret
-.asm_40ead
+.setup_first_ronald_meeting_cutscene
 	ld a, NPC_RONALD
 	lb de, 6, 5
 	ld b, EAST
@@ -1414,7 +1414,7 @@ HandleMasonLaboratoryMainWarpFadeInPreload: ; Func_40e91
 	ld [wOverworldScriptPointer + 1], a
 	scf
 	ret
-.asm_40ee8
+.restore_challenge_machine_and_fade_in
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	call DrawMasonLaboratoryMainChallengeMachineTilemap
@@ -1433,20 +1433,20 @@ DrawMasonLaboratoryMainChallengeMachineTilemap: ; Func_40ef9
 HandleMasonLaboratoryMainInteractions: ; Func_40f04
 	ld hl, MasonLaboratoryMain_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_40f12
+	jr nc, .return_success
 	ld hl, MasonLaboratoryMain_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_40f12
+.return_success
 	scf
 	ret
 
 CheckMasonLaboratoryMainAfterDuelPreload: ; Func_40f14
 	ld a, EVENT_EB
 	farcall GetEventValue
-	jr nz, .asm_40f1e
+	jr nz, .return_no_preload
 	scf
 	ret
-.asm_40f1e
+.return_no_preload
 	scf
 	ccf
 	ret
@@ -1454,13 +1454,13 @@ CheckMasonLaboratoryMainAfterDuelPreload: ; Func_40f14
 HandleMasonLaboratoryMainAfterDuel: ; Func_40f21
 	ld a, EVENT_EB
 	farcall GetEventValue
-	jr nz, .asm_40f34
+	jr nz, .load_challenge_machine_after_duel
 	ld hl, MasonLaboratoryMain_AfterDuelScripts
 	ld a, [wScriptNPC]
 	call ExecuteNPCScript
 	scf
 	ret
-.asm_40f34
+.load_challenge_machine_after_duel
 	farcall LoadChallengeMachineSave
 	call ProcessTcgChallengeMachineAfterDuel
 	scf
@@ -1574,13 +1574,13 @@ RunMasonLaboratoryChallengeMachineReturnScript: ; Func_40fbc
 HandleMasonLaboratoryChallengeMachineTileTrigger: ; Func_40fff
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_41013
+	jr nz, .run_return_script_then_clear_reload_flag
 	ld a, OVERWORLD_MAP_TCG
 	lb de, 1, 7
 	ld b, SOUTH
 	farcall SetWarpData
 	ret
-.asm_41013
+.run_return_script_then_clear_reload_flag
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall ZeroOutEventValue
 	call RunMasonLaboratoryChallengeMachineReturnScript
@@ -1840,14 +1840,14 @@ ScriptMasonLaboratoryMainRonald: ; Func_411f2
 CheckShowMasonLaboratoryMainRonald: ; Func_4121d
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr nz, .asm_41230
+	jr nz, .hide_ronald
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	or a
-	jr z, .asm_41230
+	jr z, .hide_ronald
 	scf
 	ret
-.asm_41230
+.hide_ronald
 	scf
 	ccf
 	ret
@@ -1870,18 +1870,18 @@ ScriptMasonLaboratoryMainSam: ; Func_41233
 	ld a, $01
 	ld b, $00
 	farcall HandlePopupMenu
-	jr c, .asm_41264
+	jr c, .cancel_practice_deck_selection
 	or a
-	jr z, .asm_4126b
+	jr z, .start_first_practice_deck_duel
 	dec a
-	jr z, .asm_4128d
+	jr z, .start_second_practice_deck_duel
 	dec a
-	jr z, .asm_412b2
-.asm_41264
+	jr z, .show_practice_deck_explanation
+.cancel_practice_deck_selection
 	xor a
 	start_script
 	script_jump .ows_412bd
-.asm_4126b
+.start_first_practice_deck_duel
 	xor a
 	start_script
 	print_npc_text Text0f14
@@ -1897,7 +1897,7 @@ ScriptMasonLaboratoryMainSam: ; Func_41233
 .ows_41287
 	print_npc_text Text0f16
 	script_jump .ows_412bd
-.asm_4128d
+.start_second_practice_deck_duel
 	xor a
 	start_script
 	print_npc_text Text0f17
@@ -1915,7 +1915,7 @@ ScriptMasonLaboratoryMainSam: ; Func_41233
 .ows_412ac
 	print_npc_text Text0f19
 	script_jump .ows_412bd
-.asm_412b2
+.show_practice_deck_explanation
 	xor a
 	start_script
 	script_call Script_41408
@@ -2111,30 +2111,30 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $00
-.asm_4140c
+.menu_loop
 	xor a
 	farcall HandlePopupMenu
-	jr c, .asm_41428
+	jr c, .cancel_or_invalid_selection
 	or a
-	jr z, .asm_4142f
+	jr z, .show_option_1_text
 	dec a
-	jr z, .asm_4143e
+	jr z, .show_option_2_text
 	dec a
-	jr z, .asm_4144d
+	jr z, .show_option_3_text
 	dec a
-	jr z, .asm_4145c
+	jr z, .show_option_4_text
 	dec a
-	jr z, .asm_4146b
+	jr z, .show_option_5_text
 	dec a
-	jr z, .asm_4147a
+	jr z, .show_option_6_text
 	dec a
-	jr z, .asm_41489
-.asm_41428
+	jr z, .show_option_7_text
+.cancel_or_invalid_selection
 	ld a, $01
 	start_script
 	start_dialog
 	script_ret
-.asm_4142f
+.show_option_1_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2142,8 +2142,8 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $00
-	jr .asm_4140c
-.asm_4143e
+	jr .menu_loop
+.show_option_2_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2151,8 +2151,8 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $01
-	jr .asm_4140c
-.asm_4144d
+	jr .menu_loop
+.show_option_3_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2160,8 +2160,8 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $02
-	jr .asm_4140c
-.asm_4145c
+	jr .menu_loop
+.show_option_4_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2169,8 +2169,8 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $03
-	jr .asm_4140c
-.asm_4146b
+	jr .menu_loop
+.show_option_5_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2178,8 +2178,8 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $04
-	jr .asm_4140c
-.asm_4147a
+	jr .menu_loop
+.show_option_6_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2187,8 +2187,8 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $05
-	jr .asm_4140c
-.asm_41489
+	jr .menu_loop
+.show_option_7_text
 	ld a, $01
 	start_script
 	start_dialog
@@ -2196,7 +2196,7 @@ Script_41408:
 	end_dialog
 	quit_script
 	ld b, $06
-	jp .asm_4140c
+	jp .menu_loop
 
 Script_41499:
 	get_player_direction
@@ -2426,10 +2426,10 @@ HandleTcgChallengeHallAfterDuel: ; Func_4162a
 HandleTcgChallengeHallContinueOverworld: ; Func_4163b
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr nz, .asm_41645
+	jr nz, .resume_challenge_machine_round
 	scf
 	ret
-.asm_41645
+.resume_challenge_machine_round
 	farcall OverworldResumeWithCurSong
 	call StartTcgCupRoundFromChallengeMachineState
 	scf
@@ -3226,7 +3226,7 @@ HandleGrAirportWarpFadeInPreload: ; Func_41c60
 	farcall ClearwD986
 	ld a, [wPrevMap]
 	cp OVERWORLD_MAP_GR
-	jr nz, .asm_41c9f
+	jr nz, .return_success
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(Script_GR5_GRAirportLanded)
@@ -3246,17 +3246,17 @@ HandleGrAirportWarpFadeInPreload: ; Func_41c60
 	farcall SetOWObjectTilePosition
 	ld b, WEST
 	farcall SetOWObjectDirection
-.asm_41c9f
+.return_success
 	scf
 	ret
 
 HandleGrAirportWarpEndSFX: ; Func_41ca1
 	ld a, [wTempPrevMap]
 	cp OVERWORLD_MAP_GR
-	jr z, .asm_41caa
+	jr z, .play_gr_blimp_hatch_close_sfx
 	scf
 	ret
-.asm_41caa
+.play_gr_blimp_hatch_close_sfx
 	ld a, $0a
 	ld c, $07
 	farcall InitMusicFadeOut
@@ -3408,18 +3408,18 @@ UpdateGrAirportBoardingAlignment: ; Func_41db4
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectTilePosition
 	cpcoord 5, 8
-	jr z, .asm_41ded
+	jr z, .align_from_tile_5_8
 	cpcoord 4, 9
-	jr z, .asm_41e09
+	jr z, .align_from_tile_4_9
 	cpcoord 3, 9
-	jr z, .asm_41e25
+	jr z, .align_from_tile_3_9
 	cpcoord 2, 8
-	jr z, .asm_41e41
-	jr .asm_41e5b
-.asm_41ded
+	jr z, .align_from_tile_2_8
+	jr .done
+.align_from_tile_5_8
 	ldh a, [hKeysHeld]
 	bit B_PAD_LEFT, a
-	jr z, .asm_41e5b
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, WEST
 	farcall SetOWObjectDirection
@@ -3427,11 +3427,11 @@ UpdateGrAirportBoardingAlignment: ; Func_41db4
 	ld b, EAST
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX4
-	jr .asm_41e5b
-.asm_41e09
+	jr .done
+.align_from_tile_4_9
 	ldh a, [hKeysHeld]
 	bit B_PAD_UP, a
-	jr z, .asm_41e5b
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, NORTH
 	farcall SetOWObjectDirection
@@ -3439,11 +3439,11 @@ UpdateGrAirportBoardingAlignment: ; Func_41db4
 	ld b, SOUTH
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX4
-	jr .asm_41e5b
-.asm_41e25
+	jr .done
+.align_from_tile_3_9
 	ldh a, [hKeysHeld]
 	bit B_PAD_UP, a
-	jr z, .asm_41e5b
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, NORTH
 	farcall SetOWObjectDirection
@@ -3451,11 +3451,11 @@ UpdateGrAirportBoardingAlignment: ; Func_41db4
 	ld b, SOUTH
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX3
-	jr .asm_41e5b
-.asm_41e41
+	jr .done
+.align_from_tile_2_8
 	ldh a, [hKeysHeld]
 	bit B_PAD_RIGHT, a
-	jr z, .asm_41e5b
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, EAST
 	farcall SetOWObjectDirection
@@ -3463,7 +3463,7 @@ UpdateGrAirportBoardingAlignment: ; Func_41db4
 	ld b, WEST
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX3
-.asm_41e5b
+.done
 	ret
 
 EnsureGr5BoardingX3: ; Func_41e5c
@@ -3533,11 +3533,11 @@ HandleSealedFortInteractions: ; Func_41f1b
 	ld a, b
 	cp $00
 	ld a, [wPlayerOWObject]
-	jr nz, .asm_41f34
+	jr nz, .return_success
 	farcall GetOWObjectTilePosition
 	ld hl, SealedFort_OWInteractions
 	call ExecuteCoordScript
-.asm_41f34
+.return_success
 	scf
 	ret
 
@@ -4529,20 +4529,20 @@ HandleGrChallengeHallWarpFadeInPreload: ; Func_4266e
 HandleGrChallengeHallInteractions: ; Func_426b9
 	ld hl, GrChallengeHall_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_426c7
+	jr nc, .return_success
 	ld hl, GrChallengeHall_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_426c7
+.return_success
 	scf
 	ret
 
 CheckGrChallengeHallAfterDuelPreload: ; Func_426c9
 	ld a, EVENT_EB
 	farcall GetEventValue
-	jr nz, .asm_426d3
+	jr nz, .return_no_preload
 	scf
 	ret
-.asm_426d3
+.return_no_preload
 	scf
 	ccf
 	ret
@@ -4550,7 +4550,7 @@ CheckGrChallengeHallAfterDuelPreload: ; Func_426c9
 HandleGrChallengeHallAfterDuel: ; Func_426d6
 	ld a, EVENT_EB
 	farcall GetEventValue
-	jr nz, .asm_426ef
+	jr nz, .load_challenge_machine_after_duel
 	ld a, VAR_CHALLENGECUP_CURRENT_ROUND
 	farcall GetVarValue
 	cp 2
@@ -4558,7 +4558,7 @@ HandleGrChallengeHallAfterDuel: ; Func_426d6
 	jp z, Script_GRCupRound2AfterDuel
 	jp Script_GRCupRound3AfterDuel
 
-.asm_426ef
+.load_challenge_machine_after_duel
 	farcall LoadChallengeMachineSave
 	call ProcessGrChallengeMachineAfterDuel
 	scf
@@ -4567,10 +4567,10 @@ HandleGrChallengeHallAfterDuel: ; Func_426d6
 HandleGrChallengeHallContinueOverworld: ; Func_426f8
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr nz, .asm_42702
+	jr nz, .resume_challenge_machine_round
 	scf
 	ret
-.asm_42702
+.resume_challenge_machine_round
 	farcall OverworldResumeWithCurSong
 	call StartGrCupRoundFromChallengeMachineState
 	scf
@@ -5588,7 +5588,7 @@ LoadGrCastleBiruritchiNPCs: ; Func_42f35
 HandleGrCastleBiruritchiWarpFadeInPreload: ; Func_42f3e
 	ld a, EVENT_GR_CASTLE_STAIRS_RUI_ROADBLOCK
 	farcall GetEventValue
-	jr nz, .asm_42f84
+	jr nz, .return_success
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunBiruritchiStairsRoadblockCutscene)
@@ -5612,17 +5612,17 @@ HandleGrCastleBiruritchiWarpFadeInPreload: ; Func_42f3e
 	ld a, [wPlayerOWObject]
 	lb de, 7, 15
 	farcall SetOWObjectTilePosition
-.asm_42f84
+.return_success
 	scf
 	ret
 
 HandleGrCastleBiruritchiWarpFadeOutPreload: ; Func_42f86
 	ld a, [wNextGameEvent]
 	cp GAME_EVENT_CREDITS
-	jr z, .asm_42f8f
+	jr z, .fade_out_for_credits
 	scf
 	ret
-.asm_42f8f
+.fade_out_for_credits
 	ld a, $00
 	ld b, $04
 	farcall StartPalFadeToBlackOrWhite
@@ -5635,10 +5635,10 @@ HandleGrCastleBiruritchiWarpFadeOutPreload: ; Func_42f86
 HandleGrCastleBiruritchiWarpEndSFX: ; Func_42fa1
 	ld a, [wNextGameEvent]
 	cp GAME_EVENT_CREDITS
-	jr z, .asm_42faa
+	jr z, .return_no_warp_end_sfx_for_credits
 	scf
 	ret
-.asm_42faa
+.return_no_warp_end_sfx_for_credits
 	scf
 	ccf
 	ret
@@ -5646,10 +5646,10 @@ HandleGrCastleBiruritchiWarpEndSFX: ; Func_42fa1
 HandleGrCastleBiruritchiInteractions: ; Func_42fad
 	ld hl, GrCastleBiruritchi_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_42fbb
+	jr nc, .return_success
 	ld hl, GrCastleBiruritchi_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_42fbb
+.return_success
 	scf
 	ret
 
@@ -5667,10 +5667,10 @@ GrCastleBiruritchi_AfterDuelScripts:
 HandleGrCastleBiruritchiContinueOverworld: ; Func_42fcd
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr nz, .asm_42fd7
+	jr nz, .resume_biruritchi_continue_script
 	scf
 	ret
-.asm_42fd7
+.resume_biruritchi_continue_script
 	farcall OverworldResumeWithCurSong
 	call HandleBiruritchiContinueOverworldScript
 	scf
@@ -5932,19 +5932,19 @@ ScriptBiruritchiStatueCaption: ; Func_431bf
 Script_431ca:
 	inc_var VAR_09
 	end_script
-.asm_431cd
+.pick_unused_exec_deck
 	ld a, $04
 	call Random
 	dec a
-	jr z, .asm_431f7
+	jr z, .try_choose_scorcher_deck
 	dec a
-	jr z, .asm_43213
+	jr z, .try_choose_tsunami_starter_deck
 	dec a
-	jr z, .asm_4322f
+	jr z, .try_choose_smash_to_mincemeat_deck
 	ld a, VAR_08
 	farcall GetVarValue
 	bit 0, a
-	jr nz, .asm_431cd
+	jr nz, .pick_unused_exec_deck
 	set 0, a
 	ld c, a
 	ld a, VAR_08
@@ -5954,11 +5954,11 @@ Script_431ca:
 	start_duel STOP_LIFE_DECK_ID, MUSIC_MATCH_START_GR_EXECS
 	end_script
 	ret
-.asm_431f7
+.try_choose_scorcher_deck
 	ld a, VAR_08
 	farcall GetVarValue
 	bit 1, a
-	jr nz, .asm_431cd
+	jr nz, .pick_unused_exec_deck
 	set 1, a
 	ld c, a
 	ld a, VAR_08
@@ -5968,11 +5968,11 @@ Script_431ca:
 	start_duel SCORCHER_DECK_ID, MUSIC_MATCH_START_GR_EXECS
 	end_script
 	ret
-.asm_43213
+.try_choose_tsunami_starter_deck
 	ld a, VAR_08
 	farcall GetVarValue
 	bit 2, a
-	jr nz, .asm_431cd
+	jr nz, .pick_unused_exec_deck
 	set 2, a
 	ld c, a
 	ld a, VAR_08
@@ -5982,11 +5982,11 @@ Script_431ca:
 	start_duel TSUNAMI_STARTER_DECK_ID, MUSIC_MATCH_START_GR_EXECS
 	end_script
 	ret
-.asm_4322f
+.try_choose_smash_to_mincemeat_deck
 	ld a, VAR_08
 	farcall GetVarValue
 	bit 3, a
-	jr nz, .asm_431cd
+	jr nz, .pick_unused_exec_deck
 	set 3, a
 	ld c, a
 	ld a, VAR_08

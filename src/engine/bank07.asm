@@ -4197,20 +4197,20 @@ UpdateDuelAnimations:: ; Func_1e088
 	cp DUEL_SPECIAL_ANIMS
 	jr c, .not_special
 	call DispatchSpecialDuelAnimation
-	jr .asm_1e122
+	jr .done_dispatch
 .not_special
 	cp DUEL_ANIM_DAMAGE_HUD
 	jr nz, .not_damage_hud
 	call CreateDamageHudAnimations
-	jr .asm_1e122
+	jr .done_dispatch
 .not_damage_hud
 	cp DUEL_SCREEN_ANIMS
 	jr c, .not_screen_anim
 	call InitScreenAnimation
-	jr .asm_1e122
+	jr .done_dispatch
 .not_screen_anim
 	call CreateDuelAnimationSprite
-.asm_1e122
+.done_dispatch
 	ret
 
 ; input:
@@ -4275,7 +4275,7 @@ CreateDuelAnimationSprite: ; Func_1e171
 	cp DUEL_ANIM_COIN_SPIN
 	jr c, .not_coin_flip_animation
 	call PlayCoinAnimation
-	jr .asm_1e1d7
+	jr .flush_palettes
 
 .not_coin_flip_animation
 	; load tileset
@@ -4318,7 +4318,7 @@ CreateDuelAnimationSprite: ; Func_1e171
 	farcall LoadGfxPalettesFrom0
 	pop hl
 
-.asm_1e1d7
+.flush_palettes
 	push af
 	push bc
 	push de
@@ -4363,28 +4363,28 @@ CreateDuelAnimationSprite: ; Func_1e171
 	and SPRITE_ANIM_FLAG_X_FLIP | SPRITE_ANIM_FLAG_Y_FLIP
 	farcall SetSpriteAnimRenderFlags
 	bit SPRITE_ANIM_FLAG_Y_FLIP_F, a
-	jr z, .asm_1e234
+	jr z, .check_x_flip
 	push af
 	ld a, e
 	add -88
 	ld e, a
 	ld a, [wAnimAllowedFlags]
 	and SPRITE_ANIM_FLAG_3
-	jr z, .asm_1e233
+	jr z, .restore_flags_after_y_flip_adjust
 	ld a, e
 	add 16
 	ld e, a
-.asm_1e233
+.restore_flags_after_y_flip_adjust
 	pop af
-.asm_1e234
+.check_x_flip
 	bit SPRITE_ANIM_FLAG_X_FLIP_F, a
-	jr z, .asm_1e23e
+	jr z, .apply_coord_inversion_flags
 	push af
 	ld a, d
 	add -8
 	ld d, a
 	pop af
-.asm_1e23e
+.apply_coord_inversion_flags
 	and SPRITE_ANIM_FLAG_X_INVERTED | SPRITE_ANIM_FLAG_Y_INVERTED
 	swap a
 	sla a
@@ -4428,21 +4428,21 @@ CreateDamageHudAnimations: ; Func_1e279
 	call CreateDamageNumberAnimations
 	ld a, [wDuelAnimEffectiveness]
 	bit 0, a
-	jr z, .asm_1e293
+	jr z, .check_resistance_indicator
 	call CreateWeaknessAnimationIndicator
-.asm_1e293
+.check_resistance_indicator
 	ld a, $12
 	ld [wDuelAnimSpriteStartDelay], a
 	ld a, [wDuelAnimEffectiveness]
 	bit 1, a
-	jr z, .asm_1e2a2
+	jr z, .check_no_damage_indicator
 	call CreateResistanceAnimationIndicator
-.asm_1e2a2
+.check_no_damage_indicator
 	ld a, [wDuelAnimEffectiveness]
 	bit 2, a
-	jr z, .asm_1e2ac
+	jr z, .done
 	call CreateNoDamageAnimationIndicator
-.asm_1e2ac
+.done
 	pop hl
 	pop de
 	pop bc
@@ -4680,10 +4680,10 @@ _CheckAnyAnimationPlaying::
 	ld b, a
 	ld a, [wDuelAnimBufferCurPos]
 	cp b
-	jr nz, .asm_1e42f
+	jr nz, .return_with_flags
 	ld a, [wNumActiveAnimations]
 	and a
-.asm_1e42f
+.return_with_flags
 	pop bc
 	ret
 
@@ -6023,12 +6023,12 @@ MinicomMailboxNewMailScreen:
 	call EnableLCD
 	ld a, [wNewMail]
 	and a
-	jr z, .asm_1ed04
+	jr z, .print_status_text
 	push af
 	ld a, SFX_NEW_MAIL
 	call CallPlaySFX
 	pop af
-.asm_1ed04
+.print_status_text
 	call PrintMailboxStatusText
 	call DisableLCD
 	xor a
@@ -6042,13 +6042,13 @@ CalculateMailboxStatus:
 	ld b, $00
 	ld a, [wTempNumMailInQueue]
 	and a
-	jr nz, .asm_1ed28
+	jr nz, .store_status
 	inc b
 	ld a, [wNewMail]
 	and a
-	jr nz, .asm_1ed28
+	jr nz, .store_status
 	inc b
-.asm_1ed28
+.store_status
 	ld a, b
 	ld [wMailboxStatus], a
 	ret
@@ -6156,9 +6156,9 @@ MailboxMainScreen:
 	ldtx hl, MailboxChooseMailText
 	ld a, [wMailCount]
 	and a
-	jr nz, .asm_1ee0e
+	jr nz, .print_main_prompt
 	ldtx hl, MailboxEmptyText
-.asm_1ee0e
+.print_main_prompt
 	lb de, 1, 2
 	call InitTextPrinting_ProcessTextFromIDVRAM0
 	ldtx hl, MailboxTitleText
@@ -6206,14 +6206,14 @@ PrintMailSenderAndSubjectToScreen:
 	ldtx hl, MailboxSubjectText
 	call InitTextPrinting_ProcessTextFromIDVRAM0
 	and a
-	jr z, .asm_1ee68
+	jr z, .load_mail_text_pointers
 	bit B_MAIL_READ, a
-	jr nz, .asm_1ee68
+	jr nz, .load_mail_text_pointers
 	dec d
 	ldtx hl, MailboxUnreadSymbolText
 	call InitTextPrinting_ProcessTextFromIDVRAM0
 	inc d
-.asm_1ee68
+.load_mail_text_pointers
 	ld hl, Mail
 	and ~(1 << B_MAIL_READ)
 	ld c, a
@@ -6261,7 +6261,7 @@ DrawMailboxPageArrows: ; Func_1ee97
 	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	ld a, [wMailboxPage]
 	cp $01
-	jr nz, .asm_1eebd
+	jr nz, .check_next_page_arrow
 	lb bc, 1, 4
 	ld d, $2f
 	ld e, $41
@@ -6271,7 +6271,7 @@ DrawMailboxPageArrows: ; Func_1ee97
 	ld e, $01
 	call WriteTileAndAttrToBGMap_AdjustedByScroll
 	ret
-.asm_1eebd
+.check_next_page_arrow
 	ld a, [wMailCount]
 	cp $05
 	ret c
@@ -6300,7 +6300,7 @@ HandleMailboxMainScreenMenuInput: ; Func_1eef8
 	ld a, [wSelectedMailCursorPosition]
 	call HandleMenuBox
 	ld [wSelectedMailCursorPosition], a
-	jr c, .asm_1ef22
+	jr c, .play_cancel_sfx_and_return
 	call GetSelectedMailPosition
 	ld c, a
 	ld b, $00
@@ -6308,19 +6308,19 @@ HandleMailboxMainScreenMenuInput: ; Func_1eef8
 	add hl, bc
 	ld a, [hl]
 	and a
-	jr nz, .asm_1ef1a
+	jr nz, .play_confirm_sfx
 	push af
 	ld a, SFX_DENIED
 	call CallPlaySFX
 	pop af
 	jr HandleMailboxMainScreenMenuInput
-.asm_1ef1a
+.play_confirm_sfx
 	push af
 	ld a, SFX_CONFIRM
 	call CallPlaySFX
 	pop af
 	ret
-.asm_1ef22
+.play_cancel_sfx_and_return
 	push af
 	ld a, SFX_CANCEL
 	call CallPlaySFX
@@ -6505,11 +6505,11 @@ _ReadMail:
 	jr z, .done
 .print_body
 	call PrintMailBodyPage
-	jr z, .asm_1f074
+	jr z, .process_mail_page_attachments
 	push hl
 	call WaitForWideTextBoxInput
 	pop hl
-.asm_1f074
+.process_mail_page_attachments
 	call GiveCardsAttachedToMailPage
 	jr .read_mail_loop
 .done
@@ -6694,16 +6694,16 @@ DeleteMail:
 	ld a, [hl]
 	ld [wMailId], a
 	call MailboxYesNoPrompt_DeleteConfirm
-	jr c, .asm_1f1ad
+	jr c, .done
 	dec a
-	jr z, .asm_1f1ad
+	jr z, .done
 	bit 7, [hl]
-	jr nz, .asm_1f187
+	jr nz, .delete_selected_mail
 	call MailboxYesNoPrompt_DeleteUnreadConfirm
-	jr c, .asm_1f1ad
+	jr c, .done
 	dec a
-	jr z, .asm_1f1ad
-.asm_1f187
+	jr z, .done
+.delete_selected_mail
 	xor a
 	ld [hl], a
 	ld d, h
@@ -6712,26 +6712,26 @@ DeleteMail:
 	ld a, $08
 	sub c
 	and a
-	jr z, .asm_1f19d
+	jr z, .post_delete_updates
 	ld c, a
-.asm_1f193
+.shift_mail_entries_left
 	push af
 	ld a, [hli]
 	ld [de], a
 	inc de
 	pop af
 	dec a
-	jr nz, .asm_1f193
+	jr nz, .shift_mail_entries_left
 	xor a
 	ld [hl], a
-.asm_1f19d
+.post_delete_updates
 	ld a, [wMailCount]
 	dec a
 	ld [wMailCount], a
 	call DeleteGameCenterMailedCard
 	call DrawMailDeletedTextBox
 	call AdjustMailboxCursorAfterMailListChange
-.asm_1f1ad
+.done
 	pop hl
 	pop de
 	pop bc

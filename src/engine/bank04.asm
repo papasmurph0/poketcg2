@@ -880,12 +880,12 @@ LoadOWMapAndRestoreAnimatedTiles: ; Func_1055e
 	ld hl, wOWTilemapOverlayCount
 	ld a, [hl]
 	and a
-	jr z, .asm_1059a
+	jr z, .done
 	ld c, a
 	xor a
 	ld [hl], a
 	ld hl, wOWTilemapOverlayBuffer
-.asm_10589
+.loop_restore_tilemap_overlays
 	push bc
 	ld a, [hli]
 	ld c, a
@@ -898,8 +898,8 @@ LoadOWMapAndRestoreAnimatedTiles: ; Func_1055e
 	farcall AddOWTilemapOverlay
 	pop bc
 	dec c
-	jr nz, .asm_10589
-.asm_1059a
+	jr nz, .loop_restore_tilemap_overlays
+.done
 	pop hl
 	pop de
 	pop bc
@@ -2720,7 +2720,7 @@ TryStepNPCInDirection:: ; Func_10e3c
 	ld a, [wNPCStepNPCID]
 	call GetOWObjectWithID
 	bit 5, [hl] ; OWOBJSTRUCT_FLAGS
-	jr z, .asm_10e8f
+	jr z, .set_step_result
 	call GetOWObjectTilePosition
 	ld a, b
 	and $03
@@ -2751,14 +2751,14 @@ TryStepNPCInDirection:: ; Func_10e3c
 .got_direction
 	ld a, [wNPCBoundaryOverride]
 	cp $ff
-	jr z, .asm_10e7f
+	jr z, .check_npc_and_tile_collision
 	ld a, d
 	cp $10
 	jr nc, .blocked
 	ld a, e
 	cp $10
 	jr nc, .blocked
-.asm_10e7f
+.check_npc_and_tile_collision
 	call FindNPCAtLocation
 	inc a
 	jr nz, .blocked
@@ -2767,7 +2767,7 @@ TryStepNPCInDirection:: ; Func_10e3c
 	call GetTilemapPermissionAtCoord
 	and a
 	jr nz, .blocked
-.asm_10e8f
+.set_step_result
 	ld a, $10
 	ld [wNPCStepResult], a
 .blocked
@@ -3677,9 +3677,9 @@ BeginNPCStep: ; Func_1132e
 	jr z, .done
 	dec c
 	jr c, .done
-	jr z, .asm_11355
+	jr z, .got_step_distance
 	srl e ; /2
-.asm_11355
+.got_step_distance
 	ld a, e
 	and a
 	jr z, .done
@@ -3776,12 +3776,12 @@ ENDR
 	inc [hl] ; OWOBJSTRUCT_4
 	ld a, b
 	cp $ff
-	jr z, .asm_113cb
+	jr z, .clear_movement_script_flag
 	ld a, d
 	call BeginNPCStep
 	ret
 
-.asm_113cb
+.clear_movement_script_flag
 	ld bc, OWOBJSTRUCT_FLAGS - OWOBJSTRUCT_4
 	add hl, bc
 	res OBJ_FLAG6_F, [hl]
@@ -4729,7 +4729,7 @@ AnimateTitle:
 	xor a
 	ld [wIntroStateCounter], a
 	ld hl, Data_11e52
-.asm_11976
+.expand_frame_loop
 	call DoFrame
 	ldh a, [hKeysPressed]
 	and PAD_A | PAD_START
@@ -4740,31 +4740,31 @@ AnimateTitle:
 	ld a, $30
 	sub b
 	ld b, a ; $30 - wIntroStateCounter
-.asm_11987
+.wait_until_ly_below_91
 	ldh a, [rLY]
 	cp $91
-	jr nc, .asm_11987
-.asm_1198d
+	jr nc, .wait_until_ly_below_91
+.wait_until_ly_at_least_04
 	ldh a, [rLY]
 	cp $04
-	jr c, .asm_1198d
+	jr c, .wait_until_ly_at_least_04
 	; $04 <= rLY < $91
 	di
 	call WaitForLCDOff
 	ld a, $50
 	ldh [rSCY], a
-.asm_1199b
+.wait_until_ly_reaches_threshold
 	ldh a, [rLY]
 	cp b
-	jr c, .asm_1199b
+	jr c, .wait_until_ly_reaches_threshold
 	; rLY >= b
 	ld b, a
-.asm_119a1
+.update_scy_until_ly_30
 	ldh a, [rLY]
 	cp $30
-	jr nc, .asm_119bb
+	jr nc, .finish_scanline_updates
 	cp b
-	jr z, .asm_119a1
+	jr z, .update_scy_until_ly_30
 	ld b, a
 	call WaitForLCDOff
 	ldh a, [rLY]
@@ -4774,9 +4774,9 @@ AnimateTitle:
 	sub 8
 	xor $ff
 	ldh [rSCY], a
-	jr .asm_119a1
+	jr .update_scy_until_ly_30
 
-.asm_119bb
+.finish_scanline_updates
 	call WaitForLCDOff
 	xor a
 	ldh [rSCY], a
@@ -4788,7 +4788,7 @@ AnimateTitle:
 	inc a
 	ld [wIntroStateCounter], a
 	cp 40
-	jr c, .asm_11976
+	jr c, .expand_frame_loop
 	scf
 	ccf
 	ret
@@ -4845,7 +4845,7 @@ AnimateSubtitleEnter:
 	xor a
 	ld [wIntroStateCounter], a
 	call .CalcIntroLineSCXDistortion
-.asm_11a3c
+.distort_frame_loop
 	call DoFrame
 	ldh a, [hKeysPressed]
 	and PAD_A | PAD_START
@@ -4853,22 +4853,22 @@ AnimateSubtitleEnter:
 	ret nz
 	ld a, [wIntroStateCounter]
 	ld c, a
-.asm_11a49
+.wait_until_ly_below_91
 	ldh a, [rLY]
 	cp $91
-	jr nc, .asm_11a49
-.asm_11a4f
+	jr nc, .wait_until_ly_below_91
+.wait_until_ly_at_least_30
 	ldh a, [rLY]
 	cp $30
-	jr c, .asm_11a4f
+	jr c, .wait_until_ly_at_least_30
 	; $30 <= rLY < $91
 	di
 	ld a, [wIntroStateCounter]
 	ld e, a
-.asm_11a5a
+.loop_scanline_distortion
 	ldh a, [rLY]
 	cp $68
-	jr nc, .asm_11a7c
+	jr nc, .finish_scanline_distortion
 	ld d, a
 	and $01
 	swap a
@@ -4886,8 +4886,8 @@ AnimateSubtitleEnter:
 	call WaitForLCDOff
 	ld a, [hl]
 	ldh [rSCX], a
-	jr .asm_11a5a
-.asm_11a7c
+	jr .loop_scanline_distortion
+.finish_scanline_distortion
 	ei
 	ld a, [wIntroStateCounter]
 	cp 1
@@ -4898,7 +4898,7 @@ AnimateSubtitleEnter:
 	call .CalcIntroLineSCXDistortion
 	ld a, [wIntroDistortionCounter]
 	and a
-	jr nz, .asm_11a3c
+	jr nz, .distort_frame_loop
 	scf
 	ccf
 	ret
@@ -4910,7 +4910,7 @@ AnimateSubtitleEnter:
 	ld a, [wIntroStateCounter]
 	ld c, a ; unused
 	ld a, $20
-.asm_11aa5
+.loop_calc_line_distortion
 	push af
 	ld a, [hl]
 	push hl
@@ -4943,7 +4943,7 @@ AnimateSubtitleEnter:
 	add hl, bc
 	pop af
 	dec a
-	jr nz, .asm_11aa5
+	jr nz, .loop_calc_line_distortion
 	pop de
 	ld a, [wIntroStateCounter]
 	and $03
@@ -4962,14 +4962,14 @@ AnimateSubtitleEnter:
 	ld de, rBGPD
 	ld hl, wBackgroundPalettesCGB + $28
 	ld c, 2 palettes
-.asm_11af2
+.wait_stat_and_copy_subtitle_palettes
 	ldh a, [rSTAT]
 	and STAT_OAM
-	jr nz, .asm_11af2
+	jr nz, .wait_stat_and_copy_subtitle_palettes
 	ld a, [hli]
 	ld [de], a
 	dec c
-	jr nz, .asm_11af2
+	jr nz, .wait_stat_and_copy_subtitle_palettes
 	pop hl
 	pop de
 	pop bc
@@ -4992,20 +4992,20 @@ AnimateTrademark:
 	farcall StartPalFadeFromBlackOrWhite
 	ld a, 60
 	call WaitAFramesForInput
-	jr c, .asm_11b31 ; unnecessary jump
-.asm_11b31
+	jr c, .enable_all_bg_fades_and_return ; unnecessary jump
+.enable_all_bg_fades_and_return
 	farcall SetAllBGPaletteFadeConfigsToEnabled
 	call UnsetFadePalsFrameFunc
 	ret
 
 AnimateSubtitleExit:
 	call .Animate
-	jr c, .asm_11b46
+	jr c, .fade_out_to_white
 	ld a, 80
 	call WaitAFramesForInput
-	jr c, .asm_11b46
+	jr c, .fade_out_to_white
 	ret
-.asm_11b46
+.fade_out_to_white
 	call SetFadePalsFrameFunc
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
@@ -5020,7 +5020,7 @@ AnimateSubtitleExit:
 	ret c
 	ld hl, .ClearBoxParams
 	ld c, 7
-.asm_11b65
+.loop_clear_subtitle_bands
 	push bc
 	ld d, [hl]
 	inc hl
@@ -5050,7 +5050,7 @@ AnimateSubtitleExit:
 	pop bc
 	jr c, .clear_subtitle
 	dec c
-	jr nz, .asm_11b65
+	jr nz, .loop_clear_subtitle_bands
 	ret
 .clear_subtitle
 	push af
@@ -5112,52 +5112,52 @@ AnimateSubtitleExit:
 
 .ApplyEffect:
 	ld c, 10
-.asm_11bd2
+.effect_frame_loop
 	call DoFrame
 	ldh a, [hKeysPressed]
 	and PAD_A | PAD_START
 	scf
 	ret nz
-.asm_11bdb
+.wait_until_ly_below_91
 	ldh a, [rLY]
 	cp $91
-	jr nc, .asm_11bdb
-.asm_11be1
+	jr nc, .wait_until_ly_below_91
+.wait_until_ly_at_least_20
 	ldh a, [rLY]
 	cp $20
-	jr c, .asm_11be1
+	jr c, .wait_until_ly_at_least_20
 	; $20 <= rLY < $91
 	di
-.asm_11be8
+.wait_until_ly_at_least_2f
 	ldh a, [rLY]
 	cp $2f
-	jr c, .asm_11be8
+	jr c, .wait_until_ly_at_least_2f
 	call WaitForLCDOff
 	ld a, [wTitleAnimSCXUpper]
 	ldh [rSCX], a
 	ei
-.asm_11bf7
+.wait_until_ly_at_least_3c
 	ldh a, [rLY]
 	cp $3c
-	jr c, .asm_11bf7
+	jr c, .wait_until_ly_at_least_3c
 	di
-.asm_11bfe
+.wait_until_ly_at_least_48
 	ldh a, [rLY]
 	cp $48
-	jr c, .asm_11bfe
+	jr c, .wait_until_ly_at_least_48
 	call WaitForLCDOff
 	ld a, [wTitleAnimSCXMiddle]
 	ldh [rSCX], a
 	ei
-.asm_11c0d
+.wait_until_ly_at_least_58
 	ldh a, [rLY]
 	cp $58
-	jr c, .asm_11c0d
+	jr c, .wait_until_ly_at_least_58
 	di
-.asm_11c14
+.wait_until_ly_at_least_68
 	ldh a, [rLY]
 	cp $68
-	jr c, .asm_11c14
+	jr c, .wait_until_ly_at_least_68
 	call WaitForLCDOff
 	xor a
 	ldh [rSCX], a
@@ -5169,7 +5169,7 @@ AnimateSubtitleExit:
 	add -3
 	ld [wTitleAnimSCXMiddle], a
 	dec c
-	jr nz, .asm_11bd2
+	jr nz, .effect_frame_loop
 	scf
 	ccf
 	ret
@@ -5218,10 +5218,10 @@ AnimateIntroCards:
 
 .AnimateEntrance:
 	call ScrollIntroCard
-	jr c, .asm_11c90
+	jr c, .return
 	lb bc, 6, 7
 	call DrawLoadedCardAtBC
-.asm_11c90
+.return
 	ret
 
 .AnimateExit:
@@ -5248,39 +5248,39 @@ ScrollIntroCard:
 	ldh a, [rSCX]
 	ld [wTitleAnimSCXUpper], a
 	ld c, 28
-.asm_11cbc
+.scroll_step_loop
 	call DoFrame
 	ldh a, [hKeysPressed]
 	and PAD_A | PAD_START
 	scf
 	jr nz, .done
-.asm_11cc6
+.wait_until_ly_below_91
 	ldh a, [rLY]
 	cp $91
-	jr nc, .asm_11cc6
-.asm_11ccc
+	jr nc, .wait_until_ly_below_91
+.wait_until_ly_at_least_20
 	ldh a, [rLY]
 	cp $20
-	jr c, .asm_11ccc
+	jr c, .wait_until_ly_at_least_20
 	; $20 <= rLY < $91
 	di
-.asm_11cd3
+.wait_until_ly_at_least_36
 	ldh a, [rLY]
 	cp $36
-	jr c, .asm_11cd3
+	jr c, .wait_until_ly_at_least_36
 	call WaitForLCDOff
 	ld a, [wTitleAnimSCXUpper]
 	ldh [rSCX], a
 	ei
-.asm_11ce2
+.wait_until_ly_at_least_50
 	ldh a, [rLY]
 	cp $50
-	jr c, .asm_11ce2
+	jr c, .wait_until_ly_at_least_50
 	di
-.asm_11ce9
+.wait_until_ly_at_least_68
 	ldh a, [rLY]
 	cp $68
-	jr c, .asm_11ce9
+	jr c, .wait_until_ly_at_least_68
 	call WaitForLCDOff
 	xor a
 	ldh [rSCX], a
@@ -5289,7 +5289,7 @@ ScrollIntroCard:
 	add 4
 	ld [wTitleAnimSCXUpper], a
 	dec c
-	jr nz, .asm_11cbc
+	jr nz, .scroll_step_loop
 	scf
 	ccf
 .done
@@ -5956,7 +5956,7 @@ DrawLoadedCard:
 	ld a, [wCardAttrMapOffset]
 	ld c, a
 	ld b, $30 ; card size in tiles
-.asm_134f8
+.loop_apply_attrmap_palette
 	ld a, [hli]
 	rlca
 	rlca
@@ -5965,7 +5965,7 @@ DrawLoadedCard:
 	ld [de], a
 	inc de
 	dec b
-	jr nz, .asm_134f8
+	jr nz, .loop_apply_attrmap_palette
 	pop de
 	ld hl, wCardAttrMapBuffer
 	call .CopyCardDataToBGMap
@@ -6003,7 +6003,7 @@ ShowHiddenCardGallery: ; Func_1352a
 	push bc
 	push de
 	push hl
-	call .asm_1358a
+	call .setup_gallery_window
 	ld hl, $0
 REPT 2
 	ld a, (NUM_CARDS - 1) / 2
@@ -6015,47 +6015,47 @@ ENDR
 	ld d, h
 	ld e, l
 	call .Draw
-.asm_1354b
+.input_loop
 	call DoFrame
 	ldh a, [hKeysPressed]
 	and PAD_A | PAD_B
-	jr nz, .asm_13559
-	call .asm_13561
-	jr .asm_1354b
-.asm_13559
-	call .asm_135ac
+	jr nz, .restore_bgmap_and_exit
+	call .handle_dpad_card_cycle
+	jr .input_loop
+.restore_bgmap_and_exit
+	call .restore_bgmap_and_sprites
 	pop hl
 	pop de
 	pop bc
 	pop af
 	ret
 
-.asm_13561:
+.handle_dpad_card_cycle:
 	ldh a, [hDPadHeld]
 	and $10
-	jr nz, .asm_1357c
+	jr nz, .cycle_next_card
 	ldh a, [hDPadHeld]
 	and $20
-	jr nz, .asm_1356e
+	jr nz, .cycle_previous_card
 	ret
-.asm_1356e
+.cycle_previous_card
 	ld bc, GRASS_ENERGY
 	call CompareBCAndDE
-	jr c, .asm_13579
+	jr c, .decrement_card_index
 	ld de, NUM_CARDS + 1
-.asm_13579
+.decrement_card_index
 	dec de
 	jr .Draw
-.asm_1357c
+.cycle_next_card
 	ld bc, NUM_CARDS - 1
 	call CompareBCAndDE
-	jr nc, .asm_13587
+	jr nc, .increment_card_index
 	ld de, 0
-.asm_13587
+.increment_card_index
 	inc de
 	jr .Draw
 
-.asm_1358a:
+.setup_gallery_window:
 	lb de, 5, 4
 	lb bc, 10, 8
 	call AdjustDECoordByhSC
@@ -6069,7 +6069,7 @@ ENDR
 	call FillBoxInBGMap
 	ret
 
-.asm_135ac:
+.restore_bgmap_and_sprites:
 	call CopyBGMapFromWRAMToVRAM
 	call SetActiveSpriteAnimFlag6WithinArea
 	ret
