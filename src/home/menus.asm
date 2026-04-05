@@ -498,9 +498,9 @@ CardListMenuFunction::
 	ld c, a
 	ld hl, wNumScrollMenuItems
 	sub [hl]
-	jr nc, .asm_28c4
+	jr nc, .got_clamped_cursor_top
 	add [hl]
-.asm_28c4
+.got_clamped_cursor_top
 	ld [wCurMenuItem], a
 	xor a
 	ld [wListScrollOffset], a
@@ -522,12 +522,12 @@ CardListMenuFunction::
 	dec a
 	ld hl, wNumListItems
 	cp [hl]
-	jr nc, .asm_28f9
+	jr nc, .clamp_scroll_right
 	ld a, c
 	ld [wListScrollOffset], a
 	call ReloadCardListItems
 	jr .continue
-.asm_28f9
+.clamp_scroll_right
 	call EraseCursor
 	ld a, [wListScrollOffset]
 	ld hl, wCurMenuItem
@@ -540,9 +540,9 @@ CardListMenuFunction::
 	ld b, a
 	ld a, c
 	sub b
-	jr nc, .asm_2914
+	jr nc, .got_clamped_cursor_right
 	add [hl]
-.asm_2914
+.got_clamped_cursor_right
 	ld [wCurMenuItem], a
 	call ReloadCardListItems
 .continue

@@ -128,7 +128,7 @@ PrintScrollableText::
 	call DrawTextReadyLabeledOrRegularTextBox
 	ld a, l
 	or h
-	jr z, .asm_2cc3
+	jr z, .done
 	call GetTextOffsetFromTextID
 	call ResetTxRam_WriteToTextHeader
 .print_char_loop
@@ -153,7 +153,7 @@ PrintScrollableText::
 	jr nz, .nonzero_text_speed
 .skip_delay
 	call ProcessTextHeader
-	jr c, .asm_2cc3
+	jr c, .done
 	ld a, [wCurTextLine]
 	cp 3
 	jr c, .print_char_loop
@@ -161,7 +161,7 @@ PrintScrollableText::
 	call WaitForPlayerToAdvanceText
 	call DrawTextReadyLabeledOrRegularTextBox
 	jr .print_char_loop
-.asm_2cc3
+.done
 	pop af
 	call BankswitchROM
 	ret

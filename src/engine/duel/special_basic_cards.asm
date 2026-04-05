@@ -154,13 +154,13 @@ AIDecideSpecialBasicCards:
 ; unreferenced
 	ld hl, wLoadedCard1ID
 	cphl ELECTABUZZ_LV35
-	jr z, .asm_29f3b
+	jr z, .count_copies_in_play_area
 	cphl DODUO_LV10
-	jr z, .asm_29f3b
+	jr z, .count_copies_in_play_area
 	cphl ZAPDOS_LV40
-	jr z, .asm_29f4c
+	jr z, .check_already_in_play_area
 	jp nz, .standard_score
-.asm_29f3b
+.count_copies_in_play_area
 	ld e, [hl]
 	inc hl
 	ld d, [hl]
@@ -170,7 +170,7 @@ AIDecideSpecialBasicCards:
 	jp c, .standard_score
 	ld a, 40
 	ret
-.asm_29f4c
+.check_already_in_play_area
 	ld e, [hl]
 	inc hl
 	ld d, [hl]

@@ -1406,12 +1406,12 @@ PlayAttackAnimation_DealAttackDamage:
 	call HandleTransparencyIfApplicable
 	ld a, e
 	or d
-	jr z, .asm_15dc
+	jr z, .damage_value_stored
 	ld hl, wDealtDamage
 	ld [hl], e
 	inc hl
 	ld [hl], d
-.asm_15dc
+.damage_value_stored
 	ld b, $0
 	ld a, [wDamageEffectiveness]
 	ld c, a
@@ -1512,10 +1512,10 @@ UsePokemonPower:
 	jr c, DrawWideTextBox_WaitForInput_ReturnCarry
 	ld a, [wPokemonPowerNeedsLinkSync]
 	or a
-	jr z, .asm_1687
+	jr z, .skip_link_sync
 	ld a, OPPACTION_UNK_0C
 	call SetOppAction_SerialSendDuelData
-.asm_1687
+.skip_link_sync
 	ld a, EFFECTCMDTYPE_REQUIRE_SELECTION
 	call TryExecuteEffectCommandFunction
 	jr c, ReturnCarry
@@ -1565,11 +1565,11 @@ HandleTransparencyIfApplicable: ; Func_189d
 	ret nz
 	ld a, e
 	or d
-	jr nz, .asm_1700
+	jr nz, .apply_transparency
 	ld a, DUELVARS_ARENA_CARD_SUBSTATUS2
 	call GetNonTurnDuelistVariable
 	or a
-	jr nz, .asm_1700
+	jr nz, .apply_transparency
 	ld a, [wEffectFunctionsFeedbackIndex]
 	or a
 	ret z
@@ -1578,18 +1578,18 @@ HandleTransparencyIfApplicable: ; Func_189d
 	call GetNonTurnDuelistVariable
 	ld c, h
 	ld hl, wEffectFunctionsFeedback
-.asm_16f4
+.loop_feedback
 	ld a, [hli]
 	inc hl
 	inc hl
 	cp c
-	jr z, .asm_1700
+	jr z, .apply_transparency
 	dec b
 	dec b
 	dec b
-	jr nz, .asm_16f4
+	jr nz, .loop_feedback
 	ret
-.asm_1700
+.apply_transparency
 	push de
 	call SwapTurn
 	xor a
@@ -1740,9 +1740,9 @@ ApplyDamageModifiers_DamageToTarget:
 	ld hl, -30
 	ld a, [wSpecialRule]
 	cp LOW_RESISTANCE
-	jr nz, .asm_1801
+	jr nz, .apply_resistance_modifier
 	ld hl, -10
-.asm_1801
+.apply_resistance_modifier
 	add hl, de
 	ld e, l
 	ld d, h

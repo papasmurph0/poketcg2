@@ -112,7 +112,7 @@ SerialHandler:
 .not_printer_sequence
 	ld a, [wSerialOp]    ;
 	or a                 ;
-	jr z, .asm_d55       ; skip ahead if [wSerialOp] zero
+	jr z, .serial_op_zero       ; skip ahead if [wSerialOp] zero
 	; send/receive a byte
 	ldh a, [rSB]
 	call SerialHandleRecv
@@ -128,8 +128,8 @@ SerialHandler:
 	ld a, [wSerialOp]
 	cp SERIAL_OP_MASTER_TCG2
 	jr z, .done          ; if [wSerialOp] != $92, use external clock
-	jr .asm_d6a          ; and prepare for next byte. either way, return
-.asm_d55
+	jr .start_transfer           ; and prepare for next byte. either way, return
+.serial_op_zero
 	ld a, $1
 	ld [wSerialRecvCounter], a
 	ldh a, [rSB]
@@ -139,7 +139,7 @@ SerialHandler:
 	ld a, [wSerialRecvBuf]
 	cp SERIAL_PEER_MASTER_TCG2 ; if [wSerialRecvBuf] != $21, use external clock
 	jr z, .done                ; and prepare for next byte. either way, return
-.asm_d6a
+.start_transfer
 	ld a, SC_START | SC_EXTERNAL
 	ldh [rSC], a         ; transfer start, use external clock
 .done
@@ -270,14 +270,14 @@ SerialSendByte::
 	push de
 	push bc
 	push af
-.asm_e0e
+.wait_buffer_space
 	ld a, [wSerialSendBufWriteIndex]
 	ld e, a
 	ld a, [wSerialSendBufIndex]
 	dec a
 	and $1f
 	cp e
-	jr z, .asm_e0e
+	jr z, .wait_buffer_space
 	ld d, $0
 	ld a, e
 	inc a

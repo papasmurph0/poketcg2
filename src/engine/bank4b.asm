@@ -567,9 +567,9 @@ UpdateSpriteAnim::
 	call InitSpriteAnimFrameIfNeeded
 	ld hl, wCurSpriteAnim
 	bit SPRITEANIMSTRUCT_ANIMATING_F, [hl] ; SPRITEANIMSTRUCT_FLAGS
-	jr z, .asm_12c2fe
+	jr z, .skip_frame_duration
 	call DecrementSpriteAnimFrameDuration
-.asm_12c2fe
+.skip_frame_duration
 	ld a, [wCurSpriteAnimFramesetID + 0]
 	ld c, a
 	ld a, [wCurSpriteAnimFramesetID + 1]
@@ -718,12 +718,12 @@ LoadPortraitAttributeMap::
 	inc a
 	dec a
 	ld c, $a0
-	jr z, .asm_12c3f3
+	jr z, .got_portrait_palette
 	dec a
 	ld c, $7c
-	jr z, .asm_12c3f3
+	jr z, .got_portrait_palette
 	ld c, $58
-.asm_12c3f3
+.got_portrait_palette
 	pop af
 	and a
 	ld a, 2 | OAM_BANK1

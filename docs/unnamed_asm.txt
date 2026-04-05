@@ -1996,3 +1996,84 @@ After .loop_bench_attacker; checks wAIBestBenchAttackerPlayAreaLocation; returns
 
 src/engine/bank08.asm .asm_20ada -> .weakness_matched
 In .CheckOppBenchCardHasWeakness; jumped to when a bench card's weakness matches b; calls CheckIfCanDamageDefendingPokemon and returns carry if confirmed, else continues .loop_bench.
+
+src/home/duel.asm .asm_15dc -> .damage_value_stored
+Merge point after optionally storing de into wDealtDamage; damage is zero so store was skipped, or damage is nonzero and store is done. Continues to animation/HP subtraction.
+
+src/home/duel.asm .asm_1687 -> .skip_link_sync
+In UsePokemonPower; wPokemonPowerNeedsLinkSync is zero so OPPACTION_UNK_0C sync is not sent; fall through to EFFECTCMDTYPE_REQUIRE_SELECTION.
+
+src/home/duel.asm .asm_16f4 -> .loop_feedback
+In HandleTransparencyIfApplicable; main loop over wEffectFunctionsFeedback entries checking if any entry's card matches the arena card; retries test per 3-byte entry.
+
+src/home/duel.asm .asm_1700 -> .apply_transparency
+In HandleTransparencyIfApplicable; reached when damage is nonzero, substatus2 is set, or a feedback entry matches; calls HandleTransparency via SwapTurn wrapper.
+
+src/home/duel.asm .asm_1801 -> .apply_resistance_modifier
+In ApplyDamageModifiers_DamageToTarget resistance path; merge point for -10 (LOW_RESISTANCE rule) or -30 (normal) modifier before adding to damage in de.
+
+src/home/menus.asm .asm_28c4 -> .got_clamped_cursor_top
+In HandleCardListScrollMenu left-scroll; after sub=[wNumScrollMenuItems] underflowed and was corrected: stores clamped wCurMenuItem and resets scroll state.
+
+src/home/menus.asm .asm_28f9 -> .clamp_scroll_right
+In HandleCardListScrollMenu right-scroll; double-page advance would exceed list end; aligns scroll offset to last page and recomputes cursor within that page.
+
+src/home/menus.asm .asm_2914 -> .got_clamped_cursor_right
+In HandleCardListScrollMenu right-scroll; after cursor-within-page underflowed and was corrected: stores clamped wCurMenuItem.
+
+src/home/random.asm .asm_882 -> .mul_add
+In HtimesL; add de to hl (accumulate partial product) when the current bit of a is set.
+
+src/home/random.asm .asm_883 -> .mul_shift
+In HtimesL; shift de left by 1 (double the multiplicand) at each loop iteration.
+
+src/home/random.asm .asm_887 -> .mul_loop
+In HtimesL; top of the multiply loop; shifts a right and dispatches to .mul_add or .mul_shift based on carry/zero.
+
+src/home/serial.asm .asm_d55 -> .serial_op_zero
+In SerialHandler; [wSerialOp] is zero so no byte to send/receive; set up receive counter and load $ac sentinel, check for peer master token.
+
+src/home/serial.asm .asm_d6a -> .start_transfer
+In SerialHandler; shared path after both the op-nonzero send/receive path and the op-zero path; starts serial transfer with external clock via rSC.
+
+src/home/serial.asm .asm_e0e -> .wait_buffer_space
+In SerialSendByte; spin-wait loop: retry until wSerialSendBufWriteIndex != (wSerialSendBufIndex-1) mod 32, i.e., there is space in the ring buffer.
+
+src/home/print_text.asm .asm_2cc3 -> .done
+In PrintScrollableText; end-of-text or error exit: restore banked ROM and return.
+
+src/home/text_box.asm .asm_1c8b -> .fill_loop
+Zero-fill loop writing c bytes to wc000 in preparation for VRAM attribute tile copy.
+
+src/engine/duel/effect_functions1.asm .asm_68b02 -> .apply_hp_recovery
+In ButterfreeMegaDrainEffect; merge point after optional rounding of damage/2 recovery amount; loads amount into de and calls ApplyAndAnimateHPRecovery.
+
+src/engine/duel/effect_functions1.asm .asm_69c9d -> .loop_energy
+In MewtwoAltEnergyAbsorption_AddToHandEffect; main loop: reads next index from hTempList, calls MoveDiscardPileCardToHand, sets card location to CARD_LOCATION_ARENA, repeats until $ff.
+
+src/engine/duel/effect_functions1.asm .asm_6b3bb -> .got_damage_result
+Merge point of self-damage vs opponent-damage paths; carry reflects whether damage should be skipped; falls through to bench-hit animation/damage dispatch.
+
+src/engine/duel/effect_functions2.asm .asm_6648a -> .valid_bench_selection
+In Gigashock bench target selection; chosen slot was not already marked; draws fighting symbol on cursor and stores the slot in the chosen list.
+
+src/engine/duel/effect_functions2.asm .asm_67231 -> .returned_from_arena
+In card-return-to-hand effect; hTemp_ffa0 is zero meaning the card was in the Arena; uses PokemonWasReturnedFromArenaToHandText before displaying card detail screen.
+
+src/engine/duel/special_basic_cards.asm .asm_29f3b -> .count_copies_in_play_area
+In unreferenced Electabuzz/Doduo scoring block; counts how many copies of this card are already in the player's Play Area; returns 40 score if >= 2.
+
+src/engine/duel/special_basic_cards.asm .asm_29f4c -> .check_already_in_play_area
+In unreferenced Zapdos scoring block; searches if the card is already present in the Play Area and discourages placement via 40-score return if bench is not empty.
+
+src/engine/bank4b.asm .asm_12c2fe -> .skip_frame_duration
+In sprite animation update loop; SPRITEANIMSTRUCT_ANIMATING bit is clear so DecrementSpriteAnimFrameDuration is skipped; continues to fetch frameset data.
+
+src/engine/bank4b.asm .asm_12c3f3 -> .got_portrait_palette
+In LoadPortraitAttributeMap; merge point after selecting palette offset c ($a0/$7c/$58) based on bank b value; loads tilemap with chosen palette index.
+
+src/engine/bank05.asm .asm_176b6 -> .encourage_and_done
+In AI bench HP threshold scoring; bench candidate meets all criteria: add $14 (20) to AI score via AIEncourage then jump to .done.
+
+src/engine/bank05.asm .asm_176e3 -> .magnemite_hp_threshold
+In AI bench HP threshold logic for Magnemite Lv13 specifically: skip adding the extra $0a penalty to b so the HP threshold is lower than for other cards.

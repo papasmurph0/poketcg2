@@ -5941,12 +5941,12 @@ EarthWave_PlayerSelectEffect:
 	jr z, .try_cancel
 
 	call .CheckIfChosenAlready
-	jr nc, .asm_6648a
+	jr nc, .valid_bench_selection
 	; play SFX
 	call PlaySFX_InvalidChoice
 	jr .loop_input
 
-.asm_6648a
+.valid_bench_selection
 ; mark this Play Area location
 	ldh a, [hCurScrollMenuItem]
 	inc a
@@ -8312,9 +8312,9 @@ ScoopUp_ReturnToHandEffect:
 	ldtx hl, PokemonWasReturnedFromArenaToHandText
 	ldh a, [hTemp_ffa0]
 	or a
-	jr z, .asm_67231
+	jr z, .returned_from_arena
 	ldtx hl, PokemonWasReturnedFromBenchToHandText
-.asm_67231
+.returned_from_arena
 	ldh a, [hTempCardIndex_ff98]
 	bank1call DisplayCardDetailScreen
 

@@ -6,16 +6,16 @@ HtimesL::
 	ld d, $0
 	ld l, d
 	ld h, d
-	jr .asm_887
-.asm_882
+	jr .mul_loop
+.mul_add
 	add hl, de
-.asm_883
+.mul_shift
 	sla e
 	rl d
-.asm_887
+.mul_loop
 	srl a
-	jr c, .asm_882
-	jr nz, .asm_883
+	jr c, .mul_add
+	jr nz, .mul_shift
 	pop de
 	ret
 

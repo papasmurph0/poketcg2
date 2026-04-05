@@ -141,10 +141,10 @@ DrawLabeledTextBox::
 	ld d, h
 	ld hl, wc000
 	xor a
-.asm_1c8b
+.fill_loop
 	ld [hli], a
 	dec c
-	jr nz, .asm_1c8b
+	jr nz, .fill_loop
 	ld hl, wc000
 	inc de
 	inc de

@@ -8785,7 +8785,7 @@ GetAIScoreOfAttack:
 	xor a
 	ld [wAIScore], a
 	jp .done
-.asm_176b6
+.encourage_and_done
 	ld a, $14
 	call AIEncourage
 	jp .done
@@ -8803,16 +8803,16 @@ GetAIScoreOfAttack:
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	cp16 MAGNEMITE_LV13
-	jr z, .asm_176e3
+	jr z, .magnemite_hp_threshold
 	ld b, $0a
-.asm_176e3
+.magnemite_hp_threshold
 	ld a, $0a
 	add b
 	ld b, a
 	ld a, $01
 	call .CountBenchPkmnAboveHPThreshold
 	jr c, .set_zero_score_and_finish
-	jr .asm_176b6
+	jr .encourage_and_done
 	call CountPrizes
 	cp $04
 	jr nc, .set_zero_score_and_finish
@@ -8821,7 +8821,7 @@ GetAIScoreOfAttack:
 	xor a
 	call .CountBenchPkmnAboveHPThreshold
 	call SwapTurn
-	jr c, .asm_176b6
+	jr c, .encourage_and_done
 .score_bench_hp_threshold_matchups
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var

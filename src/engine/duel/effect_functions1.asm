@@ -2172,10 +2172,10 @@ ButterfreeMegaDrainEffect:
 	srl h
 	rr l
 	bit 0, l
-	jr z, .asm_68b02
+	jr z, .apply_hp_recovery
 	ldtx de, DoneText
 	add hl, de
-.asm_68b02
+.apply_hp_recovery
 	ld e, l
 	ld d, h
 	call ApplyAndAnimateHPRecovery
@@ -5406,7 +5406,7 @@ MewtwoAltEnergyAbsorption_AISelectEffect:
 
 MewtwoAltEnergyAbsorption_AddToHandEffect:
 	ld hl, hTempList
-.asm_69c9d
+.loop_energy
 	ld a, [hli]
 	cp $ff
 	ret z
@@ -5415,7 +5415,7 @@ MewtwoAltEnergyAbsorption_AddToHandEffect:
 	get_turn_duelist_var
 	ld [hl], CARD_LOCATION_ARENA
 	pop hl
-	jr .asm_69c9d
+	jr .loop_energy
 
 MewtwoEnergyAbsorption_CheckDiscardPile:
 	call CreateEnergyCardListFromDiscardPile_AllEnergy
@@ -9472,12 +9472,12 @@ HandleMassExplosionDamage:
 	or a
 	jr z, .damage_against_other_duelist
 	call .CalculateDamageOrDamageSelf
-	jr .asm_6b3bb
+	jr .got_damage_result
 .damage_against_other_duelist
 	call SwapTurn
 	call .CalculateDamageOrDamageSelf
 	call SwapTurn
-.asm_6b3bb
+.got_damage_result
 	jr c, .skip_bench_hit
 	ld a, ATK_ANIM_BENCH_HIT
 	ld [wLoadedAttackAnimation], a
