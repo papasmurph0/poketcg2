@@ -816,7 +816,7 @@ SetSlotMachineTeaseOffset:
 
 ; unreferenced
 ; set tease offset = (distance + 1) % 4
-.asm_1295f
+.tease_offset_mod4
 	call GetSlotMachineReelStatePtr
 	inc hl
 	ld a, [wSlotMachineBiasedSymbol]

@@ -14,10 +14,10 @@ ATimes10::
 ADividedBy10::
 	push de
 	ld e, -1
-.asm_c62
+.div_loop
 	inc e
 	sub 10
-	jr nc, .asm_c62
+	jr nc, .div_loop
 	add 5
 	ld a, e
 	pop de

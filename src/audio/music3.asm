@@ -218,11 +218,11 @@ Music3_Update:
 	call Music3_CheckForEndOfSong
 	ld a, [wAudio_d011]
 	or a
-	jr z, .asm_1dc17b
+	jr z, .skip_backup
 	call Music3_BackupSong
 	xor a
 	ld [wAudio_d011], a
-.asm_1dc17b
+.skip_backup
 	call Music3_UnloadAudioWRAMBank2
 	ret
 
@@ -439,31 +439,31 @@ Music3_EmptyFunc:
 Music3_UpdateChannel1:
 	ld a, [wMusicIsPlaying]
 	or a
-	jr z, .asm_f42fa
+	jr z, .channel_inactive
 	ld a, [wMusicCh1CutoffEnable]
 	cp $0
-	jr z, .asm_f42d4
+	jr z, .decrement_duration
 	ld a, [wMusicCutoffCountdown]
 	dec a
 	ld [wMusicCutoffCountdown], a
-	jr nz, .asm_f42d4
+	jr nz, .decrement_duration
 	ld a, [wMusicNoteDuration]
 	cp $1
-	jr z, .asm_f42d4
+	jr z, .decrement_duration
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_f42d4
+	jr nz, .decrement_duration
 	ld hl, rAUD1ENV
 	ld a, [wMusicEcho]
 	ld [hli], a
 	inc hl
 	ld a, $80
 	ld [hl], a
-.asm_f42d4
+.decrement_duration
 	ld a, [wMusicNoteDuration]
 	dec a
 	ld [wMusicNoteDuration], a
-	jr nz, .asm_f42f4
+	jr nz, .update_vibrato
 	ld a, [wMusicChannelPointers + 1]
 	ld h, a
 	ld a, [wMusicChannelPointers]
@@ -472,21 +472,21 @@ Music3_UpdateChannel1:
 	call Music3_PlayNextNote
 	ld a, [wMusicIsPlaying]
 	or a
-	jr z, .asm_f42fa
+	jr z, .channel_inactive
 	call Music3_f4714
-.asm_f42f4
+.update_vibrato
 	ld a, $0
 	call Music3_f485a
 	ret
-.asm_f42fa
+.channel_inactive
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_f4309
+	jr nz, .preserve_duty_bits
 	ld a, AUD1ENV_UP
 	ldh [rAUD1ENV], a
 	swap a ; AUD1HIGH_RESTART
 	ldh [rAUD1HIGH], a
-.asm_f4309
+.preserve_duty_bits
 	ldh a, [rAUD1LEN]
 	and AUD1LEN_DUTY
 	ldh [rAUD1LEN], a
@@ -495,31 +495,31 @@ Music3_UpdateChannel1:
 Music3_UpdateChannel2:
 	ld a, [wMusicIsPlaying + 1]
 	or a
-	jr z, .asm_f435f
+	jr z, .channel_inactive
 	ld a, [wMusicCh2CutoffEnable]
 	cp $0
-	jr z, .asm_f4339
+	jr z, .decrement_duration
 	ld a, [wMusicCutoffCountdown + 1]
 	dec a
 	ld [wMusicCutoffCountdown + 1], a
-	jr nz, .asm_f4339
+	jr nz, .decrement_duration
 	ld a, [wMusicNoteDuration + 1]
 	cp $1
-	jr z, .asm_f4339
+	jr z, .decrement_duration
 	ld a, [wSFXChannelMask]
 	bit 1, a
-	jr nz, .asm_f4339
+	jr nz, .decrement_duration
 	ld hl, rAUD2ENV
 	ld a, [wMusicEcho + 1]
 	ld [hli], a
 	inc hl
 	ld a, $80
 	ld [hl], a
-.asm_f4339
+.decrement_duration
 	ld a, [wMusicNoteDuration + 1]
 	dec a
 	ld [wMusicNoteDuration + 1], a
-	jr nz, .asm_f4359
+	jr nz, .update_vibrato
 	ld a, [wMusicChannelPointers + 3]
 	ld h, a
 	ld a, [wMusicChannelPointers + 2]
@@ -528,47 +528,47 @@ Music3_UpdateChannel2:
 	call Music3_PlayNextNote
 	ld a, [wMusicIsPlaying + 1]
 	or a
-	jr z, .asm_f435f
+	jr z, .channel_inactive
 	call Music3_f475a
-.asm_f4359
+.update_vibrato
 	ld a, $1
 	call Music3_f485a
 	ret
-.asm_f435f
+.channel_inactive
 	ld a, [wSFXChannelMask]
 	bit 1, a
-	jr nz, .asm_f436e
+	jr nz, .done
 	ld a, AUD2ENV_UP
 	ldh [rAUD2ENV], a
 	swap a ; AUD2HIGH_RESTART
 	ldh [rAUD2HIGH], a
-.asm_f436e
+.done
 	ret
 
 Music3_UpdateChannel3:
 	ld a, [wMusicIsPlaying + 2]
 	or a
-	jr z, .asm_f43be
+	jr z, .channel_inactive
 	ld a, [wMusicCh3CutoffEnable]
 	cp $0
-	jr z, .asm_f4398
+	jr z, .decrement_duration
 	ld a, [wMusicCutoffCountdown + 2]
 	dec a
 	ld [wMusicCutoffCountdown + 2], a
-	jr nz, .asm_f4398
+	jr nz, .decrement_duration
 	ld a, [wSFXChannelMask]
 	bit 2, a
-	jr nz, .asm_f4398
+	jr nz, .decrement_duration
 	ld a, [wMusicNoteDuration + 2]
 	cp $1
-	jr z, .asm_f4398
+	jr z, .decrement_duration
 	ld a, [wMusicEcho + 2]
 	ldh [rAUD3LEVEL], a
-.asm_f4398
+.decrement_duration
 	ld a, [wMusicNoteDuration + 2]
 	dec a
 	ld [wMusicNoteDuration + 2], a
-	jr nz, .asm_f43b8
+	jr nz, .update_vibrato
 	ld a, [wMusicChannelPointers + 5]
 	ld h, a
 	ld a, [wMusicChannelPointers + 4]
@@ -577,31 +577,31 @@ Music3_UpdateChannel3:
 	call Music3_PlayNextNote
 	ld a, [wMusicIsPlaying + 2]
 	or a
-	jr z, .asm_f43be
+	jr z, .channel_inactive
 	call Music3_f479c
-.asm_f43b8
+.update_vibrato
 	ld a, $2
 	call Music3_f485a
 	ret
-.asm_f43be
+.channel_inactive
 	ld a, [wSFXChannelMask]
 	bit 2, a
-	jr nz, .asm_f43cd
+	jr nz, .done
 	ld a, $0
 	ldh [rAUD3LEVEL], a
 	ld a, $80
 	ldh [rAUD3HIGH], a
-.asm_f43cd
+.done
 	ret
 
 Music3_UpdateChannel4:
 	ld a, [wMusicIsPlaying + 3]
 	or a
-	jr z, .asm_f4400
+	jr z, .channel_inactive
 	ld a, [wMusicNoteDuration + 3]
 	dec a
 	ld [wMusicNoteDuration + 3], a
-	jr nz, .asm_f43f6
+	jr nz, .duration_not_expired
 	ld a, [wMusicChannelPointers + 7]
 	ld h, a
 	ld a, [wMusicChannelPointers + 6]
@@ -610,26 +610,26 @@ Music3_UpdateChannel4:
 	call Music3_PlayNextNote
 	ld a, [wMusicIsPlaying + 3]
 	or a
-	jr z, .asm_f4400
+	jr z, .channel_inactive
 	call Music3_f480a
-	jr .asm_f4413
-.asm_f43f6
+	jr .done
+.duration_not_expired
 	ld a, [wMusicNoiseActive]
 	or a
-	jr z, .asm_f4413
+	jr z, .done
 	call Music3_f4839
 	ret
-.asm_f4400
+.channel_inactive
 	ld a, [wSFXChannelMask]
 	bit 3, a
-	jr nz, .asm_f4413
+	jr nz, .done
 	xor a
 	ld [wMusicNoiseActive], a
 	ld a, AUD4ENV_UP
 	ldh [rAUD4ENV], a
 	swap a ; AUD4GO_RESTART
 	ldh [rAUD4GO], a
-.asm_f4413
+.done
 	ret
 
 Music3_PlayNextNote:
@@ -710,7 +710,7 @@ Music3_note:
 	add hl, bc
 	ld a, [hl]
 	cp $80
-	jr z, .asm_f44b0
+	jr z, .skip_vibrato_reset
 	ld [hl], $1
 	xor a
 	ld hl, wMusicVibratoPhase
@@ -726,7 +726,7 @@ Music3_note:
 	ld hl, wMusicVibratoType
 	add hl, bc
 	ld [hl], a
-.asm_f44b0
+.skip_vibrato_reset
 	pop af
 	push de
 	ld hl, wMusicSpeed
@@ -735,18 +735,18 @@ Music3_note:
 	and $f
 	inc a
 	cp d
-	jr nc, .asm_f44c0
+	jr nc, .note_duration_capped
 	ld e, a
 	ld a, d
 	ld d, e
-.asm_f44c0
+.note_duration_capped
 	ld e, a
-.asm_f44c1
+.duration_multiply_loop
 	dec d
-	jr z, .asm_f44c7
+	jr z, .store_note_duration
 	add e
-	jr .asm_f44c1
-.asm_f44c7
+	jr .duration_multiply_loop
+.store_note_duration
 	ld hl, wMusicNoteDuration
 	add hl, bc
 	ld [hl], a
@@ -755,7 +755,7 @@ Music3_note:
 	ld a, e
 	cp $d9
 	ld a, d
-	jr z, .asm_f44fb
+	jr z, .store_cutoff_countdown
 	ld e, a
 	ld hl, wMusicCutoff
 	add hl, bc
@@ -763,16 +763,16 @@ Music3_note:
 	cp $8
 	ld d, a
 	ld a, e
-	jr z, .asm_f44fb
+	jr z, .store_cutoff_countdown
 	push hl
 	push bc
 	ld b, $0
 	ld c, a
 	ld hl, $0000
-.asm_f44e8
+.cutoff_multiply_loop
 	add hl, bc
 	dec d
-	jr nz, .asm_f44e8
+	jr nz, .cutoff_multiply_loop
 	srl h
 	rr l
 	srl h
@@ -782,7 +782,7 @@ Music3_note:
 	ld a, l
 	pop bc
 	pop hl
-.asm_f44fb
+.store_cutoff_countdown
 	ld hl, wMusicCutoffCountdown
 	add hl, bc
 	ld [hl], a
@@ -792,18 +792,18 @@ Music3_note:
 	add hl, bc
 	ld [hl], a
 	or a
-	jr nz, .asm_f450e
-	jp .asm_f458e
-.asm_f450e
+	jr nz, .apply_cutoff_settings
+	jp .save_channel_ptr
+.apply_cutoff_settings
 	swap a
 	dec a
 	ld h, a
 	ld a, $3
 	cp c
 	ld a, h
-	jr z, .asm_f451a
-	jr .asm_f4564
-.asm_f451a
+	jr z, .noise_channel_note
+	jr .tone_channel_note
+.noise_channel_note
 	push af
 	ld hl, wMusicOctave
 	add hl, bc
@@ -858,8 +858,8 @@ Music3_note:
 	ld [hl], d
 	ld a, $1
 	ld [wMusicNoiseActive], a
-	jr .asm_f458e
-.asm_f4564
+	jr .save_channel_ptr
+.tone_channel_note
 	ld hl, wMusicCh1CurPitch
 	add hl, bc
 	add hl, bc
@@ -892,7 +892,7 @@ Music3_note:
 	ld a, e
 	ld [hli], a
 	ld [hl], d
-.asm_f458e
+.save_channel_ptr
 	pop de
 	ld hl, wMusicChannelPointers
 	add hl, bc
@@ -919,12 +919,12 @@ Music3_octave:
 	push af
 	ld a, c
 	cp $2
-	jr nz, .asm_f45b6
+	jr nz, .not_wave_channel
 	pop af
 	inc a
 	ld [hl], a
 	jp Music3_PlayNextNote_pop
-.asm_f45b6
+.not_wave_channel
 	pop af
 	ld [hl], a
 	jp Music3_PlayNextNote_pop
@@ -1259,45 +1259,45 @@ Music3_preset:
 	ld a, [de]
 	inc de
 	cp $00
-	jr z, .asm_1dc7f9
+	jr z, .skip_volume
 	ld hl, wMusicVolume
 	add hl, bc
 	ld [hl], a
-.asm_1dc7f9
+.skip_volume
 	ld a, [de]
 	inc de
 	cp $ff
-	jr z, .asm_1dc804
+	jr z, .skip_duty
 	ld hl, wMusicDuty1
 	add hl, bc
 	ld [hl], a
-.asm_1dc804
+.skip_duty
 	ld a, [de]
 	inc de
 	cp $ff
-	jr z, .asm_1dc814
+	jr z, .skip_vibrato_type
 	ld hl, wMusicVibratoType
 	add hl, bc
 	ld [hl], a
 	ld hl, wMusicVibratoType2
 	add hl, bc
 	ld [hl], a
-.asm_1dc814
+.skip_vibrato_type
 	ld a, [de]
 	inc de
 	cp $ff
-	jr z, .asm_1dc81f
+	jr z, .skip_vibrato_delay
 	ld hl, wMusicVibratoDelay
 	add hl, bc
 	ld [hl], a
-.asm_1dc81f
+.skip_vibrato_delay
 	ld a, [de]
 	cp $80
-	jr z, .asm_1dc829
+	jr z, .skip_freq_offset
 	ld hl, wMusicFrequencyOffset
 	add hl, bc
 	ld [hl], a
-.asm_1dc829
+.skip_freq_offset
 	pop de
 	ld h, d
 	ld l, e
@@ -1384,38 +1384,38 @@ Music3_PlayNextNote_pop:
 Music3_f4714:
 	ld a, [wMusicCh1CutoffEnable]
 	cp $0
-	jr z, .asm_f474a
+	jr z, .clear_tie_flags
 	ld d, $0
 	ld hl, wMusicTie
 	ld a, [hl]
 	cp $80
-	jr z, .asm_f4733
+	jr z, .apply_note_to_ch1
 	ld a, [wMusicVolume]
 	ld d, a
 	ld a, [wAudio_d080]
 	cp $00
-	jr z, .asm_1dc8b5
+	jr z, .check_sfx_mask
 	ld a, [wAudio_d07a]
 	ld e, a
 	ld hl, wAudio_d07d
 	ld a, [hl]
 	inc [hl]
 	and $01
-	jr z, .asm_1dc8b5
+	jr z, .check_sfx_mask
 	ld d, e
-.asm_1dc8b5
+.check_sfx_mask
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_f4749
+	jr nz, .done
 	ld a, d
 	ldh [rAUD1ENV], a
 	ld d, $80
-.asm_f4733
+.apply_note_to_ch1
 	ld hl, wMusicTie
 	ld [hl], $2
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_f4749
+	jr nz, .done
 	ld a, [wAudio_d083]
 	ldh [rAUD1SWEEP], a
 	ld a, [wMusicDuty1]
@@ -1425,14 +1425,14 @@ Music3_f4714:
 	ld a, [wMusicCh1CurOctave]
 	or d
 	ldh [rAUD1HIGH], a
-.asm_f4749
+.done
 	ret
-.asm_f474a
+.clear_tie_flags
 	ld hl, wMusicTie
 	ld [hl], $0
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_f4749
+	jr nz, .done
 	ld hl, rAUD1ENV
 	ld a, AUD1ENV_UP
 	ld [hli], a
@@ -1444,38 +1444,38 @@ Music3_f4714:
 Music3_f475a:
 	ld a, [wMusicCh2CutoffEnable]
 	cp $0
-	jr z, .asm_f478c
+	jr z, .clear_tie_flags
 	ld d, $0
 	ld hl, wMusicTie + 1
 	ld a, [hl]
 	cp $80
-	jr z, .asm_f4779
+	jr z, .apply_note_to_ch2
 	ld a, [wMusicVolume + 1]
 	ld d, a
 	ld a, [wAudio_d080 + 1]
 	cp $00
-	jr z, .asm_1dc924
+	jr z, .check_sfx_mask
 	ld a, [wAudio_d07a + 1]
 	ld e, a
 	ld hl, wAudio_d07d + 1
 	ld a, [hl]
 	inc [hl]
 	and $01
-	jr z, .asm_1dc924
+	jr z, .check_sfx_mask
 	ld d, e
-.asm_1dc924
+.check_sfx_mask
 	ld a, [wSFXChannelMask]
 	bit 1, a
-	jr nz, .asm_f478b
+	jr nz, .done
 	ld a, d
 	ldh [rAUD2ENV], a
 	ld d, $80
-.asm_f4779
+.apply_note_to_ch2
 	ld hl, wMusicTie + 1
 	ld [hl], $2
 	ld a, [wSFXChannelMask]
 	bit 1, a
-	jr nz, .asm_f478b
+	jr nz, .done
 	ld a, [wMusicDuty2]
 	ldh [rAUD2LEN], a
 	ld a, [wMusicCh2CurPitch]
@@ -1483,14 +1483,14 @@ Music3_f475a:
 	ld a, [wMusicCh2CurOctave]
 	or d
 	ldh [rAUD2HIGH], a
-.asm_f478b
+.done
 	ret
-.asm_f478c
+.clear_tie_flags
 	ld hl, wMusicTie + 1
 	ld [hl], $0
 	ld a, [wSFXChannelMask]
 	bit 1, a
-	jr nz, .asm_f478b
+	jr nz, .done
 	ld hl, rAUD2ENV
 	ld a, AUD2ENV_UP
 	ld [hli], a
@@ -1511,39 +1511,39 @@ Music3_f479c:
 .no_wave_change
 	ld a, [wMusicCh3CutoffEnable]
 	cp $0
-	jr z, .asm_f47e1
+	jr z, .clear_tie_flags
 	ld hl, wMusicTie + 2
 	ld a, [hl]
 	cp $80
-	jr z, .asm_f47cc
+	jr z, .apply_note_to_ch3
 	ld a, [wMusicVolume + 2]
 	ld d, a
 	ld a, [wAudio_d080 + 2]
 	cp $00
-	jr z, .asm_1dc99c
+	jr z, .check_sfx_mask
 	ld a, [wAudio_d07a + 2]
 	ld e, a
 	ld hl, wAudio_d07d + 2
 	ld a, [hl]
 	inc [hl]
 	and $01
-	jr z, .asm_1dc99c
+	jr z, .check_sfx_mask
 	ld d, e
-.asm_1dc99c
+.check_sfx_mask
 	ld a, [wSFXChannelMask]
 	bit 2, a
-	jr nz, .asm_f47e0
+	jr nz, .done
 	ld a, d
 	ldh [rAUD3LEVEL], a
 	xor a
 	ldh [rAUD3ENA], a
 	ld d, $80
-.asm_f47cc
+.apply_note_to_ch3
 	ld hl, wMusicTie + 2
 	ld [hl], $2
 	ld a, [wSFXChannelMask]
 	bit 2, a
-	jr nz, .asm_f47e0
+	jr nz, .done
 	xor a
 	ldh [rAUD3LEN], a
 	ld a, [wMusicCh3CurPitch]
@@ -1553,14 +1553,14 @@ Music3_f479c:
 	ld a, [wMusicCh3CurOctave]
 	or d
 	ldh [rAUD3HIGH], a
-.asm_f47e0
+.done
 	ret
-.asm_f47e1
+.clear_tie_flags
 	ld hl, wMusicTie + 2
 	ld [hl], $0
 	ld a, [wSFXChannelMask]
 	bit 2, a
-	jr nz, .asm_f47e0
+	jr nz, .done
 	xor a
 	ldh [rAUD3ENA], a
 	ret
@@ -1592,10 +1592,10 @@ Music3_LoadWaveInstrument:
 Music3_f480a:
 	ld a, [wSFXChannelMask]
 	bit 3, a
-	jr nz, .asm_f4829
+	jr nz, .done
 	ld a, [wMusicCh4CutoffEnable]
 	cp $0
-	jr z, .asm_f482a
+	jr z, .clear_noise_active
 	ld de, rAUD4LEN
 	ld hl, wMusicNoiseLenBuffer
 	ld a, [hli]
@@ -1609,9 +1609,9 @@ Music3_f480a:
 	inc e
 	ld a, [hli]
 	ld [de], a
-.asm_f4829
+.done
 	ret
-.asm_f482a
+.clear_noise_active
 	xor a
 	ld [wMusicNoiseActive], a
 	ld hl, rAUD4ENV
@@ -1625,26 +1625,26 @@ Music3_f480a:
 Music3_f4839:
 	ld a, [wSFXChannelMask]
 	bit 3, a
-	jr z, .asm_f4846
+	jr z, .read_noise_data
 	xor a
 	ld [wMusicNoiseActive], a
-	jr .asm_f4859
-.asm_f4846
+	jr .done
+.read_noise_data
 	ld hl, wMusicNoiseCurDataPtr
 	ld a, [hli]
 	ld d, [hl]
 	ld e, a
 	ld a, [de]
 	cp $ff
-	jr nz, .asm_f4853
-	jr Music3_f480a.asm_f482a
-.asm_f4853
+	jr nz, .not_end_of_pattern
+	jr Music3_f480a.clear_noise_active
+.not_end_of_pattern
 	ldh [rAUD4POLY], a
 	inc de
 	ld a, d
 	ld [hld], a
 	ld [hl], e
-.asm_f4859
+.done
 	ret
 
 Music3_f485a:
@@ -1663,7 +1663,7 @@ Music3_f4866:
 	or a
 	ld hl, wMusicStereoPanning
 	ld a, [hli]
-	jr z, .asm_f4888
+	jr z, .apply_panning_mask
 	ld a, [wSFXChannelMask]
 	and $f
 	ld d, a
@@ -1678,7 +1678,7 @@ Music3_f4866:
 	ld a, [hl]
 	and e
 	or d
-.asm_f4888
+.apply_panning_mask
 	ld d, a
 	ld a, [wMusicChannelMuteMask]
 	xor $ff
@@ -1695,14 +1695,14 @@ Music3_UpdateVibrato:
 	add hl, bc
 	ld a, [hl]
 	cp $0
-	jr z, .asm_f4902
+	jr z, .load_current_pitch
 	ld hl, wMusicVibratoCounter
 	add hl, bc
 	cp [hl]
-	jr z, .asm_f48ab
+	jr z, .apply_vibrato_table
 	inc [hl]
-	jr .asm_f4902
-.asm_f48ab
+	jr .load_current_pitch
+.apply_vibrato_table
 	ld hl, wMusicVibratoType
 	add hl, bc
 	ld e, [hl]
@@ -1723,7 +1723,7 @@ Music3_UpdateVibrato:
 	add hl, de
 	ld a, [hli]
 	cp $80
-	jr z, .asm_f48ee
+	jr z, .vibrato_phase_wrap
 	cp $7f
 	jr z, Music3_1dcaff
 	ld hl, wMusicCh1CurPitch
@@ -1733,7 +1733,7 @@ Music3_UpdateVibrato:
 	inc hl
 	ld d, [hl]
 	bit 7, a
-	jr nz, .asm_f48df
+	jr nz, .pitch_subtract
 	add e
 	ld e, a
 	ld a, $0
@@ -1741,7 +1741,7 @@ Music3_UpdateVibrato:
 	and $7
 	ld d, a
 	ret
-.asm_f48df
+.pitch_subtract
 	xor $ff
 	inc a
 	push bc
@@ -1755,7 +1755,7 @@ Music3_UpdateVibrato:
 	ld d, a
 	pop bc
 	ret
-.asm_f48ee
+.vibrato_phase_wrap
 	push hl
 	ld hl, wMusicVibratoPhase
 	add hl, bc
@@ -1763,12 +1763,12 @@ Music3_UpdateVibrato:
 	pop hl
 	ld a, [hl]
 	cp $80
-	jr z, .asm_f48ab
+	jr z, .apply_vibrato_table
 	ld hl, wMusicVibratoType
 	add hl, bc
 	ld [hl], a
-	jr .asm_f48ab
-.asm_f4902
+	jr .apply_vibrato_table
+.load_current_pitch
 	ld hl, wMusicCh1CurPitch
 	add hl, bc
 	add hl, bc
@@ -1780,28 +1780,28 @@ Music3_UpdateVibrato:
 Music3_1dcaff:
 	ld a, c
 	cp $0
-	jr nz, .asm_1dcb12
+	jr nz, .check_ch2_duty
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_1dcb22
+	jr nz, .advance_vibrato_phase
 	ld de, rAUD1LEN
 	ld a, [hli]
 	ld [de], a
-	jr .asm_1dcb22
-.asm_1dcb12
+	jr .advance_vibrato_phase
+.check_ch2_duty
 	cp $1
-	jr nz, .asm_1dcb22
+	jr nz, .advance_vibrato_phase
 	ld a, [wSFXChannelMask]
 	bit 0, a
-	jr nz, .asm_1dcb22
+	jr nz, .advance_vibrato_phase
 	ld de, rAUD2LEN
 	ld a, [hli]
 	ld [de], a
-.asm_1dcb22
+.advance_vibrato_phase
 	ld hl, wMusicVibratoPhase
 	add hl, bc
 	inc [hl]
-	jp Music3_UpdateVibrato.asm_f48ab
+	jp Music3_UpdateVibrato.apply_vibrato_table
 
 Music3_f490b:
 	cp $0
@@ -1861,14 +1861,14 @@ Music3_f4967:
 	add hl, bc
 	ld a, [hl]
 	bit 7, a
-	jr nz, .asm_f4976
+	jr nz, .freq_offset_negative
 	add e
 	ld e, a
 	ld a, d
 	adc b
 	ld d, a
 	ret
-.asm_f4976
+.freq_offset_negative
 	xor $ff
 	ld h, a
 	ld a, e
@@ -1883,31 +1883,31 @@ Music3_f4980:
 	ld a, [wSFXChannelMask]
 	ld d, a
 	bit 0, d
-	jr nz, .asm_f4990
+	jr nz, .check_ch2_mute
 	ld a, AUD1ENV_UP
 	ldh [rAUD1ENV], a
 	swap a ; AUD1HIGH_RESTART
 	ldh [rAUD1HIGH], a
-.asm_f4990
+.check_ch2_mute
 	bit 1, d
-	jr nz, .asm_f499c
+	jr nz, .check_ch4_mute
 	swap a
 	ldh [rAUD2ENV], a
 	swap a ; AUD2HIGH_RESTART
 	ldh [rAUD2HIGH], a
-.asm_f499c
+.check_ch4_mute
 	bit 3, d
-	jr nz, .asm_f49a8
+	jr nz, .check_ch3_mute
 	swap a
 	ldh [rAUD4ENV], a
 	swap a ; AUD4GO_RESTART
 	ldh [rAUD4GO], a
-.asm_f49a8
+.check_ch3_mute
 	bit 2, d
-	jr nz, .asm_f49b0
+	jr nz, .done
 	ld a, $0
 	ldh [rAUD3LEVEL], a
-.asm_f49b0
+.done
 	ret
 
 Music3_CheckForEndOfSong:

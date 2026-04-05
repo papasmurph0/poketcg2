@@ -9,13 +9,13 @@ GetAmountOfCardsOwned::
 .next_deck
 	ld a, [de]
 	bit 0, a
-	jr nz, .asm_1ac2
+	jr nz, .count_deck
 	inc de
 	ld a, [de]
 	dec de
 	or a
 	jr z, .skip_deck ; jump if deck empty
-.asm_1ac2
+.count_deck
 	ld a, c
 	ld bc, DECK_SIZE
 	add hl, bc
