@@ -1717,3 +1717,12 @@ Common successful return path for HandleFireFortYukiWarpFadeInPreload after over
 src/engine/bank0c.asm .asm_32a26 -> .done
 Common successful return path for HandleFireFortYukiInteractions after NPC and optional OW interaction handling.
 
+src/engine/bank0c.asm .asm_32be6 -> .done
+Common return path for ScriptFireFortYukiDoorInteraction before resuming overworld input handling.
+
+src/engine/bank0c.asm .asm_32c64 -> .apply_closed_door_overlays
+In HandleFireFortShokoWarpFadeInPreload, branch that applies closed-door overlays when Shoko room door event is unset.
+
+src/engine/bank0c.asm .asm_32c88 -> .done
+Common successful return path for HandleFireFortShokoInteractions after NPC and optional OW interaction handling.
+

@@ -4368,14 +4368,14 @@ ScriptFireFortYukiAfterDuel: ; Func_32b43
 ScriptFireFortYukiDoorInteraction: ; Func_32bd4
 	ld a, EVENT_YUKIS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_32be6
+	jr nz, .done
 	xor a
 	start_script
 	start_dialog
 	print_text DoorsAreShutText
 	end_dialog
 	end_script
-.asm_32be6
+.done
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -4428,10 +4428,10 @@ LoadFireFortShokoNPCs: ; Func_32c51
 HandleFireFortShokoWarpFadeInPreload: ; Func_32c5a
 	ld a, EVENT_SHOKOS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_32c64
+	jr z, .apply_closed_door_overlays
 	scf
 	ret
-.asm_32c64
+.apply_closed_door_overlays
 	ld bc, TILEMAP_07D
 	lb de, 3, 7
 	farcall AddOWTilemapOverlay
@@ -4444,10 +4444,10 @@ HandleFireFortShokoWarpFadeInPreload: ; Func_32c5a
 HandleFireFortShokoInteractions: ; Func_32c7a
 	ld hl, FireFortShoko_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_32c88
+	jr nc, .done
 	ld hl, FireFortShoko_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_32c88
+.done
 	scf
 	ret
 
