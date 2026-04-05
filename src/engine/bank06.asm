@@ -166,12 +166,12 @@ PlayStatusConditionQueueAnimations::
 	ld c, a
 	ldh a, [hWhoseTurn]
 	cp c
-	jr z, .asm_18a5d
+	jr z, .own_turn_check
 	cp d
 	jr z, .got_anim
 	ld e, ATK_ANIM_OWN_POISON
 	jr .got_anim
-.asm_18a5d
+.own_turn_check
 	cp d
 	jr nz, .got_anim
 	ld e, ATK_ANIM_OWN_POISON
@@ -493,37 +493,37 @@ UpdateDuelAnimationScreen:
 ; opponent's turn
 	ld a, [wDuelType]
 	cp $00
-	jr z, .asm_50c6
+	jr z, .non_link_opp_turn
 ; link duel or vs. AI
 	bit 7, l
-	jr z, .asm_50e2
-	jr .asm_50d2
-.asm_50c6
+	jr z, .set_opp_play_area
+	jr .set_player_play_area
+.non_link_opp_turn
 	bit 7, l
-	jr z, .asm_50da
-	jr .asm_50ea
+	jr z, .set_player_play_area_opp_view
+	jr .set_opp_play_area_player_view
 
 .players_turn
 	bit 7, l
-	jr z, .asm_50d2
-	jr .asm_50e2
+	jr z, .set_player_play_area
+	jr .set_opp_play_area
 
-.asm_50d2
+.set_player_play_area
 	ld l, UNKNOWN_SCREEN_4
 	ld h, PLAYER_TURN
 	ld a, DUEL_ANIM_SCREEN_PLAYER_PLAY_AREA
 	jr .ok
-.asm_50da
+.set_player_play_area_opp_view
 	ld l, UNKNOWN_SCREEN_4
 	ld h, OPPONENT_TURN
 	ld a, DUEL_ANIM_SCREEN_PLAYER_PLAY_AREA
 	jr .ok
-.asm_50e2
+.set_opp_play_area
 	ld l, UNKNOWN_SCREEN_5
 	ld h, OPPONENT_TURN
 	ld a, DUEL_ANIM_SCREEN_OPP_PLAY_AREA
 	jr .ok
-.asm_50ea
+.set_opp_play_area_player_view
 	ld l, UNKNOWN_SCREEN_5
 	ld h, PLAYER_TURN
 	ld a, DUEL_ANIM_SCREEN_OPP_PLAY_AREA
@@ -559,10 +559,10 @@ SetScreenForDuelAnimation::
 	ld l, PLAYER_TURN
 	ld a, [wDuelType]
 	cp $00
-	jr nz, .asm_5127
+	jr nz, .skip_load_whose_turn
 	ld a, [wWhoseTurn]
 	ld l, a
-.asm_5127
+.skip_load_whose_turn
 	call DrawYourOrOppPlayAreaScreen_Bank0
 	pop af
 	ld [wDuelDisplayedScreen], a
@@ -2586,15 +2586,15 @@ InitSaveData:
 	or a
 	jr z, .terminating_byte
 	cp $0f
-	jr nz, .asm_199dc
+	jr nz, .not_byte_0f
 	ld c, a
 	jr .next_char
-.asm_199dc
+.not_byte_0f
 	cp $0e
-	jr nz, .asm_199e3
+	jr nz, .not_byte_0e
 	ld c, a
 	jr .next_char
-.asm_199e3
+.not_byte_0e
 	cp $06
 	jr c, .copy_2_bytes
 	ld a, c
@@ -2630,7 +2630,7 @@ _CardPopMenu:
 	ld [wCardPopMenuItem], a
 
 ; loads scene for Card Pop! menu
-.asm_19c09
+.reload_card_pop_scene
 	call SetSpriteAnimationsAsVBlankFunction
 	ld a, SCENE_CARD_POP_MENU
 	lb bc, 0, 0
@@ -2668,11 +2668,11 @@ _CardPopMenu:
 
 .card_pop
 	call DoCardPop
-	jr .asm_19c09
+	jr .reload_card_pop_scene
 
 .view_records
 	call ViewCardPopRecords
-	jr .asm_19c09
+	jr .reload_card_pop_scene
 
 .cleared_game
 	lb de,  8,  0
@@ -2707,7 +2707,7 @@ _CardPopMenu:
 
 .rare_card_pop
 	call DoRareCardPop
-	jp .asm_19c09
+	jp .reload_card_pop_scene
 
 .exit
 	ret
@@ -3585,9 +3585,9 @@ ViewCardPopRecords:
 	or a
 	jr z, .got_cur_menu_item
 	sub 5
-	jr nc, .asm_1a252
+	jr nc, .store_scroll_offset
 	xor a
-.asm_1a252
+.store_scroll_offset
 	ld [hl], a
 	jr .update_list_entries
 
@@ -3975,9 +3975,9 @@ ConnectPrinter:
 	ld hl, wPrinterStatus
 	ld a, [hl]
 	or a
-	jr nz, .asm_1a4c4
+	jr nz, .use_existing_status
 	ld [hl], $ff
-.asm_1a4c4
+.use_existing_status
 	ld a, [hl]
 	cp $ff
 	jr z, ShowPrinterIsNotConnected
@@ -4163,11 +4163,11 @@ SendExtendedCardTilesToPrinterAndPrint: ; Func_19f99
 	ret c
 	ld hl, sGfxBuffer0 + $8 tiles
 	ld c, $06
-.asm_19fa2
+.send_tile_loop
 	call SendTilesToPrinter
 	ret c
 	dec c
-	jr nz, .asm_19fa2
+	jr nz, .send_tile_loop
 	call SendPrinterInstructionPacket_1Sheet
 	ret
 
@@ -4230,11 +4230,11 @@ SendTilesToPrinterAndPrintWith3LineFeeds: ; Func_1a011
 	ret c
 	ld hl, sGfxBuffer0
 	ld c, $05
-.asm_1a01a
+.send_tile_loop
 	call SendTilesToPrinter
 	ret c
 	dec c
-	jr nz, .asm_1a01a
+	jr nz, .send_tile_loop
 	call SendPrinterInstructionPacket_1Sheet_3LineFeeds
 	ret
 
@@ -4458,15 +4458,15 @@ GetPrinterContrastSerialData:
 
 Func_1a14b: ; unreferenced
 	ld a, $01
-	jr .asm_1a15d
+	jr .store_and_return
 	ld a, $02
-	jr .asm_1a15d
+	jr .store_and_return
 	ld a, $03
-	jr .asm_1a15d
+	jr .store_and_return
 	ld a, $04
-	jr .asm_1a15d
+	jr .store_and_return
 	ld a, $05
-.asm_1a15d
+.store_and_return
 	ld [wce9d], a
 	scf
 	ret
@@ -4514,7 +4514,7 @@ PrintDeckConfiguration:
 	ld d, [hl]
 	inc hl
 	or d
-	jr z, .asm_1a1d6
+	jr z, .end_of_card_list
 	call LoadCardDataToBuffer1_FromCardID
 
 	; find out this card's count
@@ -4539,7 +4539,7 @@ PrintDeckConfiguration:
 	jr c, .printer_error
 	jr .loop_cards
 
-.asm_1a1d6
+.end_of_card_list
 	call SendCardListToPrinter
 	jr c, .printer_error
 	call ResetPrinterCommunicationSettings
@@ -4675,10 +4675,10 @@ PrintCardList:
 	call ProcessTextFromID
 	ld a, [wPrintOnlyStarRarity]
 	or a
-	jr z, .asm_1a2c2
+	jr z, .skip_star_rating_text
 	lb de, 4, 85
 	call GenerateAndPlaceTextTileIfNeeded
-.asm_1a2c2
+.skip_star_rating_text
 	ld a, $ff
 	ld [wCurPrinterCardType], a
 	xor a
@@ -4749,10 +4749,10 @@ PrintCardList:
 
 	ld hl, wPrinterNumCardTypes
 	inc [hl]
-	jr nz, .asm_1a99d
+	jr nz, .card_type_count_done
 	inc hl
 	inc [hl]
-.asm_1a99d
+.card_type_count_done
 	ld hl, wPrinterCurCardTypeEntryCount
 	inc [hl]
 	call LoadCardInfoForPrinter
@@ -5476,36 +5476,36 @@ ConvertCardGfxForPrinter: ; Func_1adbd
 	pop de
 	ld hl, wc000
 	ld c, $08
-.asm_1adcd
+.loop_sections
 	ld b, $06
-.asm_1adcf
+.loop_rows
 	push bc
 	ld c, $08
-.asm_1add2
+.loop_columns
 	ld b, $02
-.asm_1add4
+.loop_byte_pairs
 	push bc
 	push hl
 	ld c, [hl]
 	ld b, $04
-.asm_1add9
+.shift_upper_bits
 	rr c
 	rra
 	sra a
 	dec b
-	jr nz, .asm_1add9
+	jr nz, .shift_upper_bits
 	ld hl, $c0
 	add hl, de
 	ld [hli], a
 	inc hl
 	ld [hl], a
 	ld b, $04
-.asm_1adea
+.shift_lower_bits
 	rr c
 	rra
 	sra a
 	dec b
-	jr nz, .asm_1adea
+	jr nz, .shift_lower_bits
 	ld [de], a
 	ld hl, $2
 	add hl, de
@@ -5515,14 +5515,14 @@ ConvertCardGfxForPrinter: ; Func_1adbd
 	inc de
 	inc hl
 	dec b
-	jr nz, .asm_1add4
+	jr nz, .loop_byte_pairs
 	inc de
 	inc de
 	dec c
-	jr nz, .asm_1add2
+	jr nz, .loop_columns
 	pop bc
 	dec b
-	jr nz, .asm_1adcf
+	jr nz, .loop_rows
 	ld a, $c0
 	add e
 	ld e, a
@@ -5530,7 +5530,7 @@ ConvertCardGfxForPrinter: ; Func_1adbd
 	adc d
 	ld d, a
 	dec c
-	jr nz, .asm_1adcd
+	jr nz, .loop_sections
 	ret
 
 LoadHandCardsIcon:
@@ -5790,34 +5790,34 @@ UpdateNamingScreenUI:
 
 	ld a, [wNamingScreenMode]
 	or a
-	jr nz, .asm_1afe5
+	jr nz, .not_hiragana
 ; NAME_MODE_HIRAGANA
 	ld hl, .switches_from_hiragana
 	call PlaceTextItems
 	ldtx hl, HiraganaKeyboardText
-	jr .asm_1b00a
-.asm_1afe5
+	jr .print_keyboard_text
+.not_hiragana
 	dec a
-	jr nz, .asm_1aff3
+	jr nz, .not_katakana
 ; NAME_MODE_KATAKANA
 	ld hl, .switches_from_katakana
 	call PlaceTextItems
 	ldtx hl, KatakanaKeyboardText
-	jr .asm_1b00a
-.asm_1aff3
+	jr .print_keyboard_text
+.not_katakana
 	dec a
-	jr nz, .asm_1b001
+	jr nz, .not_upper_abc
 ; NAME_MODE_UPPER_ABC
 	ld hl, .switches_from_uppercase
 	call PlaceTextItems
 	ldtx hl, UppercaseKeyboardText
-	jr .asm_1b00a
-.asm_1b001
+	jr .print_keyboard_text
+.not_upper_abc
 ; NAME_MODE_LOWER_ABC
 	ld hl, .switches_from_lowercase
 	call PlaceTextItems
 	ldtx hl, LowercaseKeyboardText
-.asm_1b00a
+.print_keyboard_text
 	lb de, 2, 4
 	call InitTextPrinting
 	call ProcessTextFromID
@@ -5950,12 +5950,12 @@ HandleNamingScreenInput:
 	pop hl
 	sub d ; cursor_x - d
 	cp -1
-	jr nz, .asm_1b0f1
+	jr nz, .check_boundary_minus2
 	; wrap around
 	ld a, c
 	sub 2
 	jr .apply_x_value
-.asm_1b0f1
+.check_boundary_minus2
 	cp -2
 	jr nz, .move_left
 	; wrap around
@@ -6028,10 +6028,10 @@ HandleNamingScreenInput:
 	inc hl
 	ld a, [wNamingScreenMode]
 	cp NAME_MODE_LOWER_ABC
-	jr nz, .asm_1b14a
+	jr nz, .read_char_data
 	inc hl
 	inc hl
-.asm_1b14a
+.read_char_data
 	ld d, [hl]
 	push de
 	call HideCursorAtCharPosition
@@ -6095,9 +6095,9 @@ DrawSymbolAtCharPosition:
 	ld c, a
 	ld a, [wNamingScreenCursorRow]
 	or a
-	jr z, .asm_1b1ae
+	jr z, .skip_row_increment
 	inc c
-.asm_1b1ae
+.skip_row_increment
 	ld b, [hl] ; x
 	dec b
 	ld a, e ; tile
@@ -6125,7 +6125,7 @@ UpdateNameTextCursor:
 	jr z, .done ; cursor is invisible, done
 	ld a, [wNamingScreenCursorRow]
 	or a
-	jr nz, .asm_1b201
+	jr nz, .cursor_row_1
 
 ; place text cursor on the next name character position
 	ld a, [wNamingScreenBufferLength]
@@ -6158,21 +6158,21 @@ UpdateNameTextCursor:
 	pop af
 	ret
 
-.asm_1b201
+.cursor_row_1
 	ld a, [wNamingScreenBufferLength]
 	sub $24
-	jr c, .asm_1b212
+	jr c, .set_y_24
 	cp $24
-	jr nz, .asm_1b20e
+	jr nz, .set_y_32
 	dec a
 	dec a
-.asm_1b20e
+.set_y_32
 	ld e, 32 ; y
-	jr .asm_1b217
-.asm_1b212
+	jr .compute_cursor_x
+.set_y_24
 	ld a, [wNamingScreenBufferLength]
 	ld e, 24 ; y
-.asm_1b217
+.compute_cursor_x
 	sra a
 	ld l, a
 	ld h, 8
@@ -6221,7 +6221,7 @@ SelectKeyboardItem:
 	cp KEYBOARD_DONE
 	jp z, .set_carry
 	cp KEYBOARD_TOGGLE_KATAKANA
-	jr nz, .asm_1b276
+	jr nz, .not_katakana_toggle
 	ld a, [wNamingScreenMode]
 	or a
 	jr nz, .hiragana_mode
@@ -6230,9 +6230,9 @@ SelectKeyboardItem:
 .hiragana_mode
 	xor a ; NAME_MODE_HIRAGANA
 	jp .set_mode
-.asm_1b276
+.not_katakana_toggle
 	cp KEYBOARD_TOGGLE_UPPER_ABC
-	jr nz, .asm_1b289
+	jr nz, .not_upper_abc_toggle
 	ld a, [wNamingScreenMode]
 	cp NAME_MODE_UPPER_ABC
 	jr c, .not_upper_abc_mode
@@ -6241,7 +6241,7 @@ SelectKeyboardItem:
 .not_upper_abc_mode
 	ld a, NAME_MODE_UPPER_ABC
 	jr .set_mode
-.asm_1b289
+.not_upper_abc_toggle
 	cp KEYBOARD_TOGGLE_LOWER_ABC
 	jr nz, .character_item
 	ld a, [wNamingScreenMode]
@@ -6314,11 +6314,11 @@ SelectKeyboardItem:
 	jr nz, .add_character
 	ld a, [wNamingScreenMode]
 	or a
-	jr nz, .asm_1b2fb
+	jr nz, .katakana_mode
 	; NAME_MODE_HIRAGANA
 	ld a, TX_HIRAGANA
 	jr .add_character
-.asm_1b2fb
+.katakana_mode
 	; NAME_MODE_KATAKANA
 	ld a, TX_KATAKANA
 	jr .add_character
@@ -6624,10 +6624,10 @@ CopyBBytesFromHLToDE: ; Func_1b8f1
 	ld a, b
 	or a
 	ret z
-.asm_1b8f4
+.copy_loop
 	ld a, [hli]
 	ld [de], a
 	inc de
 	dec b
-	jr nz, .asm_1b8f4
+	jr nz, .copy_loop
 	ret

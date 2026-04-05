@@ -1810,3 +1810,120 @@ Common successful return path for HandleColorlessAltarEntranceWarpFadeInPreload 
 src/engine/bank06.asm .asm_1af3b -> .handle_keyboard_input
 In the naming-screen input loop, branch that handles normal keyboard input when SELECT is not held.
 
+
+src/engine/bank06.asm .asm_18a5d -> .own_turn_check
+In PlayStatusConditionQueueAnimations, branch where wWhoseTurn matches hWhoseTurn; selects ATK_ANIM_OWN_POISON if the card is at the expected position.
+
+src/engine/bank06.asm .asm_50c6 -> .non_link_opp_turn
+In UpdateDuelAnimationScreen set_play_area_screen, opponent's turn path for non-link (single-player) duel type; selects play area screen based on location param bit 7.
+
+src/engine/bank06.asm .asm_50d2 -> .set_player_play_area
+Loads DUEL_ANIM_SCREEN_PLAYER_PLAY_AREA with PLAYER_TURN perspective (h=PLAYER_TURN, l=UNKNOWN_SCREEN_4).
+
+src/engine/bank06.asm .asm_50da -> .set_player_play_area_opp_view
+Loads DUEL_ANIM_SCREEN_PLAYER_PLAY_AREA with OPPONENT_TURN perspective (non-link duel, bit7 clear).
+
+src/engine/bank06.asm .asm_50e2 -> .set_opp_play_area
+Loads DUEL_ANIM_SCREEN_OPP_PLAY_AREA with OPPONENT_TURN perspective (h=OPPONENT_TURN, l=UNKNOWN_SCREEN_5).
+
+src/engine/bank06.asm .asm_50ea -> .set_opp_play_area_player_view
+Loads DUEL_ANIM_SCREEN_OPP_PLAY_AREA with PLAYER_TURN perspective (non-link duel, bit7 set).
+
+src/engine/bank06.asm .asm_5127 -> .skip_load_whose_turn
+In SetScreenForDuelAnimation set_play_area_screen, skips loading wWhoseTurn into l for non-zero duel types (link/AI).
+
+src/engine/bank06.asm .asm_199dc -> .not_byte_0f
+In text-format copy loop, character is not $0f; falls through to check for $0e byte marker.
+
+src/engine/bank06.asm .asm_199e3 -> .not_byte_0e
+In text-format copy loop, character is neither $0f nor $0e; applies standard copy logic based on value vs $06.
+
+src/engine/bank06.asm .asm_19c09 -> .reload_card_pop_scene
+Loop-back point in _CardPopMenu that reloads the Card Pop! scene and re-initializes the menu from scratch.
+
+src/engine/bank06.asm .asm_1a252 -> .store_scroll_offset
+Merge point after clamping card-pop record list scroll offset to zero on underflow; stores result to wCardPopRecordListScrollOffset.
+
+src/engine/bank06.asm .asm_1a4c4 -> .use_existing_status
+In ConnectPrinter, wPrinterStatus is already non-zero; skip setting it to $ff and read existing status value.
+
+src/engine/bank06.asm .asm_19fa2 -> .send_tile_loop
+Loop in SendExtendedCardTilesToPrinterAndPrint that sends 6 tile chunks from sGfxBuffer0 to the printer.
+
+src/engine/bank06.asm .asm_1a01a -> .send_tile_loop
+Loop in SendTilesToPrinterAndPrintWith3LineFeeds that sends 5 tile chunks from sGfxBuffer0 to the printer.
+
+src/engine/bank06.asm .asm_1a15d -> .store_and_return
+In unreferenced Func_1a14b (dead code), merge point that stores a value (1-5) into wce9d, sets carry, and returns.
+
+src/engine/bank06.asm .asm_1a1d6 -> .end_of_card_list
+In PrintDeckConfiguration card loop, reached when card ID is zero; sends accumulated card list to printer.
+
+src/engine/bank06.asm .asm_1a2c2 -> .skip_star_rating_text
+In collection print setup, skips drawing the star-rarity tile when wPrintOnlyStarRarity is zero.
+
+src/engine/bank06.asm .asm_1a99d -> .card_type_count_done
+In collection card loop, merge point after optional high-byte increment of wPrinterNumCardTypes on overflow; continues to entry count increment.
+
+src/engine/bank06.asm .asm_1adcd -> .loop_sections
+Outer loop in ConvertCardGfxForPrinter; iterates over 8 tile sections for printer graphic conversion.
+
+src/engine/bank06.asm .asm_1adcf -> .loop_rows
+Second loop level in ConvertCardGfxForPrinter; iterates over 6 rows per tile section.
+
+src/engine/bank06.asm .asm_1add2 -> .loop_columns
+Third loop level in ConvertCardGfxForPrinter; iterates over 8 columns per row.
+
+src/engine/bank06.asm .asm_1add4 -> .loop_byte_pairs
+Fourth loop level in ConvertCardGfxForPrinter; processes 2 bytes per column entry.
+
+src/engine/bank06.asm .asm_1add9 -> .shift_upper_bits
+Bit-rotation loop in ConvertCardGfxForPrinter; extracts 4 bits from the upper half of a tile byte via rr/sra.
+
+src/engine/bank06.asm .asm_1adea -> .shift_lower_bits
+Bit-rotation loop in ConvertCardGfxForPrinter; extracts 4 bits from the lower half of a tile byte via rr/sra.
+
+src/engine/bank06.asm .asm_1afe5 -> .not_hiragana
+In naming-screen keyboard text setup, mode is not hiragana; falls through to katakana check.
+
+src/engine/bank06.asm .asm_1aff3 -> .not_katakana
+In naming-screen keyboard text setup, mode is not katakana; falls through to uppercase check.
+
+src/engine/bank06.asm .asm_1b001 -> .not_upper_abc
+In naming-screen keyboard text setup, mode is not uppercase; uses lowercase keyboard text.
+
+src/engine/bank06.asm .asm_1b00a -> .print_keyboard_text
+Shared continuation in naming-screen setup; initiates text printing for the selected keyboard layout.
+
+src/engine/bank06.asm .asm_1b0f1 -> .check_boundary_minus2
+In naming-screen cursor left-move, cursor_x minus row width is not -1; checks for -2 boundary wrap case.
+
+src/engine/bank06.asm .asm_1b14a -> .read_char_data
+In naming-screen cursor move, after optional extra-offset skip for lowercase mode; reads character data entry from table.
+
+src/engine/bank06.asm .asm_1b1ae -> .skip_row_increment
+In HideCursorAtCharPosition, wNamingScreenCursorRow is zero; skip incrementing tile y coordinate by 1.
+
+src/engine/bank06.asm .asm_1b201 -> .cursor_row_1
+In UpdateNameTextCursor, cursor is on keyboard row 1 (lower keyboard area); selects y=32 or y=24 based on buffer length.
+
+src/engine/bank06.asm .asm_1b20e -> .set_y_32
+Sets cursor sprite y to 32 (lower screen position) for keyboard row 1 cursor placement.
+
+src/engine/bank06.asm .asm_1b212 -> .set_y_24
+Sets cursor sprite y to 24 (upper screen position) when buffer length is below $24.
+
+src/engine/bank06.asm .asm_1b217 -> .compute_cursor_x
+Computes cursor sprite x position via HtimesL and sets OAM attributes for the name-input cursor.
+
+src/engine/bank06.asm .asm_1b276 -> .not_katakana_toggle
+In naming-screen key handler, pressed key is not KEYBOARD_TOGGLE_KATAKANA; checks for upper-ABC toggle next.
+
+src/engine/bank06.asm .asm_1b289 -> .not_upper_abc_toggle
+In naming-screen key handler, pressed key is not KEYBOARD_TOGGLE_UPPER_ABC; checks for lowercase toggle next.
+
+src/engine/bank06.asm .asm_1b2fb -> .katakana_mode
+In character-add logic, wNamingScreenMode is non-zero (katakana); sets character type to TX_KATAKANA.
+
+src/engine/bank06.asm .asm_1b8f4 -> .copy_loop
+Byte-copy loop in CopyBBytesFromHLToDE; copies b bytes from HL to DE.
