@@ -94,7 +94,7 @@ GetOWAnimationGfxPointer:
 	pop af
 	ret
 
-GetOWTileFrameGfxPointer:: ; Func_12c06e
+GetOWTileFrameGfxPointer: ; Func_12c06e
 	push af
 	sla c
 	rl b
@@ -174,7 +174,7 @@ LoadTilemapAndSaveDimensions: ; Func_12c0b7
 
 ; bc = TILEMAP_* constant
 ; de = OW coordinates
-AddOWTilemapOverlay:: ; Func_12c0ce
+AddOWTilemapOverlay: ; Func_12c0ce
 	push af
 	push bc
 	push de

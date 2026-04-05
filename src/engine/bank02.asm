@@ -605,7 +605,7 @@ DrawYourOrOppPlayAreaScreen_EmptiedScreen:
 	ret
 
 ; Func_82b6 in tcg1
-DrawYourOrOppPlayArea_PrizeCards:: ; Func_83b3
+DrawYourOrOppPlayArea_PrizeCards: ; Func_83b3
 	ld a, [wCheckMenuPlayAreaWhichDuelist]
 	ld b, a
 	ld a, [wCheckMenuPlayAreaWhichLayout]
@@ -2418,7 +2418,7 @@ WriteCardListsTerminatorBytes:
 	ld [hl], a ; terminating byte
 	ret
 
-InitBoosterPackProgress:: ; Func_8f10
+InitBoosterPackProgress: ; Func_8f10
 	call EnableSRAM
 	xor a
 	ld hl, sBoosterPacksObtained
@@ -2625,7 +2625,7 @@ DeckSelectionSubMenu:
 	ld [wBillsComputerAllowedInCardList], a
 
 	call HandleDeckBuildScreen
-	jr nc, .asm_90cd
+	jr nc, .redraw_decks_screen_after_build
 	call EnableSRAM
 	ld hl, wCurDeckCards
 	call DecrementDeckCardsInCollection
@@ -2645,13 +2645,13 @@ DeckSelectionSubMenu:
 	jr z, .get_input_deck_name
 	ld a, [hDeckSelectionFlags]
 	or a
-	jr z, .asm_90cd
+	jr z, .redraw_decks_screen_after_build
 	call EnableSRAM
 	ld de, wCurDeckCards
 	farcall SaveDeckDataToWRAM2
 	call DisableSRAM
 	farcall OpenDeckSaveMachineFromDeckBuilding
-.asm_90cd
+.redraw_decks_screen_after_build
 	ld a, ALL_DECKS
 	call DrawDecksScreen
 	ld a, [wCurDeck]
@@ -2677,14 +2677,14 @@ DeckSelectionSubMenu:
 	call CopyListFromHLToDEInSRAM
 	ld a, [hDeckSelectionFlags]
 	or a
-	jr z, .asm_9119
+	jr z, .redraw_decks_screen_after_rename
 	call EnableSRAM
 	ld hl, wCurDeckName
 	ld de, wCurDeckCards
 	farcall SaveDeckDataToWRAM2
 	call DisableSRAM
 	farcall OpenDeckSaveMachineFromDeckBuilding
-.asm_9119
+.redraw_decks_screen_after_rename
 	ld a, ALL_DECKS
 	call DrawDecksScreen
 	ld a, [wCurDeck]
@@ -3450,9 +3450,9 @@ AppendDeckName:
 	call GetTextLengthInTiles
 	ld a, c
 	cp DECK_NAME_SIZE_WO_SUFFIX + 1
-	jr c, .asm_955d
+	jr c, .got_halfwidth_name_len
 	ld c, DECK_NAME_SIZE_WO_SUFFIX + 1
-.asm_955d
+.got_halfwidth_name_len
 	ld b, $00
 	ld hl, wDefaultText
 	add hl, bc
@@ -3464,9 +3464,9 @@ AppendDeckName:
 	ld hl, wDefaultText + (.text_end - .text_start + 1)
 	ld a, [hl]
 	or a
-	jr nz, .asm_9575
+	jr nz, .write_halfwidth_terminator
 	dec hl
-.asm_9575
+.write_halfwidth_terminator
 	xor a
 	ld [hl], a
 	pop de
@@ -3634,18 +3634,18 @@ HandleDeckBuildScreen:
 .no_start_btn_2
 	ldh a, [hDPadHeld]
 	and PAD_UP
-	jr z, .asm_96a0
+	jr z, .handle_list_input
 	ld a, [wTempCardTypeFilter]
 	ld hl, wScrollMenuScrollOffset
 	add [hl]
-	jr nz, .asm_96a0
+	jr nz, .handle_list_input
 	ld a, $ff
 	ld [hCurMenuItem], a
 	ld a, MENU_CANCEL
 	call PlaySFXConfirmOrCancel
 	jr .selection_made
 
-.asm_96a0
+.handle_list_input
 	call HandleSelectUpAndDownInList
 	jr c, .loop_input
 	call HandleScrollListInput
@@ -3732,7 +3732,7 @@ HandleDeckConfigurationMenu:
 	jr nc, .do_frame
 	ld [wDeckConfigMenuSelection], a
 	cp $ff
-	jr nz, .asm_9769
+	jr nz, .handle_config_menu_selection
 .draw_icons
 	call DrawCardTypeIconsAndPrintCardCounts
 	ld a, [wTempCurMenuItem]
@@ -3741,7 +3741,7 @@ HandleDeckConfigurationMenu:
 	call PrintFilteredCardList
 	jp HandleDeckBuildScreen.skip_draw
 
-.asm_9769
+.handle_config_menu_selection
 	push af
 	call HandleMultiDirectionalMenu.DrawCursor
 	ld a, TRUE
@@ -5114,7 +5114,7 @@ HandleScrollListInput:
 	ld [wMenuInputSFX], a
 	ldh a, [hDPadHeld]
 	or a
-	jp z, .asm_9ff4
+	jp z, .run_scroll_menu_update
 	ld b, a
 	ld a, [wNumMenuItems]
 	ld c, a
@@ -5145,7 +5145,7 @@ HandleScrollListInput:
 
 .check_d_down
 	bit B_PAD_DOWN, b
-	jr z, .asm_9fd8
+	jr z, .check_left_right_shortcuts
 ; d_down
 	push af
 	ld a, SFX_CURSOR
@@ -5181,24 +5181,24 @@ HandleScrollListInput:
 	ld [wCurScrollMenuItem], a
 	xor a
 	ld [wScrollMenuCursorBlinkCounter], a
-	jr .asm_9ff4
+	jr .run_scroll_menu_update
 
-.asm_9fd8
+.check_left_right_shortcuts
 	ld a, [wCardListAllowLeftRight]
 	or a
-	jr z, .asm_9ff4
+	jr z, .run_scroll_menu_update
 	bit B_PAD_LEFT, b
-	jr z, .asm_9fea
+	jr z, .check_d_right
 	call GetSelectedVisibleCardID
 	call RemoveCardFromDeckAndUpdateCount
-	jr .asm_9ff4
-.asm_9fea
+	jr .run_scroll_menu_update
+.check_d_right
 	bit B_PAD_RIGHT, b
-	jr z, .asm_9ff4
+	jr z, .run_scroll_menu_update
 	call GetSelectedVisibleCardID
 	call AddCardToDeckAndUpdateCount
 
-.asm_9ff4
+.run_scroll_menu_update
 	ld a, [wCurScrollMenuItem]
 	ld [hCurMenuItem], a
 	ld hl, wMenuUpdateFunc
@@ -6601,16 +6601,16 @@ HandlePlayersCardsScreen:
 	call DoFrame
 	ldh a, [hDPadHeld]
 	and PAD_UP
-	jr z, .asm_a825
+	jr z, .handle_card_list_input
 	ld a, [wTempCardTypeFilter]
 	ld hl, wScrollMenuScrollOffset
 	add [hl]
-	jr nz, .asm_a825
+	jr nz, .handle_card_list_input
 	ld a, $ff
 	ld [hCurMenuItem], a
 	jr .selection_made
 
-.asm_a825
+.handle_card_list_input
 	call HandleSelectUpAndDownInList
 	jr c, .loop_input
 	call HandleScrollListInput
@@ -6875,11 +6875,11 @@ PrintCardSelectionList:
 .exit_loop
 	ld a, [hli]
 	or a
-	jr nz, .asm_a9e3
+	jr nz, .has_more_cards_below
 	ld a, [hli]
 	or a
 	jr z, .cannot_scroll
-.asm_a9e3
+.has_more_cards_below
 	pop de
 ; draw down cursor because
 ; there are still more cards
@@ -7266,17 +7266,17 @@ CreateBoosterPackCardList:
 .handle_phantom_cards
 	ld a, [wOwnedPhantomCards]
 	bit PROMO_VENUSAUR_LV64_F, a
-	jr z, .asm_ac92
+	jr z, .check_mew_lv15_promo
 	call .AddVenusaurLv64
-.asm_ac92
+.check_mew_lv15_promo
 	bit PROMO_MEW_LV15_F, a
-	jr z, .asm_ac99
+	jr z, .check_lugia_promo
 	call .AddMewLv15
-.asm_ac99
+.check_lugia_promo
 	bit PROMO_LUGIA_F, a
-	jr z, .asm_aca0
+	jr z, .check_here_comes_team_rocket_promo
 	call .AddLugia
-.asm_aca0
+.check_here_comes_team_rocket_promo
 	bit PROMO_HERE_COMES_TEAM_ROCKET_F, a
 	jr z, .find_last_owned_card
 	call .AddHereComesTeamRocket
@@ -7347,7 +7347,7 @@ CreateBoosterPackCardList:
 	push af
 	push hl
 	ld de, VENUSAUR_LV64
-.asm_acf6
+.store_promo_card_entry
 	ld bc, wBoosterPackCardList
 	add hl, hl
 	add hl, bc
@@ -7368,19 +7368,19 @@ CreateBoosterPackCardList:
 	push af
 	push hl
 	ld de, MEW_LV15
-	jr .asm_acf6
+	jr .store_promo_card_entry
 
 .AddLugia:
 	push af
 	push hl
 	ld de, LUGIA
-	jr .asm_acf6
+	jr .store_promo_card_entry
 
 .AddHereComesTeamRocket:
 	push af
 	push hl
 	ld de, HERE_COMES_TEAM_ROCKET
-	jr .asm_acf6
+	jr .store_promo_card_entry
 
 ; a = Booster Pack
 PrepareBoosterPackCardList:
@@ -8275,19 +8275,19 @@ PrinterMenu_PokemonCards:
 .handle_input
 	ldh a, [hDPadHeld]
 	and PAD_DOWN
-	jr z, .asm_b33b
+	jr z, .handle_filter_input
 ; d_down
 	call ConfirmSelectionAndReturnCarry
-	jr .asm_b348
-.asm_b33b
+	jr .open_filtered_list
+.handle_filter_input
 	call HandleCardSelectionInput
 	jr nc, .loop_frame_1
 	ld a, [hCurMenuItem]
 	cp $ff
-	jr nz, .asm_b348
+	jr nz, .open_filtered_list
 	ret
 
-.asm_b348
+.open_filtered_list
 	ld a, [wBoosterPackCardListSize]
 	or a
 	jr z, .loop_frame_1
@@ -8299,10 +8299,10 @@ PrinterMenu_PokemonCards:
 	ld [wNumCardListEntries], a
 	ld hl, wNumVisibleCardListEntries
 	cp [hl]
-	jr nc, .asm_b367
+	jr nc, .init_filtered_list_scroll
 	ld [wNumMenuItems], a
 	ld [wTempScrollMenuNumVisibleItems], a
-.asm_b367
+.init_filtered_list_scroll
 	ld hl, GeneralCardListUpdateFunc
 	ld d, h
 	ld a, l
@@ -8316,19 +8316,19 @@ PrinterMenu_PokemonCards:
 	call DoFrame
 	ldh a, [hDPadHeld]
 	and PAD_UP
-	jr z, .asm_b38e
+	jr z, .handle_filtered_list_input
 	ld a, [wTempCardTypeFilter]
 	ld hl, wScrollMenuScrollOffset
 	add [hl]
-	jr nz, .asm_b38e
+	jr nz, .handle_filtered_list_input
 	ld a, $ff
 	ld [hCurMenuItem], a
-	jr .asm_b3e7
-.asm_b38e
+	jr .handle_filtered_list_selection
+.handle_filtered_list_input
 	call HandleSelectUpAndDownInList
 	jr c, .loop_frame_2
 	call HandleScrollListInput
-	jr c, .asm_b3e7
+	jr c, .handle_filtered_list_selection
 	ldh a, [hDPadHeld]
 	and PAD_START
 	jr z, .loop_frame_2
@@ -8350,7 +8350,7 @@ PrinterMenu_PokemonCards:
 	call OpenCardPageFromCardList
 	call PrintPlayersCardsHeaderInfo
 
-.asm_b3be
+.restore_filtered_list_after_card_page
 	ld hl, FiltersCardSelectionParams
 	call InitializeScrollMenuParameters
 	ld a, [wCurCardTypeFilter]
@@ -8366,7 +8366,7 @@ PrinterMenu_PokemonCards:
 	ld [wTempCardTypeFilter], a
 	jr .loop_frame_2
 
-.asm_b3e7
+.handle_filtered_list_selection
 	call DrawListCursor_Invisible
 	ld a, [wNumMenuItems]
 	ld [wTempScrollMenuNumVisibleItems], a
@@ -8374,7 +8374,7 @@ PrinterMenu_PokemonCards:
 	ld [wTempCurMenuItem], a
 	ld a, [hCurMenuItem]
 	cp $ff
-	jr nz, .asm_b40c
+	jr nz, .confirm_print_selected_card
 
 	ld hl, FiltersCardSelectionParams
 	call InitializeScrollMenuParameters
@@ -8382,7 +8382,7 @@ PrinterMenu_PokemonCards:
 	ld [wTempCardTypeFilter], a
 	jp .loop_frame_1
 
-.asm_b40c
+.confirm_print_selected_card
 	call DrawListCursor_Visible
 	call .ClearCardListHeaderRegion
 	lb de, 1, 1
@@ -8398,7 +8398,7 @@ PrinterMenu_PokemonCards:
 	jr nc, .loop_frame_3
 	ld a, [hCurMenuItem]
 	or a
-	jr nz, .asm_b454
+	jr nz, .cancel_print_selected_card
 	ld hl, wTempCardList
 	ld a, [wTempCurMenuItem]
 	add a
@@ -8415,12 +8415,12 @@ PrinterMenu_PokemonCards:
 	ld d, [hl]
 	farcall RequestToPrintCard
 	call PrintPlayersCardsHeaderInfo
-	jp .asm_b3be
+	jp .restore_filtered_list_after_card_page
 
-.asm_b454
+.cancel_print_selected_card
 	call .ClearCardListHeaderRegion
 	call PrintPlayersCardsHeaderInfo_SkipEmptyScreen
-	jp .asm_b3be
+	jp .restore_filtered_list_after_card_page
 
 .ClearCardListHeaderRegion:
 	xor a
@@ -9218,12 +9218,12 @@ DeckDiagnosisResult:
 
 	ld a, [wScrollMenuScrollOffset]
 	or a
-	jr z, .asm_ba63
+	jr z, .use_space_as_up_cursor
 	ld a, SYM_CURSOR_U
-	jr .asm_ba65
-.asm_ba63
+	jr .draw_up_cursor
+.use_space_as_up_cursor
 	ld a, SYM_SPACE
-.asm_ba65
+.draw_up_cursor
 	call WriteByteToBGMap0
 
 	ld a, [wScrollMenuScrollOffset]
@@ -9277,13 +9277,13 @@ DeckDiagnosisResult:
 	xor a
 	ld [wUnableToScrollDown], a
 	ld a, SYM_CURSOR_D
-	jr .asm_bac3
+	jr .draw_down_cursor
 .at_last_entry
 	pop de
 	ld a, TRUE
 	ld [wUnableToScrollDown], a
 	ld a, SYM_SPACE
-.asm_bac3
+.draw_down_cursor
 	ld b, 19
 	ld c, e
 	dec c
@@ -9297,13 +9297,13 @@ DeckDiagnosisResult:
 	push bc
 	push de
 	push hl
-.asm_bad1
+.find_card_count_text_end
 	ld a, [hl]
 	or a
-	jr z, .asm_bad8
+	jr z, .append_card_count_number
 	inc hl
-	jr .asm_bad1
-.asm_bad8
+	jr .find_card_count_text_end
+.append_card_count_number
 	call GetCountOfCardInCurDeck
 	call ConvertToNumericalDigits
 	ldfw bc, "枚"

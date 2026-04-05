@@ -210,7 +210,7 @@ ExecuteOWModeScript::
 	ld l, a
 	jp hl
 
-GetOppositePlayerDirection:: ; Func_3195
+GetOppositePlayerDirection: ; Func_3195
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectAnimStruct1Flag0And1
 	ld a, b
@@ -218,12 +218,12 @@ GetOppositePlayerDirection:: ; Func_3195
 	ld b, a
 	ret
 
-HandleOverworldIdleMode:: ; Func_31a1
+HandleOverworldIdleMode: ; Func_31a1
 	call DoOverworldFrame
 	call HandleOverworldPlayerInput
 	ret
 
-HandleOverworldMoveMode:: ; Func_31a8
+HandleOverworldMoveMode: ; Func_31a8
 	call DoOverworldFrame
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectSpriteAnimFlags
@@ -387,7 +387,7 @@ ExecuteCoordScript::
 	jr .loop_lookup
 
 ; hl = npc script list (*_NPCInteractions)
-HandleNPCInteractions:: ; Func_328c
+HandleNPCInteractions: ; Func_328c
 	push hl
 	farcall GetPlayerFacingTilePosition
 	farcall FindNPCAtLocation
@@ -406,7 +406,7 @@ HandleNPCInteractions:: ; Func_328c
 	ret
 
 ; hl = npc script list (*_NPCInteractions)
-HandleNPCInteractions_NoTurnNPC:: ; Func_32aa
+HandleNPCInteractions_NoTurnNPC: ; Func_32aa
 	push hl
 	farcall GetPlayerFacingTilePosition
 	farcall FindNPCAtLocation
@@ -422,7 +422,7 @@ HandleNPCInteractions_NoTurnNPC:: ; Func_32aa
 
 ; if player's anim struct flag 0 or 1 is set, set carry
 ; else, execute player's coord script with the script list in hl
-ExecutePlayerCoordScriptIfNotMoving:: ; Func_32bf
+ExecutePlayerCoordScriptIfNotMoving: ; Func_32bf
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectAnimStruct1Flag0And1
 	ld a, 0
@@ -494,7 +494,7 @@ HandleOverworldPlayerMoveInput::
 .exit
 	ret
 
-DoOverworldFrame:: ; Func_3332
+DoOverworldFrame: ; Func_3332
 	call DoFrame
 	ret
 
@@ -505,7 +505,7 @@ WaitPalFading::
 	jr nz, .loop
 	ret
 
-WaitForPlayerAnimation:: ; Func_3340
+WaitForPlayerAnimation: ; Func_3340
 .asm_3340
 	call DoFrame
 	farcall CountOWObjectsWithMovementScript
@@ -526,7 +526,7 @@ WaitForPlayerAnimation:: ; Func_3340
 	ret
 
 ; a = NPC_* ID
-WaitForOWObjectMovement:: ; Func_336d
+WaitForOWObjectMovement: ; Func_336d
 	push af
 .loop_wait
 	call DoFrame
@@ -553,7 +553,7 @@ WaitForOWObjectAnimation::
 	pop af
 	ret
 
-FadeInOverworldFromBlackOrWhite:: ; Func_338f
+FadeInOverworldFromBlackOrWhite: ; Func_338f
 	push af
 	farcall SaveTargetFadePals
 	farcall SetOverworldAndFadePalsFrameFunc
@@ -563,7 +563,7 @@ FadeInOverworldFromBlackOrWhite:: ; Func_338f
 	farcall StartPalFadeFromBlackOrWhite
 	ret
 
-FadeOutOverworldToBlackOrWhite:: ; Func_33a3
+FadeOutOverworldToBlackOrWhite: ; Func_33a3
 	ld b, $00
 	farcall StartPalFadeToBlackOrWhite
 	call WaitPalFading
@@ -572,7 +572,7 @@ FadeOutOverworldToBlackOrWhite:: ; Func_33a3
 	farcall ZeroOutEventValue
 	ret
 
-LoadCurrentMapHeaderAndScriptPointers:: ; Func_33b7
+LoadCurrentMapHeaderAndScriptPointers: ; Func_33b7
 	ld a, [wCurMap]
 	ld c, a
 	ld b, $00
@@ -693,7 +693,7 @@ ExecuteNPCScript::
 	scf
 	ret
 
-ReadByteFromBankedHL:: ; Func_3473
+ReadByteFromBankedHL: ; Func_3473
 	push bc
 	ld b, a
 	ldh a, [hBankROM]
@@ -956,7 +956,7 @@ DivideBCbyDE::
 	jr nz, .asm_3568
 	ret
 
-WriteDataBlockToBGMap0_SaveAllRegisters:: ; Func_3588
+WriteDataBlockToBGMap0_SaveAllRegisters: ; Func_3588
 	push af
 	push bc
 	push de
@@ -968,7 +968,7 @@ WriteDataBlockToBGMap0_SaveAllRegisters:: ; Func_3588
 	pop af
 	ret
 
-WriteDataBlocksToBGMap0_SaveAllRegisters:: ; Func_3594
+WriteDataBlocksToBGMap0_SaveAllRegisters: ; Func_3594
 	push af
 	push bc
 	push de
@@ -980,7 +980,7 @@ WriteDataBlocksToBGMap0_SaveAllRegisters:: ; Func_3594
 	pop af
 	ret
 
-SetupTextWithDefaultTileRange:: ; Func_35a0
+SetupTextWithDefaultTileRange: ; Func_35a0
 	push af
 	push bc
 	push de
@@ -1046,7 +1046,7 @@ PlaceTextItemsVRAM0::
 
 ; hl = text ID
 ; de = coordinates
-PrintTextIDVRAM0AndClearTileRange:: ; Func_35df
+PrintTextIDVRAM0AndClearTileRange: ; Func_35df
 	call InitTextPrinting_ProcessTextFromIDVRAM0
 	push bc
 	push de
@@ -1146,7 +1146,7 @@ CopyTilesToTiles0::
 
 ; input:
 ; b:hl = tilemap pointer
-ReadBankedTilemapHeader:: ; Func_365b
+ReadBankedTilemapHeader: ; Func_365b
 	ldh a, [hBankROM]
 	push af
 	ld a, b
@@ -1200,7 +1200,7 @@ DecompressDataFromBank::
 	pop bc
 	ret
 
-UpdateOWAnimatedTiles:: ; Func_3698
+UpdateOWAnimatedTiles: ; Func_3698
 	push af
 	push bc
 	push de
@@ -1314,7 +1314,7 @@ UpdateOWAnimatedTiles:: ; Func_3698
 ; de = tile index
 ; b = $0 if VRAM1, $1 if VRAM0
 ; c = destination tile number in VRAM
-CopyLoadedTilesetTileToVRAM:: ; Func_372d
+CopyLoadedTilesetTileToVRAM: ; Func_372d
 	ldh a, [hBankROM]
 	push af
 	ld a, [wLoadedTilesetBank]
@@ -1382,7 +1382,7 @@ CopyCGBBGPalsFromSource_BeginWithPal2::
 	call CopyCGBBGPalsFromSource_WithPalOffset
 	ret
 
-LoadTilesetToVRAM1AndVRAM0IfCGB:: ; Func_3792
+LoadTilesetToVRAM1AndVRAM0IfCGB: ; Func_3792
 	push af
 	push bc
 	push de
@@ -1425,7 +1425,7 @@ LoadTilesetToVRAM1AndVRAM0IfCGB:: ; Func_3792
 	pop af
 	ret
 
-UpdatePaletteAnimationFrame:: ; Func_37ce
+UpdatePaletteAnimationFrame: ; Func_37ce
 	push af
 	push bc
 	push de
@@ -1477,7 +1477,7 @@ UpdatePaletteAnimationFrame:: ; Func_37ce
 	pop af
 	ret
 
-CopyPaletteFrameToBGPalBufferAndFlush:: ; Func_3828
+CopyPaletteFrameToBGPalBufferAndFlush: ; Func_3828
 	ld de, $cb26
 	ld b, $08
 .asm_382d
@@ -1497,7 +1497,7 @@ BankswitchVRAM::
 ; bc = coordinates
 ; d = VRAM0 tile index
 ; e = VRAM1 tile attributes
-WriteTileAndAttrToBGMap_AdjustedByScroll:: ; Func_383b
+WriteTileAndAttrToBGMap_AdjustedByScroll: ; Func_383b
 	push af
 	push de
 	ld d, b
@@ -1682,7 +1682,7 @@ LoadGfxFromTileset::
 ; c = frame number
 ; d = x position
 ; e = y position
-RenderSpriteAnimFrame:: ; Func_3924
+RenderSpriteAnimFrame: ; Func_3924
 	push af
 	push bc
 	push de
@@ -1900,7 +1900,7 @@ FrameFunc_FadePals::
 	pop af
 	ret
 
-FrameFunc_OverworldAndFadePals:: ; Func_3a39
+FrameFunc_OverworldAndFadePals: ; Func_3a39
 	push af
 	push bc
 	push de
@@ -1941,7 +1941,7 @@ FrameFunc_SpriteAnimationAndFadePals::
 	pop af
 	ret
 
-FrameFunc_DuelAnimationsAndSpriteAnims:: ; Func_3a81
+FrameFunc_DuelAnimationsAndSpriteAnims: ; Func_3a81
 	push af
 	push bc
 	push de
@@ -2060,11 +2060,11 @@ LoadPortraitPalettes::
 	pop af
 	ret
 
-UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper:: ; Func_3b14
+UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper: ; Func_3b14
 	farcall $7, $4379
 	ret
 
-UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper_2:: ; Func_3b19
+UpdateTextBoxFrameColorFromFocusedMenuItem_Wrapper_2: ; Func_3b19
 	farcall $7, $445a
 	ret
 
@@ -2180,7 +2180,7 @@ LoadMenuBoxParams::
 	ret
 
 ; a = ?
-GetOWSpriteIDFromNPCID:: ; Func_3bc1
+GetOWSpriteIDFromNPCID: ; Func_3bc1
 	push af
 	push hl
 	ld c, a
@@ -2210,7 +2210,7 @@ GetOWSpriteIDFromNPCID:: ; Func_3bc1
 ; - b = movement direction byte
 ; - c = speed bits (low 2 bits)
 ; - e = duration derived from packed movement entry
-ReadPackedNPCMovementEntry:: ; Func_3be0
+ReadPackedNPCMovementEntry: ; Func_3be0
 	push af
 	push hl
 	ldh a, [hBankROM]
@@ -2289,7 +2289,7 @@ CopyCurPaletteToPal2::
 StubbedPlayDefaultSong::
 	ret
 
-HandleCoinMenuPageInput_Wrapper:: ; Func_3c3d
+HandleCoinMenuPageInput_Wrapper: ; Func_3c3d
 	farcall HandleCoinMenuPageInput
 	ret
 
@@ -2345,7 +2345,7 @@ CheckAnyAnimationPlaying::
 	ccf
 	ret
 
-DispatchSpecialDuelAnimation:: ; Func_3c8e
+DispatchSpecialDuelAnimation: ; Func_3c8e
 	ld a, [wCurAnimation]
 	cp DUEL_ANIM_158_UNUSED
 	jr z, .asm_3ca8
@@ -2378,7 +2378,7 @@ DispatchSpecialDuelAnimation:: ; Func_3c8e
 	dw DuelAnim156        ; DUEL_ANIM_156_UNUSED
 	dw DuelAnim157        ; DUEL_ANIM_157_UNUSED
 
-ExecuteDuelAnimationCallbackInReturnBank:: ; Func_3cc3
+ExecuteDuelAnimationCallbackInReturnBank: ; Func_3cc3
 	ld a, $ff
 	ld [wDuelAnimCallbackActive], a
 	ldh a, [hBankROM]
@@ -2392,7 +2392,7 @@ ExecuteDuelAnimationCallbackInReturnBank:: ; Func_3cc3
 	ld [wDuelAnimCallbackActive], a
 	ret
 
-ClearTempActiveMusicAndState:: ; Func_3cdd
+ClearTempActiveMusicAndState: ; Func_3cdd
 	xor a
 	ld [wTempActiveMusic], a
 	ld [wTempActiveMusicState], a
@@ -2424,7 +2424,7 @@ CallPlaySFX::
 	call PlaySFX
 	ret
 
-StopSFX:: ; Func_3d02
+StopSFX: ; Func_3d02
 	push af
 	xor a
 	call CallPlaySFX
@@ -2668,11 +2668,11 @@ CreateSpriteAnim::
 	pop af
 	ret
 
-SetSpriteAnimationAndFadePalsFrameFunc_Wrapper:: ; Func_3e4f
+SetSpriteAnimationAndFadePalsFrameFunc_Wrapper: ; Func_3e4f
 	farcall SetSpriteAnimationAndFadePalsFrameFunc
 	ret
 
-UnsetSpriteAnimationAndFadePalsFrameFunc_InitOWObjects:: ; Func_3e54
+UnsetSpriteAnimationAndFadePalsFrameFunc_InitOWObjects: ; Func_3e54
 	farcall UnsetSpriteAnimationAndFadePalsFrameFunc
 	farcall InitOWObjectsAndNPCMovement
 	ret
@@ -2703,7 +2703,7 @@ UpdateMailboxPage::
 	farcall _UpdateMailboxPage
 	ret
 
-UpdateCreditsScrollCallback_SaveAllRegisters:: ; Func_3e7a
+UpdateCreditsScrollCallback_SaveAllRegisters: ; Func_3e7a
 	push af
 	push bc
 	push de
@@ -2834,7 +2834,7 @@ DisableInt_LYCoincidence::
 	ret
 
 ; clears wCallbackPointer
-ClearCallbackPointer:: ; Func_3f61
+ClearCallbackPointer: ; Func_3f61
 	di
 	xor a
 	ld [wCallbackPointer + 0], a
@@ -2843,7 +2843,7 @@ ClearCallbackPointer:: ; Func_3f61
 	ret
 
 ; sets wCallbackPointer to function in hl
-SetCallbackPointer:: ; Func_3f6b
+SetCallbackPointer: ; Func_3f6b
 	di
 	push af
 	ld a, l
@@ -2855,7 +2855,7 @@ SetCallbackPointer:: ; Func_3f6b
 	ret
 
 ; jumps to wCallbackPointer if not null
-CallCallbackPointerIfSet:: ; Func_3f78
+CallCallbackPointerIfSet: ; Func_3f78
 	push af
 	ld hl, wCallbackPointer
 	ld a, [hli]
@@ -2870,5 +2870,5 @@ CallCallbackPointerIfSet:: ; Func_3f78
 	pop af
 	jp hl
 
-NoOpRet:: ; Func_3f87
+NoOpRet: ; Func_3f87
 	ret

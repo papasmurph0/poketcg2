@@ -3678,3 +3678,65 @@ Func_fc26c_2 -> StopSFXPlayback_2
 Func_12c3dc -> GetOWSpriteIDFromNPCID_Wrapper
 ; thin wrapper that forwards to GetOWSpriteIDFromNPCID and returns
 
+Func_1a14b [UNREFERENCED]
+; dead code: multi-entry stub that writes values $01-$05 to wce9d and returns carry
+; no callers and wce9d has no confirmed external consumer; unreachable from normal game flow
+
+
+Func_381c0 -> RunDuelistAISequence
+; main NPC duel AI dispatcher that selects deck, initial settings, and AI actions based on duel state
+
+Func_38260 -> GetDuelistAIAction
+; selects the next AI action by duel state and applies opponent-specific behavior weighting
+
+Func_3835c -> GetDuelistDeckChoice
+; returns the selected deck id for the current duel opponent from choice and progress data
+
+Func_38449 -> GetDuelistInitialSettings
+; loads duel-specific coin piece location, required cards, and bonus card configuration
+
+Func_38487 -> IsAIDeckPlayerOrNonPlayer
+; validates deck id against active player/non-player deck lists and returns carry if valid
+
+Func_384d1 -> HandlePrizesAndBench
+; sets up prize cards and bench slots for the current duel opponent
+
+Func_38661 -> ProcessFinalPrizeCheck
+; evaluates remaining prize cards and applies win-condition logic
+
+Func_38729 -> GetActualDamageAgainstPlayer
+; calculates total damage for player-target attacks including weakness and resistance modifiers
+
+Func_387b8 -> GetActualDamageAgainstAI
+; calculates total damage for AI-target attacks including weakness and resistance modifiers
+
+Func_38846 -> StartDuelWithOpponent
+; initializes duel globals and routes to duel setup based on duel type
+
+Func_38854 -> ConcludeDuelAndReturnResult
+; unpacks final duel state and returns result as carry flag (0=loss, 1=win)
+
+Func_38882 -> HandleDuelistDecksRequirement
+; validates that active duel opponent has required cards available and updates availability
+
+Func_38908 -> CheckAndApplyDuelistBonusCards
+; applies bonus card rewards when player completes duel bonus conditions
+
+Func_3894a -> GenerateRandomDuelistDeck
+; generates an opponent deck list by selecting random cards from rank-appropriate card pool
+
+Func_38a5c -> GetDuelistStatus
+; returns currently cached duel status (used by duel opponent interaction flow)
+
+Func_38a95 -> GetDuelistBonusCardCount
+; calculates the bonus card reward count based on duel rating and win streak
+
+Func_38b57 -> GetDuelistCardDrawCount
+; calculates the initial hand-draw card count for the current duel type
+
+Func_38b8e -> GetDuelistHandDealAmount
+; calculates the hand-deal amount based on duel flags and special rules
+
+Func_38bc5 -> FinalizeDeckAndLoadSettings
+; performs final deck sanitization and loads duel-type settings before duel launch
+

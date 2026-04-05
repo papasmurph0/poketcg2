@@ -18,7 +18,7 @@ MACRO ai_energy
 	dw \1       ; card ID
 	db \2       ; maximum number of attached cards
 	db $80 + \3 ; energy score (ranges between -128 and 127)
-ENDM
+	ENDM
 
 DeckAIPointerTable::
 	dw AIActionTable_ScriptedSamPracticeDeck    ; SAMS_PRACTICE_DECK_ID
@@ -156,14 +156,14 @@ AIActionTable_140f4:
 .do_turn:
 	call AIDecidePlayPokemonCard
 	call AIDecideWhetherToRetreat_ConsiderStatus
-	jr nc, .asm_1411b
+	jr nc, .after_retreat_checks
 	call AIDecideBenchPokemonToSwitchTo
 	call AIDecideAndExecuteRetreat
 	call AIDecideWhetherToRetreat_ConsiderStatus
-	jr nc, .asm_1411b
+	jr nc, .after_retreat_checks
 	call AIDecideBenchPokemonToSwitchTo
 	call AIDecideAndExecuteRetreat
-.asm_1411b
+.after_retreat_checks
 	call AIProcessAndTryToPlayEnergy
 	call AIProcessAndTryToUseAttack
 	ret c ; used attack
@@ -6057,10 +6057,10 @@ AIDecideBenchPokemonToSwitchTo:
 	call CheckIfAnyAttackKnocksOutDefendingCard
 	jr nc, .check_can_use_atks
 	call CheckIfSelectedAttackIsUnusable
-	jr nc, .asm_165bb
+	jr nc, .encourage_if_ko_attack_is_usable
 	farcall LookForEnergyNeededForAttackInHand
 	jr nc, .check_can_use_atks
-.asm_165bb
+.encourage_if_ko_attack_is_usable
 	ld a, 10
 	call AIEncourage
 	ld a, [wAIRetreatFlags]
@@ -6323,10 +6323,10 @@ AIDecideBenchPokemonToSwitchTo:
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	farcall AIDeckSpecificBenchScore
-	jr c, .asm_16794
+	jr c, .discourage_deck_specific_bench_score
 	call AIEncourage
 	jr .ai_score_bonus
-.asm_16794
+.discourage_deck_specific_bench_score
 	call AIDiscourage
 
 .ai_score_bonus
@@ -6430,10 +6430,10 @@ AIDecideAndExecuteRetreat: ; Func_167e5
 	cp 1
 	jr nz, .dont_play_energy_card
 	farcall CreateEnergyCardListFromHand_OnlyBasic
-	jr nc, .asm_1682a
+	jr nc, .play_energy_for_retreat
 	farcall $12, $7f6d
 	jr c, .dont_play_energy_card
-.asm_1682a
+.play_energy_for_retreat
 	ld a, [wDuelTempList]
 	ldh [hTemp_ffa0], a
 	xor a ; PLAY_AREA_ARENA
@@ -6855,13 +6855,13 @@ AIDecideEvolution:
 	farcall AIMakeDecision
 	ld a, [wPlayedPokemonPowerActivated]
 	or a
-	jr z, .asm_16adf
+	jr z, .continue_after_evolution_decision
 	farcall AIHandlePkmnPowersWhenPlayingPkmnFromHand
 	ld a, OPPACTION_UNK_19
 	farcall AIMakeDecision
-	jr c, .asm_16aee
+	jr c, .return_after_evolution_power_followup
 
-.asm_16adf
+.continue_after_evolution_decision
 	pop bc
 	jr .done_hand_card
 .done_bench_pokemon
@@ -6876,7 +6876,7 @@ AIDecideEvolution:
 	or a
 	ret
 
-.asm_16aee
+.return_after_evolution_power_followup
 	pop bc
 	pop hl
 	ret
@@ -6981,10 +6981,10 @@ AIScoreEvolutionCandidate: ; Func_16af1
 	call CheckIfAnyAttackKnocksOutDefendingCard
 	jr nc, .evolution_cant_ko
 	call CheckIfSelectedAttackIsUnusable
-	jr nc, .asm_16baa
+	jr nc, .encourage_if_evolution_ko_attack_is_usable
 	farcall LookForEnergyNeededForAttackInHand
 	jr nc, .evolution_cant_ko
-.asm_16baa
+.encourage_if_evolution_ko_attack_is_usable
 	ld a, 5
 	call AIEncourage
 	jr .check_defending_can_ko_evolution
@@ -7644,18 +7644,18 @@ DetermineAIScoreOfAttackEnergyRequirement:
 
 .check_surplus_energy
 	farcall CheckIfNoSurplusEnergyForAttack
-	jr c, .asm_166cd
+	jr c, .encourage_for_low_surplus_energy
 	cp 3 ; check how much surplus energy
-	jr c, .asm_166cd
+	jr c, .encourage_for_low_surplus_energy
 
-.asm_166c5
+.check_special_max_before_discouraging_surplus_energy
 	farcall CheckIfAttachedEnergyIsBelowSpecialDeckCardMax
-	jr c, .asm_166cd
+	jr c, .encourage_for_low_surplus_energy
 	ld a, 5
 	call AIDiscourage
 	jp .check_evolution
 
-.asm_166cd
+.encourage_for_low_surplus_energy
 	ld a, 2
 	call AIEncourage
 
@@ -7702,8 +7702,8 @@ DetermineAIScoreOfAttackEnergyRequirement:
 	cphl ZAPDOS_LV64
 	jp z, .check_evolution
 	farcall CheckIfNoSurplusEnergyForAttack
-	jr c, .asm_166cd
-	jr .asm_166c5
+	jr c, .encourage_for_low_surplus_energy
+	jr .check_special_max_before_discouraging_surplus_energy
 
 .not_enough_energy
 	ld a, ATTACK_FLAG2_ADDRESS | FLAG_2_BIT_5_F
@@ -8083,7 +8083,7 @@ AITryToPlayEnergyCard:
 	jr nz, .loop_copy_list
 
 	ld hl, wc000
-.asm_171d6
+.check_next_energy_candidate
 	ld a, [hli]
 	cp $ff
 	jr z, .check_if_done
@@ -8093,7 +8093,7 @@ AITryToPlayEnergyCard:
 	pop hl
 	jr nc, .play_energy_card
 	cp -1
-	jr nz, .asm_171d6
+	jr nz, .check_next_energy_candidate
 
 ; plays energy card loaded in hTemp_ffa0 and sets carry flag.
 .play_energy_card
@@ -8188,16 +8188,16 @@ AICheckSpecialColorlessEnergyCards:
 	ld de, FULL_HEAL
 	call LookForCardIDInHand
 	ret nc ; no Full Heal in hand
-.asm_17279
+.check_full_heal_energy
 	add sp, $4
 	call AIDecideWhetherToRetreat_IgnoreStatus
-	jr nc, .asm_1728c
+	jr nc, .try_play_full_heal_energy
 	farcall CheckIfArenaCardCanRetreat
 	jr c, .done
 	ld a, [wAIPlayEnergyCardForRetreat]
 	or a
 	jr nz, .done
-.asm_1728c
+.try_play_full_heal_energy
 	ld de, FULLHEAL_ENERGY
 	call LookForCardIDInHand
 	jr c, .done
@@ -8224,7 +8224,7 @@ AICheckSpecialColorlessEnergyCards:
 	get_turn_duelist_var
 	or a
 	ret z
-	jr .asm_17279
+	jr .check_full_heal_energy
 
 .GreatDragonDeck:
 .PoisonStormDeck:
@@ -8305,110 +8305,110 @@ AIGetAdjustedAttackDamage: ; Func_17356
 	push af
 	ld a, [wSpecialRule]
 	cp $01
-	jr nz, .asm_173b4
+	jr nz, .check_snorlax_lv20_status_penalty
 	call SwapTurn
 	bank1call GetArenaCardColor
 	call SwapTurn
 	cp $01
-	jr nz, .asm_173b4
+	jr nz, .check_snorlax_lv20_status_penalty
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	cp16 ODDISH_LV21
-	jr z, .asm_173a0
+	jr z, .check_second_attack_minus_10
 	cp16 GLOOM
-	jr z, .asm_17398
+	jr z, .check_first_attack_minus_10
 	cp16 DARK_GLOOM
-	jr z, .asm_173a0
+	jr z, .check_second_attack_minus_10
 	ld a, $00
 	call CheckLoadedAttackFlag
-	jr c, .asm_173ad
+	jr c, .subtract_5_or_zero
 	pop af
 	ret
-.asm_17398
+.check_first_attack_minus_10
 	ld a, [wSelectedAttack]
 	or a
-	jr nz, .asm_173b4
-	jr .asm_173a6
-.asm_173a0
+	jr nz, .check_snorlax_lv20_status_penalty
+	jr .subtract_10_or_zero
+.check_second_attack_minus_10
 	ld a, [wSelectedAttack]
 	or a
-	jr z, .asm_173b4
-.asm_173a6
+	jr z, .check_snorlax_lv20_status_penalty
+.subtract_10_or_zero
 	pop af
 	sub $0a
-	jp c, .asm_17451
+	jp c, .return_zero_damage
 	ret
-.asm_173ad
+.subtract_5_or_zero
 	pop af
 	sub $05
-	jp c, .asm_17451
+	jp c, .return_zero_damage
 	ret
-.asm_173b4
+.check_snorlax_lv20_status_penalty
 	call SwapTurn
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	call SwapTurn
 	cp16 SNORLAX_LV20
-	jr nz, .asm_17431
+	jr nz, .check_defending_status_penalty
 	xor a
 	call SwapTurn
 	bank1call CheckIsIncapableOfUsingPkmnPower
 	call SwapTurn
-	jr c, .asm_17431
+	jr c, .check_defending_status_penalty
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	cp16 BULBASAUR_LV15
-	jr z, .asm_1742a
+	jr z, .check_second_attack_minus_10_snorlax_matchup
 	cp16 WEEDLE_LV15
-	jr z, .asm_1742a
+	jr z, .check_second_attack_minus_10_snorlax_matchup
 	cp16 EKANS_LV10
-	jr z, .asm_17421
+	jr z, .check_first_attack_minus_10_snorlax_matchup
 	cp16 ODDISH_LV21
-	jr z, .asm_1742a
+	jr z, .check_second_attack_minus_10_snorlax_matchup
 	cp16 GLOOM
-	jr z, .asm_17421
+	jr z, .check_first_attack_minus_10_snorlax_matchup
 	cp16 DARK_GLOOM
-	jr z, .asm_1742a
+	jr z, .check_second_attack_minus_10_snorlax_matchup
 	ld a, $00
 	call CheckLoadedAttackFlag
-	jr c, .asm_173ad
-	jr .asm_17431
-.asm_17421
+	jr c, .subtract_5_or_zero
+	jr .check_defending_status_penalty
+.check_first_attack_minus_10_snorlax_matchup
 	ld a, [wSelectedAttack]
 	or a
-	jr nz, .asm_17431
-	jp .asm_173a6
-.asm_1742a
+	jr nz, .check_defending_status_penalty
+	jp .subtract_10_or_zero
+.check_second_attack_minus_10_snorlax_matchup
 	ld a, [wSelectedAttack]
 	or a
-	jp nz, .asm_173a6
-.asm_17431
-	ld a, $ec
+	jp nz, .subtract_10_or_zero
+.check_defending_status_penalty
+	ld a, DUELVARS_ARENA_CARD_STATUS
 	call GetNonTurnDuelistVariable
 	and $f0
 	cp $c0
-	jr nz, .asm_17442
-.asm_1743c
+	jr nz, .check_poison_mist_status_penalty
+.subtract_20_or_zero
 	pop af
 	sub $14
-	jr c, .asm_17451
+	jr c, .return_zero_damage
 	ret
-.asm_17442
+.check_poison_mist_status_penalty
 	cp $80
-	jr nz, .asm_17453
+	jr nz, .return_original_damage
 	bank1call CheckPoisonMistPkmnPowers
-	jr c, .asm_1743c
+	jr c, .subtract_20_or_zero
 	pop af
 	sub $0a
-	jr c, .asm_17451
+	jr c, .return_zero_damage
 	ret
-.asm_17451
+.return_zero_damage
 	xor a
 	ret
-.asm_17453
+.return_original_damage
 	pop af
 	ret
 
@@ -8592,12 +8592,12 @@ GetAIScoreOfAttack:
 	xor a ; PLAY_AREA_ARENA
 	ldh [hTempPlayAreaLocation_ff9d], a
 	call CheckIfSelectedAttackIsUnusable
-	jr nc, .asm_17532
-.asm_1752b
+	jr nc, .begin_scoring
+.set_zero_score
 	xor a
 	ld [wAIScore], a
-	jp .asm_17969
-.asm_17532
+	jp .done
+.begin_scoring
 	xor a
 	ld [wAICannotDamage], a
 	ld a, DUELVARS_ARENA_CARD
@@ -8617,23 +8617,23 @@ GetAIScoreOfAttack:
 	ld [wTempNonTurnDuelistCardID + 1], a
 	bank1call HandleNoDamageOrEffectSubstatus
 	call SwapTurn
-	jr nc, .asm_17581
+	jr nc, .score_damage
 	ld a, $01
 	ld [wAICannotDamage], a
 	ld a, [wSelectedAttack]
 	call EstimateDamage_VersusDefendingCard
 	ld a, $12
 	call CheckLoadedAttackFlag
-	jr c, .asm_17581
+	jr c, .score_damage
 	ld a, [wLoadedAttackCategory]
 	cp $04
-	jr z, .asm_1752b
+	jr z, .set_zero_score
 	and $80
-	jr nz, .asm_17581
+	jr nz, .score_damage
 	ld a, $05
 	call CheckLoadedAttackFlag
-	jr nc, .asm_1752b
-.asm_17581
+	jr nc, .set_zero_score
+.score_damage
 	ld a, [wSelectedAttack]
 	call EstimateDamage_VersusDefendingCard
 	ld a, $c8
@@ -8644,100 +8644,100 @@ GetAIScoreOfAttack:
 	ld b, a
 	pop af
 	sub b
-	jr c, .asm_1759c
-	jr z, .asm_1759c
-	jr .asm_175f6
-.asm_1759c
+	jr c, .score_potential_ko
+	jr z, .score_potential_ko
+	jr .score_adjusted_damage
+.score_potential_ko
 	ld a, $14
 	call AIEncourage
 	ld a, $ed
 	call GetNonTurnDuelistVariable
-	cp $1b
-	jr nz, .asm_175f6
+	cp SUBSTATUS1_DESTINY_BOND
+	jr nz, .score_adjusted_damage
 	call SwapTurn
 	call CountPrizes
 	call SwapTurn
 	cp $01
-	jr nz, .asm_175be
+	jr nz, .check_only_active_pokemon_penalty
 	ld a, $32
 	call AIDiscourage
-	jr .asm_175f6
-.asm_175be
+	jr .score_adjusted_damage
+.check_only_active_pokemon_penalty
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	cp $01
-	jr nz, .asm_175cc
+	jr nz, .check_last_prize_ko_bonus
 	ld a, $32
 	call AIDiscourage
-	jr .asm_175f6
-.asm_175cc
+	jr .score_adjusted_damage
+.check_last_prize_ko_bonus
 	call CountPrizes
 	cp $01
-	jr nz, .asm_175da
+	jr nz, .check_opponent_last_pokemon_bonus
 	ld a, $0a
 	call AIEncourage
-	jr .asm_175f6
-.asm_175da
+	jr .score_adjusted_damage
+.check_opponent_last_pokemon_bonus
 	ld a, $f5
 	call GetNonTurnDuelistVariable
 	cp $01
-	jr nz, .asm_175ea
+	jr nz, .check_high_hp_ko_penalty
 	ld a, $0a
 	call AIEncourage
-	jr .asm_175f6
-.asm_175ea
+	jr .score_adjusted_damage
+.check_high_hp_ko_penalty
 	ld a, DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	cp $1e
-	jr c, .asm_175f6
+	jr c, .score_adjusted_damage
 	ld a, $1e
 	call AIDiscourage
-.asm_175f6
+.score_adjusted_damage
 	xor a
 	ld [wAIAttackScoringTempFlag], a
 	ld a, [wDamage]
 	ld [wTempAI], a
 	call AIGetAdjustedAttackDamage
 	or a
-	jr z, .asm_1760e
+	jr z, .score_zero_damage
 	call ConvertHPToCounters
 	call AIEncourage
-	jr .asm_17643
-.asm_1760e
+	jr .check_self_damage
+.score_zero_damage
 	ld a, $01
 	ld [wAIAttackScoringTempFlag], a
 	call AIDiscourage
 	ld a, [wAIMaxDamage]
 	farcall $13, $4b6e
 	or a
-	jr z, .asm_17629
+	jr z, .check_no_damage_bonus
 	ld a, $02
 	call AIEncourage
 	xor a
 	ld [wAIAttackScoringTempFlag], a
-.asm_17629
+.check_no_damage_bonus
 	ld a, $05
 	call CheckLoadedAttackFlag
-	jr nc, .asm_17643
+	jr nc, .check_self_damage
 	ld a, $f5
 	call GetNonTurnDuelistVariable
 	or a
-	jr z, .asm_17643
+	jr z, .check_self_damage
 	farcall CheckIfPlayerHasAuroraVeilActive
-	jr c, .asm_17643
+	jr c, .check_self_damage
 	ld a, $02
 	call AIEncourage
-.asm_17643
+.check_self_damage
 	ld a, $04
 	call CheckLoadedAttackFlag
-	jr c, .asm_17652
+	jr c, .score_self_damage
 	ld a, $06
 	call CheckLoadedAttackFlag
-	jp nc, .asm_17799
-.asm_17652
+	jp nc, .score_attack_effects
+.score_self_damage
 	ld a, [wLoadedAttackEffectParam]
 	or a
-	jp z, .asm_17799
+	jp z, .score_attack_effects
 	ld [wDamage], a
 	call ApplyDamageModifiers_DamageToSelf
 	ld a, e
@@ -8747,57 +8747,57 @@ GetAIScoreOfAttack:
 	ld a, $06
 	call CheckLoadedAttackFlag
 	pop de
-	jr c, .asm_1769d
+	jr c, .check_zero_score_after_self_ko
 	ld a, DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	cp e
-	jr c, .asm_17678
-	jp nz, .asm_17799
-.asm_17678
+	jr c, .discourage_self_ko
+	jp nz, .score_attack_effects
+.discourage_self_ko
 	ld a, $0a
 	call AIDiscourage
 	call SwapTurn
 	call CountPrizes
 	call SwapTurn
 	cp $01
-	jr nz, .asm_17691
+	jr nz, .check_lone_pokemon_self_ko
 	ld a, $1e
 	call AIDiscourage
-	jr .asm_1769d
-.asm_17691
+	jr .check_zero_score_after_self_ko
+.check_lone_pokemon_self_ko
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	cp $01
-	jr nz, .asm_1769d
+	jr nz, .check_zero_score_after_self_ko
 	ld a, $1e
 	call AIDiscourage
-.asm_1769d
+.check_zero_score_after_self_ko
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	cp $02
-	jr c, .asm_176af
+	jr c, .set_zero_score_and_finish
 	ld a, [wOpponentDeckID]
 	cp $12
-	jr z, .asm_176af
+	jr z, .set_zero_score_and_finish
 	cp $1c
-	jr nz, .asm_17705
-.asm_176af
+	jr nz, .score_bench_hp_threshold_matchups
+.set_zero_score_and_finish
 	xor a
 	ld [wAIScore], a
-	jp .asm_17969
+	jp .done
 .asm_176b6
 	ld a, $14
 	call AIEncourage
-	jp .asm_17969
+	jp .done
 	ld a, DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK
 	get_turn_duelist_var
 	cp $1f
-	jr nc, .asm_17705
+	jr nc, .score_bench_hp_threshold_matchups
 	ld e, $00
 	call GetCardDamageAndMaxHP
 	sla a
 	cp c
-	jr c, .asm_17705
+	jr c, .score_bench_hp_threshold_matchups
 	ld b, $00
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -8811,127 +8811,127 @@ GetAIScoreOfAttack:
 	ld b, a
 	ld a, $01
 	call .CountBenchPkmnAboveHPThreshold
-	jr c, .asm_176af
+	jr c, .set_zero_score_and_finish
 	jr .asm_176b6
 	call CountPrizes
 	cp $04
-	jr nc, .asm_176af
+	jr nc, .set_zero_score_and_finish
 	ld b, $14
 	call SwapTurn
 	xor a
 	call .CountBenchPkmnAboveHPThreshold
 	call SwapTurn
 	jr c, .asm_176b6
-.asm_17705
+.score_bench_hp_threshold_matchups
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
 	cp16 CHANSEY_LV55
-	jr z, .asm_17731
+	jr z, .set_bench_hp_threshold_0
 	cp16 MAGNEMITE_LV13
-	jr z, .asm_1772d
+	jr z, .set_bench_hp_threshold_10
 	cp16 WEEZING_LV27
-	jr z, .asm_1772d
+	jr z, .set_bench_hp_threshold_10
 	ld b, $14
-	jr .asm_17733
-.asm_1772d
+	jr .evaluate_bench_hp_threshold_counts
+.set_bench_hp_threshold_10
 	ld b, $0a
-	jr .asm_17733
-.asm_17731
+	jr .evaluate_bench_hp_threshold_counts
+.set_bench_hp_threshold_0
 	ld b, $00
-.asm_17733
+.evaluate_bench_hp_threshold_counts
 	push bc
 	call SwapTurn
 	xor a
 	call .CountBenchPkmnAboveHPThreshold
 	call SwapTurn
 	pop bc
-	jr c, .asm_17751
+	jr c, .encourage_if_opponent_bench_meets_threshold
 	push de
 	ld a, $01
 	call .CountBenchPkmnAboveHPThreshold
 	pop bc
-	jr nc, .asm_17759
+	jr nc, .adjust_score_by_bench_threshold_delta
 	xor a
 	ld [wAIScore], a
-	jp .asm_17969
-.asm_17751
+	jp .done
+.encourage_if_opponent_bench_meets_threshold
 	ld a, $14
 	call AIEncourage
-	jp .asm_17969
-.asm_17759
+	jp .done
+.adjust_score_by_bench_threshold_delta
 	push bc
 	ld a, d
 	or a
-	jr z, .asm_17762
+	jr z, .encourage_bench_threshold_result
 	dec a
 	call AIDiscourage
-.asm_17762
+.encourage_bench_threshold_result
 	pop bc
 	ld a, b
 	call AIEncourage
-	jr .asm_17799
+	jr .score_attack_effects
 
 .CountBenchPkmnAboveHPThreshold:
 	ld d, a
 	ld a, DUELVARS_BENCH
 	get_turn_duelist_var
 	ld e, $00
-.asm_1776f
+.loop_bench
 	inc e
 	ld a, [hli]
 	cp $ff
-	jr z, .asm_17783
+	jr z, .check_prize_threshold
 	ld a, e
 	add $c8
 	push hl
 	get_turn_duelist_var
 	pop hl
 	cp b
-	jr z, .asm_17780
-	jr nc, .asm_1776f
-.asm_17780
+	jr z, .count_above_threshold
+	jr nc, .loop_bench
+.count_above_threshold
 	inc d
-	jr .asm_1776f
-.asm_17783
+	jr .loop_bench
+.check_prize_threshold
 	push de
 	call SwapTurn
 	call CountPrizes
 	call SwapTurn
 	pop de
 	cp d
-	jp c, .asm_17797 ; can be jr
-	jp z, .asm_17797 ; can be jr
+	jp c, .carry ; can be jr
+	jp z, .carry ; can be jr
 	or a
 	ret
-.asm_17797
+.carry
 	scf
 	ret
 
-.asm_17799
+.score_attack_effects
 	ld a, [wSelectedAttack]
 	push af
 	farcall CheckIfDefendingPokemonCanKnockOut
 	pop bc
 	ld a, b
 	ld [wSelectedAttack], a
-	jr nc, .asm_177c5
+	jr nc, .reload_attack_data
 	ld a, $05
 	call AIEncourage
 	ld a, [wAIAttackScoringTempFlag]
 	or a
-	jr nz, .asm_177c0
+	jr nz, .discourage_if_zero_damage
 	ld a, [wSelectedAttack]
 	ld e, a
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	ld d, a
 	call CopyAttackDataAndDamage_FromDeckIndex
-	jr .asm_177e9
-.asm_177c0
+	jr .score_effect_param_bonus
+.discourage_if_zero_damage
 	ld a, $05
 	call AIDiscourage
-.asm_177c5
+.reload_attack_data
 	ld a, [wSelectedAttack]
 	ld e, a
 	ld a, DUELVARS_ARENA_CARD
@@ -8940,204 +8940,204 @@ GetAIScoreOfAttack:
 	call CopyAttackDataAndDamage_FromDeckIndex
 	ld a, $0b
 	call CheckLoadedAttackFlag
-	jr nc, .asm_177e9
+	jr nc, .score_effect_param_bonus
 	ld a, [wOpponentDeckID]
 	cp $34
-	jr z, .asm_177e9
+	jr z, .score_effect_param_bonus
 	ld a, $01
 	call AIDiscourage
 	ld a, [wLoadedAttackEffectParam]
 	call AIDiscourage
-.asm_177e9
+.score_effect_param_bonus
 	ld a, $0e
 	call CheckLoadedAttackFlag
-	jr nc, .asm_177f6
+	jr nc, .score_effect_param_penalty
 	ld a, [wLoadedAttackEffectParam]
 	call AIEncourage
-.asm_177f6
+.score_effect_param_penalty
 	ld a, $0f
 	call CheckLoadedAttackFlag
-	jr nc, .asm_17803
+	jr nc, .score_status_bonus
 	ld a, [wLoadedAttackEffectParam]
 	call AIDiscourage
-.asm_17803
+.score_status_bonus
 	ld a, $0a
 	call CheckLoadedAttackFlag
-	jr nc, .asm_1780f
+	jr nc, .score_switch_bonus
 	ld a, $01
 	call AIEncourage
-.asm_1780f
+.score_switch_bonus
 	ld a, $07
 	call CheckLoadedAttackFlag
-	jr nc, .asm_1781b
+	jr nc, .score_heal_effect
 	ld a, $01
 	call AIEncourage
-.asm_1781b
+.score_heal_effect
 	ld a, $09
 	call CheckLoadedAttackFlag
-	jr nc, .asm_17857
+	jr nc, .score_status_effects
 	ld a, [wLoadedAttackEffectParam]
 	cp $01
-	jr z, .asm_17846
+	jr z, .cap_heal_score_by_current_damage
 	ld a, [wTempAI]
 	call ConvertHPToCounters
 	ld b, a
 	ld a, [wLoadedAttackEffectParam]
 	cp $03
-	jr z, .asm_1783c
+	jr z, .check_heal_amount_vs_current_hp
 	srl b
-	jr nc, .asm_1783c
+	jr nc, .check_heal_amount_vs_current_hp
 	inc b
-.asm_1783c
+.check_heal_amount_vs_current_hp
 	ld a, DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	call ConvertHPToCounters
 	cp b
-	jr c, .asm_17846
+	jr c, .cap_heal_score_by_current_damage
 	ld a, b
-.asm_17846
+.cap_heal_score_by_current_damage
 	push af
 	ld e, $00
 	call GetCardDamageAndMaxHP
 	call ConvertHPToCounters
 	pop bc
 	cp b
-	jr c, .asm_17854
+	jr c, .encourage_heal_score
 	ld a, b
-.asm_17854
+.encourage_heal_score
 	call AIEncourage
-.asm_17857
-	ld a, $bb
+.score_status_effects
+	ld a, DUELVARS_ARENA_CARD
 	call GetNonTurnDuelistVariable
 	call SwapTurn
 	call GetCardIDFromDeckIndex
 	call SwapTurn
 	cp16 SNORLAX_LV20
-	jp z, .asm_17916
+	jp z, .check_special_ai_handling_score
 	ld a, [wSpecialRule]
-	cp $01
-	jr nz, .asm_17885
+	cp CHLOROPHYLL
+	jr nz, .check_poison_effect
 	call SwapTurn
 	bank1call GetArenaCardColor
 	call SwapTurn
-	cp $01
-	jp z, .asm_17916
-.asm_17885
-	ld a, $ec
+	cp GRASS
+	jp z, .check_special_ai_handling_score
+.check_poison_effect
+	ld a, DUELVARS_ARENA_CARD_STATUS
 	call GetNonTurnDuelistVariable
 	ld [wTempAI], a
-	ld a, $00
+	ld a, ATTACK_FLAG1_ADDRESS | INFLICT_POISON_F
 	call CheckLoadedAttackFlag
-	jr nc, .asm_178b2
+	jr nc, .check_sleep_effect
 	ld a, [wTempAI]
-	and $c0
-	jr z, .asm_178ad
-	and $40
-	jr z, .asm_178b2
-	ld a, $0e
+	and DOUBLE_POISONED
+	jr z, .encourage_poison_effect
+	and 1 << DOUBLE_POISONED_F
+	jr z, .check_sleep_effect
+	ld a, ATTACK_FLAG2_ADDRESS | FLAG_2_BIT_6_F
 	call CheckLoadedAttackFlag
-	jr nc, .asm_178b2
+	jr nc, .check_sleep_effect
 	ld a, $02
 	call AIDiscourage
-	jr .asm_178b2
-.asm_178ad
+	jr .check_sleep_effect
+.encourage_poison_effect
 	ld a, $02
 	call AIEncourage
-.asm_178b2
-	ld a, $01
+.check_sleep_effect
+	ld a, ATTACK_FLAG1_ADDRESS | INFLICT_SLEEP_F
 	call CheckLoadedAttackFlag
-	jr nc, .asm_178c7
+	jr nc, .check_paralysis_effect
 	ld a, [wTempAI]
-	and $0f
-	cp $02
-	jr z, .asm_178c7
+	and CNF_SLP_PRZ
+	cp ASLEEP
+	jr z, .check_paralysis_effect
 	ld a, $01
 	call AIEncourage
-.asm_178c7
-	ld a, $02
+.check_paralysis_effect
+	ld a, ATTACK_FLAG1_ADDRESS | INFLICT_PARALYSIS_F
 	call CheckLoadedAttackFlag
-	jr nc, .asm_178e3
+	jr nc, .check_confusion_effect
 	ld a, [wTempAI]
-	and $0f
-	cp $02
-	jr z, .asm_178de
+	and CNF_SLP_PRZ
+	cp ASLEEP
+	jr z, .discourage_paralysis_against_sleep
 	ld a, $01
 	call AIEncourage
-	jr .asm_178e3
-.asm_178de
+	jr .check_confusion_effect
+.discourage_paralysis_against_sleep
 	ld a, $01
 	call AIDiscourage
-.asm_178e3
-	ld a, $03
+.check_confusion_effect
+	ld a, ATTACK_FLAG1_ADDRESS | INFLICT_CONFUSION_F
 	call CheckLoadedAttackFlag
-	jr nc, .asm_17908
+	jr nc, .check_self_confusion_penalty
 	ld a, [wTempAI]
-	and $0f
-	cp $02
-	jr z, .asm_17903
+	and CNF_SLP_PRZ
+	cp ASLEEP
+	jr z, .discourage_confusion_against_sleep
 	ld a, [wTempAI]
-	and $0f
-	cp $01
-	jr z, .asm_17908
+	and CNF_SLP_PRZ
+	cp CONFUSED
+	jr z, .check_self_confusion_penalty
 	ld a, $01
 	call AIEncourage
-	jr .asm_17908
-.asm_17903
+	jr .check_self_confusion_penalty
+.discourage_confusion_against_sleep
 	ld a, $01
 	call AIDiscourage
-.asm_17908
+.check_self_confusion_penalty
 	ld a, DUELVARS_ARENA_CARD_STATUS
 	get_turn_duelist_var
-	and $0f
-	cp $01
-	jr nz, .asm_17916
+	and CNF_SLP_PRZ
+	cp CONFUSED
+	jr nz, .check_special_ai_handling_score
 	ld a, $01
 	call AIDiscourage
-.asm_17916
-	ld a, $11
+.check_special_ai_handling_score
+	ld a, ATTACK_FLAG3_ADDRESS | SPECIAL_AI_HANDLING_F
 	call CheckLoadedAttackFlag
-	jr nc, .asm_17935
+	jr nc, .score_effect_ai_result
 	farcall $a, $4dff
 	cp $80
-	jr c, .asm_1792c
+	jr c, .score_negative_special_ai_result
 	sub $80
 	call AIEncourage
-	jr .asm_17969
-.asm_1792c
+	jr .done
+.score_negative_special_ai_result
 	ld b, a
 	ld a, $80
 	sub b
 	call AIDiscourage
-	jr .asm_17969
-.asm_17935
+	jr .done
+.score_effect_ai_result
 	ld a, [wSelectedAttack]
 	push af
 	farcall $12, $74e4
 	cp $80
-	jr c, .asm_17948
+	jr c, .discourage_effect_ai_result
 	sub $80
 	call AIEncourage
-	jr .asm_1794f
-.asm_17948
+	jr .score_followup_effect_ai_result
+.discourage_effect_ai_result
 	ld b, a
 	ld a, $80
 	sub b
 	call AIDiscourage
-.asm_1794f
+.score_followup_effect_ai_result
 	pop af
 	ld [wSelectedAttack], a
 	farcall $13, $4063
 	cp $80
-	jr c, .asm_17962
+	jr c, .discourage_followup_effect_ai_result
 	sub $80
 	call AIEncourage
-	jr .asm_17969
-.asm_17962
+	jr .done
+.discourage_followup_effect_ai_result
 	ld b, a
 	ld a, $80
 	sub b
 	call AIDiscourage
-.asm_17969
+.done
 	ret
 
 ; return carry if card ID corresponding

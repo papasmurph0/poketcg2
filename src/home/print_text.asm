@@ -496,7 +496,7 @@ PrintTextNoDelay::
 
 ; hl = text ID
 ; de = coordinates
-PrintTextNoDelayAndZeroAttributes:: ; Func_2c4b
+PrintTextNoDelayAndZeroAttributes: ; Func_2c4b
 	push hl
 	push de
 	call PrintTextNoDelay_Init

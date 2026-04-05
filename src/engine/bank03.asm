@@ -952,7 +952,7 @@ ShowReceivedCardWithText: ; Func_c63e
 	ret
 
 ; de = card id
-AddCardAndShowReceived:: ; Func_c646
+AddCardAndShowReceived: ; Func_c646
 	call AddCardToCollection
 	call GetReceivedCardText
 	farcall _ShowReceivedCard

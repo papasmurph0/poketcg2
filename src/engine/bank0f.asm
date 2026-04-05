@@ -57,12 +57,12 @@ Prologue::
 	; show beam animation on player
 	ld a, EVENT_PLAYER_GENDER
 	farcall GetEventValue
-	jr nz, .asm_3c08d
+	jr nz, .female_player_frameset
 	ld bc, FRAMESET_0AE
-	jr .asm_3c090
-.asm_3c08d
+	jr .apply_player_frameset_for_beam
+.female_player_frameset
 	ld bc, FRAMESET_0B4
-.asm_3c090
+.apply_player_frameset_for_beam
 	ld a, [wPlayerOWObject]
 	farcall _SetAndInitOWObjectFrameset
 	call .DoGRBlimpBeamAnimation
@@ -92,12 +92,12 @@ Prologue::
 
 	ld a, EVENT_PLAYER_GENDER
 	farcall GetEventValue
-	jr nz, .asm_3c0de
+	jr nz, .female_player_frameset_2
 	ld bc, FRAMESET_0AF
-	jr .asm_3c0e1
-.asm_3c0de
+	jr .apply_player_frameset_after_cutscene
+.female_player_frameset_2
 	ld bc, FRAMESET_0B5
-.asm_3c0e1
+.apply_player_frameset_after_cutscene
 	ld a, [wPlayerOWObject]
 	farcall _SetAndInitOWObjectFrameset
 
@@ -293,11 +293,11 @@ Script_BattleCenter:
 	ld b, a
 	call DisableSRAM
 	cp16bc_long 50
-	jr z, .asm_3c280
+	jr z, .grant_50_win_milestone
 	ld a, $01
 	start_script
 	script_ret
-.asm_3c280
+.grant_50_win_milestone
 	ld a, $01
 	start_script
 	set_event EVENT_GOT_RAICHU_COIN
@@ -314,11 +314,11 @@ Script_BattleCenter:
 	ld b, a
 	call DisableSRAM
 	cp16bc_long 100
-	jr z, .asm_3c2b1
+	jr z, .grant_100_win_milestone
 	ld a, $01
 	start_script
 	script_ret
-.asm_3c2b1
+.grant_100_win_milestone
 	ld a, $01
 	start_script
 	set_event EVENT_GOT_LUGIA_COIN
@@ -810,24 +810,24 @@ LoadMasonLaboratoryComputerRoomNPCs: ; Func_3c690
 HandleMasonLaboratoryComputerRoomWarpFadeInPreload: ; Func_3c697
 	ld a, EVENT_GOT_GOLBAT_COIN
 	farcall GetEventValue
-	jr z, .asm_3c6b1
+	jr z, .skip_machine2_overlay
 	ld a, NPC_LAB_TECH_AUTO_DECK_MACHINE_2
 	ld b, WEST
 	farcall SetOWObjectDirection
 	ld bc, TILEMAP_008
 	lb de, 7, 7
 	farcall AddOWTilemapOverlay
-.asm_3c6b1
+.skip_machine2_overlay
 	scf
 	ret
 
 HandleMasonLaboratoryComputerRoomInteractions: ; Func_3c6b3
 	ld hl, MasonLaboratoryComputerRoom_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3c6c1
+	jr nc, .skip_overworld_interactions
 	ld hl, MasonLaboratoryComputerRoom_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3c6c1
+.skip_overworld_interactions
 	scf
 	ret
 
@@ -1090,36 +1090,36 @@ ScriptMasonLaboratoryTrainingRoomAaron: ; Func_3c84c
 	ld a, $02
 	ld b, $00
 	farcall HandlePopupMenu
-	jr c, .asm_3c90a
+	jr c, .cancel_duel_challenge
 	or a
 	jp z, StartAaronStep1Duel
-	jr .asm_3c90a
+	jr .cancel_duel_challenge
 .ows_3c8b3
 	print_npc_text Text0f3f
 	quit_script
 	ld a, $03
 	ld b, $00
 	farcall HandlePopupMenu
-	jr c, .asm_3c90a
+	jr c, .cancel_duel_challenge
 	or a
 	jp z, StartAaronStep1Duel
 	dec a
 	jp z, StartAaronStep2Duel
-	jr .asm_3c90a
+	jr .cancel_duel_challenge
 .ows_3c8cb
 	print_npc_text Text0f3f
 	quit_script
 	ld a, $04
 	ld b, $00
 	farcall HandlePopupMenu
-	jr c, .asm_3c90a
+	jr c, .cancel_duel_challenge
 	or a
 	jp z, StartAaronStep1Duel
 	dec a
 	jp z, StartAaronStep2Duel
 	dec a
 	jp z, StartAaronStep3Duel
-	jr .asm_3c90a
+	jr .cancel_duel_challenge
 .ows_3c8e7
 	check_event EVENT_GOT_MACHAMP_COIN
 	script_jump_if_b0nz .ows_3c8cb
@@ -1128,14 +1128,14 @@ ScriptMasonLaboratoryTrainingRoomAaron: ; Func_3c84c
 	ld a, $05
 	ld b, $00
 	farcall HandlePopupMenu
-	jr c, .asm_3c90a
+	jr c, .cancel_duel_challenge
 	cp $01
 	jp c, StartAaronStep1Duel
 	jp z, StartAaronStep2Duel
 	cp $03
 	jp c, StartAaronStep3Duel
 	jp z, StartAaronStep4Duel
-.asm_3c90a
+.cancel_duel_challenge
 	ld a, $01
 	start_script
 	print_npc_text Text0f41
@@ -1529,20 +1529,20 @@ LightningClubEntrance_MapScripts:
 SetLightningClubEntranceGRMusicIfPikachuCoinMissing: ; Func_3cbd4
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr nz, .asm_3cbe1
+	jr nz, .coin_already_obtained_skip_music
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_3cbe1
+.coin_already_obtained_skip_music
 	scf
 	ccf
 	ret
 
 HandleLightningClubEntranceMusicPostload: ; Func_3cbe4
 	call CheckIfMetRonaldAtLeastTwice
-	jr nc, .asm_3cbeb
+	jr nc, .ronald_not_met_twice
 	scf
 	ret
-.asm_3cbeb
+.ronald_not_met_twice
 	ld a, MUSIC_RONALD
 	farcall PlayAfterCurrentSong
 	scf
@@ -1557,16 +1557,16 @@ ExecuteLightningClubEntranceStepEvents: ; Func_3cbf4
 HandleLightningClubEntranceWarpFadeInPreload: ; Func_3cbfb
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_3cc0b
+	jr nz, .add_overlay_or_setup_ronald
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr nz, .asm_3cc35
-.asm_3cc0b
+	jr nz, .finish_warp_setup
+.add_overlay_or_setup_ronald
 	ld bc, TILEMAP_00C
 	lb de, 1, 0
 	farcall AddOWTilemapOverlay
 	call CheckIfMetRonaldAtLeastTwice
-	jr c, .asm_3cc35
+	jr c, .finish_warp_setup
 	ldtx hl, DialogGR4Text
 	call LoadTxRam2
 	ld a, OWMODE_SCRIPT
@@ -1578,21 +1578,21 @@ HandleLightningClubEntranceWarpFadeInPreload: ; Func_3cbfb
 	ld [wOverworldScriptPointer], a
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
-.asm_3cc35
+.finish_warp_setup
 	scf
 	ret
 
 HandleLightningClubEntranceContinueOverworld: ; Func_3cc37
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_3cc51
+	jr z, .skip_ronald_cleanup
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_3cc51
+.skip_ronald_cleanup
 	scf
 	ret
 
@@ -1600,10 +1600,10 @@ CheckIfMetRonaldAtLeastTwice: ; Func_3cc53
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $02
-	jr c, .asm_3cc5f
+	jr c, .ronald_not_met_twice_yet
 	scf
 	ret
-.asm_3cc5f
+.ronald_not_met_twice_yet
 	scf
 	ccf
 	ret
@@ -1660,10 +1660,10 @@ LightningClubLobby_MapScripts:
 SetLightningClubLobbyGRMusicIfPikachuCoinMissing: ; Func_3cd1b
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr nz, .asm_3cd28
+	jr nz, .coin_already_obtained_skip_music_2
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_3cd28
+.coin_already_obtained_skip_music_2
 	scf
 	ccf
 	ret
@@ -1683,10 +1683,10 @@ LoadLightningClubLobbyNPCs: ; Func_3cd32
 HandleLightningClubLobbyInteractions: ; Func_3cd3b
 	ld hl, LightningClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3cd49
+	jr nc, .skip_coord_script
 	ld hl, LightningClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3cd49
+.skip_coord_script
 	scf
 	ret
 
@@ -1749,13 +1749,13 @@ ScriptLightningClubLobbyBrandon: ; Func_3cd7e
 CheckShowLightningClubLobbyJenniferOrBrandon: ; Func_3cdb1
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_3cdc3
+	jr nz, .hide_jennifer_brandon
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr z, .asm_3cdc3
+	jr z, .hide_jennifer_brandon
 	scf
 	ret
-.asm_3cdc3
+.hide_jennifer_brandon
 	scf
 	ccf
 	ret
@@ -1871,10 +1871,10 @@ ScriptLightningClubLobbyLonghairedOrGrLass: ; Func_3ce6a
 CheckShowLightningClubLonghairedLass: ; Func_3ce9b
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr z, .asm_3cea5
+	jr z, .hide_longhaired_lass
 	scf
 	ret
-.asm_3cea5
+.hide_longhaired_lass
 	scf
 	ccf
 	ret
@@ -1882,10 +1882,10 @@ CheckShowLightningClubLonghairedLass: ; Func_3ce9b
 CheckShowLightningClubGrLass: ; Func_3cea8
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr nz, .asm_3ceb2
+	jr nz, .hide_gr_lass
 	scf
 	ret
-.asm_3ceb2
+.hide_gr_lass
 	scf
 	ccf
 	ret
@@ -1968,10 +1968,10 @@ GrassClubLobby_MapScripts:
 SetGrassClubLobbyGRMusicIfTopRightCoinPieceMissing: ; Func_3cf98
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_3cfa5
+	jr nz, .coin_piece_obtained_skip_music_3
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_3cfa5
+.coin_piece_obtained_skip_music_3
 	scf
 	ccf
 	ret
@@ -1991,10 +1991,10 @@ LoadGrassClubLobbyNPCs: ; Func_3cfaf
 HandleGrassClubLobbyInteractions: ; Func_3cfb8
 	ld hl, GrassClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3cfc6
+	jr nc, .skip_coord_script_2
 	ld hl, GrassClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3cfc6
+.skip_coord_script_2
 	scf
 	ret
 
@@ -2159,13 +2159,13 @@ ScriptGrassClubLobbyHeather: ; Func_3d0a8
 CheckShowGrassClubLobbyBrittanyKristinHeather: ; Func_3d0ec
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_3d0fe
+	jr nz, .hide_brittany_kristin_heather
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_3d0fe
+	jr z, .hide_brittany_kristin_heather
 	scf
 	ret
-.asm_3d0fe
+.hide_brittany_kristin_heather
 	scf
 	ccf
 	ret
@@ -2249,14 +2249,14 @@ ScriptGrassClubLobbyCappedLass: ; Func_3d158
 CheckShowGrassClubLobbyGrannyLassCappedLass: ; Func_3d189
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_3d19c
+	jr nz, .hide_granny_lass_capped
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_3d19c
+	jr z, .hide_granny_lass_capped
 	scf
 	ccf
 	ret
-.asm_3d19c
+.hide_granny_lass_capped
 	scf
 	ret
 
@@ -2497,10 +2497,10 @@ LoadTcgChallengeHallLobbyNPCs: ; Func_3d3a7
 HandleTcgChallengeHallLobbyInteractions: ; Func_3d3b0
 	ld hl, TcgChallengeHallLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3d3be
+	jr nc, .skip_coord_script_3
 	ld hl, TcgChallengeHallLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3d3be
+.skip_coord_script_3
 	scf
 	ret
 
@@ -5021,20 +5021,20 @@ SetIshiharasVillaMainMusicByIshiharaState: ; Func_3e704
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	cp ISHIHARA_TRADE_3_DONE
-	jr c, .asm_3e722
-	jr z, .asm_3e71a
+	jr c, .set_gr_music
+	jr z, .check_card_trade_main
 	ld a, EVENT_ISHIHARA_LOCATION_STATE
 	farcall GetEventValue
-	jr nz, .asm_3e722
-	jr .asm_3e727
-.asm_3e71a
+	jr nz, .set_gr_music
+	jr .done_music_setup_main
+.check_card_trade_main
 	ld a, EVENT_ISHIHARA_CARD_TRADE_STATE
 	farcall GetEventValue
-	jr z, .asm_3e727
-.asm_3e722
+	jr z, .done_music_setup_main
+.set_gr_music
 	ld a, MUSIC_GR_OVERWORLD
 	ld [wNextMusic], a
-.asm_3e727
+.done_music_setup_main
 	scf
 	ccf
 	ret
@@ -5054,10 +5054,10 @@ LoadIshiharasVillaMainNPCs: ; Func_3e731
 HandleIshiharasVillaMainInteractions: ; Func_3e73a
 	ld hl, IshiharasVillaMain_NPCInteractions
 	call HandleNPCInteractions_NoTurnNPC
-	jr nc, .asm_3e748
+	jr nc, .skip_coord_script_main
 	ld hl, IshiharasVillaMain_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3e748
+.skip_coord_script_main
 	scf
 	ret
 
@@ -5346,20 +5346,20 @@ SetIshiharasVillaLibraryMusicByIshiharaState: ; Func_3e95b
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	cp ISHIHARA_TRADE_3_DONE
-	jr c, .asm_3e979
-	jr z, .asm_3e971
+	jr c, .set_gr_music_lib
+	jr z, .check_card_trade_lib
 	ld a, EVENT_ISHIHARA_LOCATION_STATE
 	farcall GetEventValue
-	jr nz, .asm_3e979
-	jr .asm_3e97e
-.asm_3e971
+	jr nz, .set_gr_music_lib
+	jr .done_music_setup_lib
+.check_card_trade_lib
 	ld a, EVENT_ISHIHARA_CARD_TRADE_STATE
 	farcall GetEventValue
-	jr z, .asm_3e97e
-.asm_3e979
+	jr z, .done_music_setup_lib
+.set_gr_music_lib
 	ld a, MUSIC_GR_OVERWORLD
 	ld [wNextMusic], a
-.asm_3e97e
+.done_music_setup_lib
 	scf
 	ccf
 	ret
@@ -5379,10 +5379,10 @@ LoadIshiharasVillaLibraryNPCs: ; Func_3e988
 HandleIshiharasVillaLibraryInteractions: ; Func_3e991
 	ld hl, IshiharasVillaLibrary_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3e99f
+	jr nc, .skip_coord_script_lib
 	ld hl, IshiharasVillaLibrary_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3e99f
+.skip_coord_script_lib
 	scf
 	ret
 
@@ -5456,21 +5456,21 @@ RestoreIshiharasVillaLibraryEventFlagsOnContinueOverworld: ; Func_3e9de
 Script_IshiharaAtVillaLibrary:
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr z, .asm_3ea25
+	jr z, .skip_ishihara_congratulations
 	ld a, EVENT_TALKED_TO_ISHIHARA_POST_GAME
 	farcall GetEventValue
-	jr nz, .asm_3ea25
+	jr nz, .skip_ishihara_congratulations
 	jp Script_IshiharaCongratsAtVillaLibrary
-.asm_3ea25
+.skip_ishihara_congratulations
 	ld a, EVENT_ISHIHARA_CARD_TRADE_STATE
 	farcall GetEventValue
-	jr z, .asm_3ea3b
+	jr z, .dispatch_by_state
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	cp ISHIHARA_TALKED_AT_VILLA
 	jp z, Script_IshiharaVillaWelcome
 	jp Script_IshiharaTradeLaterAtVilla
-.asm_3ea3b
+.dispatch_by_state
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	sub ISHIHARA_TRADE_3_DONE
@@ -5487,28 +5487,28 @@ IshiharasVillaLibrary_IshiharaAppearanceCheck:
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	cp ISHIHARA_TRADE_3_DONE
-	jr c, .disappear
-	jr z, .asm_3ea6f
+	jr c, .disappear_ishihara
+	jr z, .check_trade_3_card_state
 	cp ISHIHARA_TRADE_7_DONE_COMPLETE
-	jr z, .asm_3ea79
+	jr z, .check_trade_7_card_state
 	ld a, EVENT_ISHIHARA_LOCATION_STATE
 	farcall GetEventValue
-	jr nz, .disappear
-	jr .appear
-.asm_3ea6f
+	jr nz, .disappear_ishihara
+	jr .appear_ishihara
+.check_trade_3_card_state
 	ld a, EVENT_ISHIHARA_CARD_TRADE_STATE
 	farcall GetEventValue
-	jr nz, .disappear
-	jr .appear
-.asm_3ea79
+	jr nz, .disappear_ishihara
+	jr .appear_ishihara
+.check_trade_7_card_state
 	ld a, EVENT_ISHIHARA_CARD_TRADE_STATE
 	farcall GetEventValue
-	jr z, .disappear
-.appear
+	jr z, .disappear_ishihara
+.appear_ishihara
 	scf
 	ccf
 	ret
-.disappear
+.disappear_ishihara
 	scf
 	ret
 
@@ -6124,10 +6124,10 @@ PlayImakuniRedThemePostload: ; Func_3ef80
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $02
-	jr z, .asm_3ef8c
+	jr z, .play_imakuni_theme
 	scf
 	ret
-.asm_3ef8c
+.play_imakuni_theme
 	ld a, MUSIC_IMAKUNI_RED
 	farcall PlayAfterCurrentSong
 	scf
@@ -6164,14 +6164,14 @@ HandleGameCenterLobbyAfterDuel: ; Func_3efb5
 HandleGameCenterLobbyContinueOverworld: ; Func_3efba
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_3efd4
+	jr z, .skip_imakuni_cleanup
 	ld a, NPC_IMAKUNI_RED
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_3efd4
+.skip_imakuni_cleanup
 	scf
 	ret
 
@@ -6239,10 +6239,10 @@ CheckShowGameCenterLobbyImakuniRed: ; Func_3f03d
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $02
-	jr z, .asm_3f049
+	jr z, .show_imakuni_red
 	scf
 	ret
-.asm_3f049
+.show_imakuni_red
 	scf
 	ccf
 	ret
@@ -6293,10 +6293,10 @@ LoadCardDungeonPawnNPCs: ; Func_3f09a
 HandleCardDungeonPawnInteractions: ; Func_3f0a3
 	ld hl, CardDungeonPawn_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3f0b1
+	jr nc, .skip_coord_pawn
 	ld hl, CardDungeonPawn_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3f0b1
+.skip_coord_pawn
 	scf
 	ret
 
@@ -6512,10 +6512,10 @@ LoadCardDungeonKnightNPCs: ; Func_3f240
 HandleCardDungeonKnightInteractions: ; Func_3f249
 	ld hl, CardDungeonKnight_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3f257
+	jr nc, .skip_coord_knight
 	ld hl, CardDungeonKnight_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3f257
+.skip_coord_knight
 	scf
 	ret
 
@@ -6753,10 +6753,10 @@ LoadCardDungeonRookNPCs: ; Func_3f410
 HandleCardDungeonRookInteractions: ; Func_3f419
 	ld hl, CardDungeonRook_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3f427
+	jr nc, .skip_coord_rook
 	ld hl, CardDungeonRook_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3f427
+.skip_coord_rook
 	scf
 	ret
 
@@ -7005,10 +7005,10 @@ PlayWaterFortLobbyImakuniRedThemePostload: ; Func_3f63b
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $08
-	jr z, .asm_3f647
+	jr z, .play_imakuni_water_fort_theme
 	scf
 	ret
-.asm_3f647
+.play_imakuni_water_fort_theme
 	ld a, MUSIC_IMAKUNI_RED
 	farcall PlayAfterCurrentSong
 	scf
@@ -7030,10 +7030,10 @@ LoadWaterFortLobbyNPCs: ; Func_3f657
 HandleWaterFortLobbyInteractions: ; Func_3f660
 	ld hl, WaterFortLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3f66e
+	jr nc, .skip_coord_water_fort
 	ld hl, WaterFortLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3f66e
+.skip_coord_water_fort
 	scf
 	ret
 
@@ -7045,14 +7045,14 @@ HandleWaterFortLobbyAfterDuel: ; Func_3f670
 HandleWaterFortLobbyContinueOverworld: ; Func_3f675
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_3f68f
+	jr z, .skip_imakuni_water_fort_cleanup
 	ld a, NPC_IMAKUNI_RED
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_3f68f
+.skip_imakuni_water_fort_cleanup
 	scf
 	ret
 
@@ -7124,16 +7124,16 @@ ScriptWaterFortLobbyTradeNpc: ; Func_3f691
 CheckShowWaterFortLobbyGlassesKid: ; Func_3f718
 	ld a, EVENT_TRADED_CARDS_WATER_FORT
 	farcall GetEventValue
-	jr z, .asm_3f732
+	jr z, .hide_glasses_kid
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_3f732
+	jr nz, .hide_glasses_kid
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr z, .asm_3f732
+	jr z, .hide_glasses_kid
 	scf
 	ret
-.asm_3f732
+.hide_glasses_kid
 	scf
 	ccf
 	ret
@@ -7141,17 +7141,17 @@ CheckShowWaterFortLobbyGlassesKid: ; Func_3f718
 CheckShowWaterFortLobbyGrLad: ; Func_3f735
 	ld a, EVENT_TRADED_CARDS_WATER_FORT
 	farcall GetEventValue
-	jr z, .asm_3f74d
+	jr z, .hide_gr_lad_fort
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_3f74d
+	jr nz, .hide_gr_lad_fort
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr nz, .asm_3f74f
-.asm_3f74d
+	jr nz, .show_gr_lad_fort
+.hide_gr_lad_fort
 	scf
 	ret
-.asm_3f74f
+.show_gr_lad_fort
 	scf
 	ccf
 	ret
@@ -7208,10 +7208,10 @@ CheckShowWaterFortLobbyImakuniRed: ; Func_3f7a6
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $08
-	jr z, .asm_3f7b2
+	jr z, .show_imakuni_water_fort
 	scf
 	ret
-.asm_3f7b2
+.show_imakuni_water_fort
 	scf
 	ccf
 	ret
@@ -7279,11 +7279,11 @@ ScriptFightingFortMaze19ClosedChest: ; Func_3f817
 CheckShowFightingFortMaze19ClosedChest: ; Func_3f830
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_5
 	farcall GetEventValue
-	jr nz, .asm_3f83b
+	jr nz, .hide_maze19_closed_chest
 	scf
 	ccf
 	ret
-.asm_3f83b
+.hide_maze19_closed_chest
 	scf
 	ret
 
@@ -7300,11 +7300,11 @@ ScriptFightingFortMaze19OpenedChest: ; Func_3f83d
 CheckShowFightingFortMaze19OpenedChest: ; Func_3f84b
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_5
 	farcall GetEventValue
-	jr z, .asm_3f856
+	jr z, .hide_maze19_opened_chest
 	scf
 	ccf
 	ret
-.asm_3f856
+.hide_maze19_opened_chest
 	scf
 	ret
 
@@ -7312,16 +7312,16 @@ HandleFightingFortMaze19OpenedChestPostInteraction: ; Func_3f858
 	ld a, VAR_3B
 	farcall GetVarValue
 	cp $03
-	jr nz, .asm_3f87b
+	jr nz, .reset_var_3b
 	ld a, [wMessageSpeedSetting]
 	ld b, a
 	ld a, [wTextBoxFrameColor]
 	ld c, a
 	cp16bc_bytes 0, 3
-	jr nz, .asm_3f87b
+	jr nz, .reset_var_3b
 	farcall ShowHiddenCardGallery
 	ret
-.asm_3f87b
+.reset_var_3b
 	ld a, VAR_3B
 	ld c, $00
 	farcall SetVarValue
@@ -7371,10 +7371,10 @@ HandleFightingFortBasementWarpFadeInPreload: ; Func_3f8c6
 	farcall SetwD896
 	ld a, [wPrevMap]
 	cp MAP_FIGHTING_FORT
-	jr nz, .asm_3f8d8
+	jr nz, .setup_basement_warp_entrance
 	scf
 	ret
-.asm_3f8d8
+.setup_basement_warp_entrance
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(ScriptFightingFortBasementWarpEntrance)
@@ -7416,11 +7416,11 @@ ScriptFightingFortBasementClosedChest: ; Func_3f90c
 CheckShowFightingFortBasementClosedChest: ; Func_3f925
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_BASEMENT
 	farcall GetEventValue
-	jr nz, .asm_3f930
+	jr nz, .hide_basement_closed_chest
 	scf
 	ccf
 	ret
-.asm_3f930
+.hide_basement_closed_chest
 	scf
 	ret
 
@@ -7444,11 +7444,11 @@ ScriptFightingFortBasementOpenedChest: ; Func_3f932
 CheckShowFightingFortBasementOpenedChest: ; Func_3f951
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_BASEMENT
 	farcall GetEventValue
-	jr z, .asm_3f95c
+	jr z, .hide_basement_opened_chest
 	scf
 	ccf
 	ret
-.asm_3f95c
+.hide_basement_opened_chest
 	scf
 	ret
 

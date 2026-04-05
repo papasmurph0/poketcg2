@@ -46,10 +46,10 @@ IshiharasHouse_MapScripts:
 
 SetIshiharasHouseMusicIfIshiharaHidden: ; Func_2c0b4
 	call IshiharasHouse_IshiharaAppearanceCheck
-	jr nc, .asm_2c0be
+	jr nc, .ishihara_is_hidden
 	ld a, MUSIC_OVERWORLD
 	ld [wNextMusic], a
-.asm_2c0be
+.ishihara_is_hidden
 	scf
 	ccf
 	ret
@@ -86,10 +86,10 @@ HandleIshiharasHouseWarpFadeInPreload: ; Func_2c0d1
 HandleIshiharasHouseInteractions: ; Func_2c0f1
 	ld hl, IshiharasHouse_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2c0ff
+	jr nc, .skip_overworld_interactions
 	ld hl, IshiharasHouse_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2c0ff
+.skip_overworld_interactions
 	scf
 	ret
 
@@ -163,21 +163,21 @@ RestoreIshiharaHouseEventFlagsOnContinueOverworld: ; Func_2c13e
 Script_IshiharaAtHome:
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr z, .asm_2c185
+	jr z, .check_trade_state
 	ld a, EVENT_TALKED_TO_ISHIHARA_POST_GAME
 	farcall GetEventValue
-	jr nz, .asm_2c185
+	jr nz, .check_trade_state
 	jp Script_IshiharaCongratsAtHome
-.asm_2c185
+.check_trade_state
 	ld a, EVENT_ISHIHARA_CARD_TRADE_STATE
 	farcall GetEventValue
-	jr z, .asm_2c19b
+	jr z, .route_by_ishihara_state
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	cp ISHIHARA_TRADE_3_DONE
 	jp c, Script_IshiharaTradeLaterAtHome
 	jp Script_IshiharaHeadingForVilla
-.asm_2c19b
+.route_by_ishihara_state
 	ld a, VAR_ISHIHARA_STATE
 	farcall GetVarValue
 	or a
@@ -611,17 +611,17 @@ LightningClub_MapScripts:
 SetLightningClubMusicAndMapGfxByPikachuCoinState: ; Func_2c4db
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr nz, .asm_2c4ea
+	jr nz, .pikachu_coin_obtained
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-	jr .asm_2c4f7
-.asm_2c4ea
+	jr .done_music_gfx_setup
+.pikachu_coin_obtained
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2c4f7
+	jr nz, .done_music_gfx_setup
 	ld a, MAP_GFX_LIGHTNING_CLUB_2
 	ld [wNextMapGfx], a
-.asm_2c4f7
+.done_music_gfx_setup
 	scf
 	ccf
 	ret
@@ -641,15 +641,15 @@ LoadLightningClubNPCs: ; Func_2c501
 HandleLightningClubWarpFadeInPreload: ; Func_2c50a
 	ld a, EVENT_MET_GR4_LIGHTNING_CLUB
 	farcall GetEventValue
-	jr z, .asm_2c524
+	jr z, .first_meeting_gr4
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2c54f
+	jr nz, .setup_alternate_npc_positions
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr z, .asm_2c54f
-	jr .asm_2c55e
-.asm_2c524
+	jr z, .setup_alternate_npc_positions
+	jr .finish_npc_setup
+.first_meeting_gr4
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunLightningClubGr4IntroCutscene)
@@ -665,14 +665,14 @@ HandleLightningClubWarpFadeInPreload: ; Func_2c50a
 	set_npc_position_and_direction NPC_NICHOLAS, 8, 9, SOUTH
 	set_npc_position_and_direction NPC_GR_4, 7, 9, SOUTH
 	end_script
-	jr .asm_2c55e
-.asm_2c54f
+	jr .finish_npc_setup
+.setup_alternate_npc_positions
 	xor a
 	start_script
 	set_npc_position_and_direction NPC_ISAAC, 5, 6, SOUTH
 	set_npc_position_and_direction NPC_NICHOLAS, 8, 8, SOUTH
 	end_script
-.asm_2c55e
+.finish_npc_setup
 	scf
 	ret
 
@@ -1184,14 +1184,14 @@ ScriptLightningClubAfterDuelBrandon: ; Func_2c8dd
 CheckShowLightningClubJenniferOrBrandon: ; Func_2c8f9
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2c90c
+	jr nz, .hide_npc
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr z, .asm_2c90c
+	jr z, .hide_npc
 	scf
 	ccf
 	ret
-.asm_2c90c
+.hide_npc
 	scf
 	ret
 
@@ -1214,10 +1214,10 @@ ScriptLightningClubGr4: ; Func_2c90e
 CheckShowLightningClubGr4: ; Func_2c929
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr z, .asm_2c933
+	jr z, .hide_npc
 	scf
 	ret
-.asm_2c933
+.hide_npc
 	scf
 	ccf
 	ret
@@ -1269,10 +1269,10 @@ HandlePsychicClubEntranceIdle: ; Func_2c9ac
 SetPsychicClubEntranceGRMusicIfBottomRightCoinPieceMissing: ; Func_2c9b8
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2c9c5
+	jr nz, .coin_piece_obtained
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2c9c5
+.coin_piece_obtained
 	scf
 	ccf
 	ret
@@ -1344,14 +1344,14 @@ HandlePsychicClubEntranceAfterDuel: ; Func_2ca1c
 HandlePsychicClubEntranceContinueOverworld: ; Func_2ca22
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2ca3c
+	jr z, .skip_ronald_cleanup
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2ca3c
+.skip_ronald_cleanup
 	scf
 	ret
 
@@ -1376,7 +1376,7 @@ UpdatePsychicClubEntranceStephanieDoorBlock: ; Func_2ca46
 	jr nz, .exit
 	ld a, $04
 	cp d
-	jr z, .asm_2ca86
+	jr z, .move_stephanie_west
 	ld a, $05
 	cp d
 	jr nz, .exit
@@ -1388,8 +1388,8 @@ UpdatePsychicClubEntranceStephanieDoorBlock: ; Func_2ca46
 	ld a, NPC_STEPHANIE
 	lb bc, EAST | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall TryStepNPCInDirection
-	jr .asm_2ca9a
-.asm_2ca86
+	jr .wait_stephanie_movement
+.move_stephanie_west
 	ld a, NPC_STEPHANIE
 	farcall GetOWObjectTilePosition
 	ld a, $04
@@ -1398,7 +1398,7 @@ UpdatePsychicClubEntranceStephanieDoorBlock: ; Func_2ca46
 	ld a, NPC_STEPHANIE
 	lb bc, WEST | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall TryStepNPCInDirection
-.asm_2ca9a
+.wait_stephanie_movement
 	ld a, NPC_STEPHANIE
 	call WaitForOWObjectMovement
 .exit
@@ -1424,10 +1424,10 @@ ScriptPsychicClubEntranceStephanie: ; Func_2caa0
 CheckShowPsychicClubEntranceStephanie: ; Func_2cabb
 	ld a, EVENT_GOT_PIKACHU_COIN
 	farcall GetEventValue
-	jr z, .asm_2cac5
+	jr z, .event_not_set
 	scf
 	ret
-.asm_2cac5
+.event_not_set
 	scf
 	ccf
 	ret
@@ -1519,11 +1519,11 @@ PsychicClubLobby_MapScripts:
 SetPsychicClubLobbyGRMusicIfBottomRightCoinPieceMissing: ; Func_2cba8
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2cbb7
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-	jr .asm_2cbb7
-.asm_2cbb7
+	jr .done
+.done
 	scf
 	ccf
 	ret
@@ -1532,10 +1532,10 @@ PlayPsychicClubLobbyImakuniBlackThemePostload: ; Func_2cbba
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 3
-	jr z, .asm_2cbc6
+	jr z, .var_25_equals_3
 	scf
 	ret
-.asm_2cbc6
+.var_25_equals_3
 	ld a, MUSIC_IMAKUNI_BLACK
 	farcall PlayAfterCurrentSong
 	scf
@@ -1557,10 +1557,10 @@ LoadPsychicClubLobbyNPCs: ; Func_2cbd6
 HandlePsychicClubLobbyInteractions: ; Func_2cbdf
 	ld hl, PsychicClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2cbed
+	jr nc, .skip_overworld_interactions
 	ld hl, PsychicClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2cbed
+.skip_overworld_interactions
 	scf
 	ret
 
@@ -1572,14 +1572,14 @@ HandlePsychicClubLobbyAfterDuel: ; Func_2cbef
 HandlePsychicClubLobbyContinueOverworld: ; Func_2cbf5
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2cc0f
+	jr z, .done
 	ld a, NPC_IMAKUNI_BLACK
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2cc0f
+.done
 	scf
 	ret
 
@@ -1661,10 +1661,10 @@ CheckShowPsychicClubLobbyImakuniBlack: ; Func_2cca8
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $03
-	jr z, .asm_2ccb4
+	jr z, .show_imakuni
 	scf
 	ret
-.asm_2ccb4
+.show_imakuni
 	scf
 	ccf
 	ret
@@ -1721,13 +1721,13 @@ ScriptPsychicClubLobbyGrLass: ; Func_2cce8
 CheckShowPsychicClubLobbyGrLass: ; Func_2cd0e
 	ld a, EVENT_GOT_GR_COIN
 	farcall GetEventValue
-	jr z, .asm_2cd20
+	jr z, .hide_gr_lass
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE
 	farcall GetEventValue
-	jr nz, .asm_2cd20
+	jr nz, .hide_gr_lass
 	scf
 	ret
-.asm_2cd20
+.hide_gr_lass
 	scf
 	ccf
 	ret
@@ -1770,10 +1770,10 @@ PsychicClub_MapScripts:
 SetPsychicClubGRMusicIfBottomRightCoinPieceMissing: ; Func_2cd82
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2cd8f
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2cd8f
+.done
 	scf
 	ccf
 	ret
@@ -1793,18 +1793,18 @@ LoadPsychicClubNPCs: ; Func_2cd99
 HandlePsychicClubWarpFadeInPreload: ; Func_2cda2
 	ld a, EVENT_MET_GR4_PSYCHIC_CLUB
 	farcall GetEventValue
-	jr z, .asm_2cdc6
+	jr z, .gr4_first_meeting
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2cdf6
+	jr nz, .normal_npc_setup
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2cdf6
+	jr z, .normal_npc_setup
 	ld bc, TILEMAP_013
 	lb de, 5, 6
 	farcall AddOWTilemapOverlay
-	jr .asm_2ce0f
-.asm_2cdc6
+	jr .done
+.gr4_first_meeting
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunPsychicClubGr4IntroCutscene)
@@ -1821,8 +1821,8 @@ HandlePsychicClubWarpFadeInPreload: ; Func_2cda2
 	set_npc_position_and_direction NPC_DANIEL, 6, 6, SOUTH
 	set_npc_position_and_direction NPC_STEPHANIE, 8, 10, SOUTH
 	end_script
-	jr .asm_2ce0f
-.asm_2cdf6
+	jr .done
+.normal_npc_setup
 	xor a
 	start_script
 	set_npc_position_and_direction NPC_MURRAY, 6, 3, SOUTH
@@ -1830,7 +1830,7 @@ HandlePsychicClubWarpFadeInPreload: ; Func_2cda2
 	set_npc_position_and_direction NPC_DANIEL, 6, 10, SOUTH
 	set_npc_position_and_direction NPC_STEPHANIE, 8, 10, SOUTH
 	end_script
-.asm_2ce0f
+.done
 	scf
 	ret
 
@@ -2411,10 +2411,10 @@ ScriptPsychicClubAfterDuelGr4: ; Func_2d20e
 CheckShowPsychicClubGr4: ; Func_2d23c
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2d246
+	jr z, .coin_piece_not_obtained
 	scf
 	ret
-.asm_2d246
+.coin_piece_not_obtained
 	scf
 	ccf
 	ret
@@ -2552,10 +2552,10 @@ RockClubEntrance_MapScripts:
 SetRockClubEntranceMusicIfGr1NotMet: ; Func_2d356
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
-	jr nz, .asm_2d363
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2d363
+.done
 	scf
 	ccf
 	ret
@@ -2597,14 +2597,14 @@ HandleRockClubEntranceWarpFadeInPreload: ; Func_2d37d
 HandleRockClubEntranceContinueOverworld: ; Func_2d399
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2d3b3
+	jr z, .done
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2d3b3
+.done
 	scf
 	ret
 
@@ -2673,13 +2673,13 @@ RockClubLobby_MapScripts:
 SetRockClubLobbyMusicByGr1AndImakuniState: ; Func_2d472
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
-	jr nz, .asm_2d486
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-	jr .asm_2d486
+	jr .done
 	ld a, MUSIC_IMAKUNI_BLACK
 	ld [wNextMusic], a
-.asm_2d486
+.done
 	scf
 	ccf
 	ret
@@ -2688,10 +2688,10 @@ PlayRockClubLobbyImakuniBlackThemePostload: ; Func_2d489
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 4
-	jr z, .asm_2d495
+	jr z, .var_25_equals_4
 	scf
 	ret
-.asm_2d495
+.var_25_equals_4
 	ld a, MUSIC_IMAKUNI_BLACK
 	farcall PlayAfterCurrentSong
 	scf
@@ -2713,10 +2713,10 @@ LoadRockClubLobbyNPCs: ; Func_2d4a5
 HandleRockClubLobbyInteractions: ; Func_2d4ae
 	ld hl, RockClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2d4bc
+	jr nc, .skip_overworld_interactions
 	ld hl, RockClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2d4bc
+.skip_overworld_interactions
 	scf
 	ret
 
@@ -2728,14 +2728,14 @@ HandleRockClubLobbyAfterDuel: ; Func_2d4be
 HandleRockClubLobbyContinueOverworld: ; Func_2d4c4
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2d4de
+	jr z, .done
 	ld a, NPC_IMAKUNI_BLACK
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2d4de
+.done
 	scf
 	ret
 
@@ -2820,10 +2820,10 @@ CheckShowRockClubLobbyImakuniBlack: ; Func_2d57c
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $04
-	jr z, .asm_2d588
+	jr z, .show_imakuni
 	scf
 	ret
-.asm_2d588
+.show_imakuni
 	scf
 	ccf
 	ret
@@ -2924,10 +2924,10 @@ RockClub_MapScripts:
 SetRockClubMusicIfGr1NotMet: ; Func_2d653
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
-	jr nz, .asm_2d660
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2d660
+.done
 	scf
 	ccf
 	ret
@@ -2947,7 +2947,7 @@ LoadRockClubNPCs: ; Func_2d66a
 HandleRockClubWarpFadeInPreload: ; Func_2d673
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
-	jr nz, .asm_2d6a4
+	jr nz, .done
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunRockClubGr1IntroCutscene)
@@ -2963,7 +2963,7 @@ HandleRockClubWarpFadeInPreload: ; Func_2d673
 	set_npc_position_and_direction NPC_RYAN, 8, 1, SOUTH
 	set_npc_position_and_direction NPC_ANDREW, 6, 1, SOUTH
 	end_script
-.asm_2d6a4
+.done
 	scf
 	ret
 
@@ -3278,10 +3278,10 @@ ScriptRockClubAfterDuelAndrew: ; Func_2d8d7
 CheckShowRockClubGr1: ; Func_2d8f3
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
-	jr z, .asm_2d8fd
+	jr z, .gr1_not_met
 	scf
 	ret
-.asm_2d8fd
+.gr1_not_met
 	scf
 	ccf
 	ret
@@ -3339,10 +3339,10 @@ FightingClubEntrance_MapScripts:
 SetFightingClubEntranceGRMusicIfTopLeftCoinPieceMissing: ; Func_2d97f
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2d98c
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2d98c
+.done
 	scf
 	ccf
 	ret
@@ -3401,14 +3401,14 @@ HandleFightingClubEntranceAfterDuel: ; Func_2d9d2
 HandleFightingClubEntranceContinueOverworld: ; Func_2d9d8
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2d9f2
+	jr z, .done
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2d9f2
+.done
 	scf
 	ret
 
@@ -3497,10 +3497,10 @@ FightingClubLobby_MapScripts:
 SetFightingClubLobbyGRMusicIfTopLeftCoinPieceMissing: ; Func_2dace
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2dadb
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2dadb
+.done
 	scf
 	ccf
 	ret
@@ -3520,10 +3520,10 @@ LoadFightingClubLobbyNPCs: ; Func_2dae5
 HandleFightingClubLobbyInteractions: ; Func_2daee
 	ld hl, FightingClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2dafc
+	jr nc, .skip_overworld_interactions
 	ld hl, FightingClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2dafc
+.skip_overworld_interactions
 	scf
 	ret
 
@@ -3614,13 +3614,13 @@ ScriptFightingClubLobbyAfterDuelMichael: ; Func_2db7b
 CheckShowFightingClubLobbyMichael: ; Func_2db97
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2dba9
+	jr nz, .hide_michael
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr z, .asm_2dba9
+	jr z, .hide_michael
 	scf
 	ret
-.asm_2dba9
+.hide_michael
 	scf
 	ccf
 	ret
@@ -3790,10 +3790,10 @@ FightingClub_MapScripts:
 SetFightingClubGRMusicIfTopLeftCoinPieceMissing: ; Func_2dcfe
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2dd0b
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2dd0b
+.done
 	scf
 	ccf
 	ret
@@ -3806,14 +3806,14 @@ ExecuteFightingClubStepEvents: ; Func_2dd0e
 HandleFightingClubWarpFadeInPreload: ; Func_2dd15
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2dd2f
+	jr nz, .done
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr z, .asm_2dd2f
+	jr z, .done
 	ld bc, TILEMAP_01A
 	lb de, 5, 0
 	farcall AddOWTilemapOverlay
-.asm_2dd2f
+.done
 	scf
 	ret
 
@@ -3920,10 +3920,10 @@ ScriptFightingClubAfterDuelMitch: ; Func_2ddc8
 CheckShowFightingClubMitch: ; Func_2dde4
 	ld a, EVENT_GODAS_ROOM_CAGE_STATE
 	farcall GetEventValue
-	jr nz, .asm_2ddee
+	jr nz, .show_when_cage_open
 	scf
 	ret
-.asm_2ddee
+.show_when_cage_open
 	scf
 	ccf
 	ret
@@ -4169,14 +4169,14 @@ ScriptFightingClubAfterDuelJessica: ; Func_2df80
 CheckShowFightingClubMembers: ; Func_2df9c
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr z, .asm_2dfaf
+	jr z, .hide_members
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2dfaf
+	jr nz, .hide_members
 	scf
 	ccf
 	ret
-.asm_2dfaf
+.hide_members
 	scf
 	ret
 
@@ -4247,14 +4247,14 @@ ScriptFightingClubAfterDuelGr1: ; Func_2e008
 CheckShowFightingClubGr1: ; Func_2e023
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2e036
+	jr nz, .hide_gr1
 	ld a, EVENT_MET_GR1_ROCK_CLUB
 	farcall GetEventValue
-	jr z, .asm_2e036
+	jr z, .hide_gr1
 	scf
 	ccf
 	ret
-.asm_2e036
+.hide_gr1
 	scf
 	ret
 
@@ -4316,10 +4316,10 @@ GrassClubEntrance_MapScripts:
 SetGrassClubEntranceGRMusicIfTopRightCoinPieceMissing: ; Func_2e0bc
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2e0c9
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2e0c9
+.done
 	scf
 	ccf
 	ret
@@ -4378,14 +4378,14 @@ HandleGrassClubEntranceAfterDuel: ; Func_2e10f
 HandleGrassClubEntranceContinueOverworld: ; Func_2e115
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2e12f
+	jr z, .done
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2e12f
+.done
 	scf
 	ret
 
@@ -4463,10 +4463,10 @@ GrassClub_MapScripts:
 SetGrassClubGRMusicIfTopRightCoinPieceMissing: ; Func_2e1c2
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2e1cf
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2e1cf
+.done
 	scf
 	ccf
 	ret
@@ -4479,14 +4479,14 @@ ExecuteGrassClubStepEvents: ; Func_2e1d2
 HandleGrassClubWarpFadeInPreload: ; Func_2e1d9
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2e1f3
+	jr nz, .done
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2e1f3
+	jr z, .done
 	ld bc, TILEMAP_01E
 	lb de, 5, 11
 	farcall AddOWTilemapOverlay
-.asm_2e1f3
+.done
 	scf
 	ret
 
@@ -4782,14 +4782,14 @@ ScriptGrassClubAfterDuelHeather: ; Func_2e3da
 CheckShowGrassClubMembers: ; Func_2e3f6
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2e409
+	jr z, .hide_members
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2e409
+	jr nz, .hide_members
 	scf
 	ccf
 	ret
-.asm_2e409
+.hide_members
 	scf
 	ret
 
@@ -4873,18 +4873,18 @@ ScriptGrassClubAfterDuelGr2: ; Func_2e449
 CheckShowGrassClubGr2: ; Func_2e498
 	ld a, EVENT_GOT_ODDISH_COIN
 	farcall GetEventValue
-	jr z, .asm_2e4b5
+	jr z, .hide_gr2
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2e4b5
+	jr nz, .hide_gr2
 	ld a, VAR_0F
 	farcall GetVarValue
 	cp $06
-	jr nz, .asm_2e4b5
+	jr nz, .hide_gr2
 	scf
 	ccf
 	ret
-.asm_2e4b5
+.hide_gr2
 	scf
 	ret
 
@@ -4924,10 +4924,10 @@ ScienceClubEntrance_MapScripts:
 SetScienceClubEntranceGRMusicIfTopRightCoinPieceMissing: ; Func_2e518
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2e525
-	ld a, MUSIC_HERE_COMES_GR
-	ld [wNextMusic], a
-.asm_2e525
+jr nz, .coin_piece_obtained
+		ld a, MUSIC_HERE_COMES_GR
+		ld [wNextMusic], a
+.coin_piece_obtained
 	scf
 	ccf
 	ret
@@ -4999,14 +4999,14 @@ HandleScienceClubEntranceAfterDuel: ; Func_2e57c
 HandleScienceClubEntranceContinueOverworld: ; Func_2e582
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2e59c
+	jr z, .end_continue_overworld
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2e59c
+.end_continue_overworld
 	scf
 	ret
 
@@ -5094,13 +5094,13 @@ ScriptScienceClubEntranceJoseph: ; Func_2e5d0
 CheckShowScienceClubEntranceJoseph: ; Func_2e62a
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2e63c
-	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
-	farcall GetEventValue
-	jr nz, .asm_2e63c
-	scf
-	ret
-.asm_2e63c
+jr z, .hide_joseph
+		ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
+		farcall GetEventValue
+		jr nz, .hide_joseph
+		scf
+		ret
+.hide_joseph
 	scf
 	ccf
 	ret
@@ -5158,11 +5158,11 @@ ScienceClubLobby_MapScripts:
 SetScienceClubLobbyGRMusicIfTopRightCoinPieceMissing: ; Func_2e6f7
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2e706
-	ld a, MUSIC_HERE_COMES_GR
-	ld [wNextMusic], a
-	jr .asm_2e706
-.asm_2e706
+jr nz, .done_gr_music_setup
+		ld a, MUSIC_HERE_COMES_GR
+		ld [wNextMusic], a
+		jr .done_gr_music_setup
+.done_gr_music_setup
 	scf
 	ccf
 	ret
@@ -5171,10 +5171,10 @@ PlayScienceClubLobbyImakuniBlackThemePostload: ; Func_2e709
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 7
-	jr z, .asm_2e715
+	jr z, .play_imakuni_black_theme
 	scf
 	ret
-.asm_2e715
+.play_imakuni_black_theme
 	ld a, MUSIC_IMAKUNI_BLACK
 	farcall PlayAfterCurrentSong
 	scf
@@ -5196,10 +5196,10 @@ LoadScienceClubLobbyNPCs: ; Func_2e725
 HandleScienceClubLobbyInteractions: ; Func_2e72e
 	ld hl, ScienceClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2e73c
-	ld hl, ScienceClubLobby_OWInteractions
-	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2e73c
+jr nc, .end_interactions
+		ld hl, ScienceClubLobby_OWInteractions
+		call ExecutePlayerCoordScriptIfNotMoving
+.end_interactions
 	scf
 	ret
 
@@ -5218,14 +5218,14 @@ ScienceClubLobby_AfterDuelScripts:
 HandleScienceClubLobbyContinueOverworld: ; Func_2e752
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2e76c
-	ld a, NPC_IMAKUNI_BLACK
-	farcall ClearOWObject
-	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
-	farcall ZeroOutEventValue
-	ld a, [wNextMusic]
-	ld [wCurMusic], a
-.asm_2e76c
+jr z, .end_continue_lobby
+		ld a, NPC_IMAKUNI_BLACK
+		farcall ClearOWObject
+		ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
+		farcall ZeroOutEventValue
+		ld a, [wNextMusic]
+		ld [wCurMusic], a
+.end_continue_lobby
 	scf
 	ret
 
@@ -5322,13 +5322,13 @@ ScriptScienceClubLobbyErik: ; Func_2e7e3
 CheckShowScienceClubLobbyDavidErik: ; Func_2e80d
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2e81f
+	jr nz, .hide_members
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2e81f
+	jr z, .hide_members
 	scf
 	ret
-.asm_2e81f
+.hide_members
 	scf
 	ccf
 	ret
@@ -5337,10 +5337,10 @@ CheckShowScienceClubLobbyImakuniBlack: ; Func_2e822
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $07
-	jr z, .asm_2e82e
+	jr z, .show_imakuni
 	scf
 	ret
-.asm_2e82e
+.show_imakuni
 	scf
 	ccf
 	ret
@@ -5435,14 +5435,14 @@ ScriptScienceClubLobbyTech: ; Func_2e8a0
 CheckShowScienceClubLobbyManGlassesKidTech: ; Func_2e8d1
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2e8e4
+	jr nz, .hide_members
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2e8e4
+	jr z, .hide_members
 	scf
 	ccf
 	ret
-.asm_2e8e4
+.hide_members
 	scf
 	ret
 
@@ -5484,10 +5484,10 @@ ScienceClub_MapScripts:
 SetScienceClubGRMusicIfTopRightCoinPieceMissing: ; Func_2e945
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2e952
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2e952
+.done
 	scf
 	ccf
 	ret
@@ -5500,10 +5500,10 @@ ExecuteScienceClubStepEvents: ; Func_2e955
 HandleScienceClubWarpFadeInPreload: ; Func_2e95c
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2e994
+	jr nz, .done
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2e994
+	jr z, .done
 	ld bc, TILEMAP_022
 	lb de, 4, 1
 	farcall AddOWTilemapOverlay
@@ -5516,7 +5516,7 @@ HandleScienceClubWarpFadeInPreload: ; Func_2e95c
 	ld bc, TILEMAP_025
 	lb de, 5, 12
 	farcall AddOWTilemapOverlay
-.asm_2e994
+.done
 	scf
 	ret
 
@@ -5652,11 +5652,11 @@ ScriptScienceClubAfterDuelRick: ; Func_2ea4b
 CheckShowScienceClubRick: ; Func_2ea87
 	ld a, EVENT_MIDORIS_ROOM_CAGE_STATE
 	farcall GetEventValue
-	jr z, .asm_2ea92
+	jr z, .show_rick
 	scf
 	ccf
 	ret
-.asm_2ea92
+.show_rick
 	scf
 	ret
 
@@ -5871,14 +5871,14 @@ ScriptScienceClubAfterDuelErik: ; Func_2ebeb
 CheckShowScienceClubMembers: ; Func_2ec07
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr z, .asm_2ec1a
+	jr z, .hide_members
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2ec1a
+	jr nz, .hide_members
 	scf
 	ccf
 	ret
-.asm_2ec1a
+.hide_members
 	scf
 	ret
 
@@ -5962,18 +5962,18 @@ ScriptScienceClubAfterDuelGr2: ; Func_2ec5a
 CheckShowScienceClubGr2: ; Func_2eca9
 	ld a, EVENT_GOT_ODDISH_COIN
 	farcall GetEventValue
-	jr z, .asm_2ecc6
+	jr z, .hide_gr2
 	ld a, EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT
 	farcall GetEventValue
-	jr nz, .asm_2ecc6
+	jr nz, .hide_gr2
 	ld a, VAR_0F
 	farcall GetVarValue
 	cp $07
-	jr nz, .asm_2ecc6
+	jr nz, .hide_gr2
 	scf
 	ccf
 	ret
-.asm_2ecc6
+.hide_gr2
 	scf
 	ret
 
@@ -6003,10 +6003,10 @@ WaterClubEntrance_MapScripts:
 SetWaterClubEntranceGRMusicIfStarmieCoinMissing: ; Func_2ed17
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr nz, .asm_2ed24
+	jr nz, .done_music_setup
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2ed24
+.done_music_setup
 	scf
 	ccf
 	ret
@@ -6062,27 +6062,27 @@ HandleWaterClubEntranceWarpFadeInPreload: ; Func_2ed3e
 HandleWaterClubEntranceWarpFadeOutPreload: ; Func_2ed75
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr z, .asm_2ed8a
+	jr z, .end_warp_fade_out_preload
 	ld a, [wTempPrevMap]
 	cp OVERWORLD_MAP_TCG
-	jr nz, .asm_2ed8a
+	jr nz, .end_warp_fade_out_preload
 	ld a, EVENT_TALKED_TO_SARA
 	farcall ZeroOutEventValue
-.asm_2ed8a
+.end_warp_fade_out_preload
 	scf
 	ret
 
 HandleWaterClubEntranceContinueOverworld: ; Func_2ed8c
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2eda6
+	jr z, .end_continue_overworld
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2eda6
+.end_continue_overworld
 	scf
 	ret
 
@@ -6160,11 +6160,11 @@ WaterClubLobby_MapScripts:
 SetWaterClubLobbyGRMusicIfStarmieCoinMissing: ; Func_2ee73
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr nz, .asm_2ee82
+	jr nz, .done_gr_music_setup
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-	jr .asm_2ee82
-.asm_2ee82
+	jr .done_gr_music_setup
+.done_gr_music_setup
 	scf
 	ccf
 	ret
@@ -6173,10 +6173,10 @@ PlayWaterClubLobbyImakuniBlackThemePostload: ; Func_2ee85
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 8
-	jr z, .asm_2ee91
+	jr z, .play_imakuni_black_theme
 	scf
 	ret
-.asm_2ee91
+.play_imakuni_black_theme
 	ld a, MUSIC_IMAKUNI_BLACK
 	farcall PlayAfterCurrentSong
 	scf
@@ -6198,10 +6198,10 @@ LoadWaterClubLobbyNPCs: ; Func_2eea1
 HandleWaterClubLobbyInteractions: ; Func_2eeaa
 	ld hl, WaterClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2eeb8
+	jr nc, .end_interactions
 	ld hl, WaterClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2eeb8
+.end_interactions
 	scf
 	ret
 
@@ -6220,14 +6220,14 @@ WaterClubLobby_AfterDuelScripts:
 HandleWaterClubLobbyContinueOverworld: ; Func_2eece
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2eee8
+	jr z, .end_continue_overworld
 	ld a, NPC_IMAKUNI_BLACK
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2eee8
+.end_continue_overworld
 	scf
 	ret
 
@@ -6299,13 +6299,13 @@ ScriptWaterClubLobbyAfterDuelJoshua: ; Func_2ef43
 CheckShowWaterClubLobbyJoshua: ; Func_2ef5f
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2ef71
+	jr nz, .hide_joshua
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr z, .asm_2ef71
+	jr z, .hide_joshua
 	scf
 	ret
-.asm_2ef71
+.hide_joshua
 	scf
 	ccf
 	ret
@@ -6337,10 +6337,10 @@ CheckShowWaterClubLobbyImakuniBlack: ; Func_2ef9f
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $08
-	jr z, .asm_2efab
+	jr z, .hide_imakuni_black
 	scf
 	ret
-.asm_2efab
+.hide_imakuni_black
 	scf
 	ccf
 	ret
@@ -6444,10 +6444,10 @@ WaterClub_MapScripts:
 SetWaterClubGRMusicIfStarmieCoinMissing: ; Func_2f085
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr nz, .asm_2f092
+	jr nz, .done_music_setup
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2f092
+.done_music_setup
 	scf
 	ccf
 	ret
@@ -6467,43 +6467,43 @@ LoadWaterClubNPCs: ; Func_2f09c
 HandleWaterClubWarpFadeInPreload: ; Func_2f0a5
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr nz, .asm_2f0c3
+	jr nz, .coin_obtained
 	xor a
 	start_script
 	load_npc NPC_CAPTURED_AMY, 4, 6, SOUTH
 	load_npc NPC_CAPTURED_SARA, 3, 6, EAST
 	load_npc NPC_CAPTURED_AMANDA, 5, 6, WEST
 	end_script
-	jr .asm_2f0f5
-.asm_2f0c3
+	jr .done
+.coin_obtained
 	ld bc, TILEMAP_02A
 	lb de, 2, 4
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2f0e1
+	jr nz, .set_member_positions
 	ld bc, TILEMAP_029
 	lb de, 5, 12
 	farcall AddOWTilemapOverlay
-	jr .asm_2f0f5
-.asm_2f0e1
+	jr .done
+.set_member_positions
 	xor a
 	start_script
 	set_npc_position_and_direction NPC_AMY, 9, 5, SOUTH
 	set_npc_position_and_direction NPC_SARA, 8, 5, SOUTH
 	set_npc_position_and_direction NPC_AMANDA, 10, 5, SOUTH
 	end_script
-.asm_2f0f5
+.done
 	scf
 	ret
 
 HandleWaterClubInteractions: ; Func_2f0f7
 	ld hl, WaterClub_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2f105
+	jr nc, .end_interactions
 	ld hl, WaterClub_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2f105
+.end_interactions
 	scf
 	ret
 
@@ -6628,10 +6628,10 @@ ScriptWaterClubAmy: ; Func_2f1d2
 CheckShowWaterClubAmy: ; Func_2f1ed
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2f1f7
+	jr nz, .hide_amy
 	scf
 	ret
-.asm_2f1f7
+.hide_amy
 	scf
 	ccf
 	ret
@@ -6841,14 +6841,14 @@ ScriptWaterClubAfterDuelJoshua: ; Func_2f335
 CheckShowWaterClubAmyLoungeAndJoshua: ; Func_2f36d
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr z, .asm_2f380
+	jr z, .hide_amy_lounge_and_joshua
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr nz, .asm_2f380
+	jr nz, .hide_amy_lounge_and_joshua
 	scf
 	ccf
 	ret
-.asm_2f380
+.hide_amy_lounge_and_joshua
 	scf
 	ret
 
@@ -6994,11 +6994,11 @@ ScriptWaterClubAfterDuelAmanda: ; Func_2f44f
 CheckShowWaterClubSaraAmanda: ; Func_2f478
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr z, .asm_2f483
+	jr z, .hide_sara_amanda
 	scf
 	ccf
 	ret
-.asm_2f483
+.hide_sara_amanda
 	scf
 	ret
 
@@ -7066,10 +7066,10 @@ ScriptWaterClubAfterDuelGr3: ; Func_2f4d9
 CheckShowWaterClubGr3: ; Func_2f4f2
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr z, .asm_2f4fc
+	jr z, .coin_not_obtained
 	scf
 	ret
-.asm_2f4fc
+.coin_not_obtained
 	scf
 	ccf
 	ret
@@ -7100,10 +7100,10 @@ FireClubEntrance_MapScripts:
 SetFireClubEntranceGRMusicIfBottomLeftCoinPieceMissing: ; Func_2f54e
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2f55b
+	jr nz, .done
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2f55b
+.done
 	scf
 	ccf
 	ret
@@ -7137,13 +7137,13 @@ HandleFireClubEntranceWarpFadeInPreload: ; Func_2f575
 	jr nc, .gift
 ; card pop
 	ld hl, RunRonaldSecondMeetingCardPopScene1
-	jr .asm_2f594
+	jr .got_event
 .duel
 	ld hl, RunRonaldGCPieces2DuelIntroScript
-	jr .asm_2f594
+	jr .got_event
 .gift
 	ld hl, RunRonaldGCPieces4GiftScript
-.asm_2f594
+.got_event
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunRonaldSecondMeetingCardPopScene1)
@@ -7166,14 +7166,14 @@ HandleFireClubEntranceAfterDuel: ; Func_2f5a8
 HandleFireClubEntranceContinueOverworld: ; Func_2f5ae
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2f5c8
+	jr z, .done
 	ld a, NPC_RONALD
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2f5c8
+.done
 	scf
 	ret
 
@@ -7262,11 +7262,11 @@ FireClubLobby_MapScripts:
 SetFireClubLobbyGRMusicIfBottomLeftCoinPieceMissing: ; Func_2f6a0
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2f6af
+	jr nz, .done_gr_music_setup
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-	jr .asm_2f6af
-.asm_2f6af
+	jr .done_gr_music_setup
+.done_gr_music_setup
 	scf
 	ccf
 	ret
@@ -7275,10 +7275,10 @@ PlayFireClubLobbyImakuniBlackThemePostload: ; Func_2f6b2
 	ld a, VAR_25
 	farcall GetVarValue
 	cp 9
-	jr z, .asm_2f6be
+	jr z, .play_imakuni_black_theme
 	scf
 	ret
-.asm_2f6be
+.play_imakuni_black_theme
 	ld a, MUSIC_IMAKUNI_BLACK
 	farcall PlayAfterCurrentSong
 	scf
@@ -7300,10 +7300,10 @@ LoadFireClubLobbyNPCs: ; Func_2f6ce
 HandleFireClubLobbyInteractions: ; Func_2f6d7
 	ld hl, FireClubLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2f6e5
+	jr nc, .end_interactions
 	ld hl, FireClubLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2f6e5
+.end_interactions
 	scf
 	ret
 
@@ -7315,14 +7315,14 @@ HandleFireClubLobbyAfterDuel: ; Func_2f6e7
 HandleFireClubLobbyContinueOverworld: ; Func_2f6ed
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_2f707
+	jr z, .end_continue_overworld
 	ld a, NPC_IMAKUNI_BLACK
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_2f707
+.end_continue_overworld
 	scf
 	ret
 
@@ -7379,10 +7379,10 @@ CheckShowFireClubLobbyImakuniBlack: ; Func_2f76f
 	ld a, VAR_25
 	farcall GetVarValue
 	cp $09
-	jr z, .asm_2f77b
+	jr z, .show_imakuni
 	scf
 	ret
-.asm_2f77b
+.show_imakuni
 	scf
 	ccf
 	ret
@@ -7476,10 +7476,10 @@ FireClub_MapScripts:
 SetFireClubGRMusicIfBottomLeftCoinPieceMissing: ; Func_2f84e
 	ld a, EVENT_GOT_GR_COIN_PIECE_BOTTOM_LEFT
 	farcall GetEventValue
-	jr nz, .asm_2f85b
+	jr nz, .done_music_setup
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_2f85b
+.done_music_setup
 	scf
 	ccf
 	ret
@@ -7499,7 +7499,7 @@ LoadFireClubNPCs: ; Func_2f865
 HandleFireClubWarpFadeInPreload: ; Func_2f86e
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
-	jr nz, .asm_2f891
+	jr nz, .coin_obtained
 	xor a
 	start_script
 	set_npc_position_and_direction NPC_KEN, 7, 10, SOUTH
@@ -7507,8 +7507,8 @@ HandleFireClubWarpFadeInPreload: ; Func_2f86e
 	set_npc_position_and_direction NPC_ADAM, 5, 10, SOUTH
 	set_npc_position_and_direction NPC_JONATHAN, 8, 10, SOUTH
 	end_script
-	jr .asm_2f8c6
-.asm_2f891
+	jr .done
+.coin_obtained
 	ld bc, TILEMAP_02E
 	lb de, 5, 11
 	farcall AddOWTilemapOverlay
@@ -7517,7 +7517,7 @@ HandleFireClubWarpFadeInPreload: ; Func_2f86e
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
-	jr z, .asm_2f8c6
+	jr z, .done
 	xor a
 	start_script
 	set_npc_position_and_direction NPC_KEN, 7, 10, SOUTH
@@ -7525,17 +7525,17 @@ HandleFireClubWarpFadeInPreload: ; Func_2f86e
 	set_npc_position_and_direction NPC_ADAM, 5, 10, SOUTH
 	set_npc_position_and_direction NPC_JONATHAN, 8, 10, SOUTH
 	end_script
-.asm_2f8c6
+.done
 	scf
 	ret
 
 HandleFireClubInteractions: ; Func_2f8c8
 	ld hl, FireClub_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_2f8d6
+	jr nc, .end_interactions
 	ld hl, FireClub_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_2f8d6
+.end_interactions
 	scf
 	ret
 
@@ -8012,14 +8012,14 @@ ScriptFireClubAfterDuelGr3: ; Func_2fc0e
 CheckShowFireClubGr3: ; Func_2fc29
 	ld a, EVENT_GOT_STARMIE_COIN
 	farcall GetEventValue
-	jr z, .asm_2fc3c
+	jr z, .show_gr3
 	ld a, EVENT_GOT_CHARMANDER_COIN
 	farcall GetEventValue
-	jr nz, .asm_2fc3c
+	jr nz, .show_gr3
 	scf
 	ccf
 	ret
-.asm_2fc3c
+.show_gr3
 	scf
 	ret
 

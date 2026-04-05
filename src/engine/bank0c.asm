@@ -2,12 +2,12 @@ SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep: ; Func_30000
 	scf
 	ccf
 	push af
-	jr SetFightingFortBasementWarpAndPlayPitfallSFX.asm_30007
+	jr SetFightingFortBasementWarpAndPlayPitfallSFX.set_fighting_fort_basement_warp_and_anim
 
 SetFightingFortBasementWarpAndPlayPitfallSFX: ; Func_30005
 	scf
 	push af
-.asm_30007:
+.set_fighting_fort_basement_warp_and_anim:
 	ld a, MAP_FIGHTING_FORT_BASEMENT
 	lb de, 10, 1
 	ld b, SOUTH
@@ -16,12 +16,12 @@ SetFightingFortBasementWarpAndPlayPitfallSFX: ; Func_30005
 	call WaitAFrames
 	ld a, EVENT_PLAYER_GENDER
 	farcall GetEventValue
-	jr nz, .asm_30024
+	jr nz, .set_player_frameset_id_b4
 	ld bc, $ae
-	jr .asm_30027
-.asm_30024
+	jr .apply_player_frameset
+.set_player_frameset_id_b4
 	ld bc, $b4
-.asm_30027
+.apply_player_frameset
 	ld a, [wPlayerOWObject]
 	farcall SetAndInitOWObjectFrameset
 	farcall StartOWObjectAnimation
@@ -30,14 +30,14 @@ SetFightingFortBasementWarpAndPlayPitfallSFX: ; Func_30005
 	ld a, $0a
 	call WaitAFrames
 	pop af
-	jr c, .asm_30050
+	jr c, .play_pitfall_sfx
 	ld a, [wPlayerOWObject]
 	ld b, SOUTH | MOVE_BACKWARDS
 	ld c, MOVE_SPEED_RUN
 	farcall TryStepNPCInDirection
 	ld a, $05
 	call WaitAFrames
-.asm_30050
+.play_pitfall_sfx
 	ld a, SFX_PITFALL
 	call PlaySFX
 	ret
@@ -56,12 +56,12 @@ AdvanceAaronStepOrReset: ; Func_30065
 	ld a, VAR_3B
 	farcall GetVarValue
 	cp c
-	jr nz, .asm_30077
+	jr nz, .reset_aaron_step
 	inc c
 	ld a, VAR_3B
 	farcall SetVarValue
 	ret
-.asm_30077
+.reset_aaron_step
 	ld a, VAR_3B
 	ld c, $00
 	farcall SetVarValue
@@ -120,9 +120,9 @@ InitGROverworldMapState: ; Func_300a8
 
 	ld a, [wPrevMap]
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_3012c
+	jr z, .init_blimp_arrival_sequence
 	cp MAP_GR_AIRPORT
-	jr z, .asm_3012c
+	jr z, .init_blimp_arrival_sequence
 
 	ld a, [wPlayerOWObject]
 	lb de, 0, 0
@@ -155,7 +155,7 @@ InitGROverworldMapState: ; Func_300a8
 	scf
 	ret
 
-.asm_3012c
+.init_blimp_arrival_sequence
 	farcall RestoreWindowPositionAndDisableWindow
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
@@ -168,7 +168,7 @@ InitGROverworldMapState: ; Func_300a8
 	ld [wOverworldScriptPointer + 1], a
 	ld a, [wPrevMap]
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_30159
+	jr z, .load_blimp_for_overhead_islands_entry
 	ld a, NPC_GR_BLIMP
 	lb de, 24, 176
 	ld b, EAST
@@ -176,21 +176,21 @@ InitGROverworldMapState: ; Func_300a8
 	scf
 	ret
 
-.asm_30159
+.load_blimp_for_overhead_islands_entry
 	ld a, NPC_GR_BLIMP
 	lb de, 48, 240
 	ld b, EAST
 	farcall LoadOWObject
 	ld a, EVENT_SHORT_GR_ISLAND_FLYOVER_SEQUENCE
 	farcall GetEventValue
-	call z, .asm_30175
+	call z, .setup_gr_blimp_long_flyover_scroll
 	ld a, 0
 	call FadeInOverworldFromBlackOrWhite
 	scf
 	ccf
 	ret
 
-.asm_30175:
+.setup_gr_blimp_long_flyover_scroll:
 	ld a, NPC_GR_BLIMP
 	farcall SetOWObjectAsScrollTarget
 	ld a, $01
@@ -209,13 +209,13 @@ HandleGROverworldWarpFadeOutPreload: ; Func_3018b
 HandleGROverworldWarpEndSFX: ; Func_30192
 	ld a, [wTempPrevMap]
 	cp MAP_GR_AIRPORT
-	jr z, .asm_3019f
+	jr z, .play_gr_airport_blimp_hatch_sfx
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_301bd
+	jr z, .return_success
 	scf
 	ret
 
-.asm_3019f
+.play_gr_airport_blimp_hatch_sfx
 	ld a, 10
 	ld c, 7
 	farcall InitMusicFadeOut
@@ -227,7 +227,7 @@ HandleGROverworldWarpEndSFX: ; Func_30192
 	ld a, SFX_GR_BLIMP_HATCH_OPEN
 	call PlaySFX
 	farcall WaitForSFXToFinish
-.asm_301bd
+.return_success
 	scf
 	ccf
 	ret
@@ -280,7 +280,7 @@ UpdateGROverworldCursorAndCross: ; Func_30202
 	pop af
 
 	call CheckIfGROverworldLocationIsLocked
-	jr c, .asm_30233
+	jr c, .show_cross_for_locked_location
 
 	ld a, NPC_CURSOR_GR
 	farcall _SetOWObjectSpriteAnimFlag6
@@ -288,7 +288,7 @@ UpdateGROverworldCursorAndCross: ; Func_30202
 	farcall _ResetOWObjectSpriteAnimFlag6
 	jr .done
 
-.asm_30233
+.show_cross_for_locked_location
 	ld a, NPC_CURSOR_GR
 	farcall _ResetOWObjectSpriteAnimFlag6
 	ld a, NPC_GR_CROSS
@@ -303,12 +303,12 @@ HandleGROverworldDPadNavigation: ; Func_30242
 	ldh a, [hKeysPressed]
 .loop_shift
 	sla a
-	jr c, .asm_30250
+	jr c, .handle_selected_dpad_direction
 	inc c
 	dec b
 	jr nz, .loop_shift
 	ret
-.asm_30250
+.handle_selected_dpad_direction
 	ld a, SFX_CURSOR
 	call PlaySFX
 	ld a, [wCurOWLocation]
@@ -659,7 +659,7 @@ MovePlayerAcrossGROverworldPath: ; Func_30452
 	ld a, e
 	cp $ff
 	jp z, .finish_movement
-	jr .asm_304c0
+	jr .handle_scroll_command
 
 .set_target_position
 	push hl
@@ -680,7 +680,7 @@ MovePlayerAcrossGROverworldPath: ; Func_30452
 	farcall SetOWObjectTargetPosition
 	jr .loop_wait_movement
 
-.asm_304c0
+.handle_scroll_command
 	push hl
 	ld a, e
 	sla a ; *2
@@ -694,20 +694,20 @@ MovePlayerAcrossGROverworldPath: ; Func_30452
 	call DoFrame
 	ld hl, wOverworldTransition
 	bit 2, [hl]
-	jr nz, .asm_304ed
+	jr nz, .update_scroll_target
 	ldh a, [hKeysPressed]
 	bit B_PAD_B, a
-	jr z, .asm_304ed
+	jr z, .update_scroll_target
 	set 2, [hl]
 	ld a, $01
 	ld b, $00
 	farcall StartPalFadeToBlackOrWhite
-.asm_304ed
+.update_scroll_target
 	farcall UpdateOWScrollToTarget
-	jr c, .asm_304f6
+	jr c, .wait_camera_fade_after_scroll
 	pop hl
 	jr .loop_commands
-.asm_304f6
+.wait_camera_fade_after_scroll
 	ld a, [wOverworldTransition]
 	bit 2, a
 	jr z, .loop_wait_camera
@@ -730,10 +730,10 @@ MovePlayerAcrossGROverworldPath: ; Func_30452
 	farcall StartPalFadeToBlackOrWhite
 .move_to_target_position
 	farcall MoveOWObjectToTargetPosition
-	jr c, .asm_3052a
+	jr c, .wait_movement_fade_after_move
 	pop hl
 	jp .loop_commands
-.asm_3052a
+.wait_movement_fade_after_move
 	ld a, [wOverworldTransition]
 	bit 2, a
 	jr z, .loop_wait_movement
@@ -793,7 +793,7 @@ INCLUDE "data/gr_island_paths.asm"
 DoGRBlimpMovement_GRIsland:
 	ld a, [wPrevMap]
 	cp MAP_GR_AIRPORT
-	jr z, .asm_310cf
+	jr z, .set_overhead_islands_destination
 
 	ld a, MAP_GR_AIRPORT
 	lb de, 0, 0
@@ -807,7 +807,7 @@ DoGRBlimpMovement_GRIsland:
 	set 3, [hl]
 	ld hl, .movement_1
 	jr .start_movement
-.asm_310cf
+.set_overhead_islands_destination
 	ld a, MAP_OVERHEAD_ISLANDS
 	lb de, 0, 0
 	ld b, NORTH
@@ -868,8 +868,8 @@ DoGRBlimpMovement_GRIsland:
 .done_movement
 	ld a, [wTempPrevMap]
 	cp MAP_OVERHEAD_ISLANDS
-	jr z, .asm_31136 ; unnecessary cp
-.asm_31136
+	jr z, .begin_final_fade_out ; unnecessary cp
+.begin_final_fade_out
 	call .FadeOut
 .finish
 	call WaitPalFading
@@ -1180,22 +1180,22 @@ HandleSealedFortEntranceInteractions: ; Func_3138d
 	ld a, b
 	cp $00
 	ld a, [wPlayerOWObject]
-	jr nz, .asm_313a6
+	jr nz, .return_success
 	farcall GetOWObjectTilePosition
 	ld hl, SealedFortEntrance_OWInteractions
 	call ExecuteCoordScript
-.asm_313a6
+.return_success
 	scf
 	ret
 
 HandleSealedFortEntranceWarpFadeInPreload: ; Func_313a8
 	ld a, EVENT_SEALED_FORT_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_313ba
+	jr nz, .return_success
 	ld bc, TILEMAP_051
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
-.asm_313ba
+.return_success
 	scf
 	ret
 
@@ -1400,10 +1400,10 @@ PlayGrassFortEntranceRonaldThemePostload: ; Func_31559
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $05
-	jr c, .asm_31565
+	jr c, .play_ronald_theme
 	scf
 	ret
-.asm_31565
+.play_ronald_theme
 	ld a, MUSIC_RONALD
 	farcall PlayAfterCurrentSong
 	scf
@@ -1426,7 +1426,7 @@ HandleGrassFortEntranceWarpFadeInPreload: ; Func_3157e
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $05
-	jr nc, .asm_3159d
+	jr nc, .return_success
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunRonaldGRXDuelIntroScript)
@@ -1436,7 +1436,7 @@ HandleGrassFortEntranceWarpFadeInPreload: ; Func_3157e
 	ld [wOverworldScriptPointer], a
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
-.asm_3159d
+.return_success
 	scf
 	ret
 
@@ -1522,10 +1522,10 @@ PlayGrassFortLobbyImakuniRedThemePostload: ; Func_3165e
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $05
-	jr z, .asm_3166a
+	jr z, .play_imakuni_red_theme
 	scf
 	ret
-.asm_3166a
+.play_imakuni_red_theme
 	ld a, MUSIC_IMAKUNI_RED
 	farcall PlayAfterCurrentSong
 	scf
@@ -1547,10 +1547,10 @@ LoadGrassFortLobbyNPCs: ; Func_3167a
 HandleGrassFortLobbyInteractions: ; Func_31683
 	ld hl, GrassFortLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_31691
+	jr nc, .return_success
 	ld hl, GrassFortLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_31691
+.return_success
 	scf
 	ret
 
@@ -1562,14 +1562,14 @@ HandleGrassFortLobbyAfterDuel: ; Func_31693
 HandleGrassFortLobbyContinueOverworld: ; Func_31699
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_316b3
+	jr z, .return_success
 	ld a, NPC_IMAKUNI_RED
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_316b3
+.return_success
 	scf
 	ret
 
@@ -1676,10 +1676,10 @@ CheckShowGrassFortLobbyImakuniRed: ; Func_31776
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $05
-	jr z, .asm_31782
+	jr z, .show_imakuni_red
 	scf
 	ret
-.asm_31782
+.show_imakuni_red
 	scf
 	ccf
 	ret
@@ -1732,18 +1732,18 @@ LoadGrassFortMidoriNPCs: ; Func_317e2
 HandleGrassFortMidoriWarpFadeInPreload: ; Func_317eb
 	ld a, [wPrevMap]
 	cp MAP_GRASS_FORT_ENTRANCE
-	jr nz, .asm_317f6
+	jr nz, .init_midori_room_transition_state
 	farcall DeliverMailFromQueue
-.asm_317f6
+.init_midori_room_transition_state
 	ld bc, $3b
 	ld a, $14
 	farcall SetwD896
 	ld a, EVENT_MIDORIS_ROOM_CAGE_STATE
 	farcall GetEventValue
-	jr z, .asm_31809
+	jr z, .add_midori_cage_overlay
 	scf
 	ret
-.asm_31809
+.add_midori_cage_overlay
 	ld bc, TILEMAP_05B
 	lb de, 5, 0
 	farcall AddOWTilemapOverlay
@@ -1753,10 +1753,10 @@ HandleGrassFortMidoriWarpFadeInPreload: ; Func_317eb
 HandleGrassFortMidoriInteractions: ; Func_31815
 	ld hl, GrassFortMidori_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_31823
+	jr nc, .return_success
 	ld hl, GrassFortMidori_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_31823
+.return_success
 	scf
 	ret
 
@@ -1800,10 +1800,10 @@ ScriptGrassFortMidoriRickCageInteraction: ; Func_31835
 CheckShowGrassFortMidoriRick: ; Func_31864
 	ld a, EVENT_MIDORIS_ROOM_CAGE_STATE
 	farcall GetEventValue
-	jr z, .asm_3186e
+	jr z, .show_midori_rick
 	scf
 	ret
-.asm_3186e
+.show_midori_rick
 	scf
 	ccf
 	ret
@@ -1994,10 +1994,10 @@ LoadGrassFortYutaNPCs: ; Func_319d3
 HandleGrassFortYutaWarpFadeInPreload: ; Func_319dc
 	ld a, EVENT_YUTAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_319e6
+	jr z, .add_yuta_door_overlay
 	scf
 	ret
-.asm_319e6
+.add_yuta_door_overlay
 	ld bc, TILEMAP_05E
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
@@ -2007,10 +2007,10 @@ HandleGrassFortYutaWarpFadeInPreload: ; Func_319dc
 HandleGrassFortYutaInteractions: ; Func_319f2
 	ld hl, GrassFortYuta_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_31a00
+	jr nc, .return_success
 	ld hl, GrassFortYuta_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_31a00
+.return_success
 	scf
 	ret
 
@@ -2132,7 +2132,7 @@ ScriptGrassFortYutaAfterDuel: ; Func_31aa7
 ScriptGrassFortYutaDoorInteraction: ; Func_31ae1
 	ld a, EVENT_YUTAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_31b05
+	jr nz, .resume_overworld_after_yuta_door
 	ld a, NPC_YUTA
 	ld [wScriptNPC], a
 	ldtx hl, DialogYutaText
@@ -2147,7 +2147,7 @@ ScriptGrassFortYutaDoorInteraction: ; Func_31ae1
 	print_npc_text Text0de5
 	end_dialog
 	end_script
-.asm_31b05
+.resume_overworld_after_yuta_door
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -2218,10 +2218,10 @@ LoadGrassFortMiyukiNPCs: ; Func_31b89
 HandleGrassFortMiyukiWarpFadeInPreload: ; Func_31b92
 	ld a, EVENT_MIYUKIS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_31b9c
+	jr z, .add_miyuki_door_overlay
 	scf
 	ret
-.asm_31b9c
+.add_miyuki_door_overlay
 	ld bc, TILEMAP_061
 	lb de, 5, 0
 	farcall AddOWTilemapOverlay
@@ -2231,10 +2231,10 @@ HandleGrassFortMiyukiWarpFadeInPreload: ; Func_31b92
 HandleGrassFortMiyukiInteractions: ; Func_31ba8
 	ld hl, GrassFortMiyuki_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_31bb6
+	jr nc, .return_success
 	ld hl, GrassFortMiyuki_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_31bb6
+.return_success
 	scf
 	ret
 
@@ -2376,14 +2376,14 @@ ScriptGrassFortMiyukiAfterDuel: ; Func_31c37
 ScriptGrassFortMiyukiDoorInteraction: ; Func_31ca8
 	ld a, EVENT_MIYUKIS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_31cba
+	jr nz, .resume_overworld_after_miyuki_door
 	xor a
 	start_script
 	start_dialog
 	print_text DoorsAreShutText
 	end_dialog
 	end_script
-.asm_31cba
+.resume_overworld_after_miyuki_door
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -2436,29 +2436,29 @@ LoadLightningFortEntranceNPCs: ; Func_31d2e
 HandleLightningFortEntranceWarpFadeInPreload: ; Func_31d37
 	ld a, EVENT_LIGHTNING_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_31d41
-	jr .asm_31d5c
-.asm_31d41
+	jr z, .apply_lightning_entrance_closed_door_overlay
+	jr .return_success
+.apply_lightning_entrance_closed_door_overlay
 	ld bc, TILEMAP_065
 	lb de, 4, 7
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_GOT_GOLBAT_COIN
 	farcall GetEventValue
-	jr nz, .asm_31d5c
+	jr nz, .return_success
 	ld a, NPC_GR_CLERK_LIGHTNING_FORT
 	lb de, 4, 8
 	farcall SetOWObjectTilePosition
-.asm_31d5c
+.return_success
 	scf
 	ret
 
 HandleLightningFortEntranceInteractions: ; Func_31d5e
 	ld hl, LightningFortEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_31d6c
+	jr nc, .return_success
 	ld hl, LightningFortEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_31d6c
+.return_success
 	scf
 	ret
 
@@ -2492,7 +2492,7 @@ ScriptLightningFortEntranceClerk: ; Func_31d6e
 ScriptLightningFortEntranceDoorInteraction: ; Func_31da0
 	ld a, EVENT_LIGHTNING_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_31dcd
+	jr nz, .return_after_lightning_entrance_door
 	xor a
 	start_script
 	start_dialog
@@ -2507,11 +2507,11 @@ ScriptLightningFortEntranceDoorInteraction: ; Func_31da0
 	play_sfx SFX_DOORS
 	load_tilemap TILEMAP_066, $04, $07
 	end_script
-	jr .asm_31dcd
+	jr .return_after_lightning_entrance_door
 .ows_31dcb
 	end_dialog
 	end_script
-.asm_31dcd
+.return_after_lightning_entrance_door
 	ret
 
 Script_31dce:
@@ -2573,10 +2573,10 @@ LoadLightningFortLobbyNPCs: ; Func_31e59
 HandleLightningFortLobbyInteractions: ; Func_31e62
 	ld hl, LightningFortLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_31e70
+	jr nc, .return_success
 	ld hl, LightningFortLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_31e70
+.return_success
 	scf
 	ret
 
@@ -2797,15 +2797,15 @@ LoadLightningFortRennaNPCs: ; Func_3200d
 HandleLightningFortRennaWarpFadeInPreload: ; Func_32016
 	ld a, [wPrevMap]
 	cp MAP_LIGHTNING_FORT_ENTRANCE
-	jr nz, .asm_32021
+	jr nz, .check_renna_door_overlay
 	farcall DeliverMailFromQueue
-.asm_32021
+.check_renna_door_overlay
 	ld a, EVENT_RENNAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_3202b
+	jr z, .add_renna_door_overlay
 	scf
 	ret
-.asm_3202b
+.add_renna_door_overlay
 	ld bc, TILEMAP_069
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
@@ -2815,10 +2815,10 @@ HandleLightningFortRennaWarpFadeInPreload: ; Func_32016
 HandleLightningFortRennaInteractions: ; Func_32037
 	ld hl, LightningFortRenna_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_32045
+	jr nc, .return_success
 	ld hl, LightningFortRenna_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_32045
+.return_success
 	scf
 	ret
 
@@ -2922,7 +2922,7 @@ ScriptLightningFortRennaAfterDuel: ; Func_320bb
 ScriptLightningFortRennaDoorInteraction: ; Func_320f5
 	ld a, EVENT_RENNAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_32119
+	jr nz, .resume_overworld_after_renna_door
 	ld a, NPC_RENNA
 	ld [wScriptNPC], a
 	ldtx hl, DialogRennaText
@@ -2937,7 +2937,7 @@ ScriptLightningFortRennaDoorInteraction: ; Func_320f5
 	print_npc_text Text11e9
 	end_dialog
 	end_script
-.asm_32119
+.resume_overworld_after_renna_door
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -3016,26 +3016,26 @@ HandleLightningFortIchikawaWarpFadeInPreload: ; Func_321ba
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_ICHIKAWAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_321d8
+	jr z, .add_ichikawa_closed_door_overlay
 	ld bc, TILEMAP_06D
 	lb de, 1, 2
 	farcall AddOWTilemapOverlay
-	jr .asm_321e2
-.asm_321d8
+	jr .return_success
+.add_ichikawa_closed_door_overlay
 	ld bc, TILEMAP_06E
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
-.asm_321e2
+.return_success
 	scf
 	ret
 
 HandleLightningFortIchikawaInteractions: ; Func_321e4
 	ld hl, LightningFortIchikawa_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_321f2
+	jr nc, .return_success
 	ld hl, LightningFortIchikawa_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_321f2
+.return_success
 	scf
 	ret
 
@@ -3301,28 +3301,28 @@ Script_323b5:
 ScriptLightningFortIchikawaDoorInteraction: ; Func_323f0
 	ld a, EVENT_ICHIKAWAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_32402
+	jr nz, .resume_overworld_after_ichikawa_door
 	xor a
 	start_script
 	start_dialog
 	print_text DoorsAreShutText
 	end_dialog
 	end_script
-.asm_32402
+.resume_overworld_after_ichikawa_door
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
 ScriptLightningFortIchikawaStevePodInteraction: ; Func_32407
 	ld a, EVENT_FREED_STEVE
 	farcall GetEventValue
-	jr nz, .asm_32419
+	jr nz, .resume_overworld_after_steve_pod_check
 	xor a
 	start_script
 	start_dialog
 	print_text Text11ce
 	end_dialog
 	end_script
-.asm_32419
+.resume_overworld_after_steve_pod_check
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -4922,27 +4922,27 @@ LoadWaterFortEntranceNPCs: ; Func_32fed
 HandleWaterFortEntranceWarpFadeInPreload: ; Func_32ff6
 	ld a, EVENT_WATER_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_3300a
+	jr z, .apply_water_fort_closed_door_overlay
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $06
-	jr c, .asm_33027
-	jr .asm_33044
-.asm_3300a
+	jr c, .check_psyduck_coin_for_ronald_intro
+	jr .return_success
+.apply_water_fort_closed_door_overlay
 	ld bc, TILEMAP_083
 	lb de, 4, 7
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_GOT_MAGNEMITE_COIN
 	farcall GetEventValue
-	jr nz, .asm_33044
+	jr nz, .return_success
 	ld a, NPC_GR_CLERK_WATER_FORT
 	lb de, 4, 8
 	farcall SetOWObjectTilePosition
-	jr .asm_33044
-.asm_33027
+	jr .return_success
+.check_psyduck_coin_for_ronald_intro
 	ld a, EVENT_GOT_PSYDUCK_COIN
 	farcall GetEventValue
-	jr z, .asm_33044
+	jr z, .return_success
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunRonaldPowerDeckDuelIntroScript)
@@ -4952,17 +4952,17 @@ HandleWaterFortEntranceWarpFadeInPreload: ; Func_32ff6
 	ld [wOverworldScriptPointer], a
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
-.asm_33044
+.return_success
 	scf
 	ret
 
 HandleWaterFortEntranceInteractions: ; Func_33046
 	ld hl, WaterFortEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_33054
+	jr nc, .return_success
 	ld hl, WaterFortEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_33054
+.return_success
 	scf
 	ret
 
@@ -5517,7 +5517,7 @@ ScriptFightingFortEntranceClerk: ; Func_33434
 ScriptFightingFortEntranceLeftDoorInteraction: ; Func_33470
 	ld a, EVENT_FIGHTING_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_334b2
+	jr nz, .resume_if_left_door_already_open
 	xor a
 	start_script
 	start_dialog
@@ -5544,13 +5544,13 @@ ScriptFightingFortEntranceLeftDoorInteraction: ; Func_33470
 .ows_334b0
 	end_dialog
 	end_script
-.asm_334b2
+.resume_if_left_door_already_open
 	ret
 
 ScriptFightingFortEntranceRightDoorInteraction: ; Func_334b3
 	ld a, EVENT_FIGHTING_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_334f5
+	jr nz, .resume_if_right_door_already_open
 	xor a
 	start_script
 	start_dialog
@@ -5577,7 +5577,7 @@ ScriptFightingFortEntranceRightDoorInteraction: ; Func_334b3
 .ows_334f3
 	end_dialog
 	end_script
-.asm_334f5
+.resume_if_right_door_already_open
 	ret
 
 ScriptFightingFortEntranceOpenDoors:
@@ -5631,10 +5631,10 @@ ExecuteFightingFortMaze2StepEvents: ; Func_33565
 HandleFightingFortMaze2WarpEndSFX: ; Func_3356c
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_33575
+	jr z, .play_basement_exit_sfx
 	scf
 	ret
-.asm_33575
+.play_basement_exit_sfx
 	scf
 	ccf
 	ret
@@ -5669,11 +5669,11 @@ ScriptFightingFortMaze2ClosedChest: ; Func_33589
 CheckShowFightingFortMaze2ClosedChest: ; Func_335a2
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_1
 	farcall GetEventValue
-	jr nz, .asm_335ad
+	jr nz, .hide_closed_chest_sprite
 	scf
 	ccf
 	ret
-.asm_335ad
+.hide_closed_chest_sprite
 	scf
 	ret
 
@@ -5689,11 +5689,11 @@ ScriptFightingFortMaze2OpenedChest: ; Func_335af
 CheckShowFightingFortMaze2OpenedChest: ; Func_335ba
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_1
 	farcall GetEventValue
-	jr z, .asm_335c5
+	jr z, .hide_opened_chest_sprite
 	scf
 	ccf
 	ret
-.asm_335c5
+.hide_opened_chest_sprite
 	scf
 	ret
 
@@ -5779,10 +5779,10 @@ ExecuteFightingFortMaze4StepEvents: ; Func_336a3
 HandleFightingFortMaze4WarpEndSFX: ; Func_336aa
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_336b3
+	jr z, .play_maze4_basement_exit_sfx
 	scf
 	ret
-.asm_336b3
+.play_maze4_basement_exit_sfx
 	scf
 	ccf
 	ret
@@ -5824,11 +5824,11 @@ ScriptFightingFortMaze4ClosedChest: ; Func_336d2
 CheckShowFightingFortMaze4ClosedChest: ; Func_336eb
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_2
 	farcall GetEventValue
-	jr nz, .asm_336f6
+	jr nz, .hide_closed_chest_sprite_maze4
 	scf
 	ccf
 	ret
-.asm_336f6
+.hide_closed_chest_sprite_maze4
 	scf
 	ret
 
@@ -5844,11 +5844,11 @@ ScriptFightingFortMaze4OpenedChest: ; Func_336f8
 CheckShowFightingFortMaze4OpenedChest: ; Func_33703
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_2
 	farcall GetEventValue
-	jr z, .asm_3370e
+	jr z, .hide_opened_chest_sprite_maze4
 	scf
 	ccf
 	ret
-.asm_3370e
+.hide_opened_chest_sprite_maze4
 	scf
 	ret
 

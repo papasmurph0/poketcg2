@@ -114,7 +114,7 @@ SetNextWordOfList:
 
 ; Set the current 16-bit element of the list at wListPointer2 to de,
 ; and advance the list to the next element.
-SetNextWordOfList2:: ; Func_0b99
+SetNextWordOfList2: ; Func_0b99
 	push hl
 	push bc
 	ld hl, wListPointer2

@@ -36,7 +36,7 @@ SerialTimerHandler:
 	ret
 
 ; tcg1: Func_0cc5
-ExchangeLinkDuelRoleByte:: ; Serial_Func_0be6
+ExchangeLinkDuelRoleByte: ; Serial_Func_0be6
 	ld hl, wSerialRecvCounter
 	or a
 	jr nz, .input_nonzero

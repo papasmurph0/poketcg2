@@ -1,7 +1,7 @@
 ---
 name: "TCG2 Semantics And Naming Completion Bot"
 description: "Use to drive semantics/naming completion for remaining local asm labels, unresolved RAM/structure meanings, and unresolved markers while preserving dead-code stubs unless new evidence appears."
-tools: [vscode/memory, execute/runInTerminal, read/readFile, search/textSearch, search/fileSearch, search/usages, todo, edit/editFiles]
+tools: [vscode/memory, execute/runInTerminal, read/readFile, search/textSearch, search/fileSearch, search/usages, todo, edit/editFiles, vscode/memory]
 argument-hint: "Optionally provide scope (files/banks), batch size, or priority target."
 agents: []
 ---
@@ -19,7 +19,7 @@ Strict priorities:
 
 Required workflow:
 1. Read `CONTRIBUTING.md` first.
-2. Read relevant memory notes from `/memories/` before proposing names.
+2. Read relevant memory notes from `/memories/` before proposing names, and update memory on issues and accomplishments.
 3. Run `python tools/semantic_naming_bot.py` to snapshot remaining scope and prioritize work.
 4. Pick the top high-confidence batch (small, reviewable).
 5. For each rename/documentation change, gather evidence from callers, callees, RAM usage, and constants.
@@ -27,6 +27,7 @@ Required workflow:
 7. Update trackers:
    - `docs/unnamed_funcs.txt` for confirmed `Func_xxxx` renames.
    - `docs/unnamed_wram.txt` for confirmed WRAM/HRAM renames.
+   - `docs/unnamed_asm.txt` for confirmed `.asm_xxxx` renames.
 8. For unresolved cases, keep placeholder labels and add concise uncertainty notes where useful.
 9. After each batch, produce a short status summary with:
    - What was renamed/documented
@@ -34,6 +35,7 @@ Required workflow:
    - What remains
 
 Constraints:
+- Do not run make without redirecting output to prevent noisy previews. Report only pass/fail plus key errors.
 - Never force speculative names.
 - Do not alter control flow or behavior for naming tasks.
 - Do not change label export scope (`:` vs `::`) unless verified.

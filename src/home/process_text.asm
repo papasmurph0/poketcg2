@@ -210,7 +210,7 @@ InitTextPrinting::
    ; $0: generate and place text tile
    ; bit 1 set: generate text tile without placing it
    ; bit 0 set: skip generation/placement and only update text buffers
-GenerateAndPlaceTextTileIfNeeded:: ; Func_22ca
+GenerateAndPlaceTextTileIfNeeded: ; Func_22ca
 	push hl
 	push de
 	push bc
@@ -279,7 +279,7 @@ TerminateHalfWidthText::
 	pop hl
 	ret
 
-FindTextTileInCacheOrReserveSlot:: ; Func_2325
+FindTextTileInCacheOrReserveSlot: ; Func_2325
 	call FindTextTileInCache
 	ret c
 	or a
@@ -730,7 +730,7 @@ GetFullWidthFontTileOffset::
 
 ; search linked-list for text characters e/d (registers), if found hoist
 ; the result to head of list and return it. carry flag denotes success.
-FindTextTileInCache:: ; Func_235e
+FindTextTileInCache: ; Func_235e
 	ld a, [wFontWidth]
 	or a
 	jr z, .print

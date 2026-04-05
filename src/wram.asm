@@ -2423,7 +2423,9 @@ wSaveDataFlags:: ; d554
 wCurrentNPCDuelistData:: ; d555
 	ds NPC_DUELIST_STRUCT_SIZE
 
-; TODO: is this really union?
+; confirmed union: shared scratch space
+; - map header temp buffer during map/script loading (wTempMapHeaderData)
+; - black box type counters (wNumBlackBoxInputPkmnPerType)
 UNION
 
 ; MAPHEADERSTRUCT_*
@@ -2455,7 +2457,10 @@ ENDU
 wFilteredListPtr:: ; d575
 	ds $2
 
-; TODO: is this really union?
+; confirmed union: shared temporary state across mutually exclusive flows
+; - challenge cup duelist selection state
+; - title-screen intro card selection state
+; - black box output counters / temporary evolution-line buffer
 UNION
 
 ; for challenge cups and challenge machines
