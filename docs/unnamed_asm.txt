@@ -1594,3 +1594,45 @@ In DeleteMail, branch that decrements mail count, updates mailed-card state, and
 src/engine/bank07.asm .asm_1f1ad -> .done
 Common return path for DeleteMail used by cancel/decline branches and the completed delete flow.
 
+src/engine/bank07.asm .asm_1f225 -> .clamp_cursor_within_mail_count
+In AdjustMailboxCursorAfterMailListChange, branch that compares selected mail index against wMailCount and moves cursor up when the current slot became invalid.
+
+src/engine/bank07.asm .asm_1f244 -> .check_bills_pc_mail
+In DeleteGameCenterMailedCard, branch that handles Bill's PC mail after the Black Box mail-id check fails.
+
+src/engine/bank07.asm .asm_1f331 -> .return_with_carry_state
+In CheckForBlackBoxCardInMail, shared return path that keeps carry set when the stored Black Box card pointer is nonzero and cleared otherwise.
+
+src/engine/bank07.asm .asm_1f340 -> .return_with_carry_state
+In CheckForBillsPCCardInMail, shared return path that keeps carry set when the stored Bill's PC card pointer is nonzero and cleared otherwise.
+
+src/engine/bank07.asm .asm_1f588 -> .done
+In ProcessScreenShakeEffect, common return path used when no shake type is active or after applying the current shake offset update.
+
+src/engine/bank07.asm .asm_1f5b6 -> .reset_shake_index
+In ProcessScreenShakeEffect.CalcScreenShakeOffset, branch taken at the shake-table terminator ($80) to reset the offset index before repeat handling.
+
+src/engine/bank07.asm .asm_1f5c5 -> .clear_shake_type
+In ProcessScreenShakeEffect.CalcScreenShakeOffset, branch that clears wScreenShakeType after repeats are exhausted (or disabled).
+
+src/engine/bank07.asm .asm_1c7a3 -> .check_obpals
+In ApplyPaletteFadeToWhiteOrBlack, branch that proceeds to OB palette fade gating after optional BG palette fade processing.
+
+src/engine/bank07.asm .asm_1c7ad -> .finalize_fade
+In ApplyPaletteFadeToWhiteOrBlack, shared finalize branch that flushes palettes and stores the fade-step status.
+
+src/engine/bank07.asm .asm_1c7c0 -> .check_obpals
+In ApplyPaletteFadeToTarget, branch that proceeds to OB palette fade gating after optional BG palette fade processing.
+
+src/engine/bank07.asm .asm_1c7ca -> .finalize_fade
+In ApplyPaletteFadeToTarget, shared finalize branch that flushes palettes and stores the fade-step status.
+
+src/engine/bank07.asm .asm_1cb31 -> .draw_labeled_box
+In DrawMenuBox, branch that draws the labeled text box variant when wMenuBoxLabelTextID is nonzero.
+
+src/engine/bank07.asm .asm_1cbc3 -> .check_action_keys
+In HandleMenuBox, branch that proceeds to confirm/cancel key checks after optional directional cursor movement updates.
+
+src/engine/bank07.asm .asm_1cbda -> .return_selection
+In HandleMenuBox, branch that focuses the current item and returns the selected/focused index when action keys are detected.
+

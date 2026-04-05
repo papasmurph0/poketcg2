@@ -1101,14 +1101,14 @@ FadeOBPalsToTarget: ; Func_1c767
 ApplyPaletteFadeToWhiteOrBlack: ; Func_1c799
 	ld hl, wPaletteFadeFlags
 	bit 0, [hl]
-	jr z, .asm_1c7a3
+	jr z, .check_obpals
 	call FadeBGPalsToWhiteOrBlack
-.asm_1c7a3
+.check_obpals
 	ld hl, wPaletteFadeFlags
 	bit 7, [hl]
-	jr z, .asm_1c7ad
+	jr z, .finalize_fade
 	call FadeOBPalsToWhiteOrBlack
-.asm_1c7ad
+.finalize_fade
 	call FlushAllPalettes
 	ld a, $02
 	ld [wPalFadeStepStatus], a
@@ -1117,14 +1117,14 @@ ApplyPaletteFadeToWhiteOrBlack: ; Func_1c799
 ApplyPaletteFadeToTarget: ; Func_1c7b6
 	ld hl, wPaletteFadeFlags
 	bit 0, [hl]
-	jr z, .asm_1c7c0
+	jr z, .check_obpals
 	call FadeBGPalsToTarget
-.asm_1c7c0
+.check_obpals
 	ld hl, wPaletteFadeFlags
 	bit 7, [hl]
-	jr z, .asm_1c7ca
+	jr z, .finalize_fade
 	call FadeOBPalsToTarget
-.asm_1c7ca
+.finalize_fade
 	call FlushAllPalettes
 	ld a, $01
 	ld [wPalFadeStepStatus], a
@@ -1763,10 +1763,10 @@ DrawMenuBox:
 	ld a, [wMenuBoxLabelTextID + 1]
 	ld h, a
 	or l
-	jr nz, .asm_1cb31
+	jr nz, .draw_labeled_box
 	call DrawRegularTextBoxVRAM0
 	jr .print_items
-.asm_1cb31
+.draw_labeled_box
 	call DrawLabeledTextBoxVRAM0
 
 .print_items
@@ -1857,25 +1857,25 @@ HandleMenuBox:
 	call .CallUpdateFunction
 	ld a, [wMenuBoxIsBoundaryNoOp]
 	and a
-	jr nz, .asm_1cbc3
+	jr nz, .check_action_keys
 	call .DownPress
 	call .UpPress
 	call .RightPress
 	call .LeftPress
 	ld a, c
 	ld [wMenuBoxFocusedItem], a
-.asm_1cbc3
+.check_action_keys
 	ld a, [wMenuBoxFocusedItem]
 	ld c, a
 	xor a
 	ld [wMenuBoxIsBoundaryNoOp], a
 	call .CheckKeysPressed
-	jr nz, .asm_1cbda
+	jr nz, .return_selection
 	call .CheckKeysHeld
-	jr nz, .asm_1cbda
+	jr nz, .return_selection
 	call .UpdateBlinkCounter
 	jr .loop_main
-.asm_1cbda
+.return_selection
 	call .FocusItem
 	ld a, c
 	pop hl
@@ -6789,7 +6789,7 @@ MailboxYesNoPrompt:
 AdjustMailboxCursorAfterMailListChange: ; Func_1f210
 	ld a, [wSelectedMailCursorPosition]
 	and a
-	jr nz, .asm_1f225
+	jr nz, .clamp_cursor_within_mail_count
 	ld a, [wMailboxPage]
 	and a
 	ret z
@@ -6798,7 +6798,7 @@ AdjustMailboxCursorAfterMailListChange: ; Func_1f210
 	ld a, $03
 	ld [wSelectedMailCursorPosition], a
 	ret
-.asm_1f225
+.clamp_cursor_within_mail_count
 	ld a, [wMailCount]
 	ld c, a
 	call GetSelectedMailPosition
@@ -6814,11 +6814,11 @@ AdjustMailboxCursorAfterMailListChange: ; Func_1f210
 DeleteGameCenterMailedCard:
 	ld a, [wMailId]
 	cp $01 ; black box mail id
-	jr nz, .asm_1f244
+	jr nz, .check_bills_pc_mail
 	ld de, $0
 	call SetBlackBoxCard
 	ret
-.asm_1f244
+.check_bills_pc_mail
 	cp $02 ; bill's PC mail id
 	ret nz
 	ld de, $0
@@ -7027,9 +7027,9 @@ CheckForBlackBoxCardInMail:
 	ld a, [wBlackBoxCardReceived + 1]
 	or b
 	scf
-	jr nz, .asm_1f331
+	jr nz, .return_with_carry_state
 	ccf
-.asm_1f331
+.return_with_carry_state
 	pop bc
 	ret
 
@@ -7041,9 +7041,9 @@ CheckForBillsPCCardInMail:
 	ld a, [wBillsPCCardReceived + 1]
 	or b
 	scf
-	jr nz, .asm_1f340
+	jr nz, .return_with_carry_state
 	ccf
-.asm_1f340
+.return_with_carry_state
 	pop bc
 	ret
 
@@ -7069,9 +7069,9 @@ ProcessScreenShakeEffect:: ; Func_1f57b
 	push hl
 	ld a, [wScreenShakeType]
 	and a
-	jr z, .asm_1f588
+	jr z, .done
 	call .CalcScreenShakeOffset
-.asm_1f588
+.done
 	pop hl
 	pop de
 	pop bc
@@ -7094,7 +7094,7 @@ ProcessScreenShakeEffect:: ; Func_1f57b
 	add hl, bc
 	ld a, [hl]
 	cp $80
-	jr z, .asm_1f5b6
+	jr z, .reset_shake_index
 	ld c, [hl]
 	ldh a, [hSCX]
 	sub c
@@ -7108,16 +7108,16 @@ ProcessScreenShakeEffect:: ; Func_1f57b
 	inc [hl]
 	ret
 
-.asm_1f5b6
+.reset_shake_index
 	xor a
 	ld [wScreenShakeIndex], a
 	ld a, [wScreenShakeRepeatCount]
 	and a
-	jr z, .asm_1f5c5
+	jr z, .clear_shake_type
 	dec a
 	ld [wScreenShakeRepeatCount], a
 	ret nz
-.asm_1f5c5
+.clear_shake_type
 	xor a
 	ld [wScreenShakeType], a
 	ret
