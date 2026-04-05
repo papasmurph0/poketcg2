@@ -1684,8 +1684,8 @@ RaticateSuperFangEffectCommands:
 	dbw EFFECTCMDTYPE_AI, SuperFangEffect
 	db $00
 
-; unreferenced
-UnreferencedTrainerCardAsPokemonEffectCommands:
+
+TrainerCardAsPokemonEffectCommands:
 	db BANK("Effect Functions 1")
 	dbw EFFECTCMDTYPE_INITIAL_EFFECT_2, TrainerCardAsPokemon_BenchCheck
 	dbw EFFECTCMDTYPE_BEFORE_DAMAGE, TrainerCardAsPokemon_DiscardEffect
