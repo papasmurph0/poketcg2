@@ -119,9 +119,40 @@ sSaveDataState:: ; baa3
 	ds $1
 
 ; see WRAMToSRAMMapper_ChallengeMachineSave
-; TODO: break down into each segment (after fully labelling wram?)
 sChallengeMachineSaveData:: ; baa4
-	ds $40
+
+; title text id + dialog name text id for each round in the active set
+sChallengeMachineOpponentTitlesAndNames:: ; baa4
+	ds (2 + 2) * NUM_CHALLENGE_MACHINE_ROUNDS_PER_SET
+
+sChallengeMachineSetsWonRecords:: ; bab8
+sTCGChallengeMachineSetsWonRecord:: ; bab8
+	ds $2
+
+sGRChallengeMachineSetsWonRecord:: ; baba
+	ds $2
+
+sChallengeMachineCurWinStreaks:: ; babc
+sTCGChallengeMachineCurWinStreak:: ; babc
+	ds $2
+
+sGRChallengeMachineCurWinStreak:: ; babe
+	ds $2
+
+sChallengeMachineWinStreakRecords:: ; bac0
+sTCGChallengeMachineWinStreakRecord:: ; bac0
+	ds $2
+
+sGRChallengeMachineWinStreakRecord:: ; bac2
+	ds $2
+
+sChallengeMachinePlayerNames:: ; bac4
+sTCGChallengeMachinePlayerName:: ; bac4
+	ds NAME_BUFFER_LENGTH
+
+sGRChallengeMachinePlayerName:: ; bad4
+	ds NAME_BUFFER_LENGTH
+
 sChallengeMachineSaveDataEnd::
 
 ; checksum: swapped order
@@ -189,7 +220,38 @@ sBackupSaveDataState:: ; baa3
 	ds $1
 
 sBackupChallengeMachineSaveData:: ; baa4
-	ds $40
+
+sBackupChallengeMachineOpponentTitlesAndNames:: ; baa4
+	ds (2 + 2) * NUM_CHALLENGE_MACHINE_ROUNDS_PER_SET
+
+sBackupChallengeMachineSetsWonRecords:: ; bab8
+sBackupTCGChallengeMachineSetsWonRecord:: ; bab8
+	ds $2
+
+sBackupGRChallengeMachineSetsWonRecord:: ; baba
+	ds $2
+
+sBackupChallengeMachineCurWinStreaks:: ; babc
+sBackupTCGChallengeMachineCurWinStreak:: ; babc
+	ds $2
+
+sBackupGRChallengeMachineCurWinStreak:: ; babe
+	ds $2
+
+sBackupChallengeMachineWinStreakRecords:: ; bac0
+sBackupTCGChallengeMachineWinStreakRecord:: ; bac0
+	ds $2
+
+sBackupGRChallengeMachineWinStreakRecord:: ; bac2
+	ds $2
+
+sBackupChallengeMachinePlayerNames:: ; bac4
+sBackupTCGChallengeMachinePlayerName:: ; bac4
+	ds NAME_BUFFER_LENGTH
+
+sBackupGRChallengeMachinePlayerName:: ; bad4
+	ds NAME_BUFFER_LENGTH
+
 sBackupChallengeMachineSaveDataEnd::
 
 sBackupChallengeMachineSaveDataChecksum1:: ; bae4
