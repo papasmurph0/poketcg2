@@ -327,12 +327,12 @@ RunRonaldGCPieces4GiftScript: ; Func_341f7
 Script_RonaldGameCenter:
 	ld a, EVENT_MET_RONALD_GAME_CENTER
 	farcall GetEventValue
-	jr nz, .asm_342d5
+	jr nz, .resume_overworld
 	ld a, EVENT_MET_RONALD_GAME_CENTER
 	farcall MaxOutEventValue
 	ld a, EVENT_GOT_MACHAMP_COIN
 	farcall GetEventValue
-	jr nz, .asm_342d5
+	jr nz, .resume_overworld
 	xor a
 	start_script
 	play_song_next MUSIC_RONALD
@@ -368,7 +368,7 @@ Script_RonaldGameCenter:
 	end_script
 	ld a, [wNextMusic]
 	farcall PlayAfterCurrentSong
-.asm_342d5
+.resume_overworld
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 .NPCMovement_342da:
@@ -772,10 +772,10 @@ HandleTcgAirportEntranceIdle: ; Func_345f1
 SetTcgAirportEntranceGRMusicIfGRCoinMissing: ; Func_345fd
 	ld a, EVENT_GOT_GR_COIN
 	farcall GetEventValue
-	jr nz, .asm_3460a
+	jr nz, .done_music_preload
 	ld a, MUSIC_HERE_COMES_GR
 	ld [wNextMusic], a
-.asm_3460a
+.done_music_preload
 	scf
 	ccf
 	ret
@@ -795,10 +795,10 @@ LoadTcgAirportEntranceNPCs: ; Func_34614
 HandleTcgAirportEntranceInteractions: ; Func_3461d
 	ld hl, TcgAirportEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3462b
+	jr nc, .done_interactions
 	ld hl, TcgAirportEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3462b
+.done_interactions
 	scf
 	ret
 
@@ -810,45 +810,45 @@ HandleTcgAirportEntranceBoardingTileTrigger: ; Func_3462d
 UpdateTcgAirportEntranceBoardingAlignment: ; Func_34635
 	ld a, EVENT_SHORT_GR_ISLAND_FLYOVER_SEQUENCE
 	farcall GetEventValue
-	jr nz, .asm_3468e
+	jr nz, .done
 	ldh a, [hKeysHeld]
 	bit B_PAD_RIGHT, a
-	jr z, .asm_3468e
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, EAST
 	farcall SetOWObjectDirection
 	farcall GetOWObjectTilePosition
 	ld a, $09
 	cp d
-	jr nz, .asm_3468e
+	jr nz, .done
 	ld a, $06
 	cp e
-	jr z, .asm_34675
+	jr z, .check_gr5_alignment_for_player_y6
 	ld a, $07
 	cp e
-	jr nz, .asm_3468e
+	jr nz, .done
 	ld a, NPC_GR_5
 	farcall GetOWObjectTilePosition
 	ld a, $07
 	cp e
-	jr z, .asm_3468e
+	jr z, .done
 	ld a, NPC_GR_5
 	lb bc, SOUTH | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall TryStepNPCInDirection
-	jr .asm_34689
-.asm_34675
+	jr .wait_for_gr5_movement
+.check_gr5_alignment_for_player_y6
 	ld a, NPC_GR_5
 	farcall GetOWObjectTilePosition
 	ld a, $06
 	cp e
-	jr z, .asm_3468e
+	jr z, .done
 	ld a, NPC_GR_5
 	lb bc, NORTH | MOVE_BACKWARDS, MOVE_SPEED_WALK
 	farcall TryStepNPCInDirection
-.asm_34689
+.wait_for_gr5_movement
 	ld a, NPC_GR_5
 	call WaitForOWObjectMovement
-.asm_3468e
+.done
 	ret
 
 Script_GR5_TCGAirportEntrance:
@@ -879,10 +879,10 @@ Script_GR5_TCGAirportEntrance:
 CheckShowTcgAirportEntranceGr5: ; Func_346bc
 	ld a, EVENT_SHORT_GR_ISLAND_FLYOVER_SEQUENCE
 	farcall GetEventValue
-	jr z, .asm_346c6
+	jr z, .hide_gr5
 	scf
 	ret
-.asm_346c6
+.hide_gr5
 	scf
 	ccf
 	ret
@@ -1037,10 +1037,10 @@ HandleTcgAirportWarpFadeInPreload: ; Func_347ea
 	farcall ClearwD986
 	ld a, [wPrevMap]
 	cp OVERWORLD_MAP_TCG
-	jr z, .asm_3483d
+	jr z, .load_landed_script
 	ld a, EVENT_SHORT_GR_ISLAND_FLYOVER_SEQUENCE
 	farcall GetEventValue
-	jr nz, .asm_34871
+	jr nz, .done
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(Script_GR5_TCGAirportFirstFlight)
@@ -1067,8 +1067,8 @@ HandleTcgAirportWarpFadeInPreload: ; Func_347ea
 	farcall SetOWObjectTilePosition
 	ld b, EAST
 	farcall SetOWObjectDirection
-	jr .asm_34871
-.asm_3483d
+	jr .done
+.load_landed_script
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(Script_GR5_TCGAirportLanded)
@@ -1088,17 +1088,17 @@ HandleTcgAirportWarpFadeInPreload: ; Func_347ea
 	farcall SetOWObjectTilePosition
 	ld b, WEST
 	farcall SetOWObjectDirection
-.asm_34871
+.done
 	scf
 	ret
 
 HandleTcgAirportWarpEndSFX: ; Func_34873
 	ld a, [wTempPrevMap]
 	cp OVERWORLD_MAP_TCG
-	jr z, .asm_3487c
+	jr z, .play_blimp_hatch_close_sfx
 	scf
 	ret
-.asm_3487c
+.play_blimp_hatch_close_sfx
 	ld a, $0a
 	ld c, $07
 	farcall InitMusicFadeOut
@@ -1297,18 +1297,18 @@ UpdateTcgAirportBoardingAlignment: ; Func_349d5
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectTilePosition
 	cpcoord 11, 8
-	jr z, .asm_34a0e
+	jr z, .align_for_tile_11_8
 	cpcoord 10, 9
-	jr z, .asm_34a2a
+	jr z, .align_for_tile_10_9
 	cpcoord 9, 9
-	jr z, .asm_34a46
+	jr z, .align_for_tile_9_9
 	cpcoord 8, 8
-	jr z, .asm_34a62
-	jr .asm_34a7c
-.asm_34a0e
+	jr z, .align_for_tile_8_8
+	jr .done
+.align_for_tile_11_8
 	ldh a, [hKeysHeld]
 	bit B_PAD_LEFT, a
-	jr z, .asm_34a7c
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, WEST
 	farcall SetOWObjectDirection
@@ -1316,11 +1316,11 @@ UpdateTcgAirportBoardingAlignment: ; Func_349d5
 	ld b, EAST
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX10_TcgAirport
-	jr .asm_34a7c
-.asm_34a2a
+	jr .done
+.align_for_tile_10_9
 	ldh a, [hKeysHeld]
 	bit B_PAD_UP, a
-	jr z, .asm_34a7c
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, NORTH
 	farcall SetOWObjectDirection
@@ -1328,11 +1328,11 @@ UpdateTcgAirportBoardingAlignment: ; Func_349d5
 	ld b, SOUTH
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX10_TcgAirport
-	jr .asm_34a7c
-.asm_34a46
+	jr .done
+.align_for_tile_9_9
 	ldh a, [hKeysHeld]
 	bit B_PAD_UP, a
-	jr z, .asm_34a7c
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, NORTH
 	farcall SetOWObjectDirection
@@ -1340,11 +1340,11 @@ UpdateTcgAirportBoardingAlignment: ; Func_349d5
 	ld b, SOUTH
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX9_TcgAirport
-	jr .asm_34a7c
-.asm_34a62
+	jr .done
+.align_for_tile_8_8
 	ldh a, [hKeysHeld]
 	bit B_PAD_RIGHT, a
-	jr z, .asm_34a7c
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	ld b, EAST
 	farcall SetOWObjectDirection
@@ -1352,7 +1352,7 @@ UpdateTcgAirportBoardingAlignment: ; Func_349d5
 	ld b, WEST
 	farcall SetOWObjectDirection
 	call EnsureGr5BoardingX9_TcgAirport
-.asm_34a7c
+.done
 	ret
 
 EnsureGr5BoardingX9_TcgAirport: ; Func_34a7d
@@ -1431,10 +1431,10 @@ LoadGrAirportEntranceNPCs: ; Func_34b1d
 HandleGrAirportEntranceInteractions: ; Func_34b26
 	ld hl, GrAirportEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_34b34
+	jr nc, .done_interactions
 	ld hl, GrAirportEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_34b34
+.done_interactions
 	scf
 	ret
 
@@ -1562,10 +1562,10 @@ LoadGameCenter1NPCs: ; Func_34c33
 HandleGameCenter1Interactions: ; Func_34c3c
 	ld hl, GameCenter1_NPCInteractions
 	call HandleNPCInteractions_NoTurnNPC
-	jr nc, .asm_34c4a
+	jr nc, .done_interactions
 	ld hl, GameCenter1_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_34c4a
+.done_interactions
 	scf
 	ret
 
@@ -1906,10 +1906,10 @@ LoadGameCenter2NPCs: ; Func_34eee
 HandleGameCenter2Interactions: ; Func_34ef7
 	ld hl, GameCenter2_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_34f05
+	jr nc, .done_interactions
 	ld hl, GameCenter2_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_34f05
+.done_interactions
 	scf
 	ret
 
@@ -2182,10 +2182,10 @@ LoadCardDungeonBishopNPCs: ; Func_350ed
 HandleCardDungeonBishopInteractions: ; Func_350f6
 	ld hl, CardDungeonBishop_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_35104
+	jr nc, .done_interactions
 	ld hl, CardDungeonBishop_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_35104
+.done_interactions
 	scf
 	ret
 
@@ -2461,10 +2461,10 @@ LoadGrChallengeHallLobbyNPCs: ; Func_35329
 HandleGrChallengeHallLobbyInteractions: ; Func_35332
 	ld hl, GrChallengeHallLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_35340
+	jr nc, .done_interactions
 	ld hl, GrChallengeHallLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_35340
+.done_interactions
 	scf
 	ret
 
@@ -2883,7 +2883,7 @@ HandleWaterFortSentaWarpFadeInPreload: ; Func_35634
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_SENTAS_ROOM_BRIDGE_STATE
 	farcall GetEventValue
-	jr nz, .asm_3565f
+	jr nz, .done
 	ld bc, TILEMAP_08B
 	lb de, 12, 5
 	farcall AddOWTilemapOverlay
@@ -2892,7 +2892,7 @@ HandleWaterFortSentaWarpFadeInPreload: ; Func_35634
 	farcall SetOWObjectTilePosition
 	ld b, EAST
 	farcall SetOWObjectDirection
-.asm_3565f
+.done
 	scf
 	ret
 
@@ -3174,14 +3174,14 @@ LoadWaterFortAiraNPCs: ; Func_3585c
 HandleWaterFortAiraWarpFadeInPreload: ; Func_35865
 	ld a, EVENT_AIRAS_ROOM_BRIDGE_STATE
 	farcall GetEventValue
-	jr nz, .asm_35880
+	jr nz, .done
 	ld bc, TILEMAP_08F
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
 	ld a, NPC_AIRA
 	lb de, 5, 5
 	farcall SetOWObjectTilePosition
-.asm_35880
+.done
 	scf
 	ret
 
@@ -3384,29 +3384,29 @@ LoadFightingFortNPCs: ; Func_35a04
 HandleFightingFortWarpFadeInPreload: ; Func_35a0d
 	ld a, [wPrevMap]
 	cp MAP_FIGHTING_FORT_ENTRANCE
-	jr nz, .asm_35a18
+	jr nz, .check_kamiya_progress
 	farcall DeliverMailFromQueue
-.asm_35a18
+.check_kamiya_progress
 	ld a, EVENT_BEAT_KAMIYA
 	farcall GetEventValue
-	jr z, .asm_35a2e
+	jr z, .position_kamiya_at_gate
 	ld a, EVENT_CAN_TRAVEL_PAST_FIGHTING_FORT
 	farcall GetEventValue
-	jr z, .asm_35a37
+	jr z, .load_gate_overlay
 	farcall SetAaronStep1IfEnteringFightingFortFromGROverworld
 	scf
 	ret
-.asm_35a2e
+.position_kamiya_at_gate
 	ld a, NPC_KAMIYA
 	lb de, 7, 2
 	farcall SetOWObjectTilePosition
-.asm_35a37
+.load_gate_overlay
 	ld bc, TILEMAP_096
 	lb de, 7, 0
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_MET_FIGHTING_FORT_MEMBERS
 	farcall GetEventValue
-	jr nz, .asm_35a7a
+	jr nz, .done
 	ld a, EVENT_MET_FIGHTING_FORT_MEMBERS
 	farcall MaxOutEventValue
 	ld a, OWMODE_SCRIPT
@@ -3426,17 +3426,17 @@ HandleFightingFortWarpFadeInPreload: ; Func_35a0d
 	lb de, 10, 2
 	ld b, SOUTH
 	farcall LoadOWObjectInMap
-.asm_35a7a
+.done
 	scf
 	ret
 
 HandleFightingFortInteractions: ; Func_35a7c
 	ld hl, FightingFort_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_35a8a
+	jr nc, .done_interactions
 	ld hl, FightingFort_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_35a8a
+.done_interactions
 	scf
 	ret
 
@@ -3631,7 +3631,7 @@ Script_KamiyaAfterDuel: ; Func_35b82
 HandleFightingFortDoorInteraction: ; Func_35be4
 	ld a, EVENT_CAN_TRAVEL_PAST_FIGHTING_FORT
 	farcall GetEventValue
-	jr nz, .asm_35c0f
+	jr nz, .done
 	xor a
 	start_script
 	start_dialog
@@ -3645,11 +3645,11 @@ HandleFightingFortDoorInteraction: ; Func_35be4
 	play_sfx SFX_DOORS
 	load_tilemap TILEMAP_097, $07, $00
 	end_script
-	jr .asm_35c0f
+	jr .done
 .ows_35c0d
 	end_dialog
 	end_script
-.asm_35c0f
+.done
 	ret
 
 FightingFortMaze16_MapHeader:
@@ -3682,10 +3682,10 @@ ExecuteFightingFortMaze16StepEvents: ; Func_35c68
 HandleFightingFortMaze16WarpEndSFX: ; Func_35c6f
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_35c78
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_35c78
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -3738,10 +3738,10 @@ ExecuteFightingFortMaze18StepEvents: ; Func_35d04
 HandleFightingFortMaze18WarpEndSFX: ; Func_35d0b
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_35d14
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_35d14
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -3808,10 +3808,10 @@ LoadFightingFortGodaNPCs: ; Func_35d81
 HandleFightingFortGodaWarpFadeInPreload: ; Func_35d8a
 	ld a, EVENT_GODAS_ROOM_CAGE_STATE
 	farcall GetEventValue
-	jr z, .asm_35d94
+	jr z, .load_cage_overlay
 	scf
 	ret
-.asm_35d94
+.load_cage_overlay
 	ld bc, TILEMAP_0A1
 	lb de, 4, 2
 	farcall AddOWTilemapOverlay
@@ -3821,10 +3821,10 @@ HandleFightingFortGodaWarpFadeInPreload: ; Func_35d8a
 HandleFightingFortGodaInteractions: ; Func_35da0
 	ld hl, FightingFortGoda_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_35dae
+	jr nc, .done_interactions
 	ld hl, FightingFortGoda_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_35dae
+.done_interactions
 	scf
 	ret
 
@@ -3861,10 +3861,10 @@ Script_FightingFortGodaCagedMitch: ; Func_35dc0
 CheckShowFightingFortGodaMitch: ; Func_35de2
 	ld a, EVENT_GODAS_ROOM_CAGE_STATE
 	farcall GetEventValue
-	jr z, .asm_35dec
+	jr z, .show_mitch
 	scf
 	ret
-.asm_35dec
+.show_mitch
 	scf
 	ccf
 	ret
@@ -4202,14 +4202,14 @@ Script_FightingFortGraceClosedChest: ; Func_36049
 CheckShowFightingFortGraceClosedChest: ; Func_36062
 	ld a, EVENT_GRACES_ROOM_CHEST_STATE
 	farcall GetEventValue
-	jr z, .asm_36075
+	jr z, .hide_closed_chest
 	ld a, EVENT_OPENED_CHEST_GRACES_ROOM
 	farcall GetEventValue
-	jr nz, .asm_36075
+	jr nz, .hide_closed_chest
 	scf
 	ccf
 	ret
-.asm_36075
+.hide_closed_chest
 	scf
 	ret
 
@@ -4225,14 +4225,14 @@ Script_FightingFortGraceOpenedChest: ; Func_36077
 CheckShowFightingFortGraceOpenedChest: ; Func_36082
 	ld a, EVENT_GRACES_ROOM_CHEST_STATE
 	farcall GetEventValue
-	jr z, .asm_36095
+	jr z, .hide_opened_chest
 	ld a, EVENT_OPENED_CHEST_GRACES_ROOM
 	farcall GetEventValue
-	jr z, .asm_36095
+	jr z, .hide_opened_chest
 	scf
 	ccf
 	ret
-.asm_36095
+.hide_opened_chest
 	scf
 	ret
 
@@ -4270,10 +4270,10 @@ PlayPsychicStrongholdEntranceRonaldMusicPostload: ; Func_360ef
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $07
-	jr c, .asm_360fb
+	jr c, .play_ronald_music
 	scf
 	ret
-.asm_360fb
+.play_ronald_music
 	ld a, MUSIC_RONALD
 	farcall PlayAfterCurrentSong
 	scf
@@ -4296,7 +4296,7 @@ HandlePsychicStrongholdEntranceWarpFadeInPreload: ; Func_36114
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $07
-	jr nc, .asm_3613e
+	jr nc, .done
 	ld a, NPC_GR_X
 	lb de, 4, 3
 	ld b, SOUTH
@@ -4310,7 +4310,7 @@ HandlePsychicStrongholdEntranceWarpFadeInPreload: ; Func_36114
 	ld [wOverworldScriptPointer], a
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
-.asm_3613e
+.done
 	scf
 	ret
 

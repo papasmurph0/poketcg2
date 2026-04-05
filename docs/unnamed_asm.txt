@@ -1,0 +1,873 @@
+.asm_17398 -> .check_first_attack_minus_10
+AIGetAdjustedAttackDamage branch that applies the minus-10 rule only when the first attack slot is selected.
+
+.asm_173a0 -> .check_second_attack_minus_10
+AIGetAdjustedAttackDamage branch that applies the minus-10 rule only when the second attack slot is selected.
+
+.asm_173a6 -> .subtract_10_or_zero
+Subtracts 10 adjusted damage and returns 0 when subtraction underflows.
+
+.asm_173ad -> .subtract_5_or_zero
+Subtracts 5 adjusted damage and returns 0 when subtraction underflows.
+
+.asm_173b4 -> .check_snorlax_lv20_status_penalty
+Checks the Snorlax Lv20 matchup path before applying status-based damage penalties.
+
+.asm_17421 -> .check_first_attack_minus_10_snorlax_matchup
+Snorlax matchup branch that applies minus-10 only for the first attack slot.
+
+.asm_1742a -> .check_second_attack_minus_10_snorlax_matchup
+Snorlax matchup branch that applies minus-10 only for the second attack slot.
+
+.asm_17431 -> .check_defending_status_penalty
+Begins defending-status based penalty scoring for adjusted attack damage.
+
+.asm_1743c -> .subtract_20_or_zero
+Subtracts 20 adjusted damage and returns 0 when subtraction underflows.
+
+.asm_17442 -> .check_poison_mist_status_penalty
+Handles poison-specific penalty logic with Poison Mist exceptions.
+
+.asm_17451 -> .return_zero_damage
+Returns zero adjusted damage.
+
+.asm_17453 -> .return_original_damage
+Returns the original pre-adjustment damage value.
+
+.asm_1783c -> .check_heal_amount_vs_current_hp
+Compares heal amount against current Arena HP counters before scoring heal value.
+
+.asm_17846 -> .cap_heal_score_by_current_damage
+Caps heal encouragement by current damage counters already on the AI Arena Pokemon.
+
+.asm_17854 -> .encourage_heal_score
+Applies the final heal-based encouragement amount.
+
+.asm_17857 -> .score_status_effects
+Begins status-infliction scoring checks after heal/switch effect scoring.
+
+.asm_17885 -> .check_poison_effect
+Evaluates poison infliction score adjustments based on defending status and attack flags.
+
+.asm_178ad -> .encourage_poison_effect
+Encourages poison-inflicting attacks when no poison status is currently present.
+
+.asm_178b2 -> .check_sleep_effect
+Evaluates sleep-infliction scoring conditions.
+
+.asm_178c7 -> .check_paralysis_effect
+Evaluates paralysis-infliction scoring conditions.
+
+.asm_178de -> .discourage_paralysis_against_sleep
+Discourages paralysis effects when the defender is already asleep.
+
+.asm_178e3 -> .check_confusion_effect
+Evaluates confusion-infliction scoring conditions.
+
+.asm_17903 -> .discourage_confusion_against_sleep
+Discourages confusion effects when the defender is already asleep.
+
+.asm_17908 -> .check_self_confusion_penalty
+Applies extra penalty when AI Arena is currently confused.
+
+.asm_17916 -> .check_special_ai_handling_score
+Checks SPECIAL_AI_HANDLING flag and applies custom AI score path when present.
+
+.asm_1792c -> .score_negative_special_ai_result
+Converts special AI handler values below 0x80 into discourage score.
+
+.asm_17935 -> .score_effect_ai_result
+Runs first effect-AI evaluation and applies encourage/discourage by returned weight.
+
+.asm_17948 -> .discourage_effect_ai_result
+Discourages based on first effect-AI evaluator result below neutral threshold.
+
+.asm_1794f -> .score_followup_effect_ai_result
+Runs second effect-AI evaluation after restoring selected attack.
+
+.asm_17962 -> .discourage_followup_effect_ai_result
+Discourages based on second effect-AI evaluator result below neutral threshold.
+
+.asm_17705 -> .score_bench_hp_threshold_matchups
+Starts matchup-dependent bench HP threshold scoring before attack-effect scoring.
+
+.asm_1772d -> .set_bench_hp_threshold_10
+Sets bench HP threshold to 10 counters for specific Arena card IDs.
+
+.asm_17731 -> .set_bench_hp_threshold_0
+Sets bench HP threshold to 0 counters for Chansey Lv55 matchup.
+
+.asm_17733 -> .evaluate_bench_hp_threshold_counts
+Compares both duelists' bench counts against the selected HP threshold.
+
+.asm_17751 -> .encourage_if_opponent_bench_meets_threshold
+Applies immediate encouragement when opponent bench threshold condition is met.
+
+.asm_17759 -> .adjust_score_by_bench_threshold_delta
+Applies discourage/encourage based on bench-threshold count delta.
+
+.asm_17762 -> .encourage_bench_threshold_result
+Applies the final encouragement value from bench-threshold scoring.
+
+.asm_176b6 kept unresolved
+Remnant/dead-code candidate block in GetAIScoreOfAttack reached only by internal jumps inside an otherwise unreachable segment after an unconditional jp .done.
+
+.asm_176e3 kept unresolved
+Secondary local branch inside the same remnant/dead-code candidate segment; behavior is intertwined with unreachable control flow and left unnamed pending stronger evidence.
+
+.asm_165bb -> .encourage_if_ko_attack_is_usable
+In AI retreat candidate scoring, encourages when a KO line exists and the selected attack is usable now or can be made usable with energy already in hand.
+
+.asm_16794 -> .discourage_deck_specific_bench_score
+Applies discourage when `AIDeckSpecificBenchScore` returns carry for the current bench candidate.
+
+.asm_1682a -> .play_energy_for_retreat
+Commits to OPPACTION_PLAY_ENERGY after confirming a one-energy retreat shortfall and finding a playable hand energy source.
+
+.asm_16adf -> .continue_after_evolution_decision
+In AIDecideEvolution, resumes hand-card iteration after a successful evolve action and optional power-handling branch.
+
+.asm_16aee -> .return_after_evolution_power_followup
+Early-returns from AIDecideEvolution when the post-evolution Pokemon Power follow-up action signals carry.
+
+.asm_16baa -> .encourage_if_evolution_ko_attack_is_usable
+In AIScoreEvolutionCandidate, encourages when an evolved active candidate has a usable KO line now or via energy in hand.
+
+.asm_166c5 -> .check_special_max_before_discouraging_surplus_energy
+In DetermineAIScoreOfAttackEnergyRequirement, checks special-deck attached-energy cap before applying surplus-energy discourage.
+
+.asm_166cd -> .encourage_for_low_surplus_energy
+Encourages when surplus energy is missing/low or when special deck limits block surplus-energy discourage.
+
+.asm_30007 -> .set_fighting_fort_basement_warp_and_anim
+Shared entry path for Fighting Fort pitfall handling that sets basement warp, applies player frameset/animation, and then continues to SFX/backstep resolution.
+
+.asm_30024 -> .set_player_frameset_id_b4
+Selects alternate player frameset ID before applying animation setup in the pitfall transition.
+
+.asm_30027 -> .apply_player_frameset
+Applies the selected player OW frameset and starts animation for the pitfall transition.
+
+.asm_30050 -> .play_pitfall_sfx
+Finalizes the pitfall transition by playing SFX_PITFALL and returning.
+
+.asm_30077 -> .reset_aaron_step
+Resets VAR_3B to 0 when the current Aaron progression step does not match the expected value.
+
+.asm_3012c -> .init_blimp_arrival_sequence
+Initializes GR-overworld script/state for arrival from blimp-route maps.
+
+.asm_30159 -> .load_blimp_for_overhead_islands_entry
+Loads the GR blimp OW object for the Overhead Islands entry variant and conditionally starts long-flyover scroll setup.
+
+.asm_30175 -> .setup_gr_blimp_long_flyover_scroll
+Targets the blimp as scroll focus, enables scrolling state, and repositions the blimp for the long flyover sequence.
+
+.asm_3019f -> .play_gr_airport_blimp_hatch_sfx
+Handles GR Airport warp-end audio sequence including music fade and blimp hatch SFX.
+
+.asm_301bd -> .return_success
+Common successful return path for HandleGROverworldWarpEndSFX.
+
+.asm_30233 -> .show_cross_for_locked_location
+In GR-overworld cursor updates, switches indicator visibility to show the cross marker when the selected location is locked.
+
+.asm_30250 -> .handle_selected_dpad_direction
+In GR-overworld D-pad handling, processes the detected pressed direction, updates location, and refreshes cursor/camera state.
+
+.asm_304c0 -> .handle_scroll_command
+In GR-overworld path movement, handles special scroll-command entries and initializes camera scroll targets.
+
+.asm_304ed -> .update_scroll_target
+Per-frame branch that updates overworld scroll toward its target after optional B-button fade trigger handling.
+
+.asm_304f6 -> .wait_camera_fade_after_scroll
+Waits for palette fade completion after camera scroll reaches its target when transition fade was requested.
+
+.asm_3052a -> .wait_movement_fade_after_move
+Waits for palette fade completion after OW object movement reaches target when transition fade was requested.
+
+.asm_310cf -> .set_overhead_islands_destination
+In GR blimp movement setup, selects Overhead Islands as destination warp and movement script when coming from GR Airport.
+
+.asm_31136 -> .begin_final_fade_out
+Common end-of-movement branch that starts the final fade-out before cleanup.
+
+.asm_313a6 -> .return_success
+In Sealed Fort Entrance interaction handling, returns immediately when player animation flags indicate interaction processing should be skipped.
+
+.asm_313ba -> .return_success
+In Sealed Fort Entrance warp-fade preload, common successful return branch used when door overlay insertion is skipped or finished.
+
+.asm_3300a -> .apply_water_fort_closed_door_overlay
+In Water Fort Entrance warp-fade preload, applies the closed-door overlay path and optional clerk repositioning.
+
+.asm_33027 -> .check_psyduck_coin_for_ronald_intro
+In Water Fort Entrance warp-fade preload, gates the Ronald intro script on Psyduck coin state when Ronald-meeting count is below the threshold.
+
+.asm_33044 -> .return_success
+Common successful return path for Water Fort Entrance warp-fade preload.
+
+.asm_33054 -> .return_success
+Common successful return path for Water Fort Entrance interaction handling.
+
+.asm_31565 -> .play_ronald_theme
+In Grass Fort Entrance postload music handling, plays Ronald's theme when the Ronald-meeting count is below the threshold.
+
+.asm_3159d -> .return_success
+Common successful return path for Grass Fort Entrance warp-fade preload.
+
+.asm_3166a -> .play_imakuni_red_theme
+In Grass Fort Lobby postload music handling, plays Imakuni Red theme when the controlling var reaches the target state.
+
+.asm_31691 -> .return_success
+Common successful return path for Grass Fort Lobby interaction handling.
+
+.asm_316b3 -> .return_success
+Common successful return path for Grass Fort Lobby continue-overworld handler.
+
+.asm_31782 -> .show_imakuni_red
+In Grass Fort Lobby visibility check, returns show (nc) when `VAR_26` reaches the Imakuni Red state.
+
+.asm_317f6 -> .init_midori_room_transition_state
+In Grass Fort Midori warp-fade preload, initializes room transition state after optional mail delivery.
+
+.asm_31809 -> .add_midori_cage_overlay
+Adds Midori room cage overlay tiles when cage-state event indicates the cage is still present.
+
+.asm_31823 -> .return_success
+Common successful return path for Grass Fort Midori interaction handling.
+
+.asm_3186e -> .show_midori_rick
+In Grass Fort Midori Rick visibility check, returns show (nc) when cage-state event is unset.
+
+.asm_319e6 -> .add_yuta_door_overlay
+In Grass Fort Yuta warp-fade preload, adds room-door overlay tiles when the door-state event indicates the door is closed.
+
+.asm_31a00 -> .return_success
+Common successful return path for Grass Fort Yuta interaction handling.
+
+.asm_31b05 -> .resume_overworld_after_yuta_door
+In Grass Fort Yuta door interaction, resumes overworld movement handling after optional dialog/script sequence.
+
+.asm_31b9c -> .add_miyuki_door_overlay
+In Grass Fort Miyuki warp-fade preload, adds room-door overlay tiles when the door-state event indicates the door is closed.
+
+.asm_31bb6 -> .return_success
+Common successful return path for Grass Fort Miyuki interaction handling.
+
+.asm_31cba -> .resume_overworld_after_miyuki_door
+In Grass Fort Miyuki door interaction, resumes overworld movement handling after optional door-closed dialog.
+
+.asm_2fc3c -> .show_gr3
+In Fire Club GR3 visibility check, returns show (carry set) before Starmie coin is obtained or after Charmander coin is already obtained.
+
+.asm_3460a -> .done_music_preload
+In TCG Airport Entrance music preload, common return path after optionally setting GR music when the GR coin is still missing.
+
+.asm_3462b -> .done_interactions
+In TCG Airport Entrance interaction handler, common return path after NPC and optional tile-interaction dispatch.
+
+.asm_34675 -> .check_gr5_alignment_for_player_y6
+In TCG Airport Entrance boarding alignment, handles the player-y=6 branch and adjusts GR5 toward matching row alignment.
+
+.asm_34689 -> .wait_for_gr5_movement
+In TCG Airport Entrance boarding alignment, waits for GR5 movement after issuing a north/south adjustment step.
+
+.asm_3468e -> .done
+Common early-exit/return path for TCG Airport Entrance boarding alignment updates.
+
+.asm_346c6 -> .hide_gr5
+In TCG Airport Entrance GR5 visibility check, returns hide (nc) when the short GR Island flyover sequence event is not set.
+
+.asm_3483d -> .load_landed_script
+In TCG Airport warp-fade preload, branch used when entering from the TCG overworld to initialize the landed GR5 script/state.
+
+.asm_34871 -> .done
+Common return path for TCG Airport warp-fade preload after initializing either first-flight or landed script state.
+
+.asm_3487c -> .play_blimp_hatch_close_sfx
+In TCG Airport warp-end SFX handler, executes music fade and blimp hatch-close SFX when the previous map is TCG overworld.
+
+.asm_342d5 -> .resume_overworld
+In Ronald Game Center script flow, common return path that resumes overworld movement/input when cutscene setup is skipped or finished.
+
+.asm_34a0e -> .align_for_tile_11_8
+In TCG Airport boarding alignment, handles the player standing at tile (11,8) and aligns facing/GR5 position for left movement.
+
+.asm_34a2a -> .align_for_tile_10_9
+In TCG Airport boarding alignment, handles the player standing at tile (10,9) and aligns GR5 for upward movement.
+
+.asm_34a46 -> .align_for_tile_9_9
+In TCG Airport boarding alignment, handles the player standing at tile (9,9) and aligns GR5 for upward movement on the west-side boarding path.
+
+.asm_34a62 -> .align_for_tile_8_8
+In TCG Airport boarding alignment, handles the player standing at tile (8,8) and aligns GR5 for rightward movement.
+
+.asm_34a7c -> .done
+Common return path for TCG Airport boarding alignment after optional per-tile facing and GR5 position adjustments.
+
+.asm_34b34 -> .done_interactions
+In GR Airport Entrance interaction handling, common return path after NPC and optional coordinate interaction processing.
+
+.asm_34c4a -> .done_interactions
+In Game Center 1 interaction handling, common return path after NPC and optional coordinate interaction processing.
+
+.asm_34f05 -> .done_interactions
+In Game Center 2 interaction handling, common return path after NPC and optional coordinate interaction processing.
+
+src/engine/bank0d.asm .asm_35104 -> .done_interactions
+Shared return branch in HandleCardDungeonBishopInteractions after NPC interaction handling and optional OW script processing.
+
+src/engine/bank0d.asm .asm_35340 -> .done_interactions
+Shared return branch in HandleGrChallengeHallLobbyInteractions after NPC interaction handling and optional OW script processing.
+
+src/engine/bank0d.asm .asm_3565f -> .done
+Common successful return path in HandleWaterFortSentaWarpFadeInPreload after optional bridge-overlay and Senta reposition setup.
+
+src/engine/bank0d.asm .asm_35880 -> .done
+Common successful return path in HandleWaterFortAiraWarpFadeInPreload after optional bridge-overlay and Aira reposition setup.
+
+src/engine/bank0d.asm .asm_35a18 -> .check_kamiya_progress
+In HandleFightingFortWarpFadeInPreload, continues into Kamiya/event progress checks after optional mail delivery from the entrance path.
+
+src/engine/bank0d.asm .asm_35a2e -> .position_kamiya_at_gate
+Branch used when Kamiya is not yet beaten to place his OW object at the gate position before door overlay handling.
+
+src/engine/bank0d.asm .asm_35a37 -> .load_gate_overlay
+Shared branch that loads the Fighting Fort gate overlay before optional meet-members script setup.
+
+src/engine/bank0d.asm .asm_35a7a -> .done
+Common successful return path in HandleFightingFortWarpFadeInPreload after overlay/script/NPC setup handling.
+
+src/engine/bank0d.asm .asm_35a8a -> .done_interactions
+Shared return branch in HandleFightingFortInteractions after NPC interaction handling and optional OW script processing.
+
+.asm_31d41 -> .apply_lightning_entrance_closed_door_overlay
+In Lightning Fort Entrance warp-fade preload, applies the closed-door overlay path and optional clerk repositioning.
+
+.asm_31d5c -> .return_success
+Common successful return path for Lightning Fort Entrance warp-fade preload.
+
+.asm_31d6c -> .return_success
+Common successful return path for Lightning Fort Entrance interaction handling.
+
+.asm_31dcd -> .return_after_lightning_entrance_door
+In Lightning Fort Entrance door interaction, common return path after door logic/dialog handling.
+
+.asm_31e70 -> .return_success
+Common successful return path for Lightning Fort Lobby interaction handling.
+
+.asm_32021 -> .check_renna_door_overlay
+In Lightning Fort Renna warp-fade preload, continues to room-door-state checks after optional mail delivery.
+
+.asm_3202b -> .add_renna_door_overlay
+In Lightning Fort Renna warp-fade preload, adds room-door overlay tiles when the door-state event indicates the door is closed.
+
+.asm_32045 -> .return_success
+Common successful return path for Lightning Fort Renna interaction handling.
+
+.asm_32119 -> .resume_overworld_after_renna_door
+In Lightning Fort Renna door interaction, resumes overworld movement handling after optional dialog/script sequence.
+
+.asm_321d8 -> .add_ichikawa_closed_door_overlay
+In Lightning Fort Ichikawa warp-fade preload, adds the closed-door overlay set when Ichikawa's room door is closed.
+
+.asm_321e2 -> .return_success
+Common successful return path for Lightning Fort Ichikawa warp-fade preload.
+
+.asm_321f2 -> .return_success
+Common successful return path for Lightning Fort Ichikawa interaction handling.
+
+.asm_32402 -> .resume_overworld_after_ichikawa_door
+In Lightning Fort Ichikawa door interaction, resumes overworld movement handling after optional door-closed dialog.
+
+.asm_32419 -> .resume_overworld_after_steve_pod_check
+In Lightning Fort Ichikawa Steve pod interaction, resumes overworld movement handling after optional unopened-pod dialog.
+
+
+.asm_334b2 -> .resume_if_left_door_already_open
+Returns early from left door interaction if the door-state event is non-zero (left door already open).
+
+.asm_334f5 -> .resume_if_right_door_already_open
+Returns early from right door interaction if the door-state event is non-zero (right door already open).
+
+.asm_33575 -> .play_basement_exit_sfx
+In Fighting Fort Maze 2 warp-end handler, clears carry flag (c=0) to indicate exit-SFX should play when returning from basement.
+
+.asm_335ad -> .hide_closed_chest_sprite
+Returns early to skip showing closed-chest NPC sprite when EVENT_OPENED_CHEST_FIGHTING_FORT_1 is set (chest already opened).
+
+.asm_335c5 -> .hide_opened_chest_sprite
+Returns early to skip showing opened-chest NPC sprite when EVENT_OPENED_CHEST_FIGHTING_FORT_1 is clear (chest not opened).
+
+.asm_336b3 -> .play_maze4_basement_exit_sfx
+In Fighting Fort Maze 4 warp-end handler, clears carry flag (c=0) to indicate exit-SFX should play when returning from basement.
+
+.asm_336f6 -> .hide_closed_chest_sprite_maze4
+Returns early to skip showing closed-chest NPC sprite in Maze 4 when EVENT_OPENED_CHEST_FIGHTING_FORT_2 is set (chest already opened).
+
+.asm_3370e -> .hide_opened_chest_sprite_maze4
+Returns early to skip showing opened-chest NPC sprite in Maze 4 when EVENT_OPENED_CHEST_FIGHTING_FORT_2 is clear (chest not opened).
+
+; Batch 2026-04-05: bank0b (Ishihara house, Lightning/Psychic clubs) local labels - 15 renamed
+.asm_2c0be -> .ishihara_is_hidden
+Branch taken when Ishihara's house appearance check indicates Ishihara is hidden (music setup skipped).
+
+.asm_2c0ff -> .skip_overworld_interactions
+Early exit from NPC interaction handler when no NPC was interacted with (skip coord script checking).
+
+.asm_2c19b -> .route_by_ishihara_state
+Routing node dispatching Script_IshiharaAtHome based on VAR_ISHIHARA_STATE to select encounter variant.
+
+.asm_2c4ea -> .pikachu_coin_obtained
+Branch taken when Pikachu Coin has already been obtained, skips GR music setup.
+
+.asm_2c4f7 -> .done_music_gfx_setup
+Common exit point from SetLightningClubMusicAndMapGfxByPikachuCoinState after conditional music/map graphics setup.
+
+.asm_2c524 -> .first_meeting_gr4
+Branch for first-time GR4 encounter at Lightning Club; sets up script mode and initial NPC positions for intro cutscene.
+
+.asm_2c54f -> .setup_alternate_npc_positions
+Branch for repeat Lightning Club encounter; sets up alternate NPC positions after coin/event checks.
+
+.asm_2c55e -> .finish_npc_setup
+Common exit point from HandleLightningClubWarpFadeInPreload after both intro and alternate NPC positioning paths.
+
+.asm_2c90c -> .hide_npc
+Return branch that hides Jennifer/Brandon visibility in Lightning Club when conditions are not met.
+
+.asm_2c933 -> .hide_npc
+Return branch that hides GR4 visibility in Lightning Club when Pikachu Coin has not been obtained.
+
+.asm_2c9c5 -> .coin_piece_obtained
+Branch taken when bottom-right GR coin piece has already been obtained; skips GR music setup.
+
+.asm_2ca3c -> .skip_ronald_cleanup
+Early exit from HandlePsychicClubEntranceContinueOverworld when dummy state is zero (skip Ronald cleanup).
+
+.asm_2ca86 -> .move_stephanie_west
+Branch for west-direction NPC movement when player position check passes for west tile.
+
+.asm_2ca9a -> .wait_stephanie_movement
+Common exit point that waits for Stephanie's NPC movement to complete before returning.
+
+; Batch 2026-04-05: bank0f (Lightning/Grass Club Lobbies, TCG Challenge Hall Lobby) local labels - 16 renamed
+
+.asm_3cbe1 -> .coin_already_obtained_skip_music
+Branch taken when Pikachu Coin already obtained; skips GR music setup in Lightning Club entrance preload.
+
+.asm_3cbeb -> .ronald_not_met_twice
+Branch taken when CheckIfMetRonaldAtLeastTwice returns NC (Ronald not met >= 2 times); clears carry flag.
+
+.asm_3cc0b -> .add_overlay_or_setup_ronald
+Branch taken when EVENT_GOT_PIKACHU_COIN is not set; continues with conditional overlay/Ronald setup logic.
+
+.asm_3cc35 -> .finish_warp_setup
+Common exit from HandleLightningClubEntranceWarpFadeInPreload after completing warp-fade setup.
+
+.asm_3cc51 -> .skip_ronald_cleanup
+Branch taken when dummy event state is zero; exits HandleLightningClubEntranceContinueOverworld without Ronald cleanup.
+
+.asm_3cc5f -> .ronald_not_met_twice_yet
+Branch taken when VAR_TIMES_MET_RONALD < 2; returns with carry clear (Ronald not yet met twice).
+
+.asm_3cd28 -> .coin_already_obtained_skip_music_2
+Branch taken when EVENT_GOT_PIKACHU_COIN is set; skips GR music setup in Lightning Club Lobby preload.
+
+.asm_3cd49 -> .skip_coord_script
+Branch taken when HandleNPCInteractions fails; skips executing coordinate-triggered scripts in Lightning Club Lobby.
+
+.asm_3cdc3 -> .hide_jennifer_brandon
+Return branch that hides Jennifer/Brandon NPCs when EVENT_SET_UNTIL_MAP_RELOAD_1 is set or initial conditions not met.
+
+.asm_3cea5 -> .hide_longhaired_lass
+Return branch that hides longhaired lass NPC when EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE is zero (pre-duel).
+
+.asm_3ceb2 -> .hide_gr_lass
+Return branch that hides GR lass NPC when EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE is nonzero (post-duel).
+
+.asm_3cfa5 -> .coin_piece_obtained_skip_music_3
+Branch taken when EVENT_GOT_GR_COIN_PIECE_TOP_RIGHT is set; skips GR music setup in Grass Club Lobby preload.
+
+.asm_3cfc6 -> .skip_coord_script_2
+Branch taken when HandleNPCInteractions fails; skips executing coordinate-triggered scripts in Grass Club Lobby.
+
+.asm_3d0fe -> .hide_brittany_kristin_heather
+Return branch that hides Brittany/Kristin/Heather NPCs when EVENT_SET_UNTIL_MAP_RELOAD_1 is set or conditions not met.
+
+.asm_3d19c -> .hide_granny_lass_capped
+Return branch that hides granny/lass/capped lass NPCs when EVENT_SET_UNTIL_MAP_RELOAD_1 is set or conditions not met.
+
+.asm_3d3be -> .skip_coord_script_3
+Branch taken when HandleNPCInteractions fails; skips executing coordinate-triggered scripts in TCG Challenge Hall Lobby.
+
+; Batch 2026-04-05: bank0f completion (Ishihara Villa, Imakuni Game Center, Card Dungeon, Water Fort, Fighting Fort) - 35 renamed
+
+.asm_3e71a -> .check_card_trade_state_at_trade_3
+Branch taken when Ishihara state equals TRADE_3_DONE; checks card trade state for music preload decision in Villa Main.
+
+.asm_3e722 -> .set_gr_music
+Branch that applies GR overworld music to wNextMusic; exit point for music preload handler.
+
+.asm_3e727 -> .done_music_setup_main
+Common exit from Ishihara Villa Main music preload handler without GR music setup.
+
+.asm_3e748 -> .skip_coord_script_main
+Branch taken when HandleNPCInteractions fails; skips coordinate scripts in Ishihara Villa Main interactions.
+
+.asm_3e971 -> .check_card_trade_state_at_trade_3_lib
+Branch taken when Ishihara state equals TRADE_3_DONE; checks card trade state in Villa Library preload.
+
+.asm_3e979 -> .set_gr_music_lib
+Branch that applies GR overworld music; exit point for Ishihara Villa Library music preload handler.
+
+.asm_3e97e -> .done_music_setup_lib
+Common exit from Ishihara Villa Library music preload handler without GR music setup.
+
+.asm_3e99f -> .skip_coord_script_lib
+Branch taken when HandleNPCInteractions fails; skips coordinate scripts in Ishihara Villa Library interactions.
+
+.asm_3ea25 -> .skip_ishihara_congratulations
+Branch taken when machine state zero or already talked to Ishihara post-game; skips congratulations script at library.
+
+.asm_3ea3b -> .dispatch_by_state
+Entry point for state-based dispatch to appropriate Ishihara Villa script based on VAR_ISHIHARA_STATE evaluation.
+
+.asm_3ea6f -> .check_trade_3_card_state
+Branch taken when Ishihara state equals TRADE_3_DONE; checks card trade for NPC visibility in library appearance check.
+
+.asm_3ea79 -> .check_trade_7_card_state
+Branch taken when Ishihara state equals TRADE_7_DONE_COMPLETE; checks card trade state for NPC visibility.
+
+.asm_3ef8c -> .play_imakuni_theme
+Branch taken when VAR_26 equals 2 (specific Imakuni state); queues Imakuni Red music theme for Game Center postload.
+
+.asm_3efd4 -> .skip_imakuni_cleanup
+Branch taken when dummy event state is zero; exits Game Center continue-overworld handler without Imakuni cleanup.
+
+.asm_3f049 -> .show_imakuni_red
+Return branch showing Imakuni Red NPC visibility when VAR_26 equals 2; returns with carry set.
+
+.asm_3f0b1 -> .skip_coord_pawn
+Branch taken when HandleNPCInteractions fails; skips coordinate scripts in Card Dungeon Pawn interactions.
+
+.asm_3f257 -> .skip_coord_knight
+Branch taken when HandleNPCInteractions fails; skips coordinate scripts in Card Dungeon Knight interactions.
+
+.asm_3f427 -> .skip_coord_rook
+Branch taken when HandleNPCInteractions fails; skips coordinate scripts in Card Dungeon Rook interactions.
+
+.asm_3f647 -> .play_imakuni_water_fort_theme
+Branch taken when VAR_26 equals 8 (Imakuni at Water Fort); queues Imakuni Red music theme for postload.
+
+.asm_3f66e -> .skip_coord_water_fort
+Branch taken when HandleNPCInteractions fails; skips coordinate scripts in Water Fort Lobby interactions.
+
+.asm_3f68f -> .skip_imakuni_water_fort_cleanup
+Branch taken when dummy event state is zero; exits Water Fort continue-overworld without Imakuni cleanup.
+
+.asm_3f732 -> .hide_glasses_kid
+Return branch hiding Glasses Kid NPC when trade incomplete, reload set, or machine state zero in Water Fort.
+
+.asm_3f74d -> .hide_gr_lad_fort
+Return branch hiding GR Lad NPC; part of multi-condition visibility check in Water Fort Lobby.
+
+.asm_3f74f -> .show_gr_lad_fort
+Return branch showing GR Lad NPC when machine state set (post-duel); part of multi-condition check.
+
+.asm_3f7b2 -> .show_imakuni_water_fort
+Return branch showing Imakuni Red NPC visibility when VAR_26 equals 8; carries set for NPC display.
+
+.asm_3f83b -> .hide_maze19_closed_chest
+Return branch hiding closed chest NPC when already opened; visibility check for Fighting Fort Maze 19.
+
+.asm_3f856 -> .hide_maze19_opened_chest
+Return branch hiding opened chest NPC when not yet opened; visibility check for Fighting Fort Maze 19.
+
+.asm_3f87b -> .reset_var_3b
+Branch taken when VAR_3B reset conditions are met; resets VAR_3B after hidden card gallery or message speed check.
+
+.asm_3f8d8 -> .setup_basement_warp_entrance
+Branch taken when not entering from Fighting Fort; sets up warp entrance script and tile coordinates for basement.
+
+.asm_3f930 -> .hide_basement_closed_chest
+Return branch hiding closed chest NPC when already opened; visibility check for Fighting Fort Basement.
+
+.asm_3f95c -> .hide_basement_opened_chest
+Return branch hiding opened chest NPC when not yet opened; visibility check for Fighting Fort Basement.
+
+.asm_2cac5 -> .event_not_set
+Return branch when EVENT_GOT_PIKACHU_COIN not set; part of show/hide conditional in CheckShowPsychicClubEntranceStephanie.
+
+.asm_2cbb7 -> .done
+Convergence point after GR coin piece check; skip/return in SetPsychicClubLobbyGRMusicIfBottomRightCoinPieceMissing.
+
+.asm_2cbc6 -> .var_25_equals_3
+Branch taken when VAR_25 equals 3; plays Imakuni Black music postload in PlayPsychicClubLobbyImakuniBlackThemePostload.
+
+.asm_2cbed -> .skip_overworld_interactions
+Branch taken when HandleNPCInteractions carries clear (no interaction); skips overworld interactions in HandlePsychicClubLobbyInteractions.
+
+.asm_2cc0f -> .done
+Convergence point after event state check; returns in HandlePsychicClubLobbyContinueOverworld.
+
+.asm_2ccb4 -> .show_imakuni
+Display Imakuni Black when VAR_25 equals 3; carry clear return in CheckShowPsychicClubLobbyImakuniBlack.
+
+.asm_2cd20 -> .hide_gr_lass
+Hide GR Lass when conditions not met (no GR coin or machine state zero); carry clear return in CheckShowPsychicClubLobbyGrLass.
+
+.asm_2cd8f -> .done
+Convergence point after coin piece check; returns in SetPsychicClubGRMusicIfBottomRightCoinPieceMissing.
+
+.asm_2cdc6 -> .gr4_first_meeting
+Branch taken on first meeting with GR4 (EVENT_MET_GR4_PSYCHIC_CLUB not set); sets up intro cutscene in HandlePsychicClubWarpFadeInPreload.
+
+.asm_2cdf6 -> .normal_npc_setup
+Branch for normal NPC positioning when not meeting GR4 or after checks pass; standard setup in HandlePsychicClubWarpFadeInPreload.
+
+.asm_2ce0f -> .done
+Exit convergence point after warp fade preload setup; returns in HandlePsychicClubWarpFadeInPreload.
+
+.asm_2d246 -> .coin_piece_not_obtained
+Show GR4 when coin piece not obtained; carry clear return in CheckShowPsychicClubGr4.
+
+.asm_2d363 -> .done
+Convergence point after GR1 meet check; returns in SetRockClubEntranceMusicIfGr1NotMet.
+
+.asm_2d3b3 -> .done
+Convergence point after event state check; returns in HandleRockClubEntranceContinueOverworld.
+
+.asm_2d486 -> .done
+Convergence point after GR1 state check; returns in SetRockClubLobbyMusicByGr1AndImakuniState.
+
+.asm_2d495 -> .var_25_equals_4
+Branch taken when VAR_25 equals 4; plays Imakuni Black music postload in PlayRockClubLobbyImakuniBlackThemePostload.
+
+.asm_2d4bc -> .skip_overworld_interactions
+Branch taken when HandleNPCInteractions carries clear; skips overworld interactions in HandleRockClubLobbyInteractions.
+
+.asm_2d4de -> .done
+Convergence point after event state check; returns in HandleRockClubLobbyContinueOverworld.
+
+.asm_2d588 -> .show_imakuni
+Display Imakuni Black when VAR_25 equals 4; carry clear return in CheckShowRockClubLobbyImakuniBlack.
+
+.asm_2d660 -> .done
+Convergence point after GR1 meet check; returns in SetRockClubMusicIfGr1NotMet.
+
+.asm_2d6a4 -> .done
+Exit convergence point after cutscene setup; returns in HandleRockClubWarpFadeInPreload.
+
+
+.asm_2d98c -> .done
+Convergence point after coin piece check; returns in SetFightingClubEntranceGRMusicIfTopLeftCoinPieceMissing.
+
+.asm_2d9f2 -> .done
+Convergence point after event state check; returns in HandleFightingClubEntranceContinueOverworld.
+
+
+.asm_2dadb -> .done
+Convergence point after coin piece check; returns in SetFightingClubLobbyGRMusicIfTopLeftCoinPieceMissing.
+
+.asm_2dafc -> .skip_overworld_interactions
+Branch taken when HandleNPCInteractions carries clear; skips overworld interactions in HandleFightingClubLobbyInteractions.
+
+.asm_2dba9 -> .hide_michael
+Hide Michael when reload flag set or coin piece not obtained; carry clear return in CheckShowFightingClubLobbyMichael.
+
+.asm_2dd0b -> .done
+Convergence point after coin piece check; returns in SetFightingClubGRMusicIfTopLeftCoinPieceMissing.
+
+.asm_2dd2f -> .done
+Exit convergence after tilemap overlay setup; returns in HandleFightingClubWarpFadeInPreload.
+
+.asm_2ddee -> .show_when_cage_open
+Show Mitch when Goda's room cage opened; carry clear return in CheckShowFightingClubMitch.
+
+.asm_2dfaf -> .hide_members
+Hide members when coin piece not obtained or not yet met; carry set return in CheckShowFightingClubMembers.
+
+.asm_2e036 -> .hide_gr1
+Hide GR1 when coin piece obtained or not met at Rock Club; carry set return in CheckShowFightingClubGr1.
+
+.asm_2e0c9 -> .done
+Convergence point after coin piece check; returns in SetGrassClubEntranceGRMusicIfTopRightCoinPieceMissing.
+
+
+.asm_2e12f -> .done
+Convergence point after event state check; returns in HandleGrassClubEntranceContinueOverworld.
+
+.asm_2e1cf -> .done
+Convergence point after coin piece check; returns in SetGrassClubGRMusicIfTopRightCoinPieceMissing.
+
+.asm_2e1f3 -> .done
+Exit convergence after tilemap overlay setup; returns in HandleGrassClubWarpFadeInPreload.
+
+
+.asm_2e409 -> .hide_members
+Hide members when reload flag set or coin piece not obtained; carry set return in CheckShowGrassClubMembers.
+
+.asm_2e81f -> .hide_members
+Hide David/Erik when reload flag set or coin piece not obtained; carry clear return in CheckShowScienceClubLobbyDavidErik.
+
+.asm_2e82e -> .show_imakuni
+Display Imakuni Black when VAR_25 equals 7; carry clear return in CheckShowScienceClubLobbyImakuniBlack.
+
+.asm_2e8e4 -> .hide_members
+Hide Science Club members when reload flag set or coin piece not obtained; carry set return in CheckShowScienceClubLobbyManGlassesKidTech.
+
+.asm_2e952 -> .done
+Convergence point after coin piece check; returns in SetScienceClubGRMusicIfTopRightCoinPieceMissing.
+
+.asm_2e994 -> .done
+Exit convergence after tilemap overlay setup; returns in HandleScienceClubWarpFadeInPreload.
+
+
+.asm_2ea92 -> .show_rick
+Display Rick when Midori's cage state not set; carry set return in CheckShowScienceClubRick.
+
+.asm_2f77b -> .show_imakuni
+Display Imakuni Black when VAR_25 equals 9; carry clear return in CheckShowFireClubLobbyImakuniBlack.
+
+
+.asm_2f55b -> .done
+Convergence point after coin piece check; returns in SetFireClubEntranceGRMusicIfBottomLeftCoinPieceMissing.
+
+.asm_2f594 -> .got_event
+Convergence point for Ronald event script selection; continues script setup in HandleFireClubEntranceWarpFadeInPreload.
+
+.asm_2f5c8 -> .done
+Convergence point after event state check; returns in HandleFireClubEntranceContinueOverworld.
+
+
+.asm_2e4b5 -> .hide_gr2
+Hide GR2 in CheckShowGrassClubGr2 when Oddish coin is missing, top-right GR coin piece is already obtained, or VAR_0F is not the required state.
+
+.asm_2e59c -> .end_continue_overworld
+Common successful return path in HandleScienceClubEntranceContinueOverworld after optional Ronald cleanup and music restore.
+
+.asm_2e715 -> .play_imakuni_black_theme
+Branch in PlayScienceClubLobbyImakuniBlackThemePostload that plays Imakuni Black music when VAR_25 equals 7.
+
+.asm_2ec1a -> .hide_members
+Hide Science Club members in CheckShowScienceClubMembers when top-right GR coin piece is missing or reload flag is set.
+
+.asm_2ecc6 -> .hide_gr2
+Hide GR2 in CheckShowScienceClubGr2 unless Oddish coin is obtained, top-right GR coin piece is not yet obtained, and VAR_0F equals 7.
+
+.asm_2ed24 -> .done_music_setup
+Convergence point in SetWaterClubEntranceGRMusicIfStarmieCoinMissing after optional GR music assignment.
+
+.asm_2ed8a -> .end_warp_fade_out_preload
+Common return branch in HandleWaterClubEntranceWarpFadeOutPreload after optional Sara-talk event reset.
+
+.asm_2eda6 -> .end_continue_overworld
+Common successful return path in HandleWaterClubEntranceContinueOverworld after optional Ronald cleanup and music restore.
+
+.asm_2ee82 -> .done_gr_music_setup
+Convergence point in SetWaterClubLobbyGRMusicIfStarmieCoinMissing after optional GR music assignment.
+
+.asm_2ee91 -> .play_imakuni_black_theme
+Branch in PlayWaterClubLobbyImakuniBlackThemePostload that plays Imakuni Black music when VAR_25 equals 8.
+
+.asm_2eeb8 -> .end_interactions
+Convergence point in HandleWaterClubLobbyInteractions after optional OW coordinate interaction handling.
+
+.asm_2eee8 -> .end_continue_overworld
+Common successful return path in HandleWaterClubLobbyContinueOverworld after optional Imakuni cleanup and music restore.
+
+.asm_2ef71 -> .hide_joshua
+Hide Joshua in CheckShowWaterClubLobbyJoshua when reload flag is set or Starmie coin has not been obtained.
+
+.asm_2efab -> .hide_imakuni_black
+Hide Imakuni Black in CheckShowWaterClubLobbyImakuniBlack when VAR_25 is not in the Water Club appearance state.
+
+
+.asm_2f6af -> .done_gr_music_setup
+Convergence point in SetFireClubLobbyGRMusicIfBottomLeftCoinPieceMissing after optional GR music assignment.
+
+.asm_2f6be -> .play_imakuni_black_theme
+Branch in PlayFireClubLobbyImakuniBlackThemePostload that plays Imakuni Black music when VAR_25 equals 9.
+
+.asm_2f6e5 -> .end_interactions
+Convergence point in HandleFireClubLobbyInteractions after optional OW coordinate interaction handling.
+
+.asm_2f707 -> .end_continue_overworld
+Common successful return path in HandleFireClubLobbyContinueOverworld after optional Imakuni cleanup and music restore.
+
+.asm_2f85b -> .done_music_setup
+Convergence point in SetFireClubGRMusicIfBottomLeftCoinPieceMissing after optional GR music assignment.
+
+.asm_2f891 -> .coin_obtained
+Branch in HandleFireClubWarpFadeInPreload that applies coin-obtained tile overlays and conditional NPC positioning.
+
+.asm_2f8c6 -> .done
+Common successful return path in HandleFireClubWarpFadeInPreload after either no-coin setup or coin-state overlay handling.
+
+.asm_2f8d6 -> .end_interactions
+Convergence point in HandleFireClubInteractions after optional OW coordinate interaction handling.
+
+
+.asm_2d8fd -> .gr1_not_met
+Branch in CheckShowRockClubGr1 for the unmet-event path, returning carry clear to keep GR1 visible.
+
+.asm_2f092 -> .done_music_setup
+Convergence point in SetWaterClubGRMusicIfStarmieCoinMissing after optional GR music assignment.
+
+.asm_2f0c3 -> .coin_obtained
+Branch in HandleWaterClubWarpFadeInPreload for the post-Starmie-coin path that applies door overlays and state-dependent NPC setup.
+
+.asm_2f0e1 -> .set_member_positions
+Branch in HandleWaterClubWarpFadeInPreload that sets Amy/Sara/Amanda to room positions when reload flag is active.
+
+.asm_2f0f5 -> .done
+Common successful return path in HandleWaterClubWarpFadeInPreload after either captive-NPC load or overlay/position setup.
+
+.asm_2f105 -> .end_interactions
+Convergence point in HandleWaterClubInteractions after optional OW coordinate interaction handling.
+
+.asm_2f1f7 -> .hide_amy
+Hide Amy in CheckShowWaterClubAmy when the room-reload event flag is active.
+
+.asm_2f380 -> .hide_amy_lounge_and_joshua
+Hide Amy (lounge) and Joshua in CheckShowWaterClubAmyLoungeAndJoshua when Starmie coin is missing or reload flag is active.
+
+.asm_2f483 -> .hide_sara_amanda
+Hide Sara and Amanda in CheckShowWaterClubSaraAmanda when Starmie coin is missing.
+
+.asm_2f4fc -> .coin_not_obtained
+Branch in CheckShowWaterClubGr3 for the pre-Starmie-coin state, returning carry clear to keep GR3 visible.
+
+.asm_35c0f -> .done
+Common return path in HandleFightingFortDoorInteraction after either immediate pass-through (already unlocked) or dialog/door-open handling.
+
+.asm_35c78 -> .return_clear_carry
+In HandleFightingFortMaze16WarpEndSFX, returns carry clear when entering from basement to signal the alternate warp-end branch.
+
+.asm_35d14 -> .return_clear_carry
+In HandleFightingFortMaze18WarpEndSFX, returns carry clear when entering from basement to signal the alternate warp-end branch.
+
+.asm_35d94 -> .load_cage_overlay
+In HandleFightingFortGodaWarpFadeInPreload, branch that loads Goda room cage overlay when cage-state event is unset.
+
+.asm_35dae -> .done_interactions
+Shared return branch in HandleFightingFortGodaInteractions after NPC interaction handling and optional OW script processing.
+
+.asm_35dec -> .show_mitch
+Carry-clear branch in CheckShowFightingFortGodaMitch that keeps Mitch visible when the cage-state event is unset.
+
+.asm_36075 -> .hide_closed_chest
+Hide closed chest sprite in CheckShowFightingFortGraceClosedChest when chest-state is unset or already-opened flag is set.
+
+.asm_36095 -> .hide_opened_chest
+Hide opened chest sprite in CheckShowFightingFortGraceOpenedChest when chest-state is unset or the opened-chest flag is not set.
+
+.asm_360fb -> .play_ronald_music
+In Psychic Stronghold Entrance music postload, branch that queues Ronald music when Ronald meetings are still below the threshold.
+
+.asm_3613e -> .done
+Common successful return path in HandlePsychicStrongholdEntranceWarpFadeInPreload after optional Ronald/GRX reveal setup.
+
