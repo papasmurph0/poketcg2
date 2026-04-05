@@ -3884,15 +3884,15 @@ LoadFireFortJesNPCs: ; Func_32864
 HandleFireFortJesWarpFadeInPreload: ; Func_3286d
 	ld a, [wPrevMap]
 	cp MAP_FIRE_FORT_ENTRANCE
-	jr nz, .asm_32878
+	jr nz, .check_door_state
 	farcall DeliverMailFromQueue
-.asm_32878
+.check_door_state
 	ld a, EVENT_JES_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_32882
+	jr z, .apply_closed_door_overlay
 	scf
 	ret
-.asm_32882
+.apply_closed_door_overlay
 	ld bc, TILEMAP_077
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
@@ -3902,10 +3902,10 @@ HandleFireFortJesWarpFadeInPreload: ; Func_3286d
 HandleFireFortJesInteractions: ; Func_3288e
 	ld hl, FireFortJes_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3289c
+	jr nc, .done
 	ld hl, FireFortJes_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3289c
+.done
 	scf
 	ret
 
@@ -4016,14 +4016,14 @@ ScriptFireFortJesAfterDuel: ; Func_32907
 ScriptFireFortJesDoorInteraction: ; Func_32956
 	ld a, EVENT_JES_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_32968
+	jr nz, .done
 	xor a
 	start_script
 	start_dialog
 	print_text DoorsAreShutText
 	end_dialog
 	end_script
-.asm_32968
+.done
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -4075,16 +4075,16 @@ LoadFireFortYukiNPCs: ; Func_329cd
 HandleFireFortYukiWarpFadeInPreload: ; Func_329d6
 	ld a, EVENT_YUKIS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_329e0
+	jr z, .apply_closed_door_overlay
 	scf
 	ret
-.asm_329e0
+.apply_closed_door_overlay
 	ld bc, TILEMAP_07A
 	lb de, 5, 0
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_MET_YUKI_FIRE_FORT
 	farcall GetEventValue
-	jr nz, .asm_32a16
+	jr nz, .done
 	ld a, EVENT_MET_YUKI_FIRE_FORT
 	farcall MaxOutEventValue
 	ld a, OWMODE_SCRIPT
@@ -4099,17 +4099,17 @@ HandleFireFortYukiWarpFadeInPreload: ; Func_329d6
 	ld a, NPC_YUKI
 	lb de, 5, 9
 	farcall SetOWObjectTilePosition
-.asm_32a16
+.done
 	scf
 	ret
 
 HandleFireFortYukiInteractions: ; Func_32a18
 	ld hl, FireFortYuki_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_32a26
+	jr nc, .done
 	ld hl, FireFortYuki_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_32a26
+.done
 	scf
 	ret
 

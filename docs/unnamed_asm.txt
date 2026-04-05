@@ -1696,3 +1696,24 @@ Common successful return path for HandleFireFortLobbyInteractions after NPC and 
 src/engine/bank0c.asm .asm_32767 -> .done
 Common successful return path for HandleFireFortLobbyContinueOverworld after optional Imakuni cleanup and music restore.
 
+src/engine/bank0c.asm .asm_32878 -> .check_door_state
+In HandleFireFortJesWarpFadeInPreload, branch that checks Jes-room door state after optional mail delivery from Fire Fort Entrance.
+
+src/engine/bank0c.asm .asm_32882 -> .apply_closed_door_overlay
+In HandleFireFortJesWarpFadeInPreload, branch that applies the closed-door overlay when Jes room door event is unset.
+
+src/engine/bank0c.asm .asm_3289c -> .done
+Common successful return path for HandleFireFortJesInteractions after NPC and optional OW interaction handling.
+
+src/engine/bank0c.asm .asm_32968 -> .done
+Common return path for ScriptFireFortJesDoorInteraction before resuming overworld input handling.
+
+src/engine/bank0c.asm .asm_329e0 -> .apply_closed_door_overlay
+In HandleFireFortYukiWarpFadeInPreload, branch that applies the closed-door overlay when Yuki room door event is unset.
+
+src/engine/bank0c.asm .asm_32a16 -> .done
+Common successful return path for HandleFireFortYukiWarpFadeInPreload after overlay and optional first-meeting script setup.
+
+src/engine/bank0c.asm .asm_32a26 -> .done
+Common successful return path for HandleFireFortYukiInteractions after NPC and optional OW interaction handling.
+
