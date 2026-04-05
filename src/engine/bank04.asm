@@ -293,8 +293,8 @@ BeginScreenTransitionToWhite: ; Func_1022a
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
 	call UnsetOverworldAndFadePalsFrameFunc
-	call Func_10ea7
-	call Func_1059f
+	call PushOWObjectsToWRAM3
+	call SaveOWMapToWRAM3
 	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
 	pop hl
@@ -310,11 +310,11 @@ EndScreenTransitionFromWhite: ; Func_10252
 	push hl
 	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
-	call Func_10ed3
-	call Func_105de
+	call PopOWObjectsFromWRAM3
+	call RestoreOWMapFromWRAM3
 	call DisableLCD
-	call Func_10b9c
-	call Func_1055e
+	call ReloadSpriteTilesetGfx
+	call LoadOWMapAndRestoreAnimatedTiles
 	call UpdateOWScroll
 	call EnableLCD
 	call SetOverworldAndFadePalsFrameFunc
@@ -353,8 +353,8 @@ BeginScreenTransitionToWhiteWithSpriteAnims: ; Func_102a4
 	push hl
 	farcall StartFadeToWhite
 	farcall WaitPalFading_Bank07
-	call Func_10ea7
-	call Func_1059f
+	call PushOWObjectsToWRAM3
+	call SaveOWMapToWRAM3
 	call SetSpriteAnimationAndFadePalsFrameFunc
 	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
@@ -371,11 +371,11 @@ EndScreenTransitionFromWhiteWithSpriteAnims: ; Func_102c4
 	push hl
 	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState
-	call Func_10ed3
-	call Func_105de
+	call PopOWObjectsFromWRAM3
+	call RestoreOWMapFromWRAM3
 	call DisableLCD
-	call Func_10b9c
-	call Func_1055e
+	call ReloadSpriteTilesetGfx
+	call LoadOWMapAndRestoreAnimatedTiles
 	call UpdateOWScroll
 	call EnableLCD
 	call UnsetSpriteAnimationAndFadePalsFrameFunc
@@ -719,7 +719,7 @@ ENDR
 ; [wOWScrollTargetX] = min(x_2 * 8, x_n),
 ; [wOWScrollTargetY] = min(y_2 * 8, y_n),
 ; [wOWScrollState] = 0
-Func_104ad:
+SetOWScrollTargetFromTileCoord: ; Func_104ad
 	push af
 	push bc
 	push de
@@ -841,7 +841,7 @@ CheckOWScroll:
 
 ; output:
 ; a = [wDecompressedTilemapPermissions + (e/2)*16 + d/2]
-Func_10541:
+GetTilemapPermissionAtCoord: ; Func_10541
 	push bc
 	push de
 	push hl
@@ -862,7 +862,7 @@ ENDR
 	pop bc
 	ret
 
-Func_1055e:
+LoadOWMapAndRestoreAnimatedTiles: ; Func_1055e
 	push af
 	push bc
 	push de
@@ -895,7 +895,7 @@ Func_1055e:
 	ld d, a
 	ld a, [hli]
 	ld e, a
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	pop bc
 	dec c
 	jr nz, .asm_10589
@@ -906,7 +906,7 @@ Func_1055e:
 	pop af
 	ret
 
-Func_1059f:
+SaveOWMapToWRAM3: ; Func_1059f
 	push af
 	push bc
 	push de
@@ -944,7 +944,7 @@ Func_1059f:
 	pop af
 	ret
 
-Func_105de:
+RestoreOWMapFromWRAM3: ; Func_105de
 	push af
 	push bc
 	push de
@@ -1219,7 +1219,7 @@ FillBoxInBGMapWithZero:
 ; e = y
 ; b = width
 ; c = height
-Func_10742:
+SetBGMapBoxPriority: ; Func_10742
 	push af
 	push bc
 	push de
@@ -1587,11 +1587,11 @@ SetNewSpriteAnimValues::
 	pop af
 	ret
 
-Func_10989:
+SetSpriteAnimRenderFlags: ; Func_10989
 	ld [wSpriteAnimRenderFlags], a
 	ret
 
-Func_1098d:
+SetSpriteAnimCoordFlags: ; Func_1098d
 	ld [wSpriteAnimCoordFlags], a
 	ret
 
@@ -1902,7 +1902,7 @@ GetSpriteAnimSpeedAndMoveDuration:
 	pop af
 	ret
 
-Func_10ab7:
+GetSpriteAnimFlags: ; Func_10ab7
 	ld a, [hl]
 	ret
 
@@ -2102,7 +2102,7 @@ ENDR
 
 ; load all sprite tilesets and their sprite anim gfx
 ; also clear wNumSpriteTilesets and wCurVRAMTile
-Func_10b9c:
+ReloadSpriteTilesetGfx: ; Func_10b9c
 	push af
 	push bc
 	push de
@@ -2646,7 +2646,7 @@ MoveNPC:
 	ret
 
 CountOWObjectsWithMovementScript:: ; Func_10df3
-	call Func_113d2
+	call _CountOWObjectsWithMovementScript
 	ret
 
 CheckOWObjectPointerWithID:
@@ -2764,7 +2764,7 @@ TryStepNPCInDirection:: ; Func_10e3c
 	jr nz, .blocked
 	sla d
 	sla e
-	call Func_10541
+	call GetTilemapPermissionAtCoord
 	and a
 	jr nz, .blocked
 .asm_10e8f
@@ -2781,11 +2781,11 @@ TryStepNPCInDirection:: ; Func_10e3c
 	pop bc
 	ret
 
-Func_10ea3::
+StepAllScriptedNPCs_Wrapper:: ; Func_10ea3
 	call StepAllScriptedNPCs
 	ret
 
-Func_10ea7:
+PushOWObjectsToWRAM3: ; Func_10ea7
 	ei
 	di
 	push af
@@ -2817,7 +2817,7 @@ Func_10ea7:
 	call PushOWObjectsAndAnimTileToBank3
 	ret
 
-Func_10ed3:
+PopOWObjectsFromWRAM3: ; Func_10ed3
 	ei
 	di
 	push af
@@ -3789,7 +3789,7 @@ ENDR
 
 ; counts number of OW objects
 ; that have flag 6 set
-Func_113d2:
+_CountOWObjectsWithMovementScript: ; Func_113d2
 	push bc
 	push de
 	push hl
@@ -5220,7 +5220,7 @@ AnimateIntroCards:
 	call ScrollIntroCard
 	jr c, .asm_11c90
 	lb bc, 6, 7
-	call Func_1340c
+	call DrawLoadedCardAtBC
 .asm_11c90
 	ret
 
@@ -5817,7 +5817,7 @@ DrawIntroCardGfx:
 	ret
 
 ; bc = coordinates
-Func_1340c:
+DrawLoadedCardAtBC: ; Func_1340c
 	push af
 	push bc
 	push de
@@ -5998,7 +5998,7 @@ DrawLoadedCard:
 	pop af
 	ret
 
-Func_1352a:
+ShowHiddenCardGallery: ; Func_1352a
 	push af
 	push bc
 	push de
@@ -6501,7 +6501,7 @@ GetPlayerGender:
 	pop hl
 	ret
 
-Func_13dfa:
+ResetAllOverworldState: ; Func_13dfa
 	call DisableLCD
 	call InitOWObjectsAndNPCMovement
 	call InitScreenTransitionGraphicsState

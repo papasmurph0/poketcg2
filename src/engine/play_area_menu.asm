@@ -103,12 +103,12 @@ OpenInPlayAreaScreen::
 	ldtx hl, EmptyLineText
 	call ProcessTextFromID
 
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	ldtx hl, HandText_2
 	call ProcessTextFromID
 
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 	lb de, 1, 17
 	call InitTextPrinting

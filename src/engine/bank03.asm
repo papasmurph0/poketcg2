@@ -95,8 +95,8 @@ StartMenu_ContinueFromDiary:
 	ld a, TRUE
 	farcall ReadOrInitSaveData
 	call DisableLCD
-	farcall Func_10b9c
-	farcall Func_1055e
+	farcall ReloadSpriteTilesetGfx
+	farcall LoadOWMapAndRestoreAnimatedTiles
 	farcall UpdateOWScroll
 	farcall SaveTargetFadePals
 	farcall SetOverworldAndFadePalsFrameFunc
@@ -317,7 +317,7 @@ HandleStartMenu:
 ReInitOverworldBeforeIntro: ; Func_c240
 	xor a
 	ld [wCurMusic], a
-	farcall Func_13dfa
+	farcall ResetAllOverworldState
 	ret
 
 InitEvents:
@@ -1238,8 +1238,8 @@ OverworldLoop::
 	jr .wait_input
 
 .fade
-	farcall Func_10b9c
-	farcall Func_1055e
+	farcall ReloadSpriteTilesetGfx
+	farcall LoadOWMapAndRestoreAnimatedTiles
 	farcall UpdateOWScroll
 	farcall SaveTargetFadePals
 	farcall SetOverworldAndFadePalsFrameFunc
@@ -3140,7 +3140,7 @@ ScriptCommand_LoadTilemap:
 	ld d, c
 	ld e, b
 	pop bc
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	jp IncreaseScriptPointerBy5
 
 ScriptCommand_ShowCardReceivedScreen:
@@ -3180,7 +3180,7 @@ ScriptCommand_ScrollToPosition:
 	sla b
 	ld d, c
 	ld e, b
-	farcall Func_104ad
+	farcall SetOWScrollTargetFromTileCoord
 .delay_loop
 	call DoFrame
 	farcall CheckOWScroll
@@ -4325,7 +4325,7 @@ ScriptCommand_CheckNPCLoaded:
 
 ScriptCommand_GiveDeck:
 	call Get1ScriptArg_IncrIndexBy1
-	farcall Func_1acbf
+	farcall TryAddNPCDeckToSavedDecks
 	ld hl, wScriptFlags
 	jr c, .invalid
 ; valid

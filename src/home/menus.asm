@@ -404,10 +404,10 @@ ReloadCardListItems::
 ; reload a list of cards, except don't print their names
 ReloadCardListItemsWithoutPrintingNames:: ; Func_2827
 	ld a, $01
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	call ReloadCardListItems
 	xor a
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	ret
 
 ; convert the number at a to TX_SYMBOL text format and write it to wDefaultText

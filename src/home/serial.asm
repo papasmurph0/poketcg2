@@ -77,10 +77,10 @@ Serial_Func_0be6::
 .received_peer
 	xor a
 	ld [wSerialSendBufIndex], a
-	ld [wcb80], a
+	ld [wSerialSendBufWriteIndex], a
 	ld [wSerialSendBufToggle], a
 	ld [wSerialSendSave], a
-	ld [wcba3], a
+	ld [wSerialRecvBufReadIndex], a
 	ld [wSerialRecvIndex], a
 	ld [wSerialRecvCounter], a
 	ld [wSerialLastReadCA], a
@@ -185,7 +185,7 @@ SerialHandleRecv:
 	push af
 	ld a, [wSerialRecvIndex]
 	ld e, a
-	ld a, [wcba3]
+	ld a, [wSerialRecvBufReadIndex]
 	dec a
 	and $1f
 	cp e
@@ -271,7 +271,7 @@ SerialSendByte::
 	push bc
 	push af
 .asm_e0e
-	ld a, [wcb80]
+	ld a, [wSerialSendBufWriteIndex]
 	ld e, a
 	ld a, [wSerialSendBufIndex]
 	dec a
@@ -282,7 +282,7 @@ SerialSendByte::
 	ld a, e
 	inc a
 	and $1f
-	ld [wcb80], a
+	ld [wSerialSendBufWriteIndex], a
 	ld hl, wSerialSendBuf
 	add hl, de
 	pop af
@@ -320,7 +320,7 @@ SerialRecvByte::
 .found_counter
 	push de
 	dec [hl]
-	ld a, [wcba3]
+	ld a, [wSerialRecvBufReadIndex]
 	ld e, a
 	ld d, $0
 	ld hl, wSerialRecvBuf
@@ -330,7 +330,7 @@ SerialRecvByte::
 	ld a, e
 	inc a
 	and $1f
-	ld [wcba3], a
+	ld [wSerialRecvBufReadIndex], a
 	pop af
 	pop de
 	pop hl

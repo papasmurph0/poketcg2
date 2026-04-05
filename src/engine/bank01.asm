@@ -1,6 +1,6 @@
 StartDuelFromSRAM:
 	call SetupDuel
-	farcall Func_24048
+	farcall CheckAndLoadSavedDuel
 	ldtx hl, BackUpIsBrokenText
 	jr c, .corrupted
 .ok::
@@ -994,7 +994,7 @@ DisplayAttachedEnergyMenu:
 	call EmptyScreen
 	call LoadDuelCardSymbolTiles
 	call LoadDuelFaceDownCardTiles
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	call FlushAllPalettesIfNotDMG
 	ld a, [wAttachedEnergyMenuPlayAreaLocation]
 	ld hl, wCurPlayAreaSlot
@@ -1003,7 +1003,7 @@ DisplayAttachedEnergyMenu:
 	call PrintPlayAreaCardInformation
 	xor a
 	ld [wAttachedEnergyMenuNumerator], a
-	ld [wcbeb], a
+	ld [wAttachedEnergyMenuReadOnly], a
 	inc a
 	ld [wAttachedEnergyMenuDenominator], a
 ;	fallthrough
@@ -1033,7 +1033,7 @@ UpdateAttachedEnergyMenu:
 ; if [wAttachedEnergyMenuDenominator] == 0:
 	; prints only "[wAttachedEnergyMenuNumerator]"
 HandleAttachedEnergyMenuInput:
-	ld a, [wcbeb]
+	ld a, [wAttachedEnergyMenuReadOnly]
 	or a
 	jr nz, .wait_input
 
@@ -1062,7 +1062,7 @@ HandleAttachedEnergyMenuInput:
 	jr nc, .wait_input
 	cp $ff ; B pressed?
 	jr z, .return_carry
-	ld a, [wcbeb]
+	ld a, [wAttachedEnergyMenuReadOnly]
 	or a
 	jr nz, .wait_input
 	ldh a, [hCurScrollMenuItem]
@@ -1167,7 +1167,7 @@ OpenAttackPage:
 	ld de, v0Tiles1 + $20 tiles
 	call LoadLoadedCard1Gfx
 	call DrawCardPageCardGfx
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	call FlushAllPalettesIfNotDMG
 	ldh a, [hCurScrollMenuItem]
 	ld [wSelectedDuelSubMenuItem], a
@@ -1766,7 +1766,7 @@ ChooseInitialArenaAndBenchPokemon:
 ; returns $00 in a and carry if no basic Pokemon cards are drawn, and $01 in a otherwise
 ShuffleDeckAndDrawSevenCards:
 	call InitializeDuelVariables
-	ld a, [wcd17]
+	ld a, [wNoShuffleDuringDuelSetup]
 	or a
 	jr nz, .deck_ready
 	call ShuffleDeck
@@ -1852,7 +1852,7 @@ PrintReturnCardsToDeckDrawAgain:
 ; used to let the player know that there are no basic Pokemon in the hand and need to redraw
 DisplayNoBasicPokemonInHandScreen:
 	call EmptyScreen
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	call LoadDuelCardSymbolTiles
 	lb de, 0, 0
 	lb bc, 20, 18
@@ -1878,7 +1878,7 @@ DisplayPracticeDuelPlayerHandScreen:
 	call CreateHandCardList
 	call EmptyScreen
 	call LoadDuelCardSymbolTiles
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	lb de, 0, 0
 	lb bc, 20, 13
 	call DrawRegularTextBox
@@ -2656,7 +2656,7 @@ DrawCardListScreenLayout:
 	call EmptyScreen
 	call LoadSymbolsFont
 	call LoadDuelCardSymbolTiles
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	; draw the surrounding box
 	lb de, 0, 0
 	lb bc, 20, 13
@@ -2792,10 +2792,10 @@ DisplayCardList:
 	and PAD_CTRL_PAD
 	ret z
 	ld a, $01
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	call PrintCardListHeaderAndInfoBoxTexts
 	xor a
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	ret
 
 ; prints the text ID at wCardListHeaderText at 1,1
@@ -2967,7 +2967,7 @@ OpenCardPage:
 	call LoadLoadedCard1Gfx
 	lb de, 6, 4
 	call DrawCardGfxToDE_BGPalIndex5
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	call FlushAllPalettesIfNotDMG
 	; display the initial card page for the card at wLoadedCard1
 	xor a
@@ -3170,7 +3170,7 @@ LoadSelectedCardGfx:
 	call LoadLoadedCard1Gfx
 	lb de, 12, 12
 	call DrawCardGfxToDE_BGPalIndex5
-	call Func_6c12
+	call LoadCardDetailScreenPalettes
 	call FlushAllPalettesIfNotDMG
 	ret
 
@@ -4278,7 +4278,7 @@ SelectingBenchPokemonMenu:
 	ldtx de, EnergyCardsAttachedToPokemonText
 	call DisplayAttachedEnergyMenu
 	ld a, $01
-	ld [wcbeb], a
+	ld [wAttachedEnergyMenuReadOnly], a
 	call HandleAttachedEnergyMenuInput
 .no_energy_cards
 	ld a, $03
@@ -4433,7 +4433,7 @@ PrintPlayAreaCardList_EnableLCD:
 PrintPlayAreaCardList:
 	ld a, PLAY_AREA_CARD_LIST
 	ld [wDuelDisplayedScreen], a
-	ld de, wcbf5
+	ld de, wPlayAreaCardList
 	call SetListPointer2
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
@@ -4482,12 +4482,12 @@ PrintPlayAreaCardList:
 	ld a, [wExcludeArenaPokemon]
 	or a
 	ret z
-	; if wExcludeArenaPokemon is set, decrement [wNumPlayAreaItems] and shift back wcbf5
+	; if wExcludeArenaPokemon is set, decrement [wNumPlayAreaItems] and shift back wPlayAreaCardList
 	dec b
 	ld a, b
 	ld [wNumPlayAreaItems], a
-	ld hl, wcbf5 + 1
-	ld de, wcbf5
+	ld hl, wPlayAreaCardList + 1
+	ld de, wPlayAreaCardList
 .shift_back_loop
 	ld a, [hli]
 	ld [de], a
@@ -5334,13 +5334,13 @@ HandleSpecialDuelMainSceneHotkeys:
 ; a = PLAY_AREA_* constant
 LoadPlayAreaCardID_ToTempTurnDuelistCardID::
 	ld hl, wTempTurnDuelistCardID
-	ld [wccd8], a
+	ld [wTempTurnDuelistCardIDPlayAreaLocation], a
 	jr LoadPlayAreaCardID
 
 ; a = PLAY_AREA_* constant
 LoadPlayAreaCardID_ToTempNonTurnDuelistCardID::
 	ld hl, wTempNonTurnDuelistCardID
-	ld [wccd9], a
+	ld [wTempNonTurnDuelistCardIDPlayAreaLocation], a
 ;	fallthrough
 
 LoadPlayAreaCardID:
@@ -5420,7 +5420,7 @@ ProcessPlayedPokemonCard:
 
 .not_using_pkmn_power
 	xor a
-	ld [wcd18], a
+	ld [wPlayedPokemonPowerActivated], a
 	scf
 	ret
 
@@ -5451,7 +5451,7 @@ ProcessPlayedPokemonCard:
 	ldtx hl, UsePokemonPowerText
 	call DrawWideTextBox_WaitForInput
 	ld a, $01
-	ld [wcd18], a
+	ld [wPlayedPokemonPowerActivated], a
 	or a
 	ret
 
@@ -6470,7 +6470,7 @@ LoadDuelSettingsFromSRAM: ; Func_6838
 	ld a, [sSkipDelayAllowed]
 	ld [wSkipDelayAllowed], a
 	ld a, [sCoinTossAnimationSetting]
-	ld [wcd14], a
+	ld [wDuelCoinTossAnimationSetting], a
 	call DisableSRAM
 	ret
 
@@ -6690,7 +6690,7 @@ PlayTrainerCard:
 	ldh a, [hTempCardIndex_ff9f]
 	call MoveHandCardToDiscardPile
 	call ExchangeRNG
-	ld a, [wcd15]
+	ld a, [wTrainerCardPlayedPokemonDeckIndex]
 	cp $ff
 	jr z, .done
 	ldh [hTempCardIndex_ff98], a
@@ -6715,7 +6715,7 @@ LoadNonPokemonCardEffectCommands:
 	call GetNonTurnDuelistVariable
 	ld [wcd0b], a
 	ld a, $ff
-	ld [wcd15], a
+	ld [wTrainerCardPlayedPokemonDeckIndex], a
 	ret
 
 ExecutePokemonPowerTrigger: ; Func_6986
@@ -7194,7 +7194,7 @@ SetFontAndTextBoxFrameColor:
 	call CopyFontsOrDuelGraphicsBytes
 	ret
 
-Func_6c12::
+LoadCardDetailScreenPalettes:: ; Func_6c12
 	ld hl, Pals_6f0d8 - $4000
 Func_6c15:
 	ld de, wBackgroundPalettesCGB + 2 * PAL_SIZE
@@ -9837,7 +9837,7 @@ GetDefendingCardType:
 	ld hl, wTempNonTurnDuelistCardID
 	call GetPlayAreaPokemonType
 	ret nc
-	ld a, [wccd9]
+	ld a, [wTempNonTurnDuelistCardIDPlayAreaLocation]
 ;	fallthrough
 GetPlayAreaCardColorWrapper: ; Func_7b0a
 	call GetPlayAreaCardColor
@@ -9848,7 +9848,7 @@ GetAttackingCardType:
 	call GetPlayAreaPokemonType
 	ret nc
 	; is Venomoth, get its color
-	ld a, [wccd8]
+	ld a, [wTempTurnDuelistCardIDPlayAreaLocation]
 	jr GetPlayAreaCardColorWrapper
 
 ; gets type of Pokémon with ID given in [hl]

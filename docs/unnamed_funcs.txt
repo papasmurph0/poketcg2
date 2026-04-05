@@ -3439,3 +3439,168 @@ Func_1dff -> LoadPlayAreaIconTiles
 Func_1eb1 -> FillDuelBoxMessageRectangle
 ; fills the fixed 10x4 duel box message tile rectangle with tile a
 
+
+Func_104ad -> SetOWScrollTargetFromTileCoord
+; computes OW scroll target from tile coordinates d/e, clamps to map bounds, stores in wOWScrollTargetX/Y
+
+Func_10541 -> GetTilemapPermissionAtCoord
+; reads wDecompressedTilemapPermissions at (e/2)*16 + d/2 and returns the byte in a
+
+Func_1055e -> LoadOWMapAndRestoreAnimatedTiles
+; reloads the current OW map, resets animated tile state, and reapplies the tilemap overlay buffer
+
+Func_1059f -> SaveOWMapToWRAM3
+; copies wOWMap and the WRAM1 region at w3d4c6 into WRAM3 before a screen transition
+
+Func_105de -> RestoreOWMapFromWRAM3
+; restores wOWMap and the WRAM1 region from WRAM3 after a screen transition
+
+Func_10742 -> SetBGMapBoxPriority
+; sets the priority bit (bit 7) on all VRAM1 attribute bytes within a tile box region
+
+Func_10989 -> SetSpriteAnimRenderFlags
+; stores a into wSpriteAnimRenderFlags
+
+Func_1098d -> SetSpriteAnimCoordFlags
+; stores a into wSpriteAnimCoordFlags
+
+Func_10ab7 -> GetSpriteAnimFlags
+; returns the flags byte at [hl] (SPRITEANIMSTRUCT_FLAGS) in a
+
+Func_10b9c -> ReloadSpriteTilesetGfx
+; reloads each sprite tileset via LoadSpriteAnimGfx, then clears wNumSpriteTilesets and wCurVRAMTile
+
+Func_10ea7 -> PushOWObjectsToWRAM3
+; copies one byte from wOWObjects to wWRAM3 and calls PushOWObjectsAndAnimTileToBank3
+
+Func_10ed3 -> PopOWObjectsFromWRAM3
+; restores one byte to wOWObjects from WRAM3 and calls PullSpriteAnimTileObjFromBank3
+
+Func_113d2 -> _CountOWObjectsWithMovementScript
+; internal implementation of CountOWObjectsWithMovementScript: counts OW objects with OBJ_FLAG6_F set
+
+Func_1340c -> DrawLoadedCardAtBC
+; calls DrawLoadedCard at coordinates d=b, e=c with b=$80, c=$01
+
+Func_1352a -> ShowHiddenCardGallery
+; shows a hidden scrollable card browser accessed from FightingFortMaze19 debug conditions
+
+Func_13dfa -> ResetAllOverworldState
+; full overworld reset used before intro: disables LCD, reinits objects, clears all state, re-enables LCD
+
+Func_6c12 -> LoadCardDetailScreenPalettes
+; loads 3 palettes from Pals_6f0d8 into wBackgroundPalettesCGB + 2*PAL_SIZE for card detail screens
+
+Func_14178 -> AIHandleSwitchPokemon
+; clears wAIAttackNonDamageCount and calls AIDecideBenchPokemonToSwitchTo for forced and KO switches
+
+Func_167e5 -> AIDecideAndExecuteRetreat
+; full AI retreat logic: checks retreat eligibility, needed energy, status, special card handling
+
+Func_16af1 -> AIScoreEvolutionCandidate
+; scores a bench Pokemon as an evolution candidate; returns carry when score >= 133
+
+Func_17356 -> AIGetAdjustedAttackDamage
+; adjusts raw attack damage for special rules (Grass arena + specific Pokemon); returns 0 if negative
+
+Func_19f87 -> SendCardTilesToPrinterAndPrint
+; initializes printer comms, sends 2 tile packets from sGfxBuffer0, prints one sheet
+
+Func_19f99 -> SendExtendedCardTilesToPrinterAndPrint
+; initializes printer comms, sends 6 tile packets from sGfxBuffer0+8 tiles, prints one sheet
+
+Func_1a011 -> SendTilesToPrinterAndPrintWith3LineFeeds
+; initializes printer comms, sends 5 tile packets, prints with 3 line feeds
+
+Func_1a025 -> InitPrinterGfxBufferTextParams
+; calls SetupText with printer tile params and sets wTilePatternSelector for SRAM gfx buffer text
+
+Func_1acbf -> TryAddNPCDeckToSavedDecks
+; tries to save NPC deck to an empty SRAM slot; if no slot, loads default deck and gives cards; returns carry on failure
+
+Func_1adbd -> ConvertCardGfxForPrinter
+; loads card gfx from wc000 and converts pixel data to Game Boy Printer output format via bit rotation
+
+Func_1b8f1 -> CopyBBytesFromHLToDE
+; copies b bytes from [hl] to [de], incrementing both; used locally in bank06
+
+Func_209fc -> AIChooseGustOfWindBenchTarget
+; returns carry + bench slot when AI should use Gust of Wind; considers KO potential, deck strategy, and HP
+
+Func_20be6 -> CheckBenchCardCanDamageDefender
+; temporarily swaps bench card e into Arena, checks damage against defender, and restores Arena
+
+Func_24048 -> CheckAndLoadSavedDuel
+; validates saved duel checksum and loads duel data when valid; returns with z set on success
+
+Func_243ee -> ClearAreaAndPrintAttackDescription
+; clears an 18x7 rectangle and prints attack or card description text from hl via bank1call
+
+Func_24494 -> DrawWideTextBoxAndPrintNoDelay
+; draws a wide text box, adjusts for BG scroll, inits text printing, then jumps to PrintTextNoDelay
+
+Func_24ef5 -> DrawColorChangeCardDetailScreen
+; clears screen, loads duel tiles and palettes, draws card gfx and stats for HandleColorChangeScreen
+
+Func_2517f -> ShowDeckDiagnosisAdvice
+; looks up advice text IDs for the selected deck diagnosis step and shows scrollable text pages
+
+Func_2bc4f -> RunDeckSelectionMenu
+; shows all-decks screen, handles deck selection menu, validates non-empty; returns carry if canceled
+
+Func_2bd48 -> InitAutoDeckMachineCategoryList
+; checks unlock events for each auto deck machine category and fills wIndicesAutoDeckMachineUnlockedCategories and wAutoDeckMachineTexts
+
+Func_4c25c -> AIDecideEnergyCardPlay
+; evaluates energy card at deck index a; returns carry to skip or no-carry to play; filters DCE, Rainbow, special energies
+
+Func_4c56b -> AIFindGustOfWindTargetForArenaCard
+; finds Gust of Wind bench target based on arena card type (Mr. Mime, Mewtwo, Hitmonchan/Sandslash); returns carry + slot
+
+Func_4c605 -> AICheckShouldSwitchFromFirstAttack
+; returns carry when the AI has used the first attack too many times based on deck-specific repeat limits
+
+Func_4c65b -> AITrackAttackRepeatCount
+; updates wAILastAttackArenaCard, wAILastAttackIndex, and wAIAttackRepeatCount for the current attack
+
+Func_12c06e -> GetOWTileFrameGfxPointer
+; returns a banked pointer to OW tile frame gfx data for an OW_FRAMES_* id from the GfxUnknown2 table
+
+Func_12c0b7 -> LoadTilemapAndSaveDimensions
+; calls LoadTilemap with attribute 0 at Tiles0 and saves resulting width/height to wLoadedBGMapWidth/Height
+
+Func_12c0ce -> AddOWTilemapOverlay
+; loads a TILEMAP_* tilemap at scaled OW coordinates and registers the entry in wOWTilemapOverlayBuffer
+
+Func_12c0fc -> LoadTilemapDefault
+; calls LoadTilemap with attribute 0 and Tiles0 offset; used internally by AddOWTilemapOverlay
+
+Func_12c1c1 -> DecompressTilemapPermissions
+; decompresses banked tilemap permission data into wDecompressedTilemapPermissions
+
+Func_12c35c -> InitSpriteAnimFrameIfNeeded
+; resets wCurSpriteAnimFrameIndex to -1 when both index and duration are zero, then advances the frame
+
+Func_12c36a -> AdvanceSpriteAnimFrame
+; increments sprite animation frame index, handles end-of-animation, and applies position/timing offsets
+Func_6873c -> ShowIncompleteText
+; unreferenced helper that prints IncompleteText in a wide text box and returns
+
+Func_65cf9 -> SetPsychicHitAnimAndIgnoreWeaknessResistance
+; sets ATK_ANIM_PSYCHIC_HIT and marks damage as unaffected by weakness/resistance
+
+Func_663e2 -> SetExpectedAIDamage_30
+; unreferenced helper that sets expected AI damage to fixed 30 (min 0, max 30)
+
+Func_10ea3 -> StepAllScriptedNPCs_Wrapper
+; exported wrapper that calls StepAllScriptedNPCs for farcall users outside bank04
+
+Func_12a3d -> HandleSlotMachineDebugSelectPress
+; unreferenced debug helper that toggles slot machine debug mode on Select press and starts a delay
+
+Func_12a57 -> CheckSlotMachineDebugDelayExpired
+; unreferenced debug helper that counts down slot machine debug delay frames and returns carry when it expires
+
+Func_12c17 -> FindMatchingSlotMachinePreset
+; unreferenced helper that returns the first slot machine preset whose reel symbols match the current landing state
+

@@ -1234,7 +1234,7 @@ UpdateOWAnimatedTiles:: ; Func_3698
 	ld c, [hl]
 	inc hl
 	ld b, [hl]
-	farcall Func_12c06e
+	farcall GetOWTileFrameGfxPointer
 	ld a, b
 	ld [wOWTileFrameGfxBank], a
 	pop bc
@@ -1914,7 +1914,7 @@ FrameFunc_OverworldAndFadePals:: ; Func_3a39
 	jr .asm_3a56
 .asm_3a50
 	ld e, $10
-	farcall Func_10ea3
+	farcall StepAllScriptedNPCs_Wrapper
 .asm_3a56
 	farcall ProcessScreenShakeEffect
 	farcall UpdateSpriteAnims

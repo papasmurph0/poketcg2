@@ -66,7 +66,7 @@ SaveDuelDataToDE::
 	call DisableSRAM
 	ret
 
-Func_24048:
+CheckAndLoadSavedDuel: ; Func_24048
 	ld hl, sCurrentDuel
 	call CheckSavedDuelChecksum_FromHL
 	ret c
@@ -502,7 +502,7 @@ PrintAttackDeclarationText::
 
 SECTION "Bank 9@43ee", ROMX[$43ee], BANK[$9]
 
-Func_243ee:
+ClearAreaAndPrintAttackDescription: ; Func_243ee
 	push de
 	push hl
 	dec e
@@ -529,9 +529,9 @@ DisplayUsePokemonPowerScreen:
 	call EmptyScreen
 	call LoadDuelCardSymbolTiles
 	call LoadDuelCheckPokemonScreenTiles
-	bank1call Func_6c12
+	bank1call LoadCardDetailScreenPalettes
 	pop hl
-	call Func_24494
+	call DrawWideTextBoxAndPrintNoDelay
 	bank1call PrintPlayAreaCardInformationAndLocation
 	lb de, 1, 4
 	call InitTextPrinting
@@ -553,13 +553,13 @@ DisplayUsePokemonPowerScreen:
 	call InitTextPrinting_ProcessTextFromPointerToID
 	ld hl, wLoadedCard1Atk1Description + $2
 	lb de, 1, 6
-	call Func_243ee
+	call ClearAreaAndPrintAttackDescription
 	ret
 ; 0x24459
 
 SECTION "Bank 9@4494", ROMX[$4494], BANK[$9]
 
-Func_24494:
+DrawWideTextBoxAndPrintNoDelay: ; Func_24494
 	push hl
 	call DrawWideTextBox
 	ld a, 19
@@ -817,7 +817,7 @@ PlayShuffleAndDrawCardsAnimation_BothDuelists:
 	ld c, DUEL_ANIM_BOTH_DRAW
 	ldtx hl, EachPlayerShuffleOpponentsDeckText
 	ldtx de, EachPlayerDraw7CardsText
-	ld a, [wcd17]
+	ld a, [wNoShuffleDuringDuelSetup]
 	or a
 	jr z, PlayShuffleAndDrawCardsAnimation
 	ldtx hl, PracticeDuelNoShufflesText
@@ -842,7 +842,7 @@ PlayShuffleAndDrawCardsAnimation:
 	pop hl
 	call DrawWideTextBox_PrintText
 	call EnableLCD
-	ld a, [wcd17]
+	ld a, [wNoShuffleDuringDuelSetup]
 	or a
 	jr z, .not_practice
 	call WaitForWideTextBoxInput
@@ -1817,7 +1817,7 @@ HandleColorChangeScreen:
 	or a
 	call z, SwapTurn
 	push af
-	call Func_24ef5
+	call DrawColorChangeCardDetailScreen
 	pop af
 	call z, SwapTurn
 
@@ -1846,13 +1846,13 @@ HandleColorChangeScreen:
 .menu_params
 	menu_params 1, 1, 2, MAX_PLAY_AREA_POKEMON, SYM_CURSOR_R, SYM_SPACE, NULL
 
-Func_24ef5:
+DrawColorChangeCardDetailScreen: ; Func_24ef5
 	push hl
 	push af
 	call EmptyScreen
 	call ZeroObjectPositions
 	call LoadDuelCardSymbolTiles
-	bank1call Func_6c12
+	bank1call LoadCardDetailScreenPalettes
 
 ; load card data
 	pop af
@@ -2009,16 +2009,16 @@ DeckDiagnosis:
 	inc a
 	ld [wDeckDiagnosisMenuStepSelected], a
 	xor a
-	ld [wcd29], a
+	ld [wDeckDiagnosisSubMenuItem], a
 .selected_step_menu
-	ld a, [wcd29]
+	ld a, [wDeckDiagnosisSubMenuItem]
 	ldh [hCurScrollMenuItem], a
 	ld a, [wDeckDiagnosisMenuStepSelected]
 	call HandleDeckDiagnosisMenu
 	cp $ff
 	jr z, .loop_menu
-	ld [wcd29], a
-	call Func_2517f
+	ld [wDeckDiagnosisSubMenuItem], a
+	call ShowDeckDiagnosisAdvice
 	call EmptyScreen
 	call LoadDeckDiagnosisScene
 	jr .selected_step_menu
@@ -2260,7 +2260,7 @@ DrawDrMasonsPortrait:
 	call FlushAllPalettes
 	ret
 
-Func_2517f:
+ShowDeckDiagnosisAdvice: ; Func_2517f
 	call EmptyScreen
 	ldh a, [hCurScrollMenuItem]
 	ld [wDeckDiagnosisAdvice], a
@@ -2461,7 +2461,7 @@ ENDM
 CheckDeck:
 .start
 	ldtx de, DeckDiagnosisChooseDeckToCheckText
-	farcall Func_2bc4f
+	farcall RunDeckSelectionMenu
 	ret c
 	ld l, a
 	ld h, DECK_COMPRESSED_STRUCT_SIZE
@@ -2469,9 +2469,9 @@ CheckDeck:
 	ld de, sDeck1
 	add hl, de
 	ld a, l
-	ld [wcd2b + 0], a
+	ld [wDeckDiagnosisSelectedDeckSRAMPtr + 0], a
 	ld a, h
-	ld [wcd2b + 1], a
+	ld [wDeckDiagnosisSelectedDeckSRAMPtr + 1], a
 
 	call EnableSRAM
 	ld de, wDefaultText
@@ -2492,7 +2492,7 @@ CheckDeck:
 	call .GetDeckCardCountsAndPrintCounts
 
 	xor a
-	ld [wcd4e], a
+	ld [wDeckDiagnosisNumMessagesPrinted], a
 	ld a, PLAYER_TURN
 	ldh [hWhoseTurn], a
 	call .DoChecks
@@ -2566,7 +2566,7 @@ CheckDeck:
 .PrintDrMasonText:
 	ldtx de, DrMasonText
 	call PrintScrollableText_WithTextBoxLabel
-	ld hl, wcd4e
+	ld hl, wDeckDiagnosisNumMessagesPrinted
 	inc [hl]
 	ret
 
@@ -2620,7 +2620,7 @@ CheckDeck:
 	call .PrintDrMasonText
 
 .asm_253ad
-	ld a, [wcd4e]
+	ld a, [wDeckDiagnosisNumMessagesPrinted]
 	or a
 	ret z
 	scf
@@ -2687,7 +2687,7 @@ CheckDeck:
 	ldtx hl, DeckDiagnosisBreakdownText
 	call PrintTextNoDelay_Init
 
-	ld hl, wcd2b
+	ld hl, wDeckDiagnosisSelectedDeckSRAMPtr
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
@@ -3167,7 +3167,7 @@ CheckDeck:
 ; for that type
 .CheckEnergyAmountVsPkmnCards:
 	call .CountTypesOfPkmnCards
-	ld [wcd4b], a
+	ld [wDeckCheckNumPkmnTypesForEnergyCalc], a
 
 	; counts total amount of energy that the deck provides
 	; Double Colorless counts as 2 energies
@@ -3198,12 +3198,12 @@ CheckDeck:
 	inc hl
 	add [hl] ; wDeckCheckStage2Count
 	ld b, a ; total count of all Pkmn cards
-	ld hl, wcd4b
+	ld hl, wDeckCheckNumPkmnTypesForEnergyCalc
 	sub [hl]
 	sub c
 	jr z, .asm_256f4
 	jr c, .asm_256f4
-	; total Pkmn cards > wcd4b + total energy
+	; total Pkmn cards > wDeckCheckNumPkmnTypesForEnergyCalc + total energy
 	ldtx hl, DeckDiagnosisPokemonEnergyUnbalancedText
 	call .PrintDrMasonText
 
@@ -3246,7 +3246,7 @@ CheckDeck:
 	ld [hl], e
 	inc hl
 	ld [hl], d
-	ld a, [wcd4e]
+	ld a, [wDeckDiagnosisNumMessagesPrinted]
 	or a
 	jr nz, .asm_25733
 	ldtx hl, DeckDiagnosisEnergyUnbalancedText
@@ -3260,7 +3260,7 @@ CheckDeck:
 	inc c
 	dec b
 	jr nz, .loop_colored_types_1
-	ld a, [wcd4e]
+	ld a, [wDeckDiagnosisNumMessagesPrinted]
 	or a
 	ret z
 	scf
@@ -3280,7 +3280,7 @@ CheckDeck:
 	ld a, [wDeckCheckPkmnCounts + COLORLESS]
 	ld b, a
 	ld c, 0
-	ld a, [wcd4b]
+	ld a, [wDeckCheckNumPkmnTypesForEnergyCalc]
 	ld d, 0
 	ld e, a
 	; bc = colorless counts * 16
@@ -3314,7 +3314,7 @@ CheckDeck:
 	; count = 1
 	dec a
 .at_least_2_pkmn
-	ld [wcd4c], a
+	ld [wDeckCheckCurTypeAdjustedPkmnCount], a
 
 	; multiply Pkmn count with type weight
 	call HtimesL
@@ -3338,7 +3338,7 @@ CheckDeck:
 	add [hl]
 	ld e, a
 
-	ld hl, wcd4c
+	ld hl, wDeckCheckCurTypeAdjustedPkmnCount
 	sub [hl]
 	jr c, .got_surplus_energy ; jump if (total energy) < Pkmn count
 	ld a, e
@@ -3454,7 +3454,7 @@ GenerateBoosterContent:
 	push bc
 	ld hl, wDuelTempList
 .loop_random_get
-	ld a, [wcd54]
+	ld a, [wCardPopNumCandidates]
 	call Random
 	ld l, a
 	ld h, 0
@@ -3513,13 +3513,13 @@ CreateCardPopCandidateList:
 	cp CARDPOP_PHANTOM
 	jr z, .phantom_cards
 
-	ld hl, wcd51
+	ld hl, wCardPopRarityFilter
 	ld [hli], a
-	ld [hl], b ; wcd52
+	ld [hl], b ; wCardPopMinSetFilter
 	inc hl
-	ld [hl], c ; wcd53
+	ld [hl], c ; wCardPopMaxSetFilter
 	xor a
-	ld [wcd54], a
+	ld [wCardPopNumCandidates], a
 
 	ld de, 0
 	ld hl, wCardPopCandidateList
@@ -3527,7 +3527,7 @@ CreateCardPopCandidateList:
 
 .loop_ids
 	push hl
-	ld hl, wcd51
+	ld hl, wCardPopRarityFilter
 	ld a, b ; rarity
 	cp [hl]
 	jr nz, .next_card
@@ -3535,18 +3535,18 @@ CreateCardPopCandidateList:
 
 	; accept sets >= minimum set
 	ld a, c ; set
-	cp [hl] ; wcd52
+	cp [hl] ; wCardPopMinSetFilter
 	jr z, .add_card
 	jr c, .next_card
 
 	; accept sets <= maximum set
 	inc hl
-	cp [hl] ; wcd53
+	cp [hl] ; wCardPopMaxSetFilter
 	jr z, .add_card
 	jr nc, .next_card
 
 .add_card
-	ld hl, wcd54
+	ld hl, wCardPopNumCandidates
 	inc [hl]
 	pop hl
 	ld [hl], e
@@ -3564,7 +3564,7 @@ CreateCardPopCandidateList:
 	xor a
 	ld [hli], a
 	ld [hl], a
-	ld a, [wcd54] ; number of cards
+	ld a, [wCardPopNumCandidates] ; number of cards
 	ret
 
 .phantom_cards
@@ -3588,7 +3588,7 @@ CreateCardPopCandidateList:
 	jr nz, .loop_list
 	ld a, c
 	dec a
-	ld [wcd54], a
+	ld [wCardPopNumCandidates], a
 	ret
 
 .energy_card_list
@@ -4974,11 +4974,11 @@ DeckIDData:
 
 	db $ff ; end
 
-; set [wcd55] = e
+; set [wDeckRequirementOpponentOffset] = e
 ; then check deck requirement using the opponent offset in [wDeckRequirement]
 CheckDuelDeckRequirement::
 	ld a, e
-	ld [wcd55], a
+	ld [wDeckRequirementOpponentOffset], a
 	bank1call LoadPlayerDeck
 	ld a, [wDeckRequirement]
 	ld hl, .DuelDeckRequirementPointers
@@ -5119,7 +5119,7 @@ CheckNishijimaRequirement:
 
 CheckIshiiRequirement:
 	ld e, 3 ; table offset
-	ld a, [wcd55]
+	ld a, [wDeckRequirementOpponentOffset]
 	or a
 	jr z, CheckDarkPokemonRequirement
 	jr CheckColorlessAltarRequirement
@@ -5128,7 +5128,7 @@ CheckSamejimaRequirement:
 	ld e, 6 ; table offset
 	; fallthrough
 CheckColorlessAltarRequirement:
-	ld a, [wcd55]
+	ld a, [wDeckRequirementOpponentOffset]
 	add e
 	add a
 	ld e, a
@@ -5475,7 +5475,7 @@ _TossCoin::
 .got_result
 ; already decided on coin toss result,
 ; check if we should show animation or not
-	ld a, [wcd14]
+	ld a, [wDuelCoinTossAnimationSetting]
 	or a
 	jr z, .dont_skip_animation
 	ldh a, [hKeysHeld]

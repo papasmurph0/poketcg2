@@ -4693,7 +4693,7 @@ HypnoMindShockEffect:
 	set UNAFFECTED_BY_WEAKNESS_RESISTANCE_F, [hl]
 	ret
 
-Func_65cf9:
+SetPsychicHitAnimAndIgnoreWeaknessResistance: ; Func_65cf9
 	ld a, ATK_ANIM_PSYCHIC_HIT
 	ld [wLoadedAttackAnimation], a
 	ld hl, wDamage + 1
@@ -5840,7 +5840,7 @@ PikachuThunderboltEffect:
 	jr .loop_discard
 
 ; unreferenced
-Func_663e2:
+SetExpectedAIDamage_30: ; Func_663e2
 	ld a, 30 / 2
 	lb de, 0, 30
 	farcall SetExpectedAIDamage
@@ -8130,7 +8130,7 @@ PokemonBreeder_EvolveEffect:
 
 ; load Stage2 Pokemon card name to RAM
 	ldh a, [hTempCardIndex_ff98]
-	ld [wcd15], a
+	ld [wTrainerCardPlayedPokemonDeckIndex], a
 	call LoadCardDataToBuffer1_FromDeckIndex
 	ld hl, wTxRam2_b
 	ld a, [wLoadedCard1Name + 0]

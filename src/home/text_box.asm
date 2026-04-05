@@ -76,7 +76,7 @@ DrawLabeledTextBox::
 	call CopyText
 	ld hl, wc000 + 3
 	call GetTextLengthInTiles
-	ld [wcd5c], a
+	ld [wLabeledTextBoxLabelLength], a
 	ld l, e
 	ld h, d
 	; white tile after the text
@@ -132,7 +132,7 @@ DrawLabeledTextBox::
 	push bc
 	push hl
 	push de
-	ld a, [wcd5c]
+	ld a, [wLabeledTextBoxLabelLength]
 	cpl
 	inc a
 	ld c, a

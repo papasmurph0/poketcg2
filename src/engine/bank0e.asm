@@ -5329,7 +5329,7 @@ UpdateDeckMachineScrollArrowsAndEntries_TCG1:
 
 DrawDeckMachineScreen:
 	call DrawListScrollArrows
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	call SetDeckMachineTitleText
 	lb de, 1, 14
@@ -5339,7 +5339,7 @@ DrawDeckMachineScreen:
 	ld h, [hl]
 	ld l, a
 	call ProcessTextFromID
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 	jr PrintVisibleDeckMachineEntries
 

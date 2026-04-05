@@ -795,7 +795,7 @@ InitTCGIslandOverworldState: ; Func_4048a
 .gr_blimp_cutscene
 	ld bc, TILEMAP_001
 	lb de, 0, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
@@ -1427,7 +1427,7 @@ HandleMasonLaboratoryMainWarpFadeInPreload: ; Func_40e91
 DrawMasonLaboratoryMainChallengeMachineTilemap: ; Func_40ef9
 	ld bc, TILEMAP_006
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ret
 
 HandleMasonLaboratoryMainInteractions: ; Func_40f04
@@ -4512,7 +4512,7 @@ HandleGrChallengeHallWarpFadeInPreload: ; Func_4266e
 	jr nz, .set_opponents_draw_round1
 	ld bc, TILEMAP_057
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .set_opponents_draw_round1
 	ld a, GR_ISLAND
 	farcall SetChallengeCupOpponents

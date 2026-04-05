@@ -3181,7 +3181,7 @@ HypnoMindShockEffectCommands:
 ; unreferenced
 EffectCommands_590ab:
 	db BANK("Effect Functions 2")
-	dbw EFFECTCMDTYPE_BEFORE_DAMAGE, Func_65cf9
+	dbw EFFECTCMDTYPE_BEFORE_DAMAGE, SetPsychicHitAnimAndIgnoreWeaknessResistance
 	db $00
 
 KinglerSaltWaterEffectCommands:

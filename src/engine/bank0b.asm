@@ -1802,7 +1802,7 @@ HandlePsychicClubWarpFadeInPreload: ; Func_2cda2
 	jr z, .asm_2cdf6
 	ld bc, TILEMAP_013
 	lb de, 5, 6
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	jr .asm_2ce0f
 .asm_2cdc6
 	ld a, OWMODE_SCRIPT
@@ -3812,7 +3812,7 @@ HandleFightingClubWarpFadeInPreload: ; Func_2dd15
 	jr z, .asm_2dd2f
 	ld bc, TILEMAP_01A
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .asm_2dd2f
 	scf
 	ret
@@ -4485,7 +4485,7 @@ HandleGrassClubWarpFadeInPreload: ; Func_2e1d9
 	jr z, .asm_2e1f3
 	ld bc, TILEMAP_01E
 	lb de, 5, 11
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .asm_2e1f3
 	scf
 	ret
@@ -5506,16 +5506,16 @@ HandleScienceClubWarpFadeInPreload: ; Func_2e95c
 	jr z, .asm_2e994
 	ld bc, TILEMAP_022
 	lb de, 4, 1
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld bc, TILEMAP_023
 	lb de, 9, 1
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld bc, TILEMAP_024
 	lb de, 4, 6
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld bc, TILEMAP_025
 	lb de, 5, 12
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .asm_2e994
 	scf
 	ret
@@ -6478,13 +6478,13 @@ HandleWaterClubWarpFadeInPreload: ; Func_2f0a5
 .asm_2f0c3
 	ld bc, TILEMAP_02A
 	lb de, 2, 4
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr nz, .asm_2f0e1
 	ld bc, TILEMAP_029
 	lb de, 5, 12
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	jr .asm_2f0f5
 .asm_2f0e1
 	xor a
@@ -7511,10 +7511,10 @@ HandleFireClubWarpFadeInPreload: ; Func_2f86e
 .asm_2f891
 	ld bc, TILEMAP_02E
 	lb de, 5, 11
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld bc, TILEMAP_02F
 	lb de, 5, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_SET_UNTIL_MAP_RELOAD_1
 	farcall GetEventValue
 	jr z, .asm_2f8c6

@@ -754,7 +754,7 @@ DrawYourOrOppPlayArea_ActiveCardGfx:
 	pop de
 	push de
 	bank1call DrawCardGfxToDE_BGPalIndex5
-	bank1call Func_6c12
+	bank1call LoadCardDetailScreenPalettes
 	bank1call FlushAllPalettesIfNotDMG
 	pop de
 
@@ -767,7 +767,7 @@ DrawYourOrOppPlayArea_ActiveCardGfx:
 	ret
 
 .no_pokemon
-	bank1call Func_6c12
+	bank1call LoadCardDetailScreenPalettes
 	pop de
 	ret
 
@@ -5700,10 +5700,10 @@ RemoveCardFromDeck:
 	ret
 
 UpdateConfirmationCardScreen:
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	call PrintCurDeckNumberAndName
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 	jp PrintConfirmationCardList
 
@@ -6294,7 +6294,7 @@ GetCardTypeIconPalette:
 	push hl
 	push de
 	push af
-	bank1call Func_6c12
+	bank1call LoadCardDetailScreenPalettes
 	pop af
 	pop de
 	ld b, a
@@ -6550,10 +6550,10 @@ HandlePlayersCardsScreen:
 	ld [hl], $00
 	call PrintFilteredCardSelectionList
 
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	call PrintPlayersCardsText
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 
 	ld a, NUM_FILTERS
@@ -6670,10 +6670,10 @@ GeneralCardListMenuParams:
 
 GeneralCardListUpdateFunc:
 	ld a, $01
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	call PrintPlayersCardsText
 	xor a
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	call PrintCardSelectionList
 	ret
 
@@ -8265,10 +8265,10 @@ PrinterMenu_PokemonCards:
 	ld hl, wScrollMenuScrollOffset
 	ld [hl], $00
 	call PrintFilteredCardSelectionList
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	call PrintPlayersCardsText
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 	ld a, NUM_FILTERS
 	ld [wNumMenuItems], a
@@ -8649,7 +8649,7 @@ _HandleDeckStatusCardList:
 	scrollmenu_params 0, 3, 2, 0, NUM_DECK_STATUS_LIST_VISIBLE_CARDS, SYM_CURSOR_R, SYM_SPACE, NULL
 
 .ScrollFunc_TCG1:
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	call .PrintDeckIndexAndName
 	lb de, 1, 14
@@ -8659,7 +8659,7 @@ _HandleDeckStatusCardList:
 	ld h, [hl]
 	ld l, a
 	call ProcessTextFromID
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 	jp PrintConfirmationCardList
 
@@ -8862,7 +8862,7 @@ GiftCenter_CardSelectionParams:
 	scrollmenu_params 1, 3, 2, 0, 5, SYM_CURSOR_R, SYM_SPACE, NULL
 
 ShowReceivedCardsList:
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $01
 	lb de, 1, 1
 	call InitTextPrinting
@@ -8878,7 +8878,7 @@ ShowReceivedCardsList:
 	call InitTextPrinting
 	ldtx hl, ReceivedTheseCardsFromText
 	call PrintTextNoDelay
-	ld hl, hffbb
+	ld hl, hTextTileGenerationFlags
 	ld [hl], $00
 	jp PrintCardSelectionList
 
@@ -9161,10 +9161,10 @@ DeckDiagnosisResult:
 
 .UpdateFunc:
 	ld a, $01
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	call .PrintText
 	xor a
-	ldh [hffbb], a
+	ldh [hTextTileGenerationFlags], a
 	call .PrintCardList
 	ret
 

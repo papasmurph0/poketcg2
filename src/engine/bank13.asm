@@ -99,7 +99,7 @@ AIPrioritizeStartingArenaCard:
 
 ; input:
 ; - a = deck index
-Func_4c25c:
+AIDecideEnergyCardPlay: ; Func_4c25c
 	call GetCardIDFromDeckIndex
 	cp16 DOUBLE_COLORLESS_ENERGY
 	jr z, .double_colorless
@@ -441,7 +441,7 @@ FindReplacementPkmnIfMrMime:
 
 SECTION "Bank 13@456b", ROMX[$456b], BANK[$13]
 
-Func_4c56b:
+AIFindGustOfWindTargetForArenaCard: ; Func_4c56b
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call GetCardIDFromDeckIndex
@@ -532,7 +532,7 @@ Func_4c56b:
 	or a
 	ret
 
-Func_4c605:
+AICheckShouldSwitchFromFirstAttack: ; Func_4c605
 	call CountPrizes
 	cp 1
 	jr z, .set_carry ; on last prize card
@@ -584,7 +584,7 @@ Func_4c605:
 	scf
 	ret
 
-Func_4c65b:
+AITrackAttackRepeatCount: ; Func_4c65b
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	ld hl, wAILastAttackArenaCard

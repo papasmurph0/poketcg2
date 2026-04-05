@@ -94,7 +94,7 @@ GetOWAnimationGfxPointer:
 	pop af
 	ret
 
-Func_12c06e::
+GetOWTileFrameGfxPointer:: ; Func_12c06e
 	push af
 	sla c
 	rl b
@@ -154,7 +154,7 @@ GetOWObjectFrameset::
 	ret
 
 ; b:hl = tilemap pointer
-Func_12c0b7:
+LoadTilemapAndSaveDimensions: ; Func_12c0b7
 	push af
 	push bc
 	push de
@@ -174,7 +174,7 @@ Func_12c0b7:
 
 ; bc = TILEMAP_* constant
 ; de = OW coordinates
-Func_12c0ce::
+AddOWTilemapOverlay:: ; Func_12c0ce
 	push af
 	push bc
 	push de
@@ -184,7 +184,7 @@ Func_12c0ce::
 	call GetTilemapGfxPointer
 	sla d ; *2
 	sla e ; *2
-	call Func_12c0fc
+	call LoadTilemapDefault
 	ld hl, wOWTilemapOverlayCount
 	ld a, [hl]
 	inc [hl]
@@ -210,7 +210,7 @@ Func_12c0ce::
 	ret
 
 ; b:hl = tilemap pointer
-Func_12c0fc:
+LoadTilemapDefault: ; Func_12c0fc
 	push af
 	push bc
 	push de
@@ -343,7 +343,7 @@ LoadTilemap::
 	ld h, a
 	or l
 	jr z, .null
-	call Func_12c1c1
+	call DecompressTilemapPermissions
 .null
 	ld a, [wBGMapWidth]
 	ld b, a
@@ -357,7 +357,7 @@ LoadTilemap::
 	ret
 
 ; decompress permission data?
-Func_12c1c1:
+DecompressTilemapPermissions: ; Func_12c1c1
 	call InitDataDecompressionFromBank
 	srl d
 	srl e
@@ -429,7 +429,7 @@ LoadOWMap::
 	push hl
 	call GetTilemapGfxPointer
 	lb de, 0, 0
-	call Func_12c0b7
+	call LoadTilemapAndSaveDimensions
 	pop hl
 
 	ld c, [hl] ; tileset
@@ -564,7 +564,7 @@ UpdateSpriteAnim::
 	call LoadSpriteAnim
 	call DecrementSpriteAnimStartDelay
 	jr nz, .apply_changes ; still delaying
-	call Func_12c35c
+	call InitSpriteAnimFrameIfNeeded
 	ld hl, wCurSpriteAnim
 	bit SPRITEANIMSTRUCT_ANIMATING_F, [hl] ; SPRITEANIMSTRUCT_FLAGS
 	jr z, .asm_12c2fe
@@ -622,10 +622,10 @@ DecrementSpriteAnimFrameDuration:
 	ld [wCurSpriteAnimFrameDuration], a
 	and a
 	ret nz
-	call Func_12c36a
+	call AdvanceSpriteAnimFrame
 	ret
 
-Func_12c35c:
+InitSpriteAnimFrameIfNeeded: ; Func_12c35c
 	ld a, [wCurSpriteAnimFrameIndex]
 	ld b, a
 	ld a, [wCurSpriteAnimFrameDuration]
@@ -633,7 +633,7 @@ Func_12c35c:
 	ret nz
 	ld a, -1
 	ld [wCurSpriteAnimFrameIndex], a
-Func_12c36a:
+AdvanceSpriteAnimFrame: ; Func_12c36a
 	ld a, [wCurSpriteAnimFrameIndex]
 	inc a
 	ld [wCurSpriteAnimFrameIndex], a

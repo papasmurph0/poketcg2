@@ -4,7 +4,7 @@
 LoadOpponentDeck::
 	xor a
 	ld [wIsPracticeDuel], a
-	ld [wcd17], a
+	ld [wNoShuffleDuringDuelSetup], a
 	ld a, [wOpponentDeckID]
 	or a
 	jr z, .set_practice_duel
@@ -32,7 +32,7 @@ LoadOpponentDeck::
 	dec e
 .load_predefined_player_deck
 	ld a, $01
-	ld [wcd17], a
+	ld [wNoShuffleDuringDuelSetup], a
 	call SwapTurn
 	ld a, e
 	add 2

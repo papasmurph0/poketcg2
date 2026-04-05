@@ -18,7 +18,7 @@ Prologue::
 	farcall LoadOWMap
 	ld bc, TILEMAP_001
 	lb de, 0, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, $00
 	call FadeInOverworldFromBlackOrWhite
 	call WaitPalFading
@@ -106,7 +106,7 @@ Prologue::
 
 	ld bc, TILEMAP_002
 	lb de, 0, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 
 	lb de,  1, 1
 	lb bc, 11, 1
@@ -816,7 +816,7 @@ HandleMasonLaboratoryComputerRoomWarpFadeInPreload: ; Func_3c697
 	farcall SetOWObjectDirection
 	ld bc, TILEMAP_008
 	lb de, 7, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .asm_3c6b1
 	scf
 	ret
@@ -1564,7 +1564,7 @@ HandleLightningClubEntranceWarpFadeInPreload: ; Func_3cbfb
 .asm_3cc0b
 	ld bc, TILEMAP_00C
 	lb de, 1, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call CheckIfMetRonaldAtLeastTwice
 	jr c, .asm_3cc35
 	ldtx hl, DialogGR4Text
@@ -2881,7 +2881,7 @@ LoadPokemonDomeNPCs: ; Func_3d6c1
 HandlePokemonDomeWarpFadeInPreload: ; Func_3d6ca
 	ld bc, TILEMAP_037
 	lb de, 7, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, [wPrevMap]
 	cp MAP_POKEMON_DOME_BACK
 	jr z, .cup_played
@@ -3864,7 +3864,7 @@ HandlePokemonDomeBackWarpFadeInPreload: ; Func_3ddb8
 .grand_master_cup
 	ld bc, TILEMAP_0B9
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, NPC_COURTNEY
 	lb de, 3, 5
 	ld b, EAST
@@ -6303,7 +6303,7 @@ HandleCardDungeonPawnInteractions: ; Func_3f0a3
 HandleCardDungeonPawnWarpFadeInPreload: ; Func_3f0b3
 	ld bc, TILEMAP_CARD_DUNGEON_PAWN_FRONT_DOORS_SHUT
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(ScriptCardDungeonPawnCloseFrontDoorsOnEntry)
@@ -6522,7 +6522,7 @@ HandleCardDungeonKnightInteractions: ; Func_3f249
 HandleCardDungeonKnightWarpFadeInPreload: ; Func_3f259
 	ld bc, TILEMAP_CARD_DUNGEON_KNIGHT_FRONT_DOORS_SHUT
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(ScriptCardDungeonKnightCloseFrontDoorsOnEntry)
@@ -6763,7 +6763,7 @@ HandleCardDungeonRookInteractions: ; Func_3f419
 HandleCardDungeonRookWarpFadeInPreload: ; Func_3f429
 	ld bc, TILEMAP_CARD_DUNGEON_ROOK_FRONT_DOORS_SHUT
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(ScriptCardDungeonRookCloseFrontDoorsOnEntry)
@@ -7319,7 +7319,7 @@ HandleFightingFortMaze19OpenedChestPostInteraction: ; Func_3f858
 	ld c, a
 	cp16bc_bytes 0, 3
 	jr nz, .asm_3f87b
-	farcall Func_1352a
+	farcall ShowHiddenCardGallery
 	ret
 .asm_3f87b
 	ld a, VAR_3B

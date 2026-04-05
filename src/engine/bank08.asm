@@ -281,7 +281,7 @@ AIDecide_Potion_Phase07:
 
 SECTION "Bank 8@49fc", ROMX[$49fc], BANK[$8]
 
-Func_209fc:
+AIChooseGustOfWindBenchTarget: ; Func_209fc
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	call GetNonTurnDuelistVariable
 	dec a
@@ -364,7 +364,7 @@ Func_209fc:
 	ld a, [wTotalAttachedEnergies]
 	or a
 	jr nz, .asm_20a85
-	call Func_20be6
+	call CheckBenchCardCanDamageDefender
 	jr nc, .asm_20a85
 	ld a, e
 	scf
@@ -390,7 +390,7 @@ Func_209fc:
 	inc b
 	cp b
 	jr c, .asm_20ab0
-	call Func_20be6
+	call CheckBenchCardCanDamageDefender
 	jr nc, .asm_20ab0
 	dec b
 	ld a, b
@@ -443,7 +443,7 @@ Func_209fc:
 	ret
 
 .PsychicBattleDeck:
-	farcall Func_4c56b
+	farcall AIFindGustOfWindTargetForArenaCard
 	ret nc
 	cp $ff
 	jp z, .asm_20a79
@@ -588,7 +588,7 @@ FindBenchCardThatCanBeKnockedOut:
 	scf
 	ret
 
-Func_20be6:
+CheckBenchCardCanDamageDefender: ; Func_20be6
 	push bc
 	push de
 	push hl

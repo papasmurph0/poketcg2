@@ -21,6 +21,8 @@
 - Never change a label from `:` to `::` unless export scope is confirmed by real usage or authoritative symbols.
 - Leave uncertain routines and labels as `Func_xxxx` and `.asm_xxxx` until their purpose is defensible.
 - When a `Func_xxxx` placeholder receives a confirmed function name, keep the old placeholder as an inline label comment in the form `NewFuncName: ; Func_xxxx`.
+- For every unknown ram label, create a new `wUnknown_xxxx` or `hUnknown_xxxx` RAM name in the format `wNewRAMName ; (w)XXXX` and in the appropriate file with a comment for its observed behavior and usage context. Do not rename a RAM label until its purpose is defensible.
+- If a RAM label's purpose is not obvious from the name alone, add a concise explanation comment directly above the label declaration describing observed behavior/context.
 - Functions will be scattered throught 'src', so use search and context to find the right file for a rename instead of assuming.
 - Use the inline old-name comment only for confirmed renamed functions. Do not add it to unnamed routines, local labels, or non-function labels.
 - Functions and labels should be named for their observed behavior and purpose, not just to avoid placeholder names.
@@ -39,6 +41,15 @@
 	`Concise function description`
 - Leave one blank line after the description so the next entry starts after a blank line.
 - Keep descriptions concise and aligned with `CONTRIBUTING.md`, focusing on purpose, context, and important input or output behavior.
+
+## Local WRAM Rename Documentation
+- Create `docs/unnamed_wram.txt` when recording the first confirmed WRAM rename if the file does not already exist.
+- Record each confirmed `wxxxx`/`hxxxx` rename in `docs/unnamed_wram.txt`.
+- Use this exact entry format:
+	`wxxxx -> wNewRAMName`
+	`Concise RAM behavior/context description`
+- Leave one blank line after the description so the next entry starts after a blank line.
+- Keep descriptions concise and aligned with `CONTRIBUTING.md`, focusing on observed behavior and usage context.
 
 ## Review And Documentation
 - For reviews, prioritize parity risks, accidental export changes, speculative naming, and violations of `CONTRIBUTING.md`.

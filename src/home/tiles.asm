@@ -105,7 +105,7 @@ LoadDuelCheckPokemonScreenTiles::
 	ld hl, $4000
 	ld de, v0Tiles1 + $50 tiles
 	call CopyFontsOrDuelGraphicsTiles
-	bank1call Func_6c12
+	bank1call LoadCardDetailScreenPalettes
 	ret
 
 ; loads the 8 tiles that make up the border of the main duel menu as well as the border

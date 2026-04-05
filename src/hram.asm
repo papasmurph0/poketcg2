@@ -133,11 +133,13 @@ ENDU
 hCurSelectionItem:: ; ffb2
 	ds $1
 
-; hffa8 through hffbb belong to the text engine
-hffa8:: ; ffb3
+; hTextTileLastReserved through hTextTileGenerationFlags belong to the text engine
+; last VRAM tile index that may be reserved for generated text tiles
+hTextTileLastReserved:: ; ffb3
 	ds $1
 
-hffa9:: ; ffb4
+; head index of the generated-text-tile cache linked list
+hTextTileCacheHead:: ; ffb4
 	ds $1
 
 ; Address within v*BGMap0 where text is currently being written to
@@ -167,7 +169,8 @@ hTextLineLength:: ; ffb9
 hJapaneseSyllabary:: ; ffba
 	ds $1
 
-hffbb:: ; ffbb
+; text-tile generation flags: bit 0 skips generating/placing tiles, bit 1 skips placing them
+hTextTileGenerationFlags:: ; ffbb
 	ds $1
 
 ; unlike wCurMenuItem, this accounts for the scroll offset (wListScrollOffset)

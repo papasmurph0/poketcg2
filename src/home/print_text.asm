@@ -502,7 +502,7 @@ PrintTextNoDelayAndZeroAttributes:: ; Func_2c4b
 	call PrintTextNoDelay_Init
 	pop de
 	pop hl
-	ldh a, [hffbb]
+	ldh a, [hTextTileGenerationFlags]
 	or a
 	ret nz
 	ldh a, [hTextLineCurPos]

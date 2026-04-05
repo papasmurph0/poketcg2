@@ -966,7 +966,7 @@ HandleSlotMachineBetting:
 	ret
 
 ; debug? unreferenced
-Func_12a3d:
+HandleSlotMachineDebugSelectPress: ; Func_12a3d
 	ldh a, [hKeysPressed]
 	and PAD_SELECT
 	ret z
@@ -982,7 +982,7 @@ Func_12a3d:
 	ret
 
 ; debug? unreferenced
-Func_12a57:
+CheckSlotMachineDebugDelayExpired: ; Func_12a57
 	scf
 	ccf
 	ld a, [wSlotMachineDebugFlag]
@@ -1283,7 +1283,7 @@ HandleSlotMachinePayouts:
 	db 3 ; bet 5
 
 ; debug? unreferenced
-Func_12c17:
+FindMatchingSlotMachinePreset: ; Func_12c17
 	ld hl, .pointer_table
 	ld c, 0
 .loop_presets

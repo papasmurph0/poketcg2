@@ -90,7 +90,7 @@ ProcessSpecialTextCharacter::
 	call TerminateHalfWidthText
 	pop af
 	ld [wFontWidth], a
-	ldh a, [hffbb]
+	ldh a, [hTextTileGenerationFlags]
 	or a
 	jr nz, .skip_placing_tile
 	ld a, [hl]
@@ -141,13 +141,13 @@ ProcessSpecialTextCharacter::
 SetupText::
 	ld a, d
 	dec a
-	ld [wcd04], a
+	ld [wTextTileReserveCursor], a
 	ld a, e
-	ldh [hffa8], a
+	ldh [hTextTileLastReserved], a
 	call InitTextFormat
 	xor a
-	ldh [hffbb], a
-	ldh [hffa9], a
+	ldh [hTextTileGenerationFlags], a
+	ldh [hTextTileCacheHead], a
 	ld a, $88
 	ld [wTilePatternSelector], a
 	ld a, $80
@@ -206,15 +206,15 @@ InitTextPrinting::
 	ret
 
 ; requests a text tile to be generated and prints it in the screen
-; different modes depending on hffbb:
-   ; hffbb == $0: generate and place text tile
-   ; hffbb == $2 (bit 1 set): only generate text tile?
-   ; hffbb == $1 (bit 0 set): not even generate it, but just update text buffers?
+; different modes depending on hTextTileGenerationFlags:
+   ; $0: generate and place text tile
+   ; bit 1 set: generate text tile without placing it
+   ; bit 0 set: skip generation/placement and only update text buffers
 GenerateAndPlaceTextTileIfNeeded:: ; Func_22ca
 	push hl
 	push de
 	push bc
-	ldh a, [hffbb]
+	ldh a, [hTextTileGenerationFlags]
 	and $1
 	jr nz, .asm_22ed
 	call FindTextTileInCacheOrReserveSlot
@@ -223,10 +223,10 @@ GenerateAndPlaceTextTileIfNeeded:: ; Func_22ca
 	jr nz, .done
 	call GenerateTextTile
 .tile_already_exists
-	ldh a, [hffbb]
+	ldh a, [hTextTileGenerationFlags]
 	and $2
 	jr nz, .done
-	ldh a, [hffa9]
+	ldh a, [hTextTileCacheHead]
 	call PlaceNextTextTile
 .done
 	pop bc
@@ -284,11 +284,11 @@ FindTextTileInCacheOrReserveSlot:: ; Func_2325
 	ret c
 	or a
 	ret nz
-	ldh a, [hffa8]
-	ld hl, wcd04
+	ldh a, [hTextTileLastReserved]
+	ld hl, wTextTileReserveCursor
 	cp [hl]
 	jr nz, .asm_2345
-	ldh a, [hffa9]
+	ldh a, [hTextTileCacheHead]
 	ld h, HIGH(wc800)
 .asm_2337
 	ld l, a
@@ -308,11 +308,11 @@ FindTextTileInCacheOrReserveSlot:: ; Func_2325
 .asm_2349
 	ld l, [hl]
 .asm_234a
-	ldh a, [hffa9]
+	ldh a, [hTextTileCacheHead]
 	ld c, a
 	ld b, HIGH(wc900)
 	ld a, l
-	ldh [hffa9], a
+	ldh [hTextTileCacheHead], a
 	ld [bc], a
 	ld h, HIGH(wc800)
 	ld [hl], c
@@ -751,8 +751,8 @@ FindTextTileInCache:: ; Func_235e
 .print
 	xor a
 	ld [wHalfWidthPrintState], a
-	ldh a, [hffa9]
-	ld l, a              ; l ← [hffa9]; index to to linked-list head
+	ldh a, [hTextTileCacheHead]
+	ld l, a              ; l <- cache linked-list head index
 .asm_237d
 	ld h, $c6                                     ;
 	ld a, [hl]           ; a ← key1[l]            ;
@@ -769,14 +769,14 @@ FindTextTileInCache:: ; Func_235e
 	ld l, [hl]           ; l ← next[l]            ;
 	jr .asm_237d
 .asm_238f
-	ldh a, [hffa9]
+	ldh a, [hTextTileCacheHead]
 	cp l
 	jr z, .asm_23af      ; assert at least one iteration
 	ld c, a
 	ld b, $c9
 	ld a, l
 	ld [bc], a           ; prev[i0] ← i
-	ldh [hffa9], a       ; [hffa9] ← i  (update linked-list head)
+	ldh [hTextTileCacheHead], a ; update linked-list head
 	ld h, $c9
 	ld b, [hl]
 	ld [hl], $0          ; prev[i] ← 0

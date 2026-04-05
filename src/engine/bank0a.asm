@@ -1031,7 +1031,7 @@ AISelectSpecialAttackParameters:
 	jr z, .select_foxfire_target_randomly
 	cp BLAZING_FLAME_DECK_ID
 	jr z, .select_foxfire_based_on_energies
-	farcall Func_209fc
+	farcall AIChooseGustOfWindBenchTarget
 	jr c, .asm_285ff
 	farcall FindBenchCardThatCanBeDamaged
 .asm_285ff
@@ -1277,7 +1277,7 @@ AISelectSpecialAttackParameters:
 	ld a, [wSelectedAttack]
 	or a
 	jp nz, .no_carry
-	farcall Func_209fc
+	farcall AIChooseGustOfWindBenchTarget
 	jp nc, .no_carry
 	ldh [hTempPlayAreaLocation_ffa1], a
 	ldtx de, AttackSuccessCheckText
@@ -3322,7 +3322,7 @@ ReadCurAutoDeckName:
 	ret
 
 ; de = text ID
-Func_2bc4f:
+RunDeckSelectionMenu: ; Func_2bc4f
 	ld hl, wDeckScreenTextPtr
 	ld [hl], e
 	inc hl
@@ -3441,12 +3441,12 @@ _HandleAutoDeckMenu:
 	call PrintTextNoDelayAndZeroAttributes
 	ldtx hl, ChooseDeckCategoryText
 	call DrawWideTextBox_PrintText
-	call Func_2bd48
+	call InitAutoDeckMachineCategoryList
 	farcall UpdateDeckMachineScrollArrowsAndEntries
 	call EnableLCD
 	ret
 
-Func_2bd48:
+InitAutoDeckMachineCategoryList: ; Func_2bd48
 	ld a, NUM_AUTO_DECK_MACHINE_REGULAR_CATEGORIES
 	ld hl, wIndicesAutoDeckMachineUnlockedCategories
 	farcall ClearNBytesFromHL

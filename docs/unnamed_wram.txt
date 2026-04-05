@@ -1,0 +1,78 @@
+wcbeb -> wAttachedEnergyMenuReadOnly
+; read-only mode flag for the attached-energy menu that blocks selecting cards.
+
+wcbf5 -> wPlayAreaCardList
+; temporary list buffer storing play area card deck indices for play-area screen rendering.
+
+wccd8 -> wTempTurnDuelistCardIDPlayAreaLocation
+; stores the turn duelist play-area slot used when resolving color/type from wTempTurnDuelistCardID.
+
+wccd9 -> wTempNonTurnDuelistCardIDPlayAreaLocation
+; stores the non-turn duelist play-area slot used when resolving color/type from wTempNonTurnDuelistCardID.
+
+wccec -> wSentAttackDataToLinkOpponent
+; flag that marks whether OPPACTION_BEGIN_ATTACK data was already sent to the link opponent.
+
+wcd14 -> wDuelCoinTossAnimationSetting
+; duel coin-toss animation setting loaded from SRAM and checked to allow animation skipping.
+
+wcd15 -> wTrainerCardPlayedPokemonDeckIndex
+; deck index of the Pokemon card played by a trainer effect for immediate follow-up processing.
+
+wcd17 -> wNoShuffleDuringDuelSetup
+; flag used by practice/special duel setup to skip opening deck shuffle animation.
+
+wcd18 -> wPlayedPokemonPowerActivated
+; flag set when a played Pokemon card triggered and activated a Pokemon Power.
+
+wcd29 -> wDeckDiagnosisSubMenuItem
+; current selected item in the per-step deck diagnosis submenu.
+
+wcd2b -> wDeckDiagnosisSelectedDeckSRAMPtr
+; SRAM pointer to the selected saved deck while running deck diagnosis checks.
+
+wcd4b -> wDeckCheckNumPkmnTypesForEnergyCalc
+; number of Pokemon types considered while computing deck energy-balance requirements.
+
+wcd4c -> wDeckCheckCurTypeAdjustedPkmnCount
+; adjusted current-type Pokemon count used in deck energy-balance calculations.
+
+wcd4e -> wDeckDiagnosisNumMessagesPrinted
+; count of deck diagnosis warning/result messages printed in the current check pass.
+
+wcd51 -> wCardPopRarityFilter
+; rarity filter used when building the Card Pop candidate list.
+
+wcd52 -> wCardPopMinSetFilter
+; minimum set filter used when building the Card Pop candidate list.
+
+wcd53 -> wCardPopMaxSetFilter
+; maximum set filter used when building the Card Pop candidate list.
+
+wcd54 -> wCardPopNumCandidates
+; number of entries currently available in wCardPopCandidateList.
+
+wcd55 -> wDeckRequirementOpponentOffset
+; opponent offset used by duel deck-requirement table lookups.
+
+wcb80 -> wSerialSendBufWriteIndex
+; write index for the serial send-buffer circular queue.
+
+wcba3 -> wSerialRecvBufReadIndex
+; read index for the serial receive-buffer circular queue.
+
+wcd5c -> wLabeledTextBoxLabelLength
+; tile width of the label text written by DrawLabeledTextBox.
+
+hffa8 -> hTextTileLastReserved
+; last VRAM tile index that SetupText allows the text engine to reserve.
+
+hffa9 -> hTextTileCacheHead
+; head index of the generated-text-tile cache linked list.
+
+wcd04 -> wTextTileReserveCursor
+; current reservation cursor for generated text tiles within the SetupText tile range.
+
+hffbb -> hTextTileGenerationFlags
+; text-engine flags controlling whether generated text tiles are built and/or placed.
+

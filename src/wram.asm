@@ -338,7 +338,8 @@ wSerialSendBufToggle:: ; cb78
 wSerialSendBufIndex:: ; cb79
 	ds $1
 
-wcb80:: ; cb7a
+; write index for wSerialSendBuf circular queue
+wSerialSendBufWriteIndex:: ; cb7a
 	ds $1
 
 wSerialSendBuf:: ; cb7b
@@ -350,7 +351,8 @@ wSerialLastReadCA:: ; cb9b
 wSerialRecvCounter:: ; cb9c
 	ds $1
 
-wcba3:: ; cb9d
+; read index for wSerialRecvBuf circular queue
+wSerialRecvBufReadIndex:: ; cb9d
 	ds $1
 
 wSerialRecvIndex:: ; cb9e
@@ -507,7 +509,8 @@ wTempSerialBuf:: ; cbe2
 
 	ds $1
 
-wcbeb:: ; cbeb
+; if non-zero, attached-energy menu becomes read-only and selected cards cannot be submitted
+wAttachedEnergyMenuReadOnly:: ; cbeb
 	ds $1
 
 wAttachedEnergyMenuDenominator:: ; cbec
@@ -543,7 +546,8 @@ wDuelMainSceneSelectHotkeyAction:: ; cbf3
 wPracticeDuelTurn:: ; cbf4
 	ds $1
 
-wcbf5:: ; cbf5
+; temporary list of play-area card deck indices built while drawing play-area screens
+wPlayAreaCardList:: ; cbf5
 	ds $1
 
 	ds $6
@@ -738,10 +742,12 @@ wTempTurnDuelistCardID:: ; ccd4
 wTempNonTurnDuelistCardID:: ; ccd6
 	ds $2
 
-wccd8:: ; ccd8
+; PLAY_AREA_* slot used when resolving type/color for wTempTurnDuelistCardID
+wTempTurnDuelistCardIDPlayAreaLocation:: ; ccd8
 	ds $1
 
-wccd9:: ; ccd9
+; PLAY_AREA_* slot used when resolving type/color for wTempNonTurnDuelistCardID
+wTempNonTurnDuelistCardIDPlayAreaLocation:: ; ccd9
 	ds $1
 
 ; the status condition of the defending Pokemon is loaded here after an attack
@@ -797,7 +803,8 @@ wOpponentDeckName:: ; ccfe
 wTempPlayAreaLocation_cceb:: ; cd00
 	ds $1
 
-wccec:: ; cd01
+; set after sending OPPACTION_BEGIN_ATTACK so attack data is sent once per attack flow
+wSentAttackDataToLinkOpponent:: ; cd01
 	ds $1
 
 ; used by the effect functions to return the cause of an effect to fail
@@ -864,10 +871,12 @@ wDarkWaveDamageModifier:: ; cd10
 wDarknessVeilDamageModifier:: ; cd12
 	ds $2
 
-wcd14:: ; cd14
+; copy of SRAM coin-toss animation option used by duel coin toss routines
+wDuelCoinTossAnimationSetting:: ; cd14
 	ds $1
 
-wcd15:: ; cd15
+; deck index of a Pokemon card played via trainer effect and processed immediately after the trainer resolves
+wTrainerCardPlayedPokemonDeckIndex:: ; cd15
 	ds $1
 
 ; if TRUE, then attack selected with Metronome/Mini-Metronome
@@ -875,10 +884,12 @@ wcd15:: ; cd15
 wMetronomeAttackCannotBeUsed:: ; cd16
 	ds $1
 
-wcd17:: ; cd17
+; when non-zero, opening duel setup skips shuffling (used by practice/special setup)
+wNoShuffleDuringDuelSetup:: ; cd17
 	ds $1
 
-wcd18:: ; cd18
+; set when a Pokemon played from hand activated its Pokemon Power handling path
+wPlayedPokemonPowerActivated:: ; cd18
 	ds $1
 
 ; when non-0, AIMakeDecision doesn't wait 60 frames and print DuelistIsThinkingText
@@ -947,13 +958,15 @@ wNumDeckDiagnosisSteps:: ; cd27
 wDeckDiagnosisStep:: ; cd28
 	ds $1
 
-wcd29:: ; cd29
+; current selected item in the per-step deck diagnosis submenu
+wDeckDiagnosisSubMenuItem:: ; cd29
 	ds $1
 
 wDeckDiagnosisAdvice:: ; cd2a
 	ds $1
 
-wcd2b:: ; cd2b
+; SRAM pointer to the selected saved deck while running CheckDeck
+wDeckDiagnosisSelectedDeckSRAMPtr:: ; cd2b
 	ds $2
 
 wDeckCheckCardCounts:: ; cd2d
@@ -987,16 +1000,19 @@ wDeckCheckRainbowEnergyCount:: ; cd4a
 
 wDeckCheckCardCountsEnd::
 
-wcd4b:: ; cd4b
+; number of Pokemon types considered in deck-energy balance calculations
+wDeckCheckNumPkmnTypesForEnergyCalc:: ; cd4b
 	ds $1
 
-wcd4c:: ; cd4c
+; adjusted per-type Pokemon count used while calculating required energies
+wDeckCheckCurTypeAdjustedPkmnCount:: ; cd4c
 	ds $1
 
 wDeckCheckTotalEnergyRequirement:: ; cd4d
 	ds $1
 
-wcd4e:: ; cd4e
+; number of deck diagnosis warning texts printed during the current check
+wDeckDiagnosisNumMessagesPrinted:: ; cd4e
 	ds $1
 
 wDeckCheckTotalEnergySurplus:: ; cd4f
@@ -1009,19 +1025,24 @@ ENDU
 wDeckCheckColorlessCardsPerType:: ; cd50
 	ds $1
 
-wcd51:: ; cd51
+; rarity filter used while building Card Pop candidate lists
+wCardPopRarityFilter:: ; cd51
 	ds $1
 
-wcd52:: ; cd52
+; minimum set filter used while building Card Pop candidate lists
+wCardPopMinSetFilter:: ; cd52
 	ds $1
 
-wcd53:: ; cd53
+; maximum set filter used while building Card Pop candidate lists
+wCardPopMaxSetFilter:: ; cd53
 	ds $1
 
-wcd54:: ; cd54
+; number of entries currently in wCardPopCandidateList
+wCardPopNumCandidates:: ; cd54
 	ds $1
 
-wcd55:: ; cd55
+; index offset used by duel deck-requirement checks for opponent-dependent tables
+wDeckRequirementOpponentOffset:: ; cd55
 	ds $1
 
 wDeckCheckCardName:: ; cd56
@@ -1045,7 +1066,8 @@ SECTION "WRAM0 3", WRAM0
 wTextBoxFrameType:: ; cd5b
 	ds $1
 
-wcd5c:: ; cd5c
+; tile width of the labeled text copied into wc000 by DrawLabeledTextBox
+wLabeledTextBoxLabelLength:: ; cd5c
 	ds $1
 
 ; pixel data of a tile used for text
@@ -1053,7 +1075,8 @@ wcd5c:: ; cd5c
 wTextTileBuffer:: ; cd5d
 	ds TILE_SIZE
 
-wcd04:: ; cd6d
+; current reservation cursor for generated text tiles between SetupText's first/last tile bounds
+wTextTileReserveCursor:: ; cd6d
 	ds $1
 
 ; used by PlaceNextTextTile

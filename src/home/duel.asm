@@ -1311,7 +1311,7 @@ UpdateTempDuelistCardIDs:
 ; this is called when a Pokemon card is played or when an attack is used
 ClearTwoTurnDuelVars::
 	xor a
-	ld [wccec], a
+	ld [wSentAttackDataToLinkOpponent], a
 	ld [wEffectFunctionsFeedbackIndex], a
 	ld [wEffectFailed], a
 	ld [wIsDamageToSelf], a
@@ -1534,7 +1534,7 @@ UsePokemonPower:
 ; in a link duel, it's used to send the other game data about the
 ; attack being in use, triggering a call to OppAction_BeginUseAttack in the receiver
 SendAttackDataToLinkOpponent::
-	ld a, [wccec]
+	ld a, [wSentAttackDataToLinkOpponent]
 	or a
 	ret nz
 	ldh a, [hTemp_ffa0]
@@ -1542,7 +1542,7 @@ SendAttackDataToLinkOpponent::
 	ldh a, [hTempCardIndex_ff9f]
 	push af
 	ld a, $1
-	ld [wccec], a
+	ld [wSentAttackDataToLinkOpponent], a
 	ld a, [wPlayerAttackingCardIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, [wPlayerAttackingAttackIndex]

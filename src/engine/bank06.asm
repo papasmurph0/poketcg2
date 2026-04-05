@@ -4061,12 +4061,12 @@ RequestToPrintCard:
 	call EnableLCD
 	call PrepareForPrinterCommunications
 	call .DrawTopCardInfoInSRAMGfxBuffer0
-	call Func_19f87
+	call SendCardTilesToPrinterAndPrint
 	call .DrawCardPicInSRAMGfxBuffer2
-	call Func_19f99
+	call SendExtendedCardTilesToPrinterAndPrint
 	jr c, .error
 	call DrawBottomCardInfoInSRAMGfxBuffer0
-	call Func_1a011
+	call SendTilesToPrinterAndPrintWith3LineFeeds
 	jr c, .error
 	call RestoreVBlankFunction
 	call ResetPrinterCommunicationSettings
@@ -4084,7 +4084,7 @@ RequestToPrintCard:
 	ld h, [hl]
 	ld l, a
 	ld de, sGfxBuffer2
-	call Func_1adbd
+	call ConvertCardGfxForPrinter
 	ld a, $40
 	lb hl, 12,  1
 	lb de,  2, 68
@@ -4097,7 +4097,7 @@ RequestToPrintCard:
 ; this includes card's type, lv, HP and attacks if Pokemon card
 ; or otherwise just the card's name and type symbol
 .DrawTopCardInfoInSRAMGfxBuffer0:
-	call Func_1a025
+	call InitPrinterGfxBufferTextParams
 	call LoadPrinterTextAndCardSymbolTiles
 
 	; draw empty text box frame
@@ -4148,7 +4148,7 @@ RequestToPrintCard:
 .skip_pokemon_data
 	ret
 
-Func_19f87:
+SendCardTilesToPrinterAndPrint: ; Func_19f87
 	call TryInitPrinterCommunications
 	ret c ; aborted
 	ld hl, sGfxBuffer0
@@ -4158,7 +4158,7 @@ Func_19f87:
 	call SendPrinterInstructionPacket_1Sheet
 	ret
 
-Func_19f99:
+SendExtendedCardTilesToPrinterAndPrint: ; Func_19f99
 	call TryInitPrinterCommunications
 	ret c
 	ld hl, sGfxBuffer0 + $8 tiles
@@ -4177,7 +4177,7 @@ Func_19f99:
 ; and attack if it's Pokemon card
 ; or otherwise just the card's description.
 DrawBottomCardInfoInSRAMGfxBuffer0:
-	call Func_1a025
+	call InitPrinterGfxBufferTextParams
 	xor a
 	ld [wCardPageType], a
 	ld hl, sGfxBuffer0
@@ -4225,7 +4225,7 @@ RetreatWeakResistData:
 	textitem 1, 72, ResistanceText
 	textitems_end
 
-Func_1a011:
+SendTilesToPrinterAndPrintWith3LineFeeds: ; Func_1a011
 	call TryInitPrinterCommunications
 	ret c
 	ld hl, sGfxBuffer0
@@ -4239,7 +4239,7 @@ Func_1a011:
 	ret
 
 ; calls setup text and sets wTilePatternSelector
-Func_1a025:
+InitPrinterGfxBufferTextParams: ; Func_1a025
 	lb de, $40, $bf
 	call SetupText
 	ld a, $a4
@@ -4487,7 +4487,7 @@ PrintDeckConfiguration:
 
 	call ShowPrinterTransmitting
 	call PrepareForPrinterCommunications
-	call Func_1a025
+	call InitPrinterGfxBufferTextParams
 	call LoadPrinterTextAndCardSymbolTiles
 	lb de, 0, 64
 	lb bc, 20, 4
@@ -4659,7 +4659,7 @@ PrintCardList:
 	ld de, wDefaultText
 	call CopyPlayerName
 	call PrepareForPrinterCommunications
-	call Func_1a025
+	call InitPrinterGfxBufferTextParams
 	call LoadPrinterTextAndCardSymbolTiles
 
 	lb de, 0, 64
@@ -5301,7 +5301,7 @@ _SetUpAndStartLinkDuel:
 	jr z, .loop_input
 	ret
 
-Func_1acbf:
+TryAddNPCDeckToSavedDecks: ; Func_1acbf
 	ld [wNPCDuelDeckID], a
 	ld a, PLAYER_TURN
 	ldh [hWhoseTurn], a
@@ -5468,7 +5468,7 @@ DisplayBoosterContent:
 	bank1call DisplayCardList
 	ret
 
-Func_1adbd:
+ConvertCardGfxForPrinter: ; Func_1adbd
 	push de
 	ld de, wc000
 	lb bc, $30, TILE_SIZE
@@ -5537,7 +5537,7 @@ LoadHandCardsIcon:
 	ld hl, HandCardsGfx
 	ld de, v0Tiles2 + $38 tiles
 	ld b, 4 tiles
-	call Func_1b8f1
+	call CopyBBytesFromHLToDE
 	ret
 
 HandCardsGfx:
@@ -6620,7 +6620,7 @@ HandakutenTable:
 
 SECTION "Bank 6@78f1", ROMX[$78f1], BANK[$6]
 
-Func_1b8f1:
+CopyBBytesFromHLToDE: ; Func_1b8f1
 	ld a, b
 	or a
 	ret z

@@ -1194,7 +1194,7 @@ HandleSealedFortEntranceWarpFadeInPreload: ; Func_313a8
 	jr nz, .asm_313ba
 	ld bc, TILEMAP_051
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .asm_313ba
 	scf
 	ret
@@ -1746,7 +1746,7 @@ HandleGrassFortMidoriWarpFadeInPreload: ; Func_317eb
 .asm_31809
 	ld bc, TILEMAP_05B
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -2000,7 +2000,7 @@ HandleGrassFortYutaWarpFadeInPreload: ; Func_319dc
 .asm_319e6
 	ld bc, TILEMAP_05E
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -2224,7 +2224,7 @@ HandleGrassFortMiyukiWarpFadeInPreload: ; Func_31b92
 .asm_31b9c
 	ld bc, TILEMAP_061
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -2441,7 +2441,7 @@ HandleLightningFortEntranceWarpFadeInPreload: ; Func_31d37
 .asm_31d41
 	ld bc, TILEMAP_065
 	lb de, 4, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_GOT_GOLBAT_COIN
 	farcall GetEventValue
 	jr nz, .asm_31d5c
@@ -2808,7 +2808,7 @@ HandleLightningFortRennaWarpFadeInPreload: ; Func_32016
 .asm_3202b
 	ld bc, TILEMAP_069
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -3013,18 +3013,18 @@ LoadLightningFortIchikawaNPCs: ; Func_321b1
 HandleLightningFortIchikawaWarpFadeInPreload: ; Func_321ba
 	ld bc, TILEMAP_06C
 	lb de, 3, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_ICHIKAWAS_ROOM_DOOR_STATE
 	farcall GetEventValue
 	jr z, .asm_321d8
 	ld bc, TILEMAP_06D
 	lb de, 1, 2
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	jr .asm_321e2
 .asm_321d8
 	ld bc, TILEMAP_06E
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 .asm_321e2
 	scf
 	ret
@@ -3562,7 +3562,7 @@ HandleFireFortEntranceWarpFadeInPreload: ; Func_325cc
 .asm_325e0
 	ld bc, TILEMAP_073
 	lb de, 4, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_GOT_MAGNEMITE_COIN
 	farcall GetEventValue
 	jr nz, .asm_3261a
@@ -3895,7 +3895,7 @@ HandleFireFortJesWarpFadeInPreload: ; Func_3286d
 .asm_32882
 	ld bc, TILEMAP_077
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -4081,7 +4081,7 @@ HandleFireFortYukiWarpFadeInPreload: ; Func_329d6
 .asm_329e0
 	ld bc, TILEMAP_07A
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_MET_YUKI_FIRE_FORT
 	farcall GetEventValue
 	jr nz, .asm_32a16
@@ -4434,10 +4434,10 @@ HandleFireFortShokoWarpFadeInPreload: ; Func_32c5a
 .asm_32c64
 	ld bc, TILEMAP_07D
 	lb de, 3, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld bc, TILEMAP_07E
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -4931,7 +4931,7 @@ HandleWaterFortEntranceWarpFadeInPreload: ; Func_32ff6
 .asm_3300a
 	ld bc, TILEMAP_083
 	lb de, 4, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_GOT_MAGNEMITE_COIN
 	farcall GetEventValue
 	jr nz, .asm_33044
@@ -5086,7 +5086,7 @@ HandleWaterFortMiyajimaWarpFadeInPreload: ; Func_33129
 .asm_3313e
 	ld bc, TILEMAP_087
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -5437,7 +5437,7 @@ HandleFightingFortEntranceWarpFadeInPreload: ; Func_333bd
 .asm_333c7
 	ld bc, TILEMAP_093
 	lb de, 4, 7
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_INSERTED_LEFT_COIN_IN_FIGHTING_FORT_DOOR
 	farcall GetEventValue
 	jr z, .asm_333ed
@@ -5702,7 +5702,7 @@ ScriptFightingFortMaze2OpenGateAt3x3: ; Func_335c7
 	call PlaySFX
 	ld bc, TILEMAP_09A
 	lb de, 3, 3
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep
 	ret
 
@@ -5857,7 +5857,7 @@ ScriptFightingFortMaze4OpenGateAt2x3: ; Func_33710
 	call PlaySFX
 	ld bc, TILEMAP_09D
 	lb de, 2, 3
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep
 	ret
 
@@ -6076,7 +6076,7 @@ ScriptFightingFortMaze8OpenGateAt3x3: ; Func_33915
 	call PlaySFX
 	ld bc, TILEMAP_0BC
 	lb de, 3, 3
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep
 	ret
 
@@ -6217,7 +6217,7 @@ ScriptFightingFortMaze12OpenGateAt4x6: ; Func_33aa1
 	call PlaySFX
 	ld bc, TILEMAP_0C1
 	lb de, 4, 6
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 
@@ -6304,7 +6304,7 @@ ScriptFightingFortMaze14OpenGateAt2x3: ; Func_33b91
 	call PlaySFX
 	ld bc, TILEMAP_0C4
 	lb de, 2, 3
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep
 	ret
 
@@ -6474,7 +6474,7 @@ ScriptFightingFortMaze17OpenSideGateAt8x3: ; Func_33cf8
 	call PlaySFX
 	ld bc, TILEMAP_0C9
 	lb de, 8, 3
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectTilePosition
 	ld a, $03
@@ -6491,7 +6491,7 @@ ScriptFightingFortMaze17OpenTopGateAt4x6: ; Func_33d1b
 	call PlaySFX
 	ld bc, TILEMAP_0CA
 	lb de, 4, 6
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	call SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 

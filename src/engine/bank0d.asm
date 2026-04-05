@@ -2192,7 +2192,7 @@ HandleCardDungeonBishopInteractions: ; Func_350f6
 HandleCardDungeonBishopWarpFadeInPreload: ; Func_35106
 	ld bc, TILEMAP_CARD_DUNGEON_BISHOP_FRONT_DOORS_SHUT
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(Script_CardDungeonBishopWarpEntrance)
@@ -2880,13 +2880,13 @@ LoadWaterFortSentaNPCs: ; Func_3562b
 HandleWaterFortSentaWarpFadeInPreload: ; Func_35634
 	ld bc, TILEMAP_08A
 	lb de, 5, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_SENTAS_ROOM_BRIDGE_STATE
 	farcall GetEventValue
 	jr nz, .asm_3565f
 	ld bc, TILEMAP_08B
 	lb de, 12, 5
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, NPC_SENTA
 	lb de, 11, 6
 	farcall SetOWObjectTilePosition
@@ -3177,7 +3177,7 @@ HandleWaterFortAiraWarpFadeInPreload: ; Func_35865
 	jr nz, .asm_35880
 	ld bc, TILEMAP_08F
 	lb de, 4, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, NPC_AIRA
 	lb de, 5, 5
 	farcall SetOWObjectTilePosition
@@ -3403,7 +3403,7 @@ HandleFightingFortWarpFadeInPreload: ; Func_35a0d
 .asm_35a37
 	ld bc, TILEMAP_096
 	lb de, 7, 0
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_MET_FIGHTING_FORT_MEMBERS
 	farcall GetEventValue
 	jr nz, .asm_35a7a
@@ -3702,7 +3702,7 @@ HandleFightingFortMaze16PitfallDoor: ; Func_35c86
 	call PlaySFX
 	ld bc, TILEMAP_0C7
 	lb de, 4, 6
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	farcall SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 
@@ -3758,7 +3758,7 @@ HandleFightingFortMaze18PitfallDoor: ; Func_35d22
 	call PlaySFX
 	ld bc, TILEMAP_0CC
 	lb de, 4, 6
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	farcall SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 
@@ -3814,7 +3814,7 @@ HandleFightingFortGodaWarpFadeInPreload: ; Func_35d8a
 .asm_35d94
 	ld bc, TILEMAP_0A1
 	lb de, 4, 2
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	scf
 	ret
 
@@ -6735,7 +6735,7 @@ HandleGrCastleEntranceWarpFadeInPreload: ; Func_3741f
 	jr nz, .asm_37469
 	ld bc, TILEMAP_0B4
 	lb de, 4, 2
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	ld a, EVENT_INSERTED_RIGHT_COIN_IN_GR_CASTLE_DOOR
 	farcall GetEventValue
 	jr z, .asm_3744d

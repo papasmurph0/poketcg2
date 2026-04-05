@@ -1537,7 +1537,7 @@ DrawSymbolOnPlayAreaCursor:
 	ret
 
 ; unreferenced
-Func_6873c:
+ShowIncompleteText: ; Func_6873c
 	ldtx hl, IncompleteText
 	call DrawWideTextBox_WaitForInput
 	ret

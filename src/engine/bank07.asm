@@ -817,11 +817,11 @@ SaveGamePrompt:
 	push bc
 	push de
 	push hl
-	farcall Func_10ed3
-	farcall Func_105de
+	farcall PopOWObjectsFromWRAM3
+	farcall RestoreOWMapFromWRAM3
 	call SaveGame
-	farcall Func_10ea7
-	farcall Func_1059f
+	farcall PushOWObjectsToWRAM3
+	farcall SaveOWMapToWRAM3
 	pop hl
 	pop de
 	pop bc
@@ -3002,13 +3002,13 @@ ShowOWMapLocationBox:
 	ldh [hWY], a
 	ld bc, TILEMAP_004
 	lb de, 0, 16
-	farcall Func_12c0ce
+	farcall AddOWTilemapOverlay
 	lb de,  1, 33
 	lb bc, 11,  1
 	farcall FillBoxInBGMapWithZero
 	lb de,  0, 32
 	lb bc, 13,  3
-	farcall Func_10742
+	farcall SetBGMapBoxPriority
 	call .LoadPal
 	call SetWindowOn
 	pop hl
@@ -4153,7 +4153,7 @@ UpdateDuelAnimations:: ; Func_1e088
 	ld c, NUM_SPRITE_ANIM_STRUCTS
 	farcall GetSpriteAnimBuffer
 .loop_sprite_anims
-	farcall Func_10ab7
+	farcall GetSpriteAnimFlags
 	bit 7, a
 	jr z, .next_sprite_anim
 	farcall CheckIsSpriteAnimAnimating
@@ -4357,11 +4357,11 @@ CreateDuelAnimationSprite: ; Func_1e171
 
 .no_sfx
 	xor a
-	farcall Func_10989
-	farcall Func_1098d
+	farcall SetSpriteAnimRenderFlags
+	farcall SetSpriteAnimCoordFlags
 	ld a, [wAnimAllowedFlags]
 	and SPRITE_ANIM_FLAG_X_FLIP | SPRITE_ANIM_FLAG_Y_FLIP
-	farcall Func_10989
+	farcall SetSpriteAnimRenderFlags
 	bit SPRITE_ANIM_FLAG_Y_FLIP_F, a
 	jr z, .asm_1e234
 	push af
@@ -4388,7 +4388,7 @@ CreateDuelAnimationSprite: ; Func_1e171
 	and SPRITE_ANIM_FLAG_X_INVERTED | SPRITE_ANIM_FLAG_Y_INVERTED
 	swap a
 	sla a
-	farcall Func_1098d
+	farcall SetSpriteAnimCoordFlags
 	farcall SetSpriteAnimPosition
 	ld a, [wNumActiveAnimations]
 	inc a
