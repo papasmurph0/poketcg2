@@ -330,7 +330,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	xor a ; PLAY_AREA_ARENA
 	ldh [hTempPlayAreaLocation_ff9d], a
 	call CheckIfArenaCardCanPotentiallyDamageDefendingCard
-	jr c, .asm_20a79 ; Arena card cannot damage
+	jr c, .arena_cannot_damage ; Arena card cannot damage
 	bank1call GetArenaCardColor
 	call TranslateColorToWR
 	ld b, a
@@ -347,29 +347,29 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	or a
 	ret
 
-.asm_20a79
+.arena_cannot_damage
 	call .CheckOppBenchCardHasWeakness
 	ret c
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	call GetNonTurnDuelistVariable
 	ld d, a
 	ld e, PLAY_AREA_BENCH_1 - 1
-.asm_20a85
+.loop_bench_energy
 	inc e
 	dec d
-	jr z, .asm_20aa0
+	jr z, .scan_best_bench_attacker
 	call SwapTurn
 	call GetPlayAreaCardAttachedEnergies
 	call SwapTurn
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr nz, .asm_20a85
+	jr nz, .loop_bench_energy
 	call CheckBenchCardCanDamageDefender
-	jr nc, .asm_20a85
+	jr nc, .loop_bench_energy
 	ld a, e
 	scf
 	ret
-.asm_20aa0
+.scan_best_bench_attacker
 	ld a, $ff
 	ld [wAIEnergyTransMode], a
 	xor a
@@ -378,10 +378,10 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	call GetNonTurnDuelistVariable
 	ld d, a
-.asm_20ab0
+.loop_bench_attacker
 	inc e
 	dec d
-	jr z, .asm_20ad2
+	jr z, .check_bench_attacker_found
 	ld a, e
 	add DUELVARS_ARENA_CARD_HP
 	call GetNonTurnDuelistVariable
@@ -389,23 +389,23 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	ld a, [wAIEnergyTransMode]
 	inc b
 	cp b
-	jr c, .asm_20ab0
+	jr c, .loop_bench_attacker
 	call CheckBenchCardCanDamageDefender
-	jr nc, .asm_20ab0
+	jr nc, .loop_bench_attacker
 	dec b
 	ld a, b
 	ld [wAIEnergyTransMode], a
 	ld a, e
 	ld [wAIBestBenchAttackerPlayAreaLocation], a
-	jr .asm_20ab0
-.asm_20ad2
+	jr .loop_bench_attacker
+.check_bench_attacker_found
 	ld a, [wAIBestBenchAttackerPlayAreaLocation]
 	or a
 	jr z, .no_carry
 	scf
 	ret
 
-.asm_20ada
+.weakness_matched
 	push bc
 	push hl
 	xor a
@@ -431,7 +431,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	call SwapTurn
 	ld a, [wLoadedCard1Weakness]
 	and b
-	jr nz, .asm_20ada
+	jr nz, .weakness_matched
 	jr .loop_bench
 
 .PoisonMistDeck:
@@ -446,7 +446,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	farcall AIFindGustOfWindTargetForArenaCard
 	ret nc
 	cp $ff
-	jp z, .asm_20a79
+	jp z, .arena_cannot_damage
 	scf
 	ret
 

@@ -4,13 +4,13 @@ Glossary:
 	bank1call SetDefaultPalettes
 	lb de, $38, $9f
 	call SetupText
-	jr .asm_186ba
+	jr .init_main_menu
 
 .OpenScreen
 	ld a, $01
 	ld [wGlossaryReinit], a
 
-.asm_186ba
+.init_main_menu
 	xor a
 .main_menu
 	ld hl, .MainMenuParameters
@@ -55,9 +55,9 @@ Glossary:
 ; GLOSSARY_SPECIAL_DUEL_RULES
 	ld a, [wSpecialRule]
 	or a
-	jr z, .asm_18714
+	jr z, .load_topic_table
 	dec a
-.asm_18714
+.load_topic_table
 	ld de, GlossaryTransitionTable_10Topics
 	jr .got_transition_table
 .not_special_duel_rules
@@ -163,26 +163,26 @@ Glossary:
 	call EmptyScreen
 	ld a, [wGlossaryMenu]
 	or a
-	jr nz, .asm_187df
+	jr nz, .check_card_type_menu
 ; GLOSSARY_GAME_BASICS
 	ldtx hl, GlossaryGameBasicsText
 	ldtx de, GlossaryGameBasicsMenuText
 	jr .got_title_and_topics
-.asm_187df
+.check_card_type_menu
 	cp GLOSSARY_CARD_TYPE_EXPLANATIONS
-	jr nz, .asm_187eb
+	jr nz, .check_status_menu
 ; GLOSSARY_CARD_TYPE_EXPLANATIONS
 	ldtx hl, GlossaryCardTypesAndKeywordsText
 	ldtx de, GlossaryCardTypesAndKeywordsMenuText
 	jr .got_title_and_topics
-.asm_187eb
+.check_status_menu
 	cp GLOSSARY_STATUS_WINNING_LOSING
-	jr nz, .asm_187f7
+	jr nz, .special_duel_rules_menu
 ; GLOSSARY_STATUS_WINNING_LOSING
 	ldtx hl, GlossaryStatusesAndDecisionText
 	ldtx de, GlossaryStatusesAndDecisionMenuText
 	jr .got_title_and_topics
-.asm_187f7
+.special_duel_rules_menu
 ; GLOSSARY_SPECIAL_DUEL_RULES
 	lb de, 6, 1
 	call InitTextPrinting
@@ -225,7 +225,7 @@ Glossary:
 
 	ld a, [wGlossaryMenu]
 	or a
-	jr nz, .asm_18847
+	jr nz, .check_card_type_explanation
 ; GLOSSARY_GAME_BASICS
 	ld hl, .ExplanationTextData_GameBasics
 	push hl
@@ -234,9 +234,9 @@ Glossary:
 	lb de, 2, 0
 	jr .got_explanation_data
 
-.asm_18847
+.check_card_type_explanation
 	cp GLOSSARY_CARD_TYPE_EXPLANATIONS
-	jr nz, .asm_18858
+	jr nz, .check_status_explanation
 ; GLOSSARY_CARD_TYPE_EXPLANATIONS
 	ld hl, .ExplanationTextData_CardTypes
 	push hl
@@ -245,9 +245,9 @@ Glossary:
 	lb de, 2, 0
 	jr .got_explanation_data
 
-.asm_18858
+.check_status_explanation
 	cp GLOSSARY_STATUS_WINNING_LOSING
-	jr nz, .asm_18869
+	jr nz, .special_duel_rules_explanation
 ; GLOSSARY_STATUS_WINNING_LOSING
 	ld hl, .ExplanationTextData_StatusWinningLosing
 	push hl
@@ -256,7 +256,7 @@ Glossary:
 	lb de, 2, 0
 	jr .got_explanation_data
 
-.asm_18869
+.special_duel_rules_explanation
 ; GLOSSARY_SPECIAL_DUEL_RULES
 	ld hl, .ExplanationTextData_SpecialDuelRules
 	push hl

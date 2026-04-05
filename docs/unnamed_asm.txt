@@ -1927,3 +1927,72 @@ In character-add logic, wNamingScreenMode is non-zero (katakana); sets character
 
 src/engine/bank06.asm .asm_1b8f4 -> .copy_loop
 Byte-copy loop in CopyBBytesFromHLToDE; copies b bytes from HL to DE.
+
+src/home/process_text.asm .asm_22ed -> .skip_generation
+In GenerateAndPlaceTextTileIfNeeded, when hTextTileGenerationFlags bit 0 is set; calls FindTextTileInCache to update buffers without generating/placing the tile.
+
+src/home/process_text.asm .asm_2337 -> .scan_lru_cache
+In FindTextTileInCacheOrReserveSlot; traverses wTextTileCacheNext linked list until next pointer is zero to find the LRU (tail) slot to evict.
+
+src/home/process_text.asm .asm_2345 -> .advance_cursor
+In FindTextTileInCacheOrReserveSlot; hTextTileLastReserved != wTextTileReserveCursor so a new slot is available: increment the reserve cursor.
+
+src/home/process_text.asm .asm_2349 -> .load_slot
+Merge point after cursor increment (with or without zero-skip); loads the new cursor value into l as the slot index.
+
+src/home/process_text.asm .asm_234a -> .got_cache_slot
+Merge point in FindTextTileInCacheOrReserveSlot; l holds the chosen slot index; attaches it as the new cache head and writes the tile key.
+
+src/home/process_text.asm .asm_237d -> .search_loop
+In FindTextTileInCache; main linked-list traversal loop checking key1[l] against the target character e.
+
+src/home/process_text.asm .asm_238a -> .next_node
+In FindTextTileInCache search loop; key did not match: follow next pointer to advance to the next cache node.
+
+src/home/process_text.asm .asm_238f -> .move_to_front
+In FindTextTileInCache; matching node found: performs move-to-front reordering to hoist node to head of LRU doubly-linked list.
+
+src/home/process_text.asm .asm_23af -> .found
+In FindTextTileInCache; after optional move-to-front; sets carry to indicate the tile was found and returns.
+
+src/engine/glossary.asm .asm_186ba -> .init_main_menu
+Merge entry point shared by Glossary: (initial load) and .OpenScreen (return from topic); zeroes a and sets up main menu parameters.
+
+src/engine/glossary.asm .asm_18714 -> .load_topic_table
+In GLOSSARY_SPECIAL_DUEL_RULES transition setup; cursor position already in a (0 or 0-based rule index); loads GlossaryTransitionTable_10Topics into de.
+
+src/engine/glossary.asm .asm_187df -> .check_card_type_menu
+In .ShowMenuContent; wGlossaryMenu was not GAME_BASICS; compare against GLOSSARY_CARD_TYPE_EXPLANATIONS.
+
+src/engine/glossary.asm .asm_187eb -> .check_status_menu
+In .ShowMenuContent; not CARD_TYPE_EXPLANATIONS; compare against GLOSSARY_STATUS_WINNING_LOSING.
+
+src/engine/glossary.asm .asm_187f7 -> .special_duel_rules_menu
+In .ShowMenuContent; not STATUS_WINNING_LOSING; falls through to GLOSSARY_SPECIAL_DUEL_RULES title/topics setup.
+
+src/engine/glossary.asm .asm_18847 -> .check_card_type_explanation
+In .ShowExplanation; wGlossaryMenu was not GAME_BASICS; compare against GLOSSARY_CARD_TYPE_EXPLANATIONS.
+
+src/engine/glossary.asm .asm_18858 -> .check_status_explanation
+In .ShowExplanation; not CARD_TYPE_EXPLANATIONS; compare against GLOSSARY_STATUS_WINNING_LOSING.
+
+src/engine/glossary.asm .asm_18869 -> .special_duel_rules_explanation
+In .ShowExplanation; not STATUS_WINNING_LOSING; loads ExplanationTextData_SpecialDuelRules and sets cursor x=5.
+
+src/engine/bank08.asm .asm_20a79 -> .arena_cannot_damage
+Fallback path when arena card cannot potentially damage the defender (also reached from PsychicBattleDeck); calls .CheckOppBenchCardHasWeakness then scans bench slots for energy or best attacker.
+
+src/engine/bank08.asm .asm_20a85 -> .loop_bench_energy
+Bench-slot scan loop; increments slot index e, decrements counter d; exits to .scan_best_bench_attacker when all slots checked, or returns with carry if slot has energy and can damage.
+
+src/engine/bank08.asm .asm_20aa0 -> .scan_best_bench_attacker
+Initialises wAIEnergyTransMode=$ff and wAIBestBenchAttackerPlayAreaLocation=0, then begins bench loop to find the bench Pokémon with highest HP that can damage the defender.
+
+src/engine/bank08.asm .asm_20ab0 -> .loop_bench_attacker
+Inner loop over bench slots scoring by HP (via DUELVARS_ARENA_CARD_HP) and damage ability; updates wAIEnergyTransMode and wAIBestBenchAttackerPlayAreaLocation with best candidate.
+
+src/engine/bank08.asm .asm_20ad2 -> .check_bench_attacker_found
+After .loop_bench_attacker; checks wAIBestBenchAttackerPlayAreaLocation; returns carry if a valid bench attacker was recorded, nc otherwise.
+
+src/engine/bank08.asm .asm_20ada -> .weakness_matched
+In .CheckOppBenchCardHasWeakness; jumped to when a bench card's weakness matches b; calls CheckIfCanDamageDefendingPokemon and returns carry if confirmed, else continues .loop_bench.

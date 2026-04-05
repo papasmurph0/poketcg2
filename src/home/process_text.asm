@@ -216,7 +216,7 @@ GenerateAndPlaceTextTileIfNeeded: ; Func_22ca
 	push bc
 	ldh a, [hTextTileGenerationFlags]
 	and $1
-	jr nz, .asm_22ed
+	jr nz, .skip_generation
 	call FindTextTileInCacheOrReserveSlot
 	jr c, .tile_already_exists
 	or a
@@ -233,7 +233,7 @@ GenerateAndPlaceTextTileIfNeeded: ; Func_22ca
 	pop de
 	pop hl
 	ret
-.asm_22ed
+.skip_generation
 	call FindTextTileInCache
 	jr .done
 
@@ -287,27 +287,27 @@ FindTextTileInCacheOrReserveSlot: ; Func_2325
 	ldh a, [hTextTileLastReserved]
 	ld hl, wTextTileReserveCursor
 	cp [hl]
-	jr nz, .asm_2345
+	jr nz, .advance_cursor
 	ldh a, [hTextTileCacheHead]
 	ld h, HIGH(wTextTileCacheNext)
-.asm_2337
+.scan_lru_cache
 	ld l, a
 	ld a, [hl]
 	or a
-	jr nz, .asm_2337
+	jr nz, .scan_lru_cache
 	ld h, HIGH(wTextTileCachePrev)
 	ld c, [hl]
 	ld b, HIGH(wTextTileCacheNext)
 	xor a
 	ld [bc], a
-	jr .asm_234a
-.asm_2345
+	jr .got_cache_slot
+.advance_cursor
 	inc [hl]
-	jr nz, .asm_2349
+	jr nz, .load_slot
 	inc [hl]
-.asm_2349
+.load_slot
 	ld l, [hl]
-.asm_234a
+.got_cache_slot
 	ldh a, [hTextTileCacheHead]
 	ld c, a
 	ld b, HIGH(wTextTileCachePrev)
@@ -753,25 +753,25 @@ FindTextTileInCache: ; Func_235e
 	ld [wHalfWidthPrintState], a
 	ldh a, [hTextTileCacheHead]
 	ld l, a              ; l <- cache linked-list head index
-.asm_237d
+.search_loop
 	ld h, $c6                                     ;
 	ld a, [hl]           ; a ← key1[l]            ;
 	or a                                          ;
 	ret z                ; if NULL, return a = 0  ;
 	cp e                                          ; loop for e/d key in
-	jr nz, .asm_238a     ;                        ; linked list
+	jr nz, .next_node    ;                        ; linked list
 	inc h ; $c7          ;                        ;
 	ld a, [hl]           ; if key1[l] == e and    ;
 	cp d                 ;   key2[l] == d:        ;
-	jr z, .asm_238f      ;   break                ;
-.asm_238a
-	ld h, $c8            ;                        ;
+	jr z, .move_to_front ;   break                ;
+.next_node
+	ld h, $c8            ;                         ;
 	ld l, [hl]           ; l ← next[l]            ;
-	jr .asm_237d
-.asm_238f
+	jr .search_loop
+.move_to_front
 	ldh a, [hTextTileCacheHead]
 	cp l
-	jr z, .asm_23af      ; assert at least one iteration
+	jr z, .found         ; assert at least one iteration
 	ld c, a
 	ld b, $c9
 	ld a, l
@@ -789,10 +789,10 @@ FindTextTileInCache: ; Func_235e
 	ld h, $c9
 	inc c
 	dec c
-	jr z, .asm_23af      ; if next[i] != NULL:
+	jr z, .found         ; if next[i] != NULL:
 	ld l, c              ;   l ← next[i]
 	ld [hl], b           ;   prev[next[i]] ← prev[i]
-.asm_23af
+.found
 	scf                  ; set carry to indicate success
 	ret                  ; (return new linked-list head in a)
 
