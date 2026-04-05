@@ -4301,13 +4301,13 @@ FindDoubleColorlessAttachedToCard:
 	ld a, [hli]
 	cp $ff
 	ret z ; no double colorless
-	ld [wd072], a
+	ld [wTempEnergyCardDeckIndex], a
 	push hl
 	call GetCardIDFromDeckIndex
 	cp16 DOUBLE_COLORLESS_ENERGY
 	pop hl
 	jr nz, .loop_energy_cards
-	ld a, [wd072]
+	ld a, [wTempEnergyCardDeckIndex]
 	scf
 	ret
 
@@ -4582,7 +4582,7 @@ FindDarkDragonairThatCanUseEvolutionaryLight: ; Func_4bd72
 	ld a, DUELVARS_ARENA_CARD
 	add c
 	get_turn_duelist_var
-	ld [wd084], a
+	ld [wAIPkmnPowerSourceDeckIndex], a
 	call GetCardIDFromDeckIndex
 	push bc
 	cp16 DARK_DRAGONAIR
@@ -4590,7 +4590,7 @@ FindDarkDragonairThatCanUseEvolutionaryLight: ; Func_4bd72
 	push bc
 	ld a, c
 	ldh [hTempPlayAreaLocation_ff9d], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ld d, a
 	ld e, FIRST_ATTACK_OR_PKMN_POWER
 	call CopyAttackDataAndDamage_FromDeckIndex
@@ -4603,7 +4603,7 @@ FindDarkDragonairThatCanUseEvolutionaryLight: ; Func_4bd72
 	jr c, .next_pokemon
 	; can use Evolutionary Light
 	pop bc
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	scf
 	ret
 .next_pokemon

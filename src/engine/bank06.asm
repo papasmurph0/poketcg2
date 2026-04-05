@@ -2627,7 +2627,7 @@ _CardPopMenu:
 	ld [wClearedGame], a
 	call DisableSRAM
 	xor a
-	ld [wce27], a
+	ld [wCardPopMenuItem], a
 
 ; loads scene for Card Pop! menu
 .asm_19c09
@@ -2646,7 +2646,7 @@ _CardPopMenu:
 	lb de, 10, 2
 	call InitTextPrinting_ProcessTextFromID
 	ld hl, CardPopMenuParams
-	ld a, [wce27]
+	ld a, [wCardPopMenuItem]
 	call InitializeMenuParameters
 	call DrawCardPopMenuBox
 
@@ -2654,7 +2654,7 @@ _CardPopMenu:
 .loop_input_1
 	call DoFrame
 	call HandleMenuInput
-	ld [wce27], a
+	ld [wCardPopMenuItem], a
 	jr nc, .loop_input_1
 
 	; selected an option
@@ -2682,7 +2682,7 @@ _CardPopMenu:
 	lb de, 10, 2
 	call InitTextPrinting_ProcessTextFromID
 	ld hl, CardPopMenuParams
-	ld a, [wce27]
+	ld a, [wCardPopMenuItem]
 	call InitializeMenuParameters
 	ld a, 4 ; override num items
 	ld [wNumScrollMenuItems], a
@@ -2692,7 +2692,7 @@ _CardPopMenu:
 .loop_input_2
 	call DoFrame
 	call HandleMenuInput
-	ld [wce27], a
+	ld [wCardPopMenuItem], a
 	jr nc, .loop_input_2
 
 	call RestoreVBlankFunction
@@ -3321,7 +3321,7 @@ ClearCardPopNameList:
 
 ViewCardPopRecords:
 	xor a
-	ld [wce28], a
+	ld [wCardPopRecordListScrollOffset], a
 	ld [wCurMenuItem], a
 	call .CountNumberOfRecords
 	ld a, [wNumCardPopRecords]
@@ -3580,7 +3580,7 @@ ViewCardPopRecords:
 	jr nz, .d_right
 
 ; d left
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	ld a, [hl]
 	or a
 	jr z, .got_cur_menu_item
@@ -3594,7 +3594,7 @@ ViewCardPopRecords:
 .d_right
 	ld a, [wNumCardPopRecords]
 	ld e, a
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	ld a, [hl]
 	add 5
 	cp e
@@ -3616,7 +3616,7 @@ ViewCardPopRecords:
 	jr nz, .update_highlighted_record_number
 	xor a
 	ld [wCurMenuItem], a
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	ld a, [hl]
 	or a
 	jr z, .update_highlighted_record_number
@@ -3631,13 +3631,13 @@ ViewCardPopRecords:
 	ld a, [wNumScrollMenuItems]
 	dec a
 	ld [hl], a
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	add [hl]
 	inc a
 	ld hl, wNumCardPopRecords
 	cp [hl]
 	jr nc, .update_highlighted_record_number
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	inc [hl]
 
 .update_list_entries
@@ -3647,7 +3647,7 @@ ViewCardPopRecords:
 	call .UpdateHighlightedRecordNumber
 .got_cur_menu_item
 	ld a, [wCurMenuItem]
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	add [hl]
 	ldh [hCurScrollMenuItem], a
 
@@ -3666,7 +3666,7 @@ ViewCardPopRecords:
 
 .UpdateHighlightedRecordNumber:
 	ld a, [wCurMenuItem]
-	ld hl, wce28
+	ld hl, wCardPopRecordListScrollOffset
 	add [hl]
 	inc a
 	lb bc, 14, 1
@@ -3678,13 +3678,13 @@ ViewCardPopRecords:
 	ldtx hl, CardPopRecordsText
 	call InitTextPrinting_ProcessTextFromID
 	ld a, $04
-	ld [wce2a], a
+	ld [wCardPopRecordListEntryY], a
 	call .UpdateHighlightedRecordNumber
 
 	; up arrow in list
 	ld e, SYM_SPACE
-	ld a, [wce28]
-	ld [wce29], a
+	ld a, [wCardPopRecordListScrollOffset]
+	ld [wCardPopRecordListEntryIndex], a
 	or a
 	jr z, .got_up_arrow_tile
 	ld e, SYM_CURSOR_U
@@ -3695,7 +3695,7 @@ ViewCardPopRecords:
 
 	; down arrow in list
 	ld e, SYM_SPACE
-	ld a, [wce28]
+	ld a, [wCardPopRecordListScrollOffset]
 	add 5
 	ld hl, wNumCardPopRecords
 	cp [hl]
@@ -3707,9 +3707,9 @@ ViewCardPopRecords:
 	call WriteByteToBGMap0
 
 .loop_visible_record_entries
-	ld a, [wce29]
+	ld a, [wCardPopRecordListEntryIndex]
 	call .LoadRecord
-	ld a, [wce2a]
+	ld a, [wCardPopRecordListEntryY]
 	ld e, a
 	ld d, 2
 	ldtx hl, CardPopRecordFriendNameText
@@ -3732,18 +3732,18 @@ ViewCardPopRecords:
 	call LoadCardDataToBuffer1_FromCardID
 	ld a, 14
 	call CopyCardNameAndLevel
-	ld a, [wce2a]
+	ld a, [wCardPopRecordListEntryY]
 	inc a
 	ld e, a
 	ld d, 4
 	ld hl, wDefaultText
 	call .PrintText
-	ld hl, wce29
+	ld hl, wCardPopRecordListEntryIndex
 	inc [hl]
 	ld a, [wNumCardPopRecords]
 	cp [hl]
 	jr z, .done_print_entries
-	ld hl, wce2a
+	ld hl, wCardPopRecordListEntryY
 	ld a, [hl]
 	add $03
 	ld [hl], a
@@ -4753,7 +4753,7 @@ PrintCardList:
 	inc hl
 	inc [hl]
 .asm_1a99d
-	ld hl, wce98
+	ld hl, wPrinterCurCardTypeEntryCount
 	inc [hl]
 	call LoadCardInfoForPrinter
 	call AddToPrinterGfxBuffer
@@ -4886,7 +4886,7 @@ PrintCardList:
 	xor a
 	ld [hli], a
 	ld [hl], a
-	ld [wce98], a
+	ld [wPrinterCurCardTypeEntryCount], a
 	ret
 
 .IconTextList

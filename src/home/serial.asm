@@ -462,7 +462,7 @@ SerialRecvBytes:
 
 ; tcg1: Func_0ef1
 Serial_Func_0e12:
-	ld de, wcb73
+	ld de, wSerialSavedStackPointer
 	ld hl, sp+$fe
 	ld a, l
 	ld [de], a
@@ -483,17 +483,17 @@ Serial_Func_0e12:
 ; tcg1: Func_0f05
 Serial_Func_0e26:
 	push hl
-	ld hl, wcb75
+	ld hl, wSerialSavedReturnAddress
 	ld a, [hli]
 	or [hl]
 	pop hl
 	ret z
-	ld hl, wcb73
+	ld hl, wSerialSavedStackPointer
 	ld a, [hli]
 	ld h, a
 	ld l, a
 	ld sp, hl
-	ld hl, wcb75
+	ld hl, wSerialSavedReturnAddress
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a

@@ -51,7 +51,8 @@ hLCDC:: ; ff96
 hFlushPaletteFlags:: ; ff97
 	ds $1
 
-hff96:: ; ff98
+; temporary storage used to preserve register a across helper calls
+hTempA_ff98:: ; ff98
 	ds $1
 
 hWhoseTurn:: ; ff99
@@ -180,11 +181,14 @@ hCurScrollMenuItem:: ; ffbc
 hCurMenuItem:: ; ffbd
 	ds $1
 
-hffbe:: ; ffbe
+; non-zero until CardAlbum performs its first full booster-pack menu initialization
+hCardAlbumMenuNeedsInit:: ; ffbe
 	ds $1
 
-hffbf:: ; ffbf
+; DECK_* flags used by deck selection/building menus
+hDeckSelectionFlags:: ; ffbf
 	ds $1
 
-hffc0:: ; ffc0
+; loop counter used by DivideBCbyDE
+hDivideBCbyDECounter:: ; ffc0
 	ds $1

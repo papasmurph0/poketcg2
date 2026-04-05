@@ -70,7 +70,7 @@ Glossary:
 	inc hl
 	ld [hl], d
 	ld a, $ff
-	ld [wd0c4], a
+	ld [wMultiDirectionalMenuValidCursorMask], a
 
 	xor a
 	ld [wScrollMenuCursorBlinkCounter], a

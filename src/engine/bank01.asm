@@ -6713,7 +6713,7 @@ LoadNonPokemonCardEffectCommands:
 	ld [de], a
 	ld a, DUELVARS_ARENA_CARD_SUBSTATUS1
 	call GetNonTurnDuelistVariable
-	ld [wcd0b], a
+	ld [wDefendingCardSubstatus1], a
 	ld a, $ff
 	ld [wTrainerCardPlayedPokemonDeckIndex], a
 	ret
@@ -7037,11 +7037,11 @@ ClearNonTurnTemporaryDuelvars::
 	ret
 
 ; same as ClearNonTurnTemporaryDuelvars, except the non-turn holder's arena
-; Pokemon status condition is copied to wccc5
+; Pokemon status condition is copied to wNonTurnArenaCardStatus
 ClearNonTurnTemporaryDuelvars_CopyStatus::
 	ld a, DUELVARS_ARENA_CARD_STATUS
 	call GetNonTurnDuelistVariable
-	ld [wccc5], a
+	ld [wNonTurnArenaCardStatus], a
 	call ClearNonTurnTemporaryDuelvars
 	ret
 
@@ -7556,7 +7556,7 @@ HandleStrikesBackAndPoisonFluid: ; Func_6dc4
 	ret
 
 .poison_fluid
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_HP
 	call GetNonTurnDuelistVariable
 	or a
@@ -8028,7 +8028,7 @@ CheckIsIncapableOfUsingPkmnPower_ArenaCard:
 ; - $1 = Goop Gas Attack
 ; - $2 = Dark Arbok's Stare
 CheckIsIncapableOfUsingPkmnPower:
-	ld [wce0c], a
+	ld [wPkmnPowerCheckPlayAreaLocation], a
 	or a
 	jr nz, .skip_arena_card_condition
 	ld a, DUELVARS_ARENA_CARD_STATUS
@@ -8040,7 +8040,7 @@ CheckIsIncapableOfUsingPkmnPower:
 .skip_arena_card_condition
 	call CheckGoopGasAttackAndToxicGasActive
 	ret c
-	ld a, [wce0c]
+	ld a, [wPkmnPowerCheckPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_FLAGS
 	get_turn_duelist_var
 	and AFFECTED_BY_STARE
@@ -8348,7 +8348,7 @@ HandleDestinyBondAndFinalBeam:
 ; if the defending (non-turn) card's HP is 0 and the attacking (turn) card's HP
 ;  is not, the attacking card faints if it was affected by destiny bond
 HandleDestinyBondSubstatus:
-	ld a, [wcd0b]
+	ld a, [wDefendingCardSubstatus1]
 	cp SUBSTATUS1_DESTINY_BOND
 	ret nz
 
@@ -8364,12 +8364,12 @@ HandleDestinyBondSubstatus:
 
 	; don't apply Destiny Bond if target is in Bench
 	; and Articuno's Aurora Veil is active
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	ld [wTempPlayAreaLocation_cceb], a
 	call CheckArticunoAuroraVeil
 	jr c, .draw_text_box_and_exit
 
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	or a
@@ -8377,7 +8377,7 @@ HandleDestinyBondSubstatus:
 	ld [hl], 0
 	call DrawDuelMainScene
 	call DrawDuelHUDs
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call LoadCardDataToBuffer2_FromDeckIndex
@@ -8393,7 +8393,7 @@ HandleDestinyBondSubstatus:
 
 HandleFinalBeam:
 	; exit if turn holder's Arena cards has no HP
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	or a
@@ -8411,7 +8411,7 @@ HandleFinalBeam:
 	ld b, PLAY_AREA_ARENA
 .loop_play_area
 	push bc
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	or a
@@ -8487,12 +8487,12 @@ ProcessFinalBeam:
 	push hl
 	call DrawDuelMainScene
 	pop de
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	call LoadPlayAreaCardID_ToTempNonTurnDuelistCardID
 	call SwapTurn
 	ld a, [wTempPlayAreaLocation_cceb]
 	call LoadPlayAreaCardID_ToTempTurnDuelistCardID
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	ld c, a
 	ld a, [wTempPlayAreaLocation_cceb]
 	ld b, a
@@ -8521,11 +8521,11 @@ ProcessEffectsTriggeredByTakingDamage::
 	or [hl]
 	ret z ; no damage, skip
 
-	ld a, [wcd0b]
+	ld a, [wDefendingCardSubstatus1]
 	cp SUBSTATUS1_MIRROR_SHELL
 	jr z, .mirror_shell
 
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	or a
 	jr nz, .attacking_card_is_in_bench
 	ld a, DUELVARS_ARENA_CARD_LAST_TURN_EFFECT
@@ -8536,7 +8536,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	jr z, .pkmn_powers
 .attacking_card_is_in_bench
 	call SwapTurn
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	call CheckIsIncapableOfUsingPkmnPower
 	call SwapTurn
 	ret c ; cannot use its Pkmn Power
@@ -8550,7 +8550,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	ret
 
 .poison_fluid
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	or a
 	ret nz ; attacking card is in bench
 
@@ -8607,13 +8607,13 @@ ProcessEffectsTriggeredByTakingDamage::
 	call SwapTurn
 
 	; load attacking card's card data
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	call LoadCardDataToBuffer2_FromDeckIndex
 
 	; no use continuing if already KO'd
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	or a
@@ -8666,7 +8666,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	jr z, .no_mirror_shell_damage ; no damage
 	; is the attack receiver affected by damage?
 	push de
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	ld [wTempPlayAreaLocation_cceb], a
 	call HandlePlayAreaCardNoDamageOrEffect_SkipSubstatus
 	pop de
@@ -8709,7 +8709,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	pop hl
 	pop af
 
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	call PrintPlayAreaCardKnockedOutIfNoHP
 	call DrawDuelMainScene
 	call DrawDuelHUDs
@@ -8717,20 +8717,20 @@ ProcessEffectsTriggeredByTakingDamage::
 	ret
 
 .Func_74ab:
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	or a
 	jr nz, .not_arena
 	call CheckIsIncapableOfUsingPkmnPower_ArenaCard
 	ret c
 .not_arena
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	ld [wTempPlayAreaLocation_cceb], a
 	push af
 	ld a, [wForcedSwitchPlayAreaLocation]
-	ld [wcd0a], a
+	ld [wAttackingCardPlayAreaLocation], a
 	call HandleStrikesBackAndPoisonFluid
 	pop af
-	ld [wcd0a], a
+	ld [wAttackingCardPlayAreaLocation], a
 	ret
 
 CalculateDarkWaveDamage: ; Func_74ca
@@ -8742,7 +8742,7 @@ CalculateDarkWaveDamage: ; Func_74ca
 	ld d, [hl]
 	call ApplyDarkWaveDamageBoost
 	call SwapTurn
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	or CARD_LOCATION_PLAY_AREA
 	ld b, a
 	call ApplyAttachedDefender
@@ -8786,9 +8786,9 @@ DisplayPkmnPowerDamageAndSubtractHP: ; Func_7518
 	push hl
 	call LoadTxRam3
 	ld a, e
-	ld [wce0a + 0], a
+	ld [wPkmnPowerDamageTextID + 0], a
 	ld a, d
-	ld [wce0a + 1], a
+	ld [wPkmnPowerDamageTextID + 1], a
 	ld hl, wTempTurnDuelistCardID
 	ld e, [hl]
 	inc hl
@@ -8800,14 +8800,14 @@ DisplayPkmnPowerDamageAndSubtractHP: ; Func_7518
 	ld l, a
 	call LoadTxRam2
 
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	add DUELVARS_ARENA_CARD_HP
 	get_turn_duelist_var
 	pop de
 	push af
 	push hl
 	call SubtractHP
-	ld hl, wce0a
+	ld hl, wPkmnPowerDamageTextID
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
@@ -8817,7 +8817,7 @@ DisplayPkmnPowerDamageAndSubtractHP: ; Func_7518
 	or a
 	ret z
 	call WaitForWideTextBoxInput
-	ld a, [wcd0a]
+	ld a, [wAttackingCardPlayAreaLocation]
 	call PrintPlayAreaCardKnockedOutIfNoHP
 	call DrawDuelHUDs
 	scf

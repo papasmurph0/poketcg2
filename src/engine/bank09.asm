@@ -754,7 +754,7 @@ LoadCardNameToTxRam2_b:
 ; also draw an horizontal line separating the two sides.
 DrawDuelistPortraitsAndNames:
 	ld a, $00
-	ld [wcd77], a
+	ld [wAIPortraitCardsDrawnThisAnim], a
 	call AIDoAction_UpdatePortrait
 
 	call LoadSymbolsFont
@@ -792,7 +792,7 @@ DrawDuelistPortraitsAndNames:
 	ret
 
 DrawOpponentPortrait:
-	ld a, [wcd78]
+	ld a, [wAIOpponentPortraitEmotion]
 	ld e, a
 	ld a, [wOpponentPicID]
 	lb bc, 13, 1
@@ -1106,7 +1106,7 @@ DisplayDrawNCardsScreen:
 	jr c, .anim_drawing_cards_loop
 
 	ld a, [wNumCardsTryingToDraw]
-	ld [wcd77], a
+	ld [wAIPortraitCardsDrawnThisAnim], a
 	call AIDoAction_UpdatePortrait
 	call DrawOpponentPortrait
 
@@ -3432,7 +3432,7 @@ GenerateBoosterContent:
 	ret
 
 .GenerateCard:
-	ldh [hff96], a
+	ldh [hTempA_ff98], a
 	ld a, [hli]
 	or a
 	ret z
@@ -3441,7 +3441,7 @@ GenerateBoosterContent:
 	push bc
 	push de
 	push hl
-	ldh a, [hff96]
+	ldh a, [hTempA_ff98]
 	call CreateCardPopCandidateList
 	pop hl
 	pop de
@@ -5649,11 +5649,11 @@ _TossCoin::
 ; input:
 ; - a = byte to send through serial
 .SendSerialByte:
-	ldh [hff96], a
+	ldh [hTempA_ff98], a
 	ld a, [wDuelType]
 	cp DUELTYPE_LINK
 	ret nz ; not link duel
-	ldh a, [hff96]
+	ldh a, [hTempA_ff98]
 	call SerialSendByte
 	call .CheckTransmissionError
 	ret
@@ -5667,7 +5667,7 @@ _TossCoin::
 ; output:
 ; - a = coin result (HEADS or TAILS)
 .GetOpponentCoinResult:
-	ldh [hff96], a
+	ldh [hTempA_ff98], a
 	ld a, [wDuelType]
 	cp DUELTYPE_LINK
 	jr z, .wait_serial_byte_recv
@@ -5675,14 +5675,14 @@ _TossCoin::
 	call DoFrame
 	call CheckAnyAnimationPlaying
 	jr c, .wait_anim_ai
-	ldh a, [hff96]
+	ldh a, [hTempA_ff98]
 	ret
 
 ; waits for opponent
 ; AI delays for 30 frames
 ; link opponent sends byte through serial when ready
 .WaitForOpponent:
-	ldh [hff96], a
+	ldh [hTempA_ff98], a
 	ld a, [wDuelType]
 	cp DUELTYPE_LINK
 	jr z, .wait_serial_byte_recv
@@ -5693,7 +5693,7 @@ _TossCoin::
 	call DoFrame
 	dec a
 	jr nz, .ai_coin_toss_delay
-	ldh a, [hff96]
+	ldh a, [hTempA_ff98]
 	ret
 
 .wait_serial_byte_recv

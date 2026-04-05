@@ -423,7 +423,7 @@ HandleAIPkmnPowers:
 	ld a, DUELVARS_ARENA_CARD
 	add c
 	get_turn_duelist_var
-	ld [wd084], a
+	ld [wAIPkmnPowerSourceDeckIndex], a
 
 	push af
 	push bc
@@ -575,7 +575,7 @@ HandleAIHeal:
 	call .CheckHealTarget
 	ret nc ; return if no target to heal
 	push af
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -702,7 +702,7 @@ HandleAIShift:
 	jr nc, .choose_random_color ; no color found
 
 .found
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -903,7 +903,7 @@ HandleAIPeek:
 
 .use_peek
 	push af
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -945,7 +945,7 @@ HandleAIStrangeBehavior:
 
 .use_strange_behavior
 	push af
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1074,7 +1074,7 @@ HandleAICurse:
 	ld a, e
 	ldh [hAIPkmnPowerEffectParam], a
 	call SwapTurn
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1143,7 +1143,7 @@ HandleAILongDistanceHypnosis:
 	cp 4
 	ret c ; difference is less than 4
 .use_long_distance_hypnosis
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1250,7 +1250,7 @@ HandleAIPollenStench:
 	or a
 	ret z
 .use_pollen_stench
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1361,7 +1361,7 @@ HandleAIGatherFire:
 	jr nc, .loop_bench
 .use_gather_fire
 	ldh [hTempPlayAreaLocation_ffa1], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1449,7 +1449,7 @@ HandleAIEvolutionaryLight:
 
 .use_evolutionary_light
 	ldh [hTempPlayAreaLocation_ffa1], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1662,7 +1662,7 @@ HandleAIMatterExchange:
 	ret nc
 .use_matter_exchange
 	ldh [hTempPlayAreaLocation_ffa1], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1688,7 +1688,7 @@ HandleAIPlayTricks:
 	ccf
 	ret nc
 .use_play_tricks
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1793,7 +1793,7 @@ HandleAIFossilize:
 	ret
 
 .use_fossilize
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_UNK_0C
 	farcall AIMakeDecision
@@ -1829,7 +1829,7 @@ HandleAISpecialDelivery:
 	farcall FindUnusableEvolutionCardInHand
 	ret nc ; not found
 	ldh [hTempPlayAreaLocation_ffa1], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1856,7 +1856,7 @@ HandleAIStepIn:
 	cp 4
 	ccf
 	ret nc ; Dragonite doesn't have enough energy to attack
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -1987,7 +1987,7 @@ HandleAICowardice:
 	ld a, DUELVARS_ARENA_CARD
 	add c
 	get_turn_duelist_var
-	ld [wd084], a
+	ld [wAIPkmnPowerSourceDeckIndex], a
 	call GetCardIDFromDeckIndex
 	push bc
 	cp16 TENTACOOL
@@ -2029,7 +2029,7 @@ HandleAICowardice:
 
 	ldh a, [hTemp_ffa0]
 	ldh [hTempPlayAreaLocation_ff9d], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ld d, a
 	ld e, FIRST_ATTACK_OR_PKMN_POWER
 	call CopyAttackDataAndDamage_FromDeckIndex
@@ -2048,7 +2048,7 @@ HandleAICowardice:
 	ld a, $ff
 .use_cowardice
 	push af
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTempCardIndex_ff9f], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision
@@ -2079,7 +2079,7 @@ HandleAICowardice:
 	ld a, DUELVARS_ARENA_CARD
 	add c
 	get_turn_duelist_var
-	ld [wd084], a
+	ld [wAIPkmnPowerSourceDeckIndex], a
 	call GetCardIDFromDeckIndex
 	cp16 TENTACOOL
 	jr nz, .next_pokemon
@@ -2288,17 +2288,17 @@ HandleAIDamageSwap:
 	farcall ConvertHPToCounters
 	ld [wAIEnergyTransMode], a
 	farcall FindAlakazamLv42WithActivePkmnPowerInPlayArea
-	ld [wd084], a
+	ld [wAIPkmnPowerSourceDeckIndex], a
 
 	call .FindTargets
 	ret c ; no targets found
 
 ; use Damage Swap
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	add DUELVARS_ARENA_CARD
 	get_turn_duelist_var
 	ldh [hTempCardIndex_ff9f], a
-	ld a, [wd084]
+	ld a, [wAIPkmnPowerSourceDeckIndex]
 	ldh [hTemp_ffa0], a
 	ld a, OPPACTION_USE_PKMN_POWER
 	farcall AIMakeDecision

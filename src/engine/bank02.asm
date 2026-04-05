@@ -1508,7 +1508,7 @@ DisplayCheckMenuCursor_YourOrOppPlayArea:
 _HandlePeekSelection::
 	call LoadMenuCursorTile
 	xor a
-	ld [wd0cb], a
+	ld [wPeekSelectionParam], a
 	ld [wIsSwapTurnPending], a
 ; draw turn holder play area screen
 	ldh a, [hWhoseTurn]
@@ -1625,7 +1625,7 @@ ENDR
 
 	ld a, c
 	add $40
-	ld [wd0cb], a
+	ld [wPeekSelectionParam], a
 	ld a, c
 	add DUELVARS_PRIZE_CARDS
 	get_turn_duelist_var
@@ -1643,17 +1643,17 @@ ENDR
 	call CreateDeckCardList
 	ret c
 	ld a, $7f
-	ld [wd0cb], a
+	ld [wPeekSelectionParam], a
 	ld a, [wDuelTempList]
 
 .ShowSelectedCard:
 	ld b, a
-	ld a, [wd0cb]
+	ld a, [wPeekSelectionParam]
 	or a
 	jr nz, .display
 ; fallback to input deck index
 	ld a, b
-	ld [wd0cb], a
+	ld [wPeekSelectionParam], a
 .display
 	ld a, b
 	call LoadCardDataToBuffer1_FromDeckIndex
@@ -1667,11 +1667,11 @@ ENDR
 	or a
 	jr z, .no_swap
 	call SwapTurn
-	ld a, [wd0cb]
+	ld a, [wPeekSelectionParam]
 	or $80
 	ret
 .no_swap
-	ld a, [wd0cb]
+	ld a, [wPeekSelectionParam]
 	ret
 
 .PrepareYourPlayAreaSelection:
@@ -2643,7 +2643,7 @@ DeckSelectionSubMenu:
 	call DisableSRAM
 	or a
 	jr z, .get_input_deck_name
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	or a
 	jr z, .asm_90cd
 	call EnableSRAM
@@ -2659,7 +2659,7 @@ DeckSelectionSubMenu:
 
 .ChangeName
 	xor a
-	ld [hffbf], a
+	ld [hDeckSelectionFlags], a
 	call CheckIfCurDeckIsEmpty
 	jp nc, .get_input_deck_name
 	call PrintThereIsNoDeckHereText
@@ -2675,7 +2675,7 @@ DeckSelectionSubMenu:
 	ld e, l
 	ld hl, wCurDeckName
 	call CopyListFromHLToDEInSRAM
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	or a
 	jr z, .asm_9119
 	call EnableSRAM
@@ -3202,7 +3202,7 @@ AddDeckToCollection:
 ; deck configurations
 ; a = DECK_* flags to pick which deck names to show
 DrawDecksScreen:
-	ld [hffbf], a
+	ld [hDeckSelectionFlags], a
 
 	call EmptyScreenAndLoadFontDuelAndHandCardsIcons
 
@@ -3231,7 +3231,7 @@ DrawDecksScreen:
 ; for each deck, check if it has cards and if so
 ; mark is as valid in wDecksValid
 
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_1_F, a
 	jr z, .skip_name_1
 	ld hl, sDeck1
@@ -3245,7 +3245,7 @@ DrawDecksScreen:
 	ld [wDeck1Valid], a
 
 .check_deck_2
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_2_F, a
 	jr z, .skip_name_2
 	ld hl, sDeck2
@@ -3259,7 +3259,7 @@ DrawDecksScreen:
 	ld [wDeck2Valid], a
 
 .check_deck_3
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_3_F, a
 	jr z, .skip_name_3
 	ld hl, sDeck3
@@ -3273,7 +3273,7 @@ DrawDecksScreen:
 	ld [wDeck3Valid], a
 
 .check_deck_4
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_4_F, a
 	jr z, .skip_name_4
 	ld hl, sDeck4
@@ -3534,7 +3534,7 @@ DrawHandCardsTileAtDE:
 
 HandleDeckBuildScreen:
 	xor a
-	ld [hffbf], a
+	ld [hDeckSelectionFlags], a
 	call WriteCardListsTerminatorBytes
 	call CountNumberOfCardsForEachCardType
 .skip_count
@@ -3705,7 +3705,7 @@ OpenDeckConfigurationMenu:
 	ld a, [de]
 	ld [hl], a
 	ld a, $ff
-	ld [wd0c4], a
+	ld [wMultiDirectionalMenuValidCursorMask], a
 
 .skip_init
 	xor a
@@ -3841,7 +3841,7 @@ SaveDeckConfiguration:
 	call YesOrNoMenuWithText
 	jr c, .set_carry
 	ld a, $01
-	ld [hffbf], a
+	ld [hDeckSelectionFlags], a
 
 .set_carry
 	add sp, $02
@@ -6383,7 +6383,7 @@ HandleGiftCenterSendCardsMenu:
 	ld hl, SendCards_MenuData
 	call PlaceTextItems
 	ld a, $ff
-	ld [wd0c4], a
+	ld [wMultiDirectionalMenuValidCursorMask], a
 .loop_input
 	ld a, TRUE
 	ld [wVBlankOAMCopyToggle], a
@@ -6482,7 +6482,7 @@ HandleBlackBoxSendCardsMenu:
 	ld hl, SendCards_MenuData
 	call PlaceTextItems
 	ld a, $ff
-	ld [wd0c4], a
+	ld [wMultiDirectionalMenuValidCursorMask], a
 .loop_input
 	ld a, TRUE
 	ld [wVBlankOAMCopyToggle], a
@@ -6719,11 +6719,11 @@ CreateCardCollectionListWithDeckCards:
 	xor a ; aka $100 bytes
 	call ClearNBytesFromHL
 	ld a, ALL_DECKS
-	ld [hffbf], a
+	ld [hDeckSelectionFlags], a
 	jr .deck_1
 
 .copy_card_collection
-	ld [hffbf], a
+	ld [hDeckSelectionFlags], a
 
 ; copies sCardCollection to wTempCardCollection
 	call EnableSRAM
@@ -6737,25 +6737,25 @@ CreateCardCollectionListWithDeckCards:
 	call CopyBBytesFromHLToDE_Bank02
 	call DisableSRAM
 .deck_1
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_1_F, a
 	jr z, .deck_2
 	ld de, sDeck1Cards
 	call IncrementDeckCardsInTempCollection
 .deck_2
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_2_F, a
 	jr z, .deck_3
 	ld de, sDeck2Cards
 	call IncrementDeckCardsInTempCollection
 .deck_3
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_3_F, a
 	jr z, .deck_4
 	ld de, sDeck3Cards
 	call IncrementDeckCardsInTempCollection
 .deck_4
-	ld a, [hffbf]
+	ld a, [hDeckSelectionFlags]
 	bit DECK_4_F, a
 	ret z
 	ld de, sDeck4Cards
@@ -7823,7 +7823,7 @@ GetFirstOwnedCardIndex:
 
 CardAlbum:
 	ld a, $01
-	ld [hffbe], a ; should be ldh
+	ld [hCardAlbumMenuNeedsInit], a ; should be ldh
 
 	xor a
 	ld [wScrollMenuScrollOffset], a
@@ -8124,10 +8124,10 @@ CardAlbum:
 	xor a
 	ld [wTileMapFill], a
 	call EmptyScreen
-	ld a, [hffbe]
+	ld a, [hCardAlbumMenuNeedsInit]
 	dec a
 	jp nz, .draw_box
-	ld [hffbe], a
+	ld [hCardAlbumMenuNeedsInit], a
 	call ZeroObjectPositions
 	ld a, TRUE
 	ld [wVBlankOAMCopyToggle], a

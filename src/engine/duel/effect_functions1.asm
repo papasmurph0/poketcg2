@@ -109,12 +109,10 @@ Serial_TossCoinATimes:
 	call TossCoinATimes
 	ret
 
-; sets wcd0d to TRUE
-; still not sure what wcd0d is, might have something to do
-; with syncing with the Link Opponent in specific effect commands
-Func_6808d:
+; marks that this Pokemon Power needs a pre-selection link sync op-action
+MarkPokemonPowerNeedsLinkSync: ; Func_6808d
 	ld a, TRUE
-	ld [wcd0d], a
+	ld [wPokemonPowerNeedsLinkSync], a
 	or a
 	ret
 
@@ -375,7 +373,7 @@ GetListOfFireEnergiesFromPlayAreaCard:
 .no_energy_burn
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	add CARD_LOCATION_ARENA
-	ld [wce01], a
+	ld [wAttachedEnergyListCardLocation], a
 	ld a, TYPE_ENERGY_FIRE
 	jr CreateListOfEnergyAttachedToPlayAreaCard
 .has_energy_burn
@@ -407,7 +405,7 @@ CreateListOfFireEnergyAttachedToArena:
 CreateListOfEnergyAttachedToArena:
 	push af
 	ld a, CARD_LOCATION_ARENA
-	ld [wce01], a
+	ld [wAttachedEnergyListCardLocation], a
 	pop af
 ;	fallthrough
 
@@ -420,7 +418,7 @@ CreateListOfEnergyAttachedToPlayAreaCard:
 .loop
 	ld a, [hl]
 	push hl
-	ld hl, wce01
+	ld hl, wAttachedEnergyListCardLocation
 	cp [hl]
 	pop hl
 	jr nz, .next
@@ -560,7 +558,7 @@ HandleSwitchDefendingPokemonEffect:
 	call SwapTurn
 
 	xor a
-	ld [wccc5], a
+	ld [wNonTurnArenaCardStatus], a
 	ld [wDuelDisplayedScreen], a
 	ret
 
@@ -1569,7 +1567,7 @@ EkansWrapEffect:
 	ret
 
 TerrorStrike_InitialEffect:
-	call Func_6808d
+	call MarkPokemonPowerNeedsLinkSync
 	ret
 
 ; outputs in hTemp_ffa0 the result of the coin toss (0 = tails, 1 = heads).
@@ -8402,7 +8400,7 @@ Gale_SwitchEffect:
 	dec a
 	call Random
 	inc a
-	ld [wcd0a], a
+	ld [wAttackingCardPlayAreaLocation], a
 	ld e, a
 	call SwapArenaWithBenchPokemon
 	xor a
@@ -8508,7 +8506,7 @@ Fireball_AIEffect:
 	ret
 
 Fireball_CheckEnergy:
-	call Func_6808d
+	call MarkPokemonPowerNeedsLinkSync
 	call CheckIfArenaCardHasFireOrRainbowEnergy
 	ret
 
@@ -8553,7 +8551,7 @@ Fireball_DiscardEffect:
 	ret
 
 ContinuousFireball_CheckEnergy:
-	call Func_6808d
+	call MarkPokemonPowerNeedsLinkSync
 	call CheckIfArenaCardHasFireOrRainbowEnergy
 	ret
 
@@ -8768,7 +8766,7 @@ CalculateDarkFlareonRageDamage:
 	ret
 
 PlayingWithFire_InitialEffect:
-	call Func_6808d
+	call MarkPokemonPowerNeedsLinkSync
 	ret
 
 PlayingWithFire_AIEffect:
@@ -9699,7 +9697,7 @@ TeleportBlast_SwitchEffect:
 
 	; actually do switching
 	ldh a, [hTemp_ffa0]
-	ld [wcd0a], a
+	ld [wAttackingCardPlayAreaLocation], a
 	ld e, a
 	call SwapArenaWithBenchPokemon
 	xor a
@@ -10089,7 +10087,7 @@ DragOff_SwitchEffect:
 	jr .done
 .switch
 	xor a
-	ld [wcd0b], a
+	ld [wDefendingCardSubstatus1], a
 	call SwapArenaWithBenchPokemon
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -10243,7 +10241,7 @@ HyperFang_NoDamage50PercentEffect:
 	ret
 
 CoinHurl_InitialEffect:
-	call Func_6808d
+	call MarkPokemonPowerNeedsLinkSync
 	ret
 
 CoinHurl_AIEffect:
@@ -10329,7 +10327,7 @@ DarkPersianFascinate_SwitchEffect:
 	jr FascinateSwitchEffect
 
 FascinateInitialEffect:
-	call Func_6808d
+	call MarkPokemonPowerNeedsLinkSync
 	call CheckNonTurnDuelistHasBench
 	ret
 

@@ -127,16 +127,20 @@ wCardPopSummary:: ; c5f4
 
 SECTION "WRAM0 Text Engine", WRAM0
 
-wc600:: ; c600
+; key1 byte for text-tile cache entries
+wTextTileCacheKey1:: ; c600
 	ds $100
 
-wc700:: ; c700
+; key2 byte for text-tile cache entries
+wTextTileCacheKey2:: ; c700
 	ds $100
 
-wc800:: ; c800
+; next-node index for text-tile cache linked list
+wTextTileCacheNext:: ; c800
 	ds $100
 
-wc900:: ; c900
+; prev-node index for text-tile cache linked list
+wTextTileCachePrev:: ; c900
 	ds $100
 
 SECTION "WRAM0 1", WRAM0
@@ -322,11 +326,13 @@ wSerialTimeoutCounter:: ; cb72
 	ds $1
 
 ; tcg1: wcb79
-wcb73:: ; cb73
+; saved stack pointer used by serial recovery helper flow
+wSerialSavedStackPointer:: ; cb73
 	ds $2
 
 ; tcg1: wcb7b
-wcb75:: ; cb75
+; saved return address used by serial recovery helper flow
+wSerialSavedReturnAddress:: ; cb75
 	ds $2
 
 wSerialSendSave:: ; cb77
@@ -751,7 +757,7 @@ wTempNonTurnDuelistCardIDPlayAreaLocation:: ; ccd9
 	ds $1
 
 ; the status condition of the defending Pokemon is loaded here after an attack
-wccc5:: ; ccda
+wNonTurnArenaCardStatus:: ; ccda
 	ds $1
 
 ; *_ATTACK constants for selected attack
@@ -843,16 +849,19 @@ wSkipDelayAllowed:: ; cd08
 wTurnEndedDueToComputerError:: ; cd09
 	ds $1
 
-wcd0a:: ; cd0a
+; PLAY_AREA_* slot of the attacking card for post-damage effects that can hit or switch the attacker
+wAttackingCardPlayAreaLocation:: ; cd0a
 	ds $1
 
-wcd0b:: ; cd0b
+; cached SUBSTATUS1 value of the defending arena card captured before attack effects start resolving
+wDefendingCardSubstatus1:: ; cd0b
 	ds $1
 
 wKnockedOutByGasExplosion:: ; cd0c
 	ds $1
 
-wcd0d:: ; cd0d
+; when non-zero, UsePokemonPower sends OPPACTION_UNK_0C before selection/effect handling
+wPokemonPowerNeedsLinkSync:: ; cd0d
 	ds $1
 
 ; DECK_REQUIREMENT_* constant for the current duel
@@ -1123,10 +1132,12 @@ wTextMaxLength:: ; cd75
 wUppercaseHalfWidthLetters:: ; cd76
 	ds $1
 
-wcd77:: ; cd77
+; number of cards currently shown as being drawn in the active portrait-update animation
+wAIPortraitCardsDrawnThisAnim:: ; cd77
 	ds $1
 
-wcd78:: ; cd78
+; EMOTION_* value currently selected for the opponent portrait renderer
+wAIOpponentPortraitEmotion:: ; cd78
 	ds $1
 
 ; During a duel, this is always $b after the first attack.
@@ -1197,7 +1208,8 @@ wIsTextBoxLabeled:: ; cde2
 wTextBoxLabel:: ; cde3
 	ds $2
 
-wcde5:: ; cde5
+; temporary source pointer used while copying card graphics by attribute map
+wTempCardGfxSourcePtr:: ; cde5
 	ds $2
 
 wCoinTossScreenTextID:: ; cde7
@@ -1250,7 +1262,8 @@ wMetronomeSelectedAttack:: ; cdf9
 wBackupPlayerAreaHP:: ; cdfb
 	ds MAX_PLAY_AREA_POKEMON
 
-wce01:: ; ce01
+; CARD_LOCATION_* value used when building filtered lists of attached energy cards
+wAttachedEnergyListCardLocation:: ; ce01
 	ds $1
 
 ; holds misc values corresponding to each Play Area card
@@ -1261,10 +1274,12 @@ wPlayAreaList:: ; ce02
 wTempCardID_ce08:: ; ce08
 	ds $2
 
-wce0a:: ; ce0a
+; text ID used when displaying damage dealt by a Pokemon Power helper
+wPkmnPowerDamageTextID:: ; ce0a
 	ds $2
 
-wce0c:: ; ce0c
+; PLAY_AREA_* slot currently being checked by CheckIsIncapableOfUsingPkmnPower
+wPkmnPowerCheckPlayAreaLocation:: ; ce0c
 	ds $1
 
 ; stores the real Retreat cost of a card
@@ -1300,9 +1315,8 @@ wPrinterCurCardTypeCount:: ; ce16
 wPrinterNumCardTypes:: ; ce18
 	ds $2
 
-; related to printer functions
-; only written to but never read
-wce98:: ; ce1a
+; increments per card entry processed in the current printer card-type block
+wPrinterCurCardTypeEntryCount:: ; ce1a
 	ds $1
 
 wPrinterContrastLevel:: ; ce1b
@@ -1343,16 +1357,20 @@ wCardPopType:: ; ce25
 wClearedGame:: ; ce26
 	ds $1
 
-wce27:: ; ce27
+; selected item index in the Card Pop main menu
+wCardPopMenuItem:: ; ce27
 	ds $1
 
-wce28:: ; ce28
+; index of the first visible Card Pop record in the paged list
+wCardPopRecordListScrollOffset:: ; ce28
 	ds $1
 
-wce29:: ; ce29
+; Card Pop record index currently being rendered in the record list
+wCardPopRecordListEntryIndex:: ; ce29
 	ds $1
 
-wce2a:: ; ce2a
+; y-coordinate used while rendering Card Pop record list entries
+wCardPopRecordListEntryY:: ; ce2a
 	ds $1
 
 wNumCardPopRecords:: ; ce2b
@@ -1693,7 +1711,11 @@ wAIFirstAttackDamage:: ; d070
 wAISecondAttackDamage:: ; d071
 	ds $1
 
-wd072:: ; d072
+; temporary flag used while evaluating AI attack damage scoring branches
+wAIAttackScoringTempFlag:: ; d072
+
+; temporary deck index used by helper routines that scan attached energy cards
+wTempEnergyCardDeckIndex:: ; d072
 	ds $1
 
 wAITempFoundDeckIndex:: ; d073
@@ -1754,7 +1776,12 @@ wAIEnergyTransMode:: ; d082
 ; setting up AI Boss deck
 wAISetupEnergyCount:: ; d084
 wAIPkmnPowerUserCardIndex:: ; d084
-wd084:: ; d084
+
+; deck index of the AI Pokemon currently being evaluated for a Pokemon Power
+wAIPkmnPowerSourceDeckIndex:: ; d084
+
+; play-area location selected by AI as the best bench attacker candidate
+wAIBestBenchAttackerPlayAreaLocation:: ; d084
 	ds $1
 
 	ds $d
@@ -1864,10 +1891,12 @@ wMultiDirectionalMenuCursorPosition:: ; d0c1
 wTransitionTablePtr:: ; d0c2
 	ds $2
 
+; bitmask of valid cursor indices (< 8) used by HandleMultiDirectionalMenu
+wMultiDirectionalMenuValidCursorMask:: ; d0c4
+
 ; same as wDuelInitialPrizes but with upper 2 bits set
 wDuelInitialPrizesUpperBitsSet:: ; d0c4
 
-wd0c4:: ; d0c4
 	ds $1
 
 ; call SwapTurn post-processing flag
@@ -1890,7 +1919,10 @@ wNumberOfPrizeCardsToSelect:: ; d0c8
 wSelectedPrizeCardListPtr:: ; d0c9
 	ds $2
 
-wd0cb:: ; d0cb
+; encoded selection parameter returned by HandlePeekSelection.
+; values include prize-index markers ($40+), deck marker ($7f),
+; hand-target flag, and turn-swap flag in bit 7.
+wPeekSelectionParam:: ; d0cb
 	ds $1
 
 ; stores ARENA_CARD_PLAYER/ARENA_CARD_OPPONENT flag
@@ -2695,7 +2727,8 @@ wMusicFadeOutDuration:: ; d676
 wMusicFadeOutVolume:: ; d677
 	ds $1
 
-wd678:: ; d678
+; temporary byte used by home helper routines
+wTempByte_d678:: ; d678
 	ds $1
 
 wScenarioDebugMenuCursorPosition:: ; d679
@@ -2778,7 +2811,7 @@ wBGMapHeight:: ; d7d7
 wOWPermissionsPtr:: ; d7d8
 	ds $1
 
-wd7d9:: ; d7d9
+wOWPermissionsPtrHigh:: ; d7d9
 	ds $1
 
 	ds $2
@@ -2895,10 +2928,12 @@ FOR n, 1, NUM_SPRITE_ANIM_STRUCTS + 1
 wSpriteTileset{d:n}:: obj_tile_struct wSpriteTileset{d:n}
 ENDR
 
-wd96c:: ; d96c
+; index into the local color-word table used by SetwD96CAndwD96D
+wTempColorTableIndex:: ; d96c
 	ds $1
 
-wd96d:: ; d96d
+; 16-bit color word loaded from the local table by SetwD96CAndwD96D
+wTempColorTableWord:: ; d96d
 	ds $2
 
 wSpriteAnimRenderFlags:: ; d96f
@@ -3770,30 +3805,34 @@ wBackup3DeckToBuild:: ; d58e
 
 SECTION "WRAM3", WRAMX
 
-w3d000:: ; d000
+; backing buffer used by BGMap copy save/restore routines
+wBGMapCopyBufferWRAM3:: ; d000
 	ds $1
 
 	ds $3ff
 
-w3d400:: ; d400
+; number of saved BGMap regions in wBGMapCopyBufferWRAM3
+wBGMapCopyRegionCount:: ; d400
 	ds $1
 
-; pointers to BG map
-w3d401:: ; d401
+; pointer stack for saved BGMap regions in wBGMapCopyBufferWRAM3
+wBGMapCopyRegionPointers:: ; d401
 	ds 2 * 10
 
-w3d415:: ; d415
+; backup of wOWMap used by Save/RestoreOWMapToWRAM3
+wBackupOWMapWRAM3:: ; d415
 	ds $1
 
 	ds $b0
 
-w3d4c6:: ; d4c6
+; backup copy of the BGMap copy-state block (d000-d414) in WRAM3
+wBackupBGMapCopyStateWRAM3:: ; d4c6
 	ds $415
 
-w3d8db:: ; d8db
+wBackupSpriteAnimTileStateWRAM3:: ; d8db
 	ds SPRITE_ANIM_TILE_BUFFER_SIZE
 
-w3d9a5:: ; d9a5
+wBackupOWObjectsWRAM3:: ; d9a5
 	ds OW_OBJECTS_BUFFER_SIZE
 
 SECTION "WRAM7 Audio", WRAMX

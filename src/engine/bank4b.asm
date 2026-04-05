@@ -251,7 +251,7 @@ LoadTilemap::
 	ld a, l
 	ld [wOWPermissionsPtr], a
 	ld a, h
-	ld [wd7d9], a
+	ld [wOWPermissionsPtrHigh], a
 	pop hl
 	inc hl
 	inc hl
@@ -339,7 +339,7 @@ LoadTilemap::
 
 	ld a, [wOWPermissionsPtr]
 	ld l, a
-	ld a, [wd7d9]
+	ld a, [wOWPermissionsPtrHigh]
 	ld h, a
 	or l
 	jr z, .null

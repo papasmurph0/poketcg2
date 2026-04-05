@@ -644,10 +644,10 @@ StartScript::
 
 ; copies b bytes from a:hl to de
 CopyFarHLToDE::
-	ld [wd678], a
+	ld [wTempByte_d678], a
 	ldh a, [hBankROM]
 	push af
-	ld a, [wd678]
+	ld a, [wTempByte_d678]
 	call BankswitchROM
 	call CopyDataHLtoDE_SaveRegisters
 	pop af
@@ -714,7 +714,7 @@ DivideDEByBC::
 	rl d
 	ld a, 16 ; number of bits
 .loop
-	ld [wd678], a
+	ld [wTempByte_d678], a
 	rl l
 	rl h
 	push hl
@@ -735,7 +735,7 @@ DivideDEByBC::
 .skip_pop_hl
 	rl e
 	rl d
-	ld a, [wd678]
+	ld a, [wTempByte_d678]
 	dec a
 	jr nz, .loop
 	ld a, h
@@ -931,7 +931,7 @@ DivideBCbyDE::
 	rl b
 	ld a, $10
 .asm_3568
-	ldh [hffc0], a
+	ldh [hDivideBCbyDECounter], a
 	rl l
 	rl h
 	push hl
@@ -951,7 +951,7 @@ DivideBCbyDE::
 .asm_357e
 	rl c
 	rl b
-	ldh a, [hffc0]
+	ldh a, [hDivideBCbyDECounter]
 	dec a
 	jr nz, .asm_3568
 	ret

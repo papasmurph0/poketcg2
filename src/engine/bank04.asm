@@ -426,9 +426,9 @@ ResetBGMapCopyState: ; Func_10327
 	ld a, BANK("WRAM3")
 	call SwitchWRAMBank
 	xor a
-	ld [w3d400], a
-	ld de, w3d000
-	ld hl, w3d401
+	ld [wBGMapCopyRegionCount], a
+	ld de, wBGMapCopyBufferWRAM3
+	ld hl, wBGMapCopyRegionPointers
 	ld [hl], e
 	inc hl
 	ld [hl], d
@@ -448,10 +448,10 @@ CopyBGMapFromVRAMToWRAM:
 	ld a, BANK("WRAM3")
 	call SwitchWRAMBank
 	push bc
-	ld a, [w3d400]
+	ld a, [wBGMapCopyRegionCount]
 	ld c, a
 	ld b, $00
-	ld hl, w3d401
+	ld hl, wBGMapCopyRegionPointers
 	add hl, bc
 	add hl, bc
 	pop bc
@@ -510,7 +510,7 @@ CopyBGMapFromVRAMToWRAM:
 	dec c
 	jr nz, .loop
 
-	ld hl, w3d400
+	ld hl, wBGMapCopyRegionCount
 	inc [hl]
 	pop hl
 	inc hl
@@ -536,12 +536,12 @@ CopyBGMapFromWRAMToVRAM:
 	push af
 	ld a, BANK("WRAM3")
 	call SwitchWRAMBank
-	ld hl, w3d400
+	ld hl, wBGMapCopyRegionCount
 	dec [hl]
 	ld a, [hl]
 	ld c, a
 	ld b, $00
-	ld hl, w3d401
+	ld hl, wBGMapCopyRegionPointers
 	add hl, bc
 	add hl, bc
 	ld a, [hli]
@@ -911,7 +911,7 @@ SaveOWMapToWRAM3: ; Func_1059f
 	push bc
 	push de
 	push hl
-	ld de, w3d415
+	ld de, wBackupOWMapWRAM3
 	ld hl, wOWMap
 	ld c, $b1
 .loop_copy
@@ -933,8 +933,8 @@ SaveOWMapToWRAM3: ; Func_1059f
 	ld a, BANK("WRAM3")
 	call SwitchWRAMBank
 	ld bc, $415
-	ld de, w3d4c6
-	ld hl, w3d000
+	ld de, wBackupBGMapCopyStateWRAM3
+	ld hl, wBGMapCopyBufferWRAM3
 	call CopyBCBytesFromHLToDE
 	pop af
 	call SwitchWRAMBank
@@ -949,7 +949,7 @@ RestoreOWMapFromWRAM3: ; Func_105de
 	push bc
 	push de
 	push hl
-	ld de, w3d415
+	ld de, wBackupOWMapWRAM3
 	ld hl, wOWMap
 	ld c, $b1
 .loop_copy
@@ -971,8 +971,8 @@ RestoreOWMapFromWRAM3: ; Func_105de
 	ld a, BANK("WRAM3")
 	call SwitchWRAMBank
 	ld bc, $415
-	ld de, w3d000
-	ld hl, w3d4c6
+	ld de, wBGMapCopyBufferWRAM3
+	ld hl, wBackupBGMapCopyStateWRAM3
 	call CopyBCBytesFromHLToDE
 	pop af
 	call SwitchWRAMBank
@@ -2165,7 +2165,7 @@ CountActiveSpriteAnims:
 	pop bc
 	ret
 
-; push to w3d8db
+; push to wBackupSpriteAnimTileStateWRAM3
 ; wSpriteAnimationStructs, wCurVRAMTile, wNumSpriteTilesets, wSpriteTilesets
 PushSpriteAnimTileToBank3:
 	ei
@@ -2174,7 +2174,7 @@ PushSpriteAnimTileToBank3:
 	push bc
 	push de
 	push hl
-	ld de, w3d8db
+	ld de, wBackupSpriteAnimTileStateWRAM3
 	ld hl, wSpriteAnimationStructs
 	ld c, SPRITE_ANIM_TILE_BUFFER_SIZE
 .copy_loop
@@ -2198,7 +2198,7 @@ PushSpriteAnimTileToBank3:
 	ei
 	ret
 
-; pull from w3d8db
+; pull from wBackupSpriteAnimTileStateWRAM3
 ; wSpriteAnimationStructs, wCurVRAMTile, wNumSpriteTilesets, wSpriteTilesets
 PullSpriteAnimTileFromBank3:
 	ei
@@ -2207,7 +2207,7 @@ PullSpriteAnimTileFromBank3:
 	push bc
 	push de
 	push hl
-	ld de, w3d8db
+	ld de, wBackupSpriteAnimTileStateWRAM3
 	ld hl, wSpriteAnimationStructs
 	ld c, SPRITE_ANIM_TILE_BUFFER_SIZE
 .copy_loop
@@ -2236,8 +2236,8 @@ CheckIsSpriteAnimAnimating:
 	bit SPRITEANIMSTRUCT_ANIMATING_F, [hl]
 	ret
 
-SetwD96CAndwD96D:
-	ld [wd96c], a
+SetTempColorTableIndexAndWord:
+	ld [wTempColorTableIndex], a
 
 	add a
 	ld c, a
@@ -2245,9 +2245,9 @@ SetwD96CAndwD96D:
 	ld hl, .DataTable
 	add hl, bc
 	ld a, [hli]
-	ld [wd96d], a
+	ld [wTempColorTableWord], a
 	ld a, [hl]
-	ld [wd96d + 1], a
+	ld [wTempColorTableWord + 1], a
 	ret
 
 .DataTable:
@@ -2255,8 +2255,8 @@ SetwD96CAndwD96D:
 	dw $791d ; rgb 29, 8, 30?
 	dw 0
 
-GetwD96C:
-	ld a, [wd96c]
+GetTempColorTableIndex:
+	ld a, [wTempColorTableIndex]
 	ret
 
 ; bc = FRAMESET_* constant
@@ -3825,7 +3825,7 @@ GetOWObjectsPointer:
 	ld hl, wOWObjects
 	ret
 
-; push all wOWObjects to w3d9a5, then PushSpriteAnimTileToBank3
+; push all wOWObjects to wBackupOWObjectsWRAM3, then PushSpriteAnimTileToBank3
 PushOWObjectsAndAnimTileToBank3:
 	ei
 	di
@@ -3833,7 +3833,7 @@ PushOWObjectsAndAnimTileToBank3:
 	push bc
 	push de
 	push hl
-	ld de, w3d9a5
+	ld de, wBackupOWObjectsWRAM3
 	ld hl, wOWObjects
 	ld c, OW_OBJECTS_BUFFER_SIZE
 .copy_loop
@@ -3858,7 +3858,7 @@ PushOWObjectsAndAnimTileToBank3:
 	pop af
 	ret
 
-; pull all wOWObjects from w3d9a5, then PullSpriteAnimTileFromBank3
+; pull all wOWObjects from wBackupOWObjectsWRAM3, then PullSpriteAnimTileFromBank3
 PullSpriteAnimTileObjFromBank3:
 	ei
 	di
@@ -3866,7 +3866,7 @@ PullSpriteAnimTileObjFromBank3:
 	push bc
 	push de
 	push hl
-	ld de, w3d9a5
+	ld de, wBackupOWObjectsWRAM3
 	ld hl, wOWObjects
 	ld c, OW_OBJECTS_BUFFER_SIZE
 .copy_loop

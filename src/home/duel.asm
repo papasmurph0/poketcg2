@@ -1318,9 +1318,9 @@ ClearTwoTurnDuelVars::
 	ld [wForcedSwitchPlayAreaLocation], a
 	ld [wMetronomeEnergyCost], a
 	ld [wNoEffectFromWhichStatus], a
-	ld [wcd0a], a
+	ld [wAttackingCardPlayAreaLocation], a
 	ld [wKnockedOutByGasExplosion], a
-	ld [wcd0d], a
+	ld [wPokemonPowerNeedsLinkSync], a
 	ld [wMetronomeAttackCannotBeUsed], a
 	ld hl, wDarkWaveAndDarknessVeilDamageModifiers
 	ld [hli], a
@@ -1330,7 +1330,7 @@ ClearTwoTurnDuelVars::
 	bank1call ClearNonTurnTemporaryDuelvars_CopyStatus
 	ld a, DUELVARS_ARENA_CARD_SUBSTATUS1
 	call GetNonTurnDuelistVariable
-	ld [wcd0b], a
+	ld [wDefendingCardSubstatus1], a
 	ret
 
 ; Use an attack (from DuelMenu_Attack) or a Pokemon Power (from DuelMenu_PkmnPower)
@@ -1510,7 +1510,7 @@ UsePokemonPower:
 	ld a, EFFECTCMDTYPE_INITIAL_EFFECT_2
 	call TryExecuteEffectCommandFunction
 	jr c, DrawWideTextBox_WaitForInput_ReturnCarry
-	ld a, [wcd0d]
+	ld a, [wPokemonPowerNeedsLinkSync]
 	or a
 	jr z, .asm_1687
 	ld a, OPPACTION_UNK_0C

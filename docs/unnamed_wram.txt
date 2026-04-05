@@ -76,3 +76,123 @@ wcd04 -> wTextTileReserveCursor
 hffbb -> hTextTileGenerationFlags
 ; text-engine flags controlling whether generated text tiles are built and/or placed.
 
+wcd0a -> wAttackingCardPlayAreaLocation
+; PLAY_AREA_* slot of the attacking card for post-damage effects that can damage or switch the attacker.
+
+wcd0b -> wDefendingCardSubstatus1
+; cached defending arena-card SUBSTATUS1 value captured before attack effects start resolving.
+
+wce0a -> wPkmnPowerDamageTextID
+; temporary text ID used when printing Pokemon Power damage messages.
+
+wce0c -> wPkmnPowerCheckPlayAreaLocation
+; PLAY_AREA_* slot currently being checked for whether its Pokemon Power is blocked.
+
+wce01 -> wAttachedEnergyListCardLocation
+; CARD_LOCATION_* value used when building filtered lists of attached energy cards.
+
+hffc0 -> hDivideBCbyDECounter
+; loop counter used internally by DivideBCbyDE.
+
+hffbe -> hCardAlbumMenuNeedsInit
+; one-time initialization flag for the Card Album booster-pack menu.
+
+wcd0d -> wPokemonPowerNeedsLinkSync
+; when set by specific Pokemon Power effects, UsePokemonPower sends a pre-selection link sync op-action.
+
+hff96 -> hTempA_ff98
+; temporary byte used to preserve register a across helper calls.
+
+hffbf -> hDeckSelectionFlags
+; DECK_* bitfield used by deck selection/building menu flows.
+
+wcd77 -> wAIPortraitCardsDrawnThisAnim
+; number of cards currently shown as being drawn during AI portrait-update animation logic.
+
+wcd78 -> wAIOpponentPortraitEmotion
+; EMOTION_* value used when drawing the opponent portrait during duel UI updates.
+
+wccc5 -> wNonTurnArenaCardStatus
+; non-turn arena Pokemon status condition cached before temporary duelvars are cleared.
+
+wce27 -> wCardPopMenuItem
+; selected item index preserved while navigating the Card Pop main menu.
+
+wce28 -> wCardPopRecordListScrollOffset
+; index of the first visible Card Pop record in the paged records list.
+
+wce29 -> wCardPopRecordListEntryIndex
+; current Card Pop record index used while rendering visible record entries.
+
+wce2a -> wCardPopRecordListEntryY
+; y-coordinate cursor used when drawing Card Pop record list rows.
+
+wcde5 -> wTempCardGfxSourcePtr
+; temporary 16-bit source pointer used by LoadCardGfxByAttrMap tile-copy loops.
+
+wd0cb -> wPeekSelectionParam
+; encoded Peek-target selection parameter returned by HandlePeekSelection.
+
+wcb73 -> wSerialSavedStackPointer
+; saved stack pointer used by serial recovery helper routines.
+
+wcb75 -> wSerialSavedReturnAddress
+; saved return-address pointer used by serial recovery helper routines.
+
+wce98 -> wPrinterCurCardTypeEntryCount
+; counter incremented per card entry processed in the current printer type block.
+
+wd678 -> wTempByte_d678
+; temporary byte used by home helper routines for short-lived state.
+
+wd7d9 -> wOWPermissionsPtrHigh
+; high byte paired with wOWPermissionsPtr when decompressing map permissions.
+
+w3d000 -> wBGMapCopyBufferWRAM3
+; backing buffer used by BGMap copy save/restore routines in WRAM3.
+
+w3d400 -> wBGMapCopyRegionCount
+; number of BGMap regions currently saved in the WRAM3 BGMap copy buffer.
+
+w3d401 -> wBGMapCopyRegionPointers
+; pointer stack to BGMap region entries inside the WRAM3 BGMap copy buffer.
+
+w3d415 -> wBackupOWMapWRAM3
+; WRAM3 backup copy of wOWMap used by Save/RestoreOWMapToWRAM3.
+
+w3d4c6 -> wBackupBGMapCopyStateWRAM3
+; WRAM3 backup of the BGMap copy-state block (d000-d414).
+
+w3d8db -> wBackupSpriteAnimTileStateWRAM3
+; WRAM3 backup block for sprite animation tile state data.
+
+w3d9a5 -> wBackupOWObjectsWRAM3
+; WRAM3 backup block for the full overworld objects buffer.
+
+wd072 -> wAIAttackScoringTempFlag / wTempEnergyCardDeckIndex
+; dual-use byte: AI attack-scoring temp flag and temporary attached-energy deck index.
+
+wd084 -> wAIPkmnPowerSourceDeckIndex / wAIBestBenchAttackerPlayAreaLocation
+; dual-use byte: AI Pokemon Power source deck index and best bench attacker play-area location.
+
+wd0c4 -> wMultiDirectionalMenuValidCursorMask
+; bitmask of valid cursor indices consumed by HandleMultiDirectionalMenu.
+
+wc600 -> wTextTileCacheKey1
+; first key byte for each text-tile cache entry.
+
+wc700 -> wTextTileCacheKey2
+; second key byte for each text-tile cache entry.
+
+wc800 -> wTextTileCacheNext
+; next-node index array for text-tile cache linked-list entries.
+
+wc900 -> wTextTileCachePrev
+; previous-node index array for text-tile cache linked-list entries.
+
+wd96c -> wTempColorTableIndex
+; temporary index into the local color-word table in SetwD96CAndwD96D.
+
+wd96d -> wTempColorTableWord
+; temporary 16-bit color word loaded from SetwD96CAndwD96D's local table.
+

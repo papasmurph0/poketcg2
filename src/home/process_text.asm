@@ -135,7 +135,7 @@ ProcessSpecialTextCharacter::
 	xor a
 	ret
 
-; calls InitTextFormat, selects tiles at $8800-$97FF for text, and clears the wc600.
+; calls InitTextFormat, selects tiles at $8800-$97FF for text, and clears wTextTileCacheKey1.
 ; selects the first and last tile to be reserved for constructing text tiles in VRAM
 ; based on the values given in d and e respectively.
 SetupText::
@@ -152,7 +152,7 @@ SetupText::
 	ld [wTilePatternSelector], a
 	ld a, $80
 	ld [wTilePatternSelectorCorrection], a
-	ld hl, wc600
+	ld hl, wTextTileCacheKey1
 .clear_loop
 	xor a
 	ld [hl], a
@@ -289,15 +289,15 @@ FindTextTileInCacheOrReserveSlot:: ; Func_2325
 	cp [hl]
 	jr nz, .asm_2345
 	ldh a, [hTextTileCacheHead]
-	ld h, HIGH(wc800)
+	ld h, HIGH(wTextTileCacheNext)
 .asm_2337
 	ld l, a
 	ld a, [hl]
 	or a
 	jr nz, .asm_2337
-	ld h, HIGH(wc900)
+	ld h, HIGH(wTextTileCachePrev)
 	ld c, [hl]
-	ld b, HIGH(wc800)
+	ld b, HIGH(wTextTileCacheNext)
 	xor a
 	ld [bc], a
 	jr .asm_234a
@@ -310,15 +310,15 @@ FindTextTileInCacheOrReserveSlot:: ; Func_2325
 .asm_234a
 	ldh a, [hTextTileCacheHead]
 	ld c, a
-	ld b, HIGH(wc900)
+	ld b, HIGH(wTextTileCachePrev)
 	ld a, l
 	ldh [hTextTileCacheHead], a
 	ld [bc], a
-	ld h, HIGH(wc800)
+	ld h, HIGH(wTextTileCacheNext)
 	ld [hl], c
-	ld h, HIGH(wc600)
+	ld h, HIGH(wTextTileCacheKey1)
 	ld [hl], e
-	inc h ; HIGH(wc700)
+	inc h ; HIGH(wTextTileCacheKey2)
 	ld [hl], d
 	ld b, l
 	xor a

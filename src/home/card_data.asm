@@ -212,9 +212,9 @@ LoadCardGfxByAttrMap:: ; Func_2dc4
 	push af
 	call LoadCardPalettes
 	ld a, l
-	ld [wcde5 + 0], a
+	ld [wTempCardGfxSourcePtr + 0], a
 	ld a, h
-	ld [wcde5 + 1], a
+	ld [wTempCardGfxSourcePtr + 1], a
 	ld hl, wCardAttrMap
 	lb bc, $30, 0
 .loop_copy
@@ -230,10 +230,10 @@ LoadCardGfxByAttrMap:: ; Func_2dc4
 	add hl, hl
 	add hl, hl
 	add hl, hl ; *TILE_SIZE
-	ld a, [wcde5 + 0]
+	ld a, [wTempCardGfxSourcePtr + 0]
 	add l
 	ld l, a
-	ld a, [wcde5 + 1]
+	ld a, [wTempCardGfxSourcePtr + 1]
 	adc h
 	ld h, a
 	ld b, TILE_SIZE

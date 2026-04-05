@@ -24,3 +24,13 @@
 
 # *disasm.py output file
 *disasm_output.asm
+
+dont_look.txt
+tools/project_map.png
+tools/project_map.dot
+tools/asm_mapper.py
+tools/repo_graph.py
+tools/repo_structure.dot
+tools/repo_structure.mmd
+tools/repo_structure.html
+tools/repo_components/

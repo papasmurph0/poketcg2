@@ -3439,7 +3439,6 @@ Func_1dff -> LoadPlayAreaIconTiles
 Func_1eb1 -> FillDuelBoxMessageRectangle
 ; fills the fixed 10x4 duel box message tile rectangle with tile a
 
-
 Func_104ad -> SetOWScrollTargetFromTileCoord
 ; computes OW scroll target from tile coordinates d/e, clamps to map bounds, stores in wOWScrollTargetX/Y
 
@@ -3603,4 +3602,7 @@ Func_12a57 -> CheckSlotMachineDebugDelayExpired
 
 Func_12c17 -> FindMatchingSlotMachinePreset
 ; unreferenced helper that returns the first slot machine preset whose reel symbols match the current landing state
+
+Func_6808d -> MarkPokemonPowerNeedsLinkSync
+; marks that the current Pokemon Power effect needs pre-selection link sync handling
 

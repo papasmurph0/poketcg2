@@ -189,7 +189,7 @@ AIActionTable_140f4:
 
 .update_portrait:
 	xor a
-	ld [wcd78], a
+	ld [wAIOpponentPortraitEmotion], a
 	ret
 
 ; input:
@@ -8694,7 +8694,7 @@ GetAIScoreOfAttack:
 	call AIDiscourage
 .asm_175f6
 	xor a
-	ld [wd072], a
+	ld [wAIAttackScoringTempFlag], a
 	ld a, [wDamage]
 	ld [wTempAI], a
 	call AIGetAdjustedAttackDamage
@@ -8705,7 +8705,7 @@ GetAIScoreOfAttack:
 	jr .asm_17643
 .asm_1760e
 	ld a, $01
-	ld [wd072], a
+	ld [wAIAttackScoringTempFlag], a
 	call AIDiscourage
 	ld a, [wAIMaxDamage]
 	farcall $13, $4b6e
@@ -8714,7 +8714,7 @@ GetAIScoreOfAttack:
 	ld a, $02
 	call AIEncourage
 	xor a
-	ld [wd072], a
+	ld [wAIAttackScoringTempFlag], a
 .asm_17629
 	ld a, $05
 	call CheckLoadedAttackFlag
@@ -8918,7 +8918,7 @@ GetAIScoreOfAttack:
 	jr nc, .asm_177c5
 	ld a, $05
 	call AIEncourage
-	ld a, [wd072]
+	ld a, [wAIAttackScoringTempFlag]
 	or a
 	jr nz, .asm_177c0
 	ld a, [wSelectedAttack]

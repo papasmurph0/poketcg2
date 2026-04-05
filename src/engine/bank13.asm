@@ -763,7 +763,7 @@ AIUpdatePortrait:
 	jp z, .set_normal_portrait
 
 	ld b, a
-	ld a, [wcd77]
+	ld a, [wAIPortraitCardsDrawnThisAnim]
 	or a
 	jr z, .not_drawing
 	; is drawing cards
@@ -854,7 +854,7 @@ AIUpdatePortrait:
 	ld hl, PrizeCountPersonalityEmotionMatrix
 	add hl, bc
 	ld a, [hl]
-	ld [wcd78], a
+	ld [wAIOpponentPortraitEmotion], a
 	ret
 
 .drawing_1_card
@@ -1017,15 +1017,15 @@ AIUpdatePortrait:
 
 .set_normal_portrait
 	xor a ; EMOTION_NORMAL
-	ld [wcd78], a
+	ld [wAIOpponentPortraitEmotion], a
 	jr .finished
 .set_happy_portrait
 	ld a, EMOTION_HAPPY
-	ld [wcd78], a
+	ld [wAIOpponentPortraitEmotion], a
 	jr .finished
 .set_sad_portrait
 	ld a, EMOTION_SAD
-	ld [wcd78], a
+	ld [wAIOpponentPortraitEmotion], a
 .finished
 	; if drew a card to peek,
 	; then put it back in the deck

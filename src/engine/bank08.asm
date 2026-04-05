@@ -373,7 +373,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	ld a, $ff
 	ld [wAIEnergyTransMode], a
 	xor a
-	ld [wd084], a
+	ld [wAIBestBenchAttackerPlayAreaLocation], a
 	ld e, a
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	call GetNonTurnDuelistVariable
@@ -396,10 +396,10 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	ld a, b
 	ld [wAIEnergyTransMode], a
 	ld a, e
-	ld [wd084], a
+	ld [wAIBestBenchAttackerPlayAreaLocation], a
 	jr .asm_20ab0
 .asm_20ad2
-	ld a, [wd084]
+	ld a, [wAIBestBenchAttackerPlayAreaLocation]
 	or a
 	jr z, .no_carry
 	scf

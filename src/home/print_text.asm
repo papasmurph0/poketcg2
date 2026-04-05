@@ -562,11 +562,11 @@ CopyText::
 ; fill any remaining bytes with spaces plus TX_END to match the length specified in a.
 ; return the text's actual length in characters (i.e. before the first TX_END) in e.
 CopyTextData_FromTextID::
-	ldh [hff96], a
+	ldh [hTempA_ff98], a
 	ldh a, [hBankROM]
 	push af
 	call GetTextOffsetFromTextID
-	ldh a, [hff96]
+	ldh a, [hTempA_ff98]
 	call CopyTextData
 	pop af
 	call BankswitchROM
