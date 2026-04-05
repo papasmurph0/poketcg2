@@ -4277,7 +4277,7 @@ ClearPrinterGfxBuffer:
 	or b
 	jr nz, .loop
 	xor a
-	ld [wce9f], a
+	ld [wUnusedPrinterGfxClearState], a
 	ret
 
 ; reverts settings changed by PrepareForPrinterCommunications
@@ -4467,7 +4467,7 @@ Func_1a14b: ; unreferenced
 	jr .store_and_return
 	ld a, $05
 .store_and_return
-	ld [wce9d], a
+	ld [wUnusedPrinterStubValue], a
 	scf
 	ret
 
@@ -5470,11 +5470,11 @@ DisplayBoosterContent:
 
 ConvertCardGfxForPrinter: ; Func_1adbd
 	push de
-	ld de, wc000
+	ld de, wTempScratchBuffer
 	lb bc, $30, TILE_SIZE
 	call LoadCardGfxByAttrMap
 	pop de
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 	ld c, $08
 .loop_sections
 	ld b, $06

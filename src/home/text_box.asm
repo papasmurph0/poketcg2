@@ -61,7 +61,7 @@ DrawLabeledTextBox::
 	push bc
 	push hl
 	; top left tile of the box
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 	ld a, TX_SYMBOL
 	ld [hli], a
 	ld a, SYM_BOX_TOP_L
@@ -74,7 +74,7 @@ DrawLabeledTextBox::
 	ld d, h
 	pop hl
 	call CopyText
-	ld hl, wc000 + 3
+	ld hl, wTempScratchBuffer + 3
 	call GetTextLengthInTiles
 	ld [wLabeledTextBoxLabelLength], a
 	ld l, e
@@ -109,7 +109,7 @@ DrawLabeledTextBox::
 	push de
 	push bc
 	call InitTextPrinting
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 	call ProcessText
 	pop bc
 	pop de
@@ -139,13 +139,13 @@ DrawLabeledTextBox::
 	ld b, a
 	ld e, l
 	ld d, h
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 	xor a
 .fill_loop
 	ld [hli], a
 	dec c
 	jr nz, .fill_loop
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 	inc de
 	inc de
 	call BankswitchVRAM1

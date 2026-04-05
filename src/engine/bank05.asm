@@ -5800,10 +5800,10 @@ TrySetUpStartingPlayArea_PowerfulPokemonDeck:
 	or a
 	jr z, .set_carry ; return if null
 
-; copy hand list to wc000
+; copy hand list to wTempScratchBuffer
 	call CreateHandCardList
 	ld hl, wDuelTempList
-	ld de, wc000
+	ld de, wTempScratchBuffer
 .loop_copy
 	ld a, [hli]
 	ld [de], a
@@ -5811,7 +5811,7 @@ TrySetUpStartingPlayArea_PowerfulPokemonDeck:
 	cp $ff
 	jr nz, .loop_copy
 
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 	ld de, wAICardListArenaPriority
 	call .PlayHighestPreferenceWithMatchingEnergyInHand
 	jr nc, .play_bench
@@ -8072,9 +8072,9 @@ AITryToPlayEnergyCard:
 	call CountCardsInDuelTempList
 	call ShuffleCards
 
-	; copy wDuelTempList to wc000
+	; copy wDuelTempList to wTempScratchBuffer
 	ld hl, wDuelTempList
-	ld de, wc000
+	ld de, wTempScratchBuffer
 .loop_copy_list
 	ld a, [hli]
 	ld [de], a
@@ -8082,7 +8082,7 @@ AITryToPlayEnergyCard:
 	cp $ff
 	jr nz, .loop_copy_list
 
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 .check_next_energy_candidate
 	ld a, [hli]
 	cp $ff

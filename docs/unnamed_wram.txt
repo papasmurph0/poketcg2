@@ -199,3 +199,12 @@ wd96d -> wTempColorTableWord
 wAudio_d0ed -> wSFXChannelUpdateMask
 ; rotating copy of wSFXChannelMask consumed while iterating per-channel SFX updates.
 
+wc000 -> wTempScratchBuffer
+; generic c000 scratch buffer alias used by temporary list/text copy flows when no context-specific c000 union alias applies.
+
+wce9d -> wUnusedPrinterStubValue
+; dead/unreferenced printer stub byte written with values 1-5 only by Func_1a14b.
+
+wce9f -> wUnusedPrinterGfxClearState
+; byte cleared by ClearPrinterGfxBuffer with no confirmed consumer in current code paths.
+

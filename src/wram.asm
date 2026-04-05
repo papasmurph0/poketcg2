@@ -12,7 +12,7 @@ wTempCardCollection:: ; c000
 
 NEXTU
 
-wc000:: ; c000
+wTempScratchBuffer:: ; c000
 	ds $100
 
 NEXTU
@@ -1075,7 +1075,7 @@ SECTION "WRAM0 3", WRAM0
 wTextBoxFrameType:: ; cd5b
 	ds $1
 
-; tile width of the labeled text copied into wc000 by DrawLabeledTextBox
+; tile width of the labeled text copied into wTempScratchBuffer by DrawLabeledTextBox
 wLabeledTextBoxLabelLength:: ; cd5c
 	ds $1
 
@@ -1331,16 +1331,16 @@ wPrinterNumberLineFeeds:: ; ce1d
 wPrintOnlyStarRarity:: ; ce1e
 	ds $1
 
-; only used in unreferenced function Func_1a14b
-; otherwise unused
-wce9d:: ; ce1f
+; only written by unreferenced function Func_1a14b
+; otherwise unused/dead
+wUnusedPrinterStubValue:: ; ce1f
 	; value 1-5 written by unreferenced Func_1a14b stub
 	ds $1
 
 wPrinterInitAttempts:: ; ce20
 	ds $1
 
-wce9f:: ; ce21
+wUnusedPrinterGfxClearState:: ; ce21
 	; cleared by ClearPrinterGfxBuffer; no confirmed consumer yet
 	ds $1
 

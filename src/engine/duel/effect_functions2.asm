@@ -5067,7 +5067,7 @@ BurningFire_PlayerSelectEffect:
 	ldh a, [hWhoseTurn]
 	ld h, a
 	ld l, LOW(wPlayerDuelVariables)
-	ld de, wc000
+	ld de, wTempScratchBuffer
 .loop_copy_to_buffer
 	ld a, [hli]
 	ld [de], a
@@ -5113,7 +5113,7 @@ BurningFire_PlayerSelectEffect:
 	ldh a, [hWhoseTurn]
 	ld d, a
 	ld e, LOW(wPlayerDuelVariables)
-	ld hl, wc000
+	ld hl, wTempScratchBuffer
 .loop_copy_from_buffer
 	ld a, [hli]
 	ld [de], a
