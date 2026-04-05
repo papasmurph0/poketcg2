@@ -5657,7 +5657,7 @@ InputName:
 .check_select
 	ldh a, [hDPadHeld]
 	and PAD_SELECT
-	jr z, .asm_1af3b
+	jr z, .handle_keyboard_input
 	ld a, MENU_CONFIRM
 	call PlaySFXConfirmOrCancel_Bank06
 	ld a, [wNamingScreenMode]
@@ -5673,7 +5673,7 @@ InputName:
 	call UpdateNamingScreenUI
 	jr .loop
 
-.asm_1af3b
+.handle_keyboard_input
 	call HandleNamingScreenInput
 	jr nc, .loop
 	cp $ff

@@ -1732,3 +1732,81 @@ Common return path for ScriptFireFortShokoDoorInteraction before resuming overwo
 src/engine/bank0c.asm .asm_32d8c -> .return_clear_carry
 In CheckShowFireFortShokoCourtney, branch that returns carry clear (show) when EVENT_FREED_COURTNEY is unset.
 
+src/engine/bank0c.asm .asm_32fdb -> .return_success
+In PlayWaterFortEntranceRonaldThemePostload, branch that returns success without changing music when Ronald-theme conditions are not met.
+
+src/engine/bank0c.asm .asm_32fdd -> .play_ronald_theme
+In PlayWaterFortEntranceRonaldThemePostload, branch that queues Ronald music when Psyduck coin is obtained and meeting-count threshold is still active.
+
+src/engine/bank0c.asm .asm_330bb -> .done
+Common return path for ScriptWaterFortEntranceDoorInteraction after either already-open check or door-opening script flow.
+
+src/engine/bank0c.asm .asm_33134 -> .check_door_state
+In HandleWaterFortMiyajimaWarpFadeInPreload, branch that checks Miyajima room door state after optional mail delivery from Water Fort Entrance.
+
+src/engine/bank0c.asm .asm_3313e -> .apply_closed_door_overlay
+In HandleWaterFortMiyajimaWarpFadeInPreload, branch that applies the closed-door overlay when Miyajima room door event is unset.
+
+src/engine/bank0c.asm .asm_33158 -> .done
+Common successful return path for HandleWaterFortMiyajimaInteractions after NPC and optional OW interaction handling.
+
+src/engine/bank0c.asm .asm_33248 -> .done
+Common return path for ScriptWaterFortMiyajimaDoorInteraction before resuming overworld input handling.
+
+src/engine/bank0c.asm .asm_333c7 -> .apply_closed_door_overlay
+In HandleFightingFortEntranceWarpFadeInPreload, branch that applies the closed-door overlay path when entrance door state is unset.
+
+src/engine/bank0c.asm .asm_333ed -> .check_right_coin_inserted
+In HandleFightingFortEntranceWarpFadeInPreload, branch that checks right-coin insertion state after the left-coin branch is not taken.
+
+src/engine/bank0c.asm .asm_33409 -> .check_move_clerk_to_door
+In HandleFightingFortEntranceWarpFadeInPreload, branch that conditionally repositions the clerk when neither door coin has been inserted and required coin progress is unmet.
+
+src/engine/bank0c.asm .asm_33422 -> .done
+Common successful return path for HandleFightingFortEntranceWarpFadeInPreload after overlay/object placement branching.
+
+src/engine/bank0c.asm .asm_33432 -> .done
+Common successful return path for HandleFightingFortEntranceInteractions after NPC and optional OW interaction handling.
+
+src/engine/bank0c.asm .asm_338b8 -> .return_clear_carry
+In HandleFightingFortMaze8WarpEndSFX, branch that returns carry clear when entering from Fighting Fort Basement.
+
+src/engine/bank0c.asm .asm_338fb -> .return_carry
+In CheckShowFightingFortMaze8ClosedChest, branch that returns carry (hide) when chest-open event is set.
+
+src/engine/bank0c.asm .asm_33913 -> .return_carry
+In CheckShowFightingFortMaze8OpenedChest, branch that returns carry (hide) when chest-open event is unset.
+
+src/engine/bank0c.asm .asm_32801 -> .return_clear_carry
+In CheckShowFireFortLobbyImakuniRed, branch that returns carry clear (show) when VAR_26 reaches the reveal value.
+
+src/engine/bank0c.asm .asm_33a93 -> .return_clear_carry
+In HandleFightingFortMaze12WarpEndSFX, branch that returns carry clear when entering from Fighting Fort Basement.
+
+src/engine/bank0c.asm .asm_33b83 -> .return_clear_carry
+In HandleFightingFortMaze14WarpEndSFX, branch that returns carry clear when entering from Fighting Fort Basement.
+
+src/engine/bank0c.asm .asm_33c86 -> .start_open_side_gate_script
+In HandleFightingFortMaze17WarpFadeInPreload, branch that starts ScriptFightingFortMaze17OpenSideGateAt8x3 when entering from Maze 18.
+
+src/engine/bank0c.asm .asm_33ca6 -> .return_clear_carry
+In HandleFightingFortMaze17WarpEndSFX, branch that returns carry clear when entering from Fighting Fort Basement.
+
+src/engine/bank0c.asm .asm_33cde -> .return_carry
+In CheckShowFightingFortMaze17ClosedChest, branch that returns carry (hide) when chest-open event is set.
+
+src/engine/bank0c.asm .asm_33cf6 -> .return_carry
+In CheckShowFightingFortMaze17OpenedChest, branch that returns carry (hide) when chest-open event is unset.
+
+src/engine/bank0c.asm .asm_33d17 -> .use_forward_pitfall_warp
+In ScriptFightingFortMaze17OpenSideGateAt8x3, branch that uses the non-backstep pitfall warp when player tile Y is not 3.
+
+src/engine/bank0c.asm .asm_33dd8 -> .play_ronald_theme
+In PlayColorlessAltarEntranceRonaldThemePostload, branch that queues Ronald music while meeting count is below threshold.
+
+src/engine/bank0c.asm .asm_33e12 -> .done
+Common successful return path for HandleColorlessAltarEntranceWarpFadeInPreload after optional GRX reveal cutscene setup.
+
+src/engine/bank06.asm .asm_1af3b -> .handle_keyboard_input
+In the naming-screen input loop, branch that handles normal keyboard input when SELECT is not held.
+

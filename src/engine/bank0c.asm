@@ -3828,10 +3828,10 @@ CheckShowFireFortLobbyImakuniRed: ; Func_327f5
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $07
-	jr z, .asm_32801
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_32801
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -4892,15 +4892,15 @@ WaterFortEntrance_MapScripts:
 PlayWaterFortEntranceRonaldThemePostload: ; Func_32fc9
 	ld a, EVENT_GOT_PSYDUCK_COIN
 	farcall GetEventValue
-	jr z, .asm_32fdb
+	jr z, .return_success
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $06
-	jr c, .asm_32fdd
-.asm_32fdb
+	jr c, .play_ronald_theme
+.return_success
 	scf
 	ret
-.asm_32fdd
+.play_ronald_theme
 	ld a, MUSIC_RONALD
 	farcall PlayAfterCurrentSong
 	scf
@@ -5001,7 +5001,7 @@ ScriptWaterFortEntranceClerk: ; Func_3305c
 ScriptWaterFortEntranceDoorInteraction: ; Func_3308e
 	ld a, EVENT_WATER_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_330bb
+	jr nz, .done
 	xor a
 	start_script
 	start_dialog
@@ -5016,11 +5016,11 @@ ScriptWaterFortEntranceDoorInteraction: ; Func_3308e
 	play_sfx SFX_DOORS
 	load_tilemap TILEMAP_084, $04, $07
 	end_script
-	jr .asm_330bb
+	jr .done
 .ows_330b9
 	end_dialog
 	end_script
-.asm_330bb
+.done
 	ret
 
 Script_330bc:
@@ -5075,15 +5075,15 @@ LoadWaterFortMiyajimaNPCs: ; Func_33120
 HandleWaterFortMiyajimaWarpFadeInPreload: ; Func_33129
 	ld a, [wPrevMap]
 	cp MAP_WATER_FORT_ENTRANCE
-	jr nz, .asm_33134
+	jr nz, .check_door_state
 	farcall DeliverMailFromQueue
-.asm_33134
+.check_door_state
 	ld a, EVENT_MIYAJIMAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_3313e
+	jr z, .apply_closed_door_overlay
 	scf
 	ret
-.asm_3313e
+.apply_closed_door_overlay
 	ld bc, TILEMAP_087
 	lb de, 4, 0
 	farcall AddOWTilemapOverlay
@@ -5093,10 +5093,10 @@ HandleWaterFortMiyajimaWarpFadeInPreload: ; Func_33129
 HandleWaterFortMiyajimaInteractions: ; Func_3314a
 	ld hl, WaterFortMiyajima_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_33158
+	jr nc, .done
 	ld hl, WaterFortMiyajima_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_33158
+.done
 	scf
 	ret
 
@@ -5224,14 +5224,14 @@ ScriptWaterFortMiyajimaAfterDuel: ; Func_331d9
 ScriptWaterFortMiyajimaDoorInteraction: ; Func_33236
 	ld a, EVENT_MIYAJIMAS_ROOM_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_33248
+	jr nz, .done
 	xor a
 	start_script
 	start_dialog
 	print_text DoorsAreShutText
 	end_dialog
 	end_script
-.asm_33248
+.done
 	farcall OverworldResumeAndHandlePlayerMoveInput
 	ret
 
@@ -5432,54 +5432,54 @@ LoadFightingFortEntranceNPCs: ; Func_333b4
 HandleFightingFortEntranceWarpFadeInPreload: ; Func_333bd
 	ld a, EVENT_FIGHTING_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_333c7
-	jr .asm_33422
-.asm_333c7
+	jr z, .apply_closed_door_overlay
+	jr .done
+.apply_closed_door_overlay
 	ld bc, TILEMAP_093
 	lb de, 4, 7
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_INSERTED_LEFT_COIN_IN_FIGHTING_FORT_DOOR
 	farcall GetEventValue
-	jr z, .asm_333ed
+	jr z, .check_right_coin_inserted
 	ld bc, PALETTE_187
 	farcall GetPalettesWithID
 	ld a, NPC_RED_FORT_COIN
 	lb de, 4, 7
 	ld b, SOUTH
 	farcall LoadOWObjectInMap
-	jr .asm_33422
-.asm_333ed
+	jr .done
+.check_right_coin_inserted
 	ld a, EVENT_INSERTED_RIGHT_COIN_IN_FIGHTING_FORT_DOOR
 	farcall GetEventValue
-	jr z, .asm_33409
+	jr z, .check_move_clerk_to_door
 	ld bc, PALETTE_186
 	farcall GetPalettesWithID
 	ld a, NPC_BLUE_FORT_COIN
 	lb de, 5, 7
 	ld b, SOUTH
 	farcall LoadOWObjectInMap
-	jr .asm_33422
-.asm_33409
+	jr .done
+.check_move_clerk_to_door
 	ld a, EVENT_GOT_MAGMAR_COIN
 	farcall GetEventValue
-	jr nz, .asm_33422
+	jr nz, .done
 	ld a, EVENT_GOT_PSYDUCK_COIN
 	farcall GetEventValue
-	jr nz, .asm_33422
+	jr nz, .done
 	ld a, NPC_GR_CLERK_FIGHTING_FORT
 	lb de, 4, 8
 	farcall SetOWObjectTilePosition
-.asm_33422
+.done
 	scf
 	ret
 
 HandleFightingFortEntranceInteractions: ; Func_33424
 	ld hl, FightingFortEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_33432
+	jr nc, .done
 	ld hl, FightingFortEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_33432
+.done
 	scf
 	ret
 
@@ -5998,10 +5998,10 @@ ExecuteFightingFortMaze8StepEvents: ; Func_338a8
 HandleFightingFortMaze8WarpEndSFX: ; Func_338af
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_338b8
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_338b8
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -6043,11 +6043,11 @@ ScriptFightingFortMaze8ClosedChest: ; Func_338d7
 CheckShowFightingFortMaze8ClosedChest: ; Func_338f0
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_3
 	farcall GetEventValue
-	jr nz, .asm_338fb
+	jr nz, .return_carry
 	scf
 	ccf
 	ret
-.asm_338fb
+.return_carry
 	scf
 	ret
 
@@ -6063,11 +6063,11 @@ ScriptFightingFortMaze8OpenedChest: ; Func_338fd
 CheckShowFightingFortMaze8OpenedChest: ; Func_33908
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_3
 	farcall GetEventValue
-	jr z, .asm_33913
+	jr z, .return_carry
 	scf
 	ccf
 	ret
-.asm_33913
+.return_carry
 	scf
 	ret
 
@@ -6197,10 +6197,10 @@ ExecuteFightingFortMaze12StepEvents: ; Func_33a83
 HandleFightingFortMaze12WarpEndSFX: ; Func_33a8a
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_33a93
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_33a93
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -6284,10 +6284,10 @@ ExecuteFightingFortMaze14StepEvents: ; Func_33b73
 HandleFightingFortMaze14WarpEndSFX: ; Func_33b7a
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_33b83
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_33b83
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -6384,10 +6384,10 @@ HandleFightingFortMaze17WarpFadeInPreload: ; Func_33c74
 	farcall SetwD896
 	ld a, [wPrevMap]
 	cp MAP_FIGHTING_FORT_MAZE_18
-	jr z, .asm_33c86
+	jr z, .start_open_side_gate_script
 	scf
 	ret
-.asm_33c86
+.start_open_side_gate_script
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(ScriptFightingFortMaze17OpenSideGateAt8x3)
@@ -6403,10 +6403,10 @@ HandleFightingFortMaze17WarpFadeInPreload: ; Func_33c74
 HandleFightingFortMaze17WarpEndSFX: ; Func_33c9d
 	ld a, [wTempPrevMap]
 	cp MAP_FIGHTING_FORT_BASEMENT
-	jr z, .asm_33ca6
+	jr z, .return_clear_carry
 	scf
 	ret
-.asm_33ca6
+.return_clear_carry
 	scf
 	ccf
 	ret
@@ -6441,11 +6441,11 @@ ScriptFightingFortMaze17ClosedChest: ; Func_33cba
 CheckShowFightingFortMaze17ClosedChest: ; Func_33cd3
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_4
 	farcall GetEventValue
-	jr nz, .asm_33cde
+	jr nz, .return_carry
 	scf
 	ccf
 	ret
-.asm_33cde
+.return_carry
 	scf
 	ret
 
@@ -6461,11 +6461,11 @@ ScriptFightingFortMaze17OpenedChest: ; Func_33ce0
 CheckShowFightingFortMaze17OpenedChest: ; Func_33ceb
 	ld a, EVENT_OPENED_CHEST_FIGHTING_FORT_4
 	farcall GetEventValue
-	jr z, .asm_33cf6
+	jr z, .return_carry
 	scf
 	ccf
 	ret
-.asm_33cf6
+.return_carry
 	scf
 	ret
 
@@ -6479,10 +6479,10 @@ ScriptFightingFortMaze17OpenSideGateAt8x3: ; Func_33cf8
 	farcall GetOWObjectTilePosition
 	ld a, $03
 	cp e
-	jr nz, .asm_33d17
+	jr nz, .use_forward_pitfall_warp
 	call SetFightingFortBasementWarpAndPlayPitfallSFX_WithBackstep
 	ret
-.asm_33d17
+.use_forward_pitfall_warp
 	call SetFightingFortBasementWarpAndPlayPitfallSFX
 	ret
 
@@ -6559,10 +6559,10 @@ PlayColorlessAltarEntranceRonaldThemePostload: ; Func_33dcc
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $07
-	jr c, .asm_33dd8
+	jr c, .play_ronald_theme
 	scf
 	ret
-.asm_33dd8
+.play_ronald_theme
 	ld a, MUSIC_RONALD
 	farcall PlayAfterCurrentSong
 	scf
@@ -6578,7 +6578,7 @@ HandleColorlessAltarEntranceWarpFadeInPreload: ; Func_33de8
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $07
-	jr nc, .asm_33e12
+	jr nc, .done
 	ld a, NPC_GR_X
 	lb de, 4, 7
 	ld b, SOUTH
@@ -6592,6 +6592,6 @@ HandleColorlessAltarEntranceWarpFadeInPreload: ; Func_33de8
 	ld [wOverworldScriptPointer], a
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
-.asm_33e12
+.done
 	scf
 	ret
