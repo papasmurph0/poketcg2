@@ -430,7 +430,7 @@ StubbedAIChooseRandomlyNotToDoAction:
 CreateListOfCardIDFoundInDeck:
 	ld b, a
 	ld c, 0
-.asm_281d2
+.loop_deck_cards
 	ld a, DUELVARS_CARD_LOCATIONS
 	add c
 	push hl
@@ -458,7 +458,7 @@ CreateListOfCardIDFoundInDeck:
 	inc c
 	ld a, c
 	cp DECK_SIZE
-	jr nz, .asm_281d2
+	jr nz, .loop_deck_cards
 	or a
 	ret
 
@@ -1032,9 +1032,9 @@ AISelectSpecialAttackParameters:
 	cp BLAZING_FLAME_DECK_ID
 	jr z, .select_foxfire_based_on_energies
 	farcall AIChooseGustOfWindBenchTarget
-	jr c, .asm_285ff
+	jr c, .store_foxfire_target
 	farcall FindBenchCardThatCanBeDamaged
-.asm_285ff
+.store_foxfire_target
 	ldh [hTemp_ffa0], a
 	scf
 	ret
@@ -1063,14 +1063,14 @@ AISelectSpecialAttackParameters:
 	jp z, .no_carry
 	xor a ; PLAY_AREA_ARENA
 	call CreateArenaOrBenchEnergyCardList
-	jp c, .asm_286ad
+	jp c, .return_carry
 	; show Play Area
 	bank1call SetupPlayAreaScreen
 	bank1call PrintPlayAreaCardList_EnableLCD
-.asm_28633
+.find_energy_target
 	; check a potential target to give energy card
 	farcall AIProcessButDontPlayEnergy_SkipEvolutionAndArena
-	jr nc, .asm_28661
+	jr nc, .try_arena_energy
 	ldh a, [hTempPlayAreaLocation_ff9d]
 	ldh [hTempPlayAreaLocation_ffa1], a
 	xor a ; PLAY_AREA_ARENA
@@ -1079,10 +1079,10 @@ AISelectSpecialAttackParameters:
 	ld a, [wDuelTempList + 0] ; first energy card
 	ldh [hTemp_ffa0], a
 	ld b, 60
-.asm_2864a
+.delay_loop_arena
 	call DoFrame
 	dec b
-	jr nz, .asm_2864a
+	jr nz, .delay_loop_arena
 	ld e, SECOND_ATTACK
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -1090,27 +1090,27 @@ AISelectSpecialAttackParameters:
 	call CopyAttackDataAndDamage_FromDeckIndex
 	ld a, OPPACTION_6B15
 	farcall AIMakeDecision
-	jr .asm_28633
-.asm_28661
+	jr .find_energy_target
+.try_arena_energy
 	xor a ; PLAY_AREA_ARENA
 	ldh [hTempPlayAreaLocation_ffa1], a
-.asm_28664
+.loop_bench_slots
 	ld a, DUELVARS_BENCH
 	ld hl, hTempPlayAreaLocation_ffa1
 	add [hl]
 	get_turn_duelist_var
 	cp $ff
-	jr z, .asm_28661 ; restart loop
+	jr z, .try_arena_energy ; restart loop
 	; bug, a is clobbered so it doesn't have a play area location
 	call CreateArenaOrBenchEnergyCardList
 	jr c, .energy_bomb_no_more_energies
 	ld a, [wDuelTempList + 0] ; first energy card
 	ldh [hTemp_ffa0], a
 	ld b, 60
-.asm_2867b
+.delay_loop_bench
 	call DoFrame
 	dec b
-	jr nz, .asm_2867b
+	jr nz, .delay_loop_bench
 	ld e, SECOND_ATTACK
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -1120,13 +1120,13 @@ AISelectSpecialAttackParameters:
 	farcall AIMakeDecision
 	ld hl, hTempPlayAreaLocation_ffa1
 	inc [hl]
-	jr .asm_28664
+	jr .loop_bench_slots
 .energy_bomb_no_more_energies
 	ld d, 60
-.asm_28698
+.delay_loop_fallback
 	call DoFrame
 	dec d
-	jr nz, .asm_28698
+	jr nz, .delay_loop_fallback
 	ld e, SECOND_ATTACK
 	ld a, DUELVARS_ARENA_CARD
 	get_turn_duelist_var
@@ -1134,7 +1134,7 @@ AISelectSpecialAttackParameters:
 	call CopyAttackDataAndDamage_FromDeckIndex
 	ld a, OPPACTION_DUEL_MAIN_SCENE
 	farcall AIMakeDecision
-.asm_286ad
+.return_carry
 	scf
 	ret
 
@@ -1146,10 +1146,10 @@ AISelectSpecialAttackParameters:
 	farcall Serial_TossCoin
 	ldh [hTemp_ffa0], a
 	or a
-	jr nz, .asm_286c7
+	jr nz, .done
 	call AIChooseRagingThunderTarget
 	ldh [hTempPlayAreaLocation_ffa1], a
-.asm_286c7
+.done
 	scf
 	ret
 
@@ -1321,9 +1321,9 @@ AISelectSpecialAttackParameters:
 	jp nz, .no_carry
 	farcall IsPlayerArenaCardImmune
 	ld a, PLAY_AREA_BENCH_1
-	jr c, .asm_287e8
+	jr c, .search_stare_target
 	xor a ; PLAY_AREA_ARENA
-.asm_287e8
+.search_stare_target
 	ld d, 10
 	call AIFindPlayAreaPkmnWithMinimumLeastRemainingHP
 	ld b, a
@@ -1475,9 +1475,9 @@ AISelectSpecialAttackParameters:
 	ldh [$ffa5], a
 	farcall CheckIfDefendingCardIsWeakToArenaCard
 	ld c, 10
-	jr nc, .asm_288c5
+	jr nc, .got_weakness_bonus
 	ld c, 20 ; defending is weak to attack
-.asm_288c5
+.got_weakness_bonus
 	xor a ; PLAY_AREA_ARENA
 	ldh [hTempPlayAreaLocation_ff9d], a
 	push bc
@@ -1600,7 +1600,7 @@ AISelectSpecialAttackParameters:
 	ld c, a ; number of benched Pokémon
 	ldh a, [hTemp_ffa0]
 	or a
-	jr z, .asm_28984 ; no energy cards to discard
+	jr z, .skip_rock_blast ; no energy cards to discard
 	; choose randomly from player's Bench,
 	; up to [hTemp_ffa0] number of cards
 	ld b, a
@@ -1615,7 +1615,7 @@ AISelectSpecialAttackParameters:
 	pop hl
 	dec b
 	jr nz, .loop_rock_blast_random_selection
-.asm_28984
+.skip_rock_blast
 	scf
 	ret
 
@@ -1665,21 +1665,21 @@ AISelectSpecialAttackParameters:
 	get_turn_duelist_var
 	ld d, a
 	ld e, PLAY_AREA_BENCH_1
-.asm_289d0
+.loop_bench_energy
 	push de
 	call GetPlayAreaCardAttachedEnergies
 	pop de
 	ld a, [wTotalAttachedEnergies]
 	or a
-	jr z, .asm_289e6 ; no energies
+	jr z, .got_bench_energy_target ; no energies
 	inc e
 	ld a, e
 	cp d
-	jr nz, .asm_289d0
+	jr nz, .loop_bench_energy
 	ld a, PLAY_AREA_BENCH_1
 	call FindPlayAreaCardWithLeastRemainingHP
 	ld e, a
-.asm_289e6
+.got_bench_energy_target
 	ld a, e
 	ldh [$ffa5], a
 	xor a ; PLAY_AREA_ARENA
@@ -2731,11 +2731,11 @@ AIDeckSpecificBenchScore:
 	ld b, PLAY_AREA_BENCH_1
 	farcall CountCardIDInTurnDuelistPlayArea
 	cp 2
-	jr c, .asm_2a438
+	jr c, .too_few_voltorbs
 	; >= 2
 	ld a, 5
 	ret
-.asm_2a438
+.too_few_voltorbs
 	; < 2
 	ld a, 5
 	scf
@@ -2778,7 +2778,7 @@ AIDeckSpecificBenchScore:
 	ld de, HYPNO_LV30
 	ld b, PLAY_AREA_BENCH_1
 	call FindCardIDInTurnDuelistsPlayArea
-	jr nc, .asm_2a4a5
+	jr nc, .use_puppet_fallback
 	ld hl, hTempPlayAreaLocation_ff9d
 	ld b, [hl]
 	push bc
@@ -2789,10 +2789,10 @@ AIDeckSpecificBenchScore:
 	pop bc
 	ld hl, hTempPlayAreaLocation_ff9d
 	ld [hl], b
-	jr c, .asm_2a4a5
+	jr c, .use_puppet_fallback
 	ld a, 5
 	ret
-.asm_2a4a5
+.use_puppet_fallback
 	ld a, 3
 	scf
 	ret
@@ -2808,10 +2808,10 @@ AIDeckSpecificBenchScore:
 
 .GreatEarthquakeDeck:
 	cp16 DIGLETT_LV8
-	jr z, .asm_2a4cd
+	jr z, .is_diglett
 	cp16 DIGLETT_LV16
 	jp nz, .zero
-.asm_2a4cd
+.is_diglett
 	ld a, 3
 	scf
 	ret
@@ -2838,10 +2838,10 @@ AIDeckSpecificBenchScore:
 
 .PoisonousSwampDeck:
 	cp16 NIDORANM_LV20
-	jr z, .asm_2a512
+	jr z, .is_nidoran_m
 	cp16 NIDORANM_LV22
 	jp nz, .zero
-.asm_2a512
+.is_nidoran_m
 	; is NidoranM
 	ld a, 5
 	scf
@@ -2849,12 +2849,12 @@ AIDeckSpecificBenchScore:
 
 .GatheringNidoranDeck:
 	cp16 NIDORANM_LV22
-	jr z, .asm_2a535
+	jr z, .is_nidoran
 	cp16 NIDORANF_LV12
-	jr z, .asm_2a535
+	jr z, .is_nidoran
 	cp16 NIDORANF_LV13
 	jp nz, .zero
-.asm_2a535
+.is_nidoran
 	; is NidoranM or NidoranF
 	ld a, 3
 	scf
@@ -2885,9 +2885,9 @@ AIDeckSpecificBenchScore:
 	bank1call GetArenaCardWeakness
 	call SwapTurn
 	cp FIGHTING
-	jr z, .asm_2a589 ; weak to Fighting
+	jr z, .weak_to_attack ; weak to Fighting
 
-.asm_2a578
+.not_weak_to_attack
 	ld a, 5
 	scf
 	ret
@@ -2897,8 +2897,8 @@ AIDeckSpecificBenchScore:
 	bank1call GetArenaCardWeakness
 	call SwapTurn
 	cp WATER
-	jr nz, .asm_2a578 ; not weak to Water
-.asm_2a589
+	jr nz, .not_weak_to_attack ; not weak to Water
+.weak_to_attack
 	ld a, 5
 	or a
 	ret
@@ -2914,11 +2914,11 @@ AIDeckSpecificBenchScore:
 	bank1call GetArenaCardWeakness
 	call SwapTurn
 	cp LIGHTNING
-	jr z, .asm_2a5b3
+	jr z, .weak_to_lightning
 	ld a, 5
 	scf
 	ret
-.asm_2a5b3
+.weak_to_lightning
 	ld a, 5
 	or a
 	ret
@@ -3331,7 +3331,7 @@ RunDeckSelectionMenu: ; Func_2bc4f
 	ld a, ALL_DECKS
 	farcall DrawDecksScreen
 	xor a
-.asm_2bc5c
+.init_deck_menu
 	ld hl, .MenuParameters
 	call InitializeMenuParameters
 	ld hl, wDeckScreenTextPtr
@@ -3342,7 +3342,7 @@ RunDeckSelectionMenu: ; Func_2bc4f
 .loop_input
 	call DoFrame
 	farcall HandleStartButtonInDeckSelectionMenu
-	jr c, .asm_2bc5c
+	jr c, .init_deck_menu
 	call HandleMenuInput
 	jp nc, .loop_input ; can be jr
 	ldh a, [hCurScrollMenuItem]
@@ -3357,7 +3357,7 @@ RunDeckSelectionMenu: ; Func_2bc4f
 	jp nc, .valid ; can be jr
 	; deck is empty
 	farcall PrintThereIsNoDeckHereText
-	jr .asm_2bc5c
+	jr .init_deck_menu
 
 .valid
 	ld a, [wCurDeck]

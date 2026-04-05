@@ -506,20 +506,20 @@ WaitPalFading::
 	ret
 
 WaitForPlayerAnimation: ; Func_3340
-.asm_3340
+.loop
 	call DoFrame
 	farcall CountOWObjectsWithMovementScript
-	jr z, .asm_3361
+	jr z, .done
 	ld a, [wPlayerOWObject]
 	farcall GetOWObjectSpriteAnimFlags
 	bit 2, a
-	jr nz, .asm_3340
+	jr nz, .loop
 	bit SPRITEANIMSTRUCT_ANIMATING_F, a
-	jr z, .asm_3340
+	jr z, .loop
 	ld a, [wPlayerOWObject]
 	farcall StopOWObjectAnimation
-	jr .asm_3340
-.asm_3361
+	jr .loop
+.done
 	ld a, [wPlayerOWObject]
 	farcall StopOWObjectAnimation
 	farcall SetOWObjectFlag5_WithID
@@ -817,9 +817,9 @@ Multiply:
 .loop
 	rr d
 	rr e
-	jr nc, .asm_34fa
+	jr nc, .skip_add
 	add hl, bc
-.asm_34fa
+.skip_add
 	sla c
 	rl b
 	dec a
@@ -930,7 +930,7 @@ DivideBCbyDE::
 	rl c
 	rl b
 	ld a, $10
-.asm_3568
+.div_loop
 	ldh [hDivideBCbyDECounter], a
 	rl l
 	rl h
@@ -941,19 +941,19 @@ DivideBCbyDE::
 	ld a, h
 	sbc d
 	ccf
-	jr nc, .asm_357d
+	jr nc, .quotient_bit_zero
 	ld h, a
 	add sp, $2
 	scf
-	jr .asm_357e
-.asm_357d
+	jr .next_div_bit
+.quotient_bit_zero
 	pop hl
-.asm_357e
+.next_div_bit
 	rl c
 	rl b
 	ldh a, [hDivideBCbyDECounter]
 	dec a
-	jr nz, .asm_3568
+	jr nz, .div_loop
 	ret
 
 WriteDataBlockToBGMap0_SaveAllRegisters: ; Func_3588
@@ -1220,12 +1220,12 @@ UpdateOWAnimatedTiles: ; Func_3698
 	ld b, $00
 	add hl, bc
 	ld de, wOWAnimatedTiles
-.asm_36b8
+.loop_anim_tiles
 	push bc
 	push hl
 	ld a, [de]
 	and a
-	jr nz, .asm_3713
+	jr nz, .next_anim_tile
 	ld a, [hli] ; tile number
 	ld c, a
 	ld a, [hli] ; VRAM
@@ -1257,19 +1257,19 @@ UpdateOWAnimatedTiles: ; Func_3698
 	add hl, bc
 	pop bc
 	push de
-.asm_36eb
+.scan_frame_table
 	inc hl
 	ld a, [hld]
 	bit 7, a
-	jr z, .asm_36fe
+	jr z, .got_frame_data
 	ld a, [wOWTileFrameGfxPtr + 0]
 	ld l, a
 	ld a, [wOWTileFrameGfxPtr + 1]
 	ld h, a
 	ld a, $00
 	ld [de], a
-	jr .asm_36eb
-.asm_36fe
+	jr .scan_frame_table
+.got_frame_data
 	ld a, [hli] ; tile index
 	ld e, a     ;
 	ld a, [hli] ;
@@ -1287,7 +1287,7 @@ UpdateOWAnimatedTiles: ; Func_3698
 	ld [de], a
 	pop af
 	call BankswitchROM
-.asm_3713
+.next_anim_tile
 	ld a, [de]
 	dec a
 	ld [de], a
@@ -1301,7 +1301,7 @@ UpdateOWAnimatedTiles: ; Func_3698
 	pop bc
 	dec c
 	jr z, .done
-	jp .asm_36b8
+	jp .loop_anim_tiles
 .done
 	pop af
 	call BankswitchROM
@@ -1435,16 +1435,16 @@ UpdatePaletteAnimationFrame: ; Func_37ce
 	ld a, [wPalAnimTarget + 1]
 	ld b, a
 	or c
-	jr z, .asm_3823
+	jr z, .skip_pal_update
 	farcall CheckPalFading
-	jr nz, .asm_3823
+	jr nz, .skip_pal_update
 	farcall $7, $4941
 	cp $02
-	jr z, .asm_3823
+	jr z, .skip_pal_update
 	ld a, [wPalAnimFrameCounter]
 	dec a
 	ld [wPalAnimFrameCounter], a
-	jr nz, .asm_3823
+	jr nz, .skip_pal_update
 	ld a, [wPalAnimFrameDelay]
 	ld [wPalAnimFrameCounter], a
 	farcall GetPaletteGfxPointer
@@ -1458,9 +1458,9 @@ UpdatePaletteAnimationFrame: ; Func_37ce
 	ld c, a
 	inc a
 	cp b
-	jr nz, .asm_3810
+	jr nz, .advance_frame_index
 	xor a
-.asm_3810
+.advance_frame_index
 	ld [wPalAnimFrameIndex], a
 	sla c
 	sla c
@@ -1470,7 +1470,7 @@ UpdatePaletteAnimationFrame: ; Func_37ce
 	call CopyPaletteFrameToBGPalBufferAndFlush
 	pop af
 	call BankswitchROM
-.asm_3823
+.skip_pal_update
 	pop hl
 	pop de
 	pop bc
@@ -1480,12 +1480,12 @@ UpdatePaletteAnimationFrame: ; Func_37ce
 CopyPaletteFrameToBGPalBufferAndFlush: ; Func_3828
 	ld de, $cb26
 	ld b, $08
-.asm_382d
+.copy_loop
 	ld a, [hli]
 	ld [de], a
 	inc de
 	dec b
-	jr nz, .asm_382d
+	jr nz, .copy_loop
 	call FlushAllPalettes
 	ret
 
@@ -1791,20 +1791,20 @@ GetFramesetData::
 	ld e, [hl]
 	ld a, [wSpriteAnimCoordFlags]
 	bit 5, a
-	jr z, .asm_39ba
+	jr z, .check_flip_y
 	ld a, d
 	xor $ff
 	inc a
 	ld d, a ; d = -d
-.asm_39ba
+.check_flip_y
 	ld a, [wSpriteAnimCoordFlags]
 	bit 6, a
-	jr z, .asm_39c6
+	jr z, .got_coords
 	ld a, e
 	xor $ff
 	inc a
 	ld e, a ; e = -e
-.asm_39c6
+.got_coords
 	pop af
 	call BankswitchROM
 	pop hl
@@ -1908,14 +1908,14 @@ FrameFunc_OverworldAndFadePals: ; Func_3a39
 	farcall UpdateOWScroll
 	farcall GetwD8A1
 	and a
-	jr nz, .asm_3a50
+	jr nz, .use_npc_wrapper
 	ld e, $01
 	farcall StepAllScriptedNPCs
-	jr .asm_3a56
-.asm_3a50
+	jr .post_npc_update
+.use_npc_wrapper
 	ld e, $10
 	farcall StepAllScriptedNPCs_Wrapper
-.asm_3a56
+.post_npc_update
 	farcall ProcessScreenShakeEffect
 	farcall UpdateSpriteAnims
 	call UpdateOWAnimatedTiles
@@ -2029,9 +2029,9 @@ LoadPortraitTiles::
 	add hl, bc
 	ld a, $20
 	dec e
-	jr nz, .asm_3af2
+	jr nz, .got_tile_offset
 	add $30
-.asm_3af2
+.got_tile_offset
 	ld b, a
 	ld c, 36
 	xor a ; BANK("VRAM0")
@@ -2050,9 +2050,9 @@ LoadPortraitPalettes::
 	push de
 	ld a, $02
 	dec e
-	jr nz, .asm_3b0c
+	jr nz, .got_pal_offset
 	add $03
-.asm_3b0c
+.got_pal_offset
 	ld c, a
 	call CopyCGBBGPalsFromSource_WithPalOffset
 	pop de
@@ -2131,7 +2131,7 @@ LoadMenuBoxParams::
 .loop
 	ld a, [hl]
 	cp $ff
-	jr z, .asm_3bb0
+	jr z, .end_of_items
 	push bc
 	push de
 	ld a, [hli]
@@ -2166,7 +2166,7 @@ LoadMenuBoxParams::
 	inc c
 	jr .loop
 
-.asm_3bb0
+.end_of_items
 	ld a, c
 	ld [wMenuBoxNumItems], a
 	xor a
@@ -2230,10 +2230,10 @@ ReadPackedNPCMovementEntry: ; Func_3be0
 .loop
 	srl a
 	and a
-	jr z, .asm_3c00
+	jr z, .loop_shift_done
 	sla e
 	jr .loop
-.asm_3c00
+.loop_shift_done
 	ld a, c
 	and $03
 	ld c, a
@@ -2307,9 +2307,9 @@ FinishQueuedAnimations::
 	push af
 	ld a, [wDuelAnimFrameFuncActive]
 	and a
-	jr z, .asm_3c60
+	jr z, .no_anim_func_active
 	farcall UnsetDuelAnimationsAndSpriteAnimsFrameFunc
-.asm_3c60
+.no_anim_func_active
 	xor a
 	ld [wDuelAnimFrameFuncActive], a
 	ld [wDuelAnimBufferSize], a
@@ -2348,7 +2348,7 @@ CheckAnyAnimationPlaying::
 DispatchSpecialDuelAnimation: ; Func_3c8e
 	ld a, [wCurAnimation]
 	cp DUEL_ANIM_158_UNUSED
-	jr z, .asm_3ca8
+	jr z, .dispatch_anim_158
 	ld a, [wCurAnimation]
 	sub $96
 	add a
@@ -2361,7 +2361,7 @@ DispatchSpecialDuelAnimation: ; Func_3c8e
 	ld l, a
 	jp ExecuteDuelAnimationCallbackInReturnBank
 
-.asm_3ca8
+.dispatch_anim_158
 	ld a, [wDuelAnimDamage]
 	ld l, a
 	ld a, [wDuelAnimDamage + 1]
