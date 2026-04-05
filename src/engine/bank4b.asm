@@ -701,7 +701,7 @@ WriteCurSpriteAnim:
 	call CopyDataHLtoDE_SaveRegisters
 	ret
 
-Func_12c3dc:
+GetOWSpriteIDFromNPCID_Wrapper: ; Func_12c3dc
 	call GetOWSpriteIDFromNPCID
 	ret
 

@@ -1334,12 +1334,14 @@ wPrintOnlyStarRarity:: ; ce1e
 ; only used in unreferenced function Func_1a14b
 ; otherwise unused
 wce9d:: ; ce1f
+	; value 1-5 written by unreferenced Func_1a14b stub
 	ds $1
 
 wPrinterInitAttempts:: ; ce20
 	ds $1
 
 wce9f:: ; ce21
+	; cleared by ClearPrinterGfxBuffer; no confirmed consumer yet
 	ds $1
 
 ; which song to play when obtaining the card from Card Pop!

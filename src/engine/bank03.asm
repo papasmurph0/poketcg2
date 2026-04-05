@@ -4339,13 +4339,13 @@ ScriptCommand_67:
 	call Get2ScriptArgs_IncrIndexBy1
 	ld a, c
 	ld c, b
-	farcall Set3FromwDD75
+	farcall SetScreenShakeState
 	jp IncreaseScriptPointerBy3
 
 ScriptCommand_68:
 .delay_loop
 	call DoFrame
-	farcall GetwDD75
+	farcall IsScreenShakeActive
 	jr nz, .delay_loop
 	jp IncreaseScriptPointerBy1
 

@@ -2258,7 +2258,7 @@ _DrawPlayAreaToPlacePrizeCards::
 	db  0,  2
 
 ; remnant from tcg1, unreferenced
-Func_8dcf:
+DrawCheckMenuPrizeTiles_TCG1Remnant: ; Func_8dcf
 	push hl
 	ld a, [wCheckMenuPlayAreaWhichDuelist]
 	ld h, a

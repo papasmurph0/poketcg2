@@ -619,6 +619,24 @@ Func_3c81e -> LoadMasonLaboratoryTrainingRoomNPCs
 Func_3c825 -> HandleMasonLaboratoryTrainingRoomInteractions
 ; dispatches Mason Laboratory training room NPC interaction scripts
 
+Func_5bfd -> InitPlayAreaCardInfoScreenAndPrintSlot
+; tcg1 remnant that initializes the play area card-info screen and prints the slot given in a
+
+Func_5efe -> WriteDefaultText8BytesToBGMap0
+; tcg1 remnant helper that writes 8 bytes from wDefaultText to BGMap0 at bc
+
+Func_8dcf -> DrawCheckMenuPrizeTiles_TCG1Remnant
+; tcg1 remnant that draws prize-card tiles for the current check-menu duelist layout
+
+Func_198f7 -> NoOp_Unreferenced
+; unreferenced no-op function that immediately returns
+
+Func_1a080 -> SendPrinterNulPacket_Unreferenced
+; unreferenced printer helper that sends a PRINTERPKT_NUL packet through SendPrinterPacket
+
+Func_1f61a -> InitScreenShakeType0WithRepeatCount
+; initializes screen-shake type/index to 0 and sets repeat count from c
+
 Func_3c82d -> HandleMasonLaboratoryTrainingRoomAfterDuel
 ; dispatches Mason Laboratory training room after-duel scripts using Aaron step state
 
@@ -3656,4 +3674,7 @@ Func_fc1cd_2 -> ApplyNoiseChannelPitchOffset_2
 
 Func_fc26c_2 -> StopSFXPlayback_2
 ; bank 7f mirror of StopSFXPlayback
+
+Func_12c3dc -> GetOWSpriteIDFromNPCID_Wrapper
+; thin wrapper that forwards to GetOWSpriteIDFromNPCID and returns
 

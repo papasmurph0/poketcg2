@@ -7174,7 +7174,7 @@ ProcessScreenShakeEffect:: ; Func_1f57b
 
 ; input: a, c
 ; set [wScreenShakeType] = a, [wScreenShakeIndex] = 0, [wScreenShakeRepeatCount] = c
-Set3FromwDD75:
+SetScreenShakeState:
 	push af
 	ld [wScreenShakeType], a
 	ld a, c
@@ -7185,14 +7185,14 @@ Set3FromwDD75:
 	ret
 
 ; set [wScreenShakeType] = [wScreenShakeIndex] = 0, [wScreenShakeRepeatCount] = c
-Func_1f61a:
+InitScreenShakeType0WithRepeatCount: ; Func_1f61a
 	push af
 	ld a, 0
-	call Set3FromwDD75
+	call SetScreenShakeState
 	push af
 	ret
 
-GetwDD75:
+IsScreenShakeActive:
 	ld a, [wScreenShakeType]
 	and a
 	ret

@@ -2441,7 +2441,7 @@ BackupVBlankFunctionTrampoline:
 	ret
 
 ; unreferenced
-Func_198f7:
+NoOp_Unreferenced: ; Func_198f7
 	ret
 
 ; clears saved data (card Collection/saved decks/Card Pop! data/etc)
@@ -4293,7 +4293,7 @@ ResetPrinterCommunicationSettings:
 	ret
 
 	; send some bytes through serial
-Func_1a080: ; unreferenced
+SendPrinterNulPacket_Unreferenced: ; Func_1a080
 	ld bc, 0
 	lb de, PRINTERPKT_NUL, FALSE
 	jp SendPrinterPacket
