@@ -232,9 +232,9 @@ wcddc -> wAITurnInitByte0
 wd081 -> wAITurnInitByte1
 ; cleared in InitAITurnVars at turn start with no confirmed consumer.
 
-wd40e -> wUnknown_d40e
-; 8-byte deck-machine-adjacent unknown scratch region with no direct references yet.
+wUnknown_d40e -> wd40e
+; reverted to address-style placeholder for unknown 8-byte deck-machine-adjacent scratch region.
 
-wd579 -> wUnknown_d579
-; unknown two-byte field in the title-intro/challenge-cup union at d579-d57a.
+wUnknown_d579 -> wd579
+; reverted to address-style placeholder for unresolved two-byte union field at d579-d57a.
 

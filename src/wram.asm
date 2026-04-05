@@ -2305,8 +2305,8 @@ wNamingScreenCursorRow:: ; d3ef
 
 	ds $1e
 
-; temporary/unknown deck-machine scratch region; no confirmed direct consumer yet
-wUnknown_d40e:: ; d40e
+; temporary deck-machine scratch region; no confirmed direct consumer yet
+wd40e:: ; d40e
 	ds $8
 
 ; pointers to all decks of current deck machine
@@ -2485,7 +2485,7 @@ wRemainingIntroCards:: ; d577
 	ds $1
 
 ; title-intro union byte pair at d579-d57a; no confirmed symbolic role yet
-wUnknown_d579:: ; d579
+wd579:: ; d579
 	ds $2
 
 wIntroCardsRepeatsAllowed:: ; d57b

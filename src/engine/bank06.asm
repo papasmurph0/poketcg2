@@ -3760,19 +3760,19 @@ ViewCardPopRecords:
 IngameCardPop:
 .Imakuni_first
 	ldtx hl, CardPopImakuniText
-	ld a, SCRIPTED_CARD_POP_IMAKUNI + 2
+	ld a, SCRIPTED_CARD_POP_IMAKUNI + SCRIPTED_CARD_POP_PARTNER_MARKER_OFFSET
 	jr .got_partner
 
 .Imakuni_rare
 	ldtx hl, CardPopImakuniText
-	ld a, SCRIPTED_RARE_CARD_POP_IMAKUNI + 2
+	ld a, SCRIPTED_RARE_CARD_POP_IMAKUNI + SCRIPTED_CARD_POP_PARTNER_MARKER_OFFSET
 	push af
 	ld a, IRPARAM_RARE_CARD_POP
 	jr .got_partner_and_type
 
 .Ronald
 	ldtx hl, CardPopRonaldText
-	ld a, SCRIPTED_CARD_POP_RONALD + 2
+	ld a, SCRIPTED_CARD_POP_RONALD + SCRIPTED_CARD_POP_PARTNER_MARKER_OFFSET
 ; fallthrough
 
 .got_partner
@@ -3810,7 +3810,7 @@ IngameCardPop:
 	ld de, wCardPopRecordName
 	call CopyDataHLtoDE
 	ld a, [wNameBuffer + MAX_PLAYER_NAME_LENGTH + 1]
-	cp SCRIPTED_CARD_POP_IMAKUNI + 2
+	cp SCRIPTED_CARD_POP_IMAKUNI + SCRIPTED_CARD_POP_PARTNER_MARKER_OFFSET
 	jr z, .with_Imakuni_first
 
 ; with Ronald or Imakuni_rare
@@ -3873,7 +3873,7 @@ IngameCardPop:
 	ld a, IRPARAM_CARD_POP
 	ld [de], a ; wCardPopRecordType
 	ld a, [wNameBuffer + MAX_PLAYER_NAME_LENGTH + 1]
-	cp SCRIPTED_RARE_CARD_POP_IMAKUNI + 2
+	cp SCRIPTED_RARE_CARD_POP_IMAKUNI + SCRIPTED_CARD_POP_PARTNER_MARKER_OFFSET
 	jr nz, .display_ingame_pop
 
 ; Imakuni_rare

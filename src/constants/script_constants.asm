@@ -357,7 +357,10 @@ DEF MAIL_COMMAND_GIVE_GENERIC_CARD EQU 1 << B_MAIL_GENERIC_CARD
 DEF MAIL_COMMAND_GIVE_BOOSTER      EQU 1 << B_MAIL_BOOSTER_PACK
 DEF MAIL_TERMINATOR EQU $ffff
 
-; TODO: Figure out why 2 is added in IngameCardPop
+; IngameCardPop stores a partner marker in wNameBuffer[MAX_PLAYER_NAME_LENGTH + 1].
+; Values 0 and 1 are used by link-player markers, so scripted Card Pop partners
+; are offset by 2 to use a non-overlapping range (2..4).
+DEF SCRIPTED_CARD_POP_PARTNER_MARKER_OFFSET EQU 2
 	const_def
 	const SCRIPTED_CARD_POP_RONALD       ; $0
 	const SCRIPTED_CARD_POP_IMAKUNI      ; $1

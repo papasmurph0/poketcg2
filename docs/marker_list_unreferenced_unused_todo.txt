@@ -1,0 +1,424 @@
+UNREFERENCED|src/engine/black_box.asm:946:; unreferenced & bugged
+UNREFERENCED|src/engine/card_list_ops.asm:329:; unreferenced?
+UNREFERENCED|src/engine/card_list_ops.asm:673:; unreferenced?
+UNREFERENCED|src/engine/card_list_ops.asm:1005:; unreferenced
+UNREFERENCED|src/engine/bank0f.asm:6075:; unreferenced resumption
+UNREFERENCED|src/engine/bank0f.asm:6076:SetOverworldModeIdle_Unreferenced: ; Func_3eef4
+UNREFERENCED|src/wram.asm:1339:; value written by unreferenced function Func_1a14b
+UNREFERENCED|src/wram.asm:1341:	; value 1-5 written by unreferenced Func_1a14b stub
+UNREFERENCED|src/engine/debug_scenario.asm:630:; unreferenced
+UNREFERENCED|src/engine/debug_scenario.asm:707:; unreferenced
+UNREFERENCED|src/engine/bank01.asm:425:; unreferenced
+UNREFERENCED|src/engine/bank01.asm:426:UnreferencedDrawCardFromDeckToHand:
+UNREFERENCED|src/engine/bank01.asm:4372:; remnant from tcg1, unreferenced
+UNREFERENCED|src/engine/bank01.asm:4898:; remnant from tcg1, unreferenced
+UNREFERENCED|src/engine/bank02.asm:2260:; remnant from tcg1, unreferenced
+UNREFERENCED|src/engine/bank02.asm:2312:; remnant from tcg1, unreferenced
+UNREFERENCED|src/engine/bank07.asm:3726:; unreferenced
+UNREFERENCED|src/engine/bank04.asm:1383:; unreferenced?
+UNREFERENCED|src/engine/duel/effect_functions1.asm:1:; unreferenced
+UNREFERENCED|src/engine/duel/effect_functions1.asm:828:; unreferenced
+UNREFERENCED|src/engine/duel/effect_functions1.asm:829:UnreferencedCreateEnergyCardListFromDiscardPile_OnlySpecial:
+UNREFERENCED|src/engine/duel/effect_functions1.asm:1537:; unreferenced
+UNREFERENCED|src/engine/duel/effect_functions1.asm:3947:; unreferenced
+UNREFERENCED|src/engine/duel/effect_functions1.asm:3948:EnergyBurnCheck_Unreferenced:
+UNREFERENCED|src/engine/duel/effect_functions1.asm:8179:CopyPlayAreaHPToBackup_Unreferenced:
+UNREFERENCED|src/engine/duel/effect_functions1.asm:8193:CopyPlayAreaHPFromBackup_Unreferenced:
+UNREFERENCED|src/engine/duel/special_basic_cards.asm:154:; unreferenced
+UNREFERENCED|src/engine/duel/effect_functions2.asm:5842:; unreferenced
+UNREFERENCED|src/engine/duel/effect_functions2.asm:7545:UnreferencedCheckIfCardIsBasicEnergy:
+UNREFERENCED|src/engine/duel/effect_commands.asm:3181:; unreferenced
+UNREFERENCED|src/engine/bank09.asm:1228:; unreferenced, copied over from TCG1
+UNREFERENCED|src/engine/bank06.asm:5:; remnant from tcg1, remaining bugged, unreferenced
+UNREFERENCED|src/engine/bank06.asm:2443:; unreferenced
+UNREFERENCED|src/engine/bank06.asm:2444:NoOp_Unreferenced: ; Func_198f7
+UNREFERENCED|src/engine/bank06.asm:4296:SendPrinterNulPacket_Unreferenced: ; Func_1a080
+UNREFERENCED|src/engine/bank06.asm:4459:Func_1a14b: ; unreferenced
+UNREFERENCED|src/engine/slot_machine.asm:715:; unreferenced
+UNREFERENCED|src/engine/slot_machine.asm:817:; unreferenced
+UNREFERENCED|src/engine/slot_machine.asm:968:; debug? unreferenced
+UNREFERENCED|src/engine/slot_machine.asm:984:; debug? unreferenced
+UNREFERENCED|src/engine/slot_machine.asm:1285:; debug? unreferenced
+UNREFERENCED|src/engine/slot_machine.asm:1555:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:562:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:652:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:740:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:828:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:918:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1006:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1090:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1178:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1262:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1462:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1562:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1658:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1757:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1858:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:1958:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2047:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2137:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2227:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2319:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2484:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2636:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2721:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2803:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2888:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:2970:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3052:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3140:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3296:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3383:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3464:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3546:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3629:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3719:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3808:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3897:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:3991:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4080:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4173:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4256:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4340:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4423:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4516:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4609:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4692:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4778:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4863:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:4949:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:5031:; unreferenced
+UNREFERENCED|src/engine/bank05.asm:5117:; unreferenced
+UNUSED|src/wram.asm:627:; in order to account for the two unused pointers at the beginning of DeckPointers.
+UNUSED|src/wram.asm:701:; 8 energy types (includes the unused one that shares byte with the colorless energy)
+UNUSED|src/wram.asm:3261:; harmless bug: stores garbage data but is unused
+UNUSED|src/wram.asm:3262:wUnusedCoinFlipGamePayout:: ; db21
+UNUSED|src/constants/animation_constants.asm:75:	const DUEL_ANIM_UNUSED_HIT            ; $42
+UNUSED|src/constants/animation_constants.asm:76:	const DUEL_ANIM_UNUSED_BIG_HIT        ; $43
+UNUSED|src/constants/animation_constants.asm:81:	const DUEL_ANIM_UNUSED_FIREGIVER_INIT ; $48
+UNUSED|src/constants/animation_constants.asm:89:	const DUEL_ANIM_UNUSED_DECK_SWAP      ; $50
+UNUSED|src/constants/animation_constants.asm:93:	const DUEL_ANIM_UNUSED_DECK_SHIFT     ; $54
+UNUSED|src/constants/animation_constants.asm:105:	const DUEL_ANIM_UNUSED_DECK_PAUSE     ; $60
+UNUSED|src/constants/animation_constants.asm:163:	const DUEL_ANIM_153_UNUSED            ; $99
+UNUSED|src/constants/animation_constants.asm:164:	const DUEL_ANIM_154_UNUSED            ; $9a
+UNUSED|src/constants/animation_constants.asm:165:	const DUEL_ANIM_155_UNUSED            ; $9b
+UNUSED|src/constants/animation_constants.asm:166:	const DUEL_ANIM_156_UNUSED            ; $9c
+UNUSED|src/constants/animation_constants.asm:167:	const DUEL_ANIM_157_UNUSED            ; $9d
+UNUSED|src/constants/animation_constants.asm:168:	const DUEL_ANIM_158_UNUSED            ; $9e
+UNUSED|src/constants/deck_constants.asm:23:	deck_const UNUSED_SAMS_PRACTICE_DECK             ; $09 is overwritten by SAMS_PRACTICE_DECK
+UNUSED|src/constants/attack_animation_constants.asm:16:	const ATK_ANIM_UNUSED_0B                      ; $0b
+UNUSED|src/constants/attack_animation_constants.asm:47:	const ATK_ANIM_UNUSED_2A                      ; $2a
+UNUSED|src/constants/attack_animation_constants.asm:57:	const ATK_ANIM_UNUSED_34                      ; $34
+UNUSED|src/constants/attack_animation_constants.asm:63:	const ATK_ANIM_UNUSED_3A                      ; $3a
+UNUSED|src/constants/attack_animation_constants.asm:67:	const ATK_ANIM_UNUSED_3E                      ; $3e
+UNUSED|src/constants/attack_animation_constants.asm:73:	const ATK_ANIM_UNUSED_44                      ; $44
+UNUSED|src/constants/attack_animation_constants.asm:78:	const ATK_ANIM_UNUSED_49                      ; $49
+UNUSED|src/constants/attack_animation_constants.asm:108:	const ATK_ANIM_UNUSED_67                      ; $67
+UNUSED|src/constants/attack_animation_constants.asm:109:	const ATK_ANIM_UNUSED_68                      ; $68
+UNUSED|src/constants/attack_animation_constants.asm:110:	const ATK_ANIM_UNUSED_69                      ; $69
+UNUSED|src/constants/attack_animation_constants.asm:117:	const ATK_ANIM_UNUSED_70                      ; $70
+UNUSED|src/constants/attack_animation_constants.asm:123:	const ATK_ANIM_UNUSED_76                      ; $76
+UNUSED|src/constants/attack_animation_constants.asm:124:	const ATK_ANIM_UNUSED_77                      ; $77
+UNUSED|src/constants/attack_animation_constants.asm:134:	const ATK_ANIM_UNUSED_81                      ; $81
+UNUSED|src/constants/attack_animation_constants.asm:142:	const ATK_ANIM_UNUSED_89                      ; $89
+UNUSED|src/constants/attack_animation_constants.asm:144:	const ATK_ANIM_UNUSED_8B                      ; $8b
+UNUSED|src/constants/attack_animation_constants.asm:153:	const ATK_ANIM_UNUSED_94                      ; $94
+UNUSED|src/constants/attack_animation_constants.asm:154:	const ATK_ANIM_UNUSED_95                      ; $95
+UNUSED|src/constants/attack_animation_constants.asm:155:	const ATK_ANIM_UNUSED_96                      ; $96
+UNUSED|src/constants/attack_animation_constants.asm:157:	const ATK_ANIM_UNUSED_98                      ; $98
+UNUSED|src/constants/attack_animation_constants.asm:158:	const ATK_ANIM_UNUSED_99                      ; $99
+UNUSED|src/constants/attack_animation_constants.asm:161:	const ATK_ANIM_UNUSED_9C                      ; $9c
+UNUSED|src/constants/attack_animation_constants.asm:162:	const ATK_ANIM_UNUSED_9D                      ; $9d
+UNUSED|src/constants/attack_animation_constants.asm:169:	const ATK_ANIM_UNUSED_A4                      ; $a4
+UNUSED|src/constants/attack_animation_constants.asm:172:	const ATK_ANIM_UNUSED_A7                      ; $a7
+UNUSED|src/constants/attack_animation_constants.asm:175:	const ATK_ANIM_UNUSED_AA                      ; $aa
+UNUSED|src/constants/attack_animation_constants.asm:178:	const ATK_ANIM_UNUSED_AD                      ; $ad
+UNUSED|src/constants/attack_animation_constants.asm:184:	const ATK_ANIM_UNUSED_B3                      ; $b3
+UNUSED|src/constants/attack_animation_constants.asm:185:	const ATK_ANIM_UNUSED_B4                      ; $b4
+UNUSED|src/constants/attack_animation_constants.asm:188:	const ATK_ANIM_UNUSED_B7                      ; $b7
+UNUSED|src/constants/attack_animation_constants.asm:190:	const ATK_ANIM_UNUSED_B9                      ; $b9
+UNUSED|src/constants/attack_animation_constants.asm:194:	const ATK_ANIM_UNUSED_BD                      ; $bd
+UNUSED|src/constants/attack_animation_constants.asm:201:	const ATK_ANIM_UNUSED_C4                      ; $c4
+UNUSED|src/constants/attack_animation_constants.asm:202:	const ATK_ANIM_UNUSED_C5                      ; $c5
+UNUSED|src/constants/attack_animation_constants.asm:212:	const ATK_ANIM_UNUSED_CF                      ; $cf
+UNUSED|src/constants/attack_animation_constants.asm:219:	const ATK_ANIM_UNUSED_D6                      ; $d6
+UNUSED|src/constants/attack_animation_constants.asm:222:	const ATK_ANIM_UNUSED_D9                      ; $d9
+UNUSED|src/constants/attack_animation_constants.asm:226:	const ATK_ANIM_UNUSED_DD                      ; $dd
+UNUSED|src/constants/attack_animation_constants.asm:229:	const ATK_ANIM_UNUSED_E0                      ; $e0
+UNUSED|src/constants/attack_animation_constants.asm:233:	const ATK_ANIM_UNUSED_E4                      ; $e4
+UNUSED|src/constants/attack_animation_constants.asm:238:	const ATK_ANIM_UNUSED_E9                      ; $e9
+UNUSED|src/constants/attack_animation_constants.asm:253:	const ATK_ANIM_UNUSED_F8                      ; $f8
+UNUSED|src/constants/music_constants.asm:48:	const MUSIC_UNUSED_2E                 ; $2e
+UNUSED|src/constants/music_constants.asm:51:	const MUSIC_UNUSED_31                 ; $31
+UNUSED|src/engine/bank12.asm:1386:	jr z, .set_score_8d_bad_dream_unused
+UNUSED|src/engine/bank12.asm:1389:	jr nc, .set_score_78_bad_dream_unused
+UNUSED|src/engine/bank12.asm:1393:	jr nc, .set_score_78_bad_dream_unused
+UNUSED|src/engine/bank12.asm:1396:.set_score_8d_bad_dream_unused
+UNUSED|src/engine/bank12.asm:1399:.set_score_78_bad_dream_unused
+UNUSED|src/constants/game_center_constants.asm:74:	const SLOTMACHINESYMBOL_UNUSED    ; $5
+UNUSED|src/engine/bank0e.asm:5734:; unused in tcg1
+UNUSED|src/constants/credits_constants.asm:37:	const CREDITS_FADE_HEADER          ; $2 (unused)
+UNUSED|src/constants/card_data_constants.asm:136:	const TYPE_ENERGY_UNUSED           ; $0f
+UNUSED|src/constants/card_data_constants.asm:138:	const TYPE_TRAINER_UNUSED          ; $11
+UNUSED|src/constants/card_data_constants.asm:266:; bits 2-7 are unused
+UNUSED|src/constants/card_data_constants.asm:294:; bits 2-7 are unused
+UNUSED|src/constants/hardware.inc:146:; -- $FF03 is unused ----------------------------------------------------------
+UNUSED|src/constants/hardware.inc:174:; -- $FF08-$FF0E are unused ---------------------------------------------------
+UNUSED|src/constants/hardware.inc:247:; -- $FF15 is unused ----------------------------------------------------------
+UNUSED|src/constants/hardware.inc:329:; -- $FF1F is unused ----------------------------------------------------------
+UNUSED|src/constants/hardware.inc:428:; -- $FF27-$FF2F are unused ---------------------------------------------------
+UNUSED|src/constants/hardware.inc:584:; -- $FF4E is unused ----------------------------------------------------------
+UNUSED|src/constants/hardware.inc:647:; -- $FF57-$FF67 are unused ---------------------------------------------------
+UNUSED|src/constants/hardware.inc:684:; -- $FF6D-$FF6F are unused ---------------------------------------------------
+UNUSED|src/constants/hardware.inc:692:; -- $FF71-$FF75 are unused ---------------------------------------------------
+UNUSED|src/constants/hardware.inc:708:; -- $FF78-$FF7F are unused ---------------------------------------------------
+UNUSED|src/engine/bank07.asm:128:	ld a, c ; unused
+UNUSED|src/engine/bank07.asm:1891:	ld l, a ; unused
+UNUSED|src/engine/bank07.asm:1914:	ld l, a ; unused
+UNUSED|src/engine/bank07.asm:3985:	ld a, $01 ; unused
+UNUSED|src/engine/bank07.asm:4191:	ld a, $01 ; unused
+UNUSED|src/engine/bank07.asm:6612:; appears to be unused in the real game mail data
+UNUSED|src/engine/bank07.asm:7790:; DUEL_ANIM_UNUSED_HIT
+UNUSED|src/engine/bank07.asm:7792:; DUEL_ANIM_UNUSED_BIG_HIT
+UNUSED|src/engine/bank07.asm:7802:; DUEL_ANIM_UNUSED_FIREGIVER_INIT
+UNUSED|src/engine/bank07.asm:7818:; DUEL_ANIM_UNUSED_DECK_SWAP
+UNUSED|src/engine/bank07.asm:7826:; DUEL_ANIM_UNUSED_DECK_SHIFT
+UNUSED|src/engine/bank07.asm:7850:; DUEL_ANIM_UNUSED_DECK_PAUSE
+UNUSED|src/engine/bank04.asm:1515:	ld b, $00 ; unused
+UNUSED|src/engine/bank04.asm:1537:	ld b, $00 ; unused
+UNUSED|src/engine/bank04.asm:4911:	ld c, a ; unused
+UNUSED|src/engine/bank04.asm:5719:; unused
+UNUSED|src/engine/coin_flip_game.asm:2:; harmless bug: also return bc = wUnusedCoinFlipGamePayout which is garbage but unused
+UNUSED|src/engine/coin_flip_game.asm:10:; harmless bug: also return bc = wUnusedCoinFlipGamePayout which is garbage but unused
+UNUSED|src/engine/coin_flip_game.asm:24:	ld hl, wUnusedCoinFlipGamePayout
+UNUSED|src/engine/coin_flip_game.asm:42:	ld [wUnusedCoinFlipGamePayout], a
+UNUSED|src/engine/coin_flip_game.asm:44:	ld [wUnusedCoinFlipGamePayout + 1], a
+UNUSED|src/engine/coin_flip_game.asm:208:; unused
+UNUSED|src/engine/bank02.asm:1141:	ld a, $d0 ; hand icon, unused
+UNUSED|src/engine/bank02.asm:1263:	ld a, $d0 ; hand icon, unused
+UNUSED|src/engine/duel/effect_functions1.asm:8066:; unused in-game
+UNUSED|src/engine/duel/effect_functions1.asm:8073:; unused in-game
+UNUSED|src/engine/duel/effect_functions1.asm:8087:; unused in-game
+UNUSED|src/engine/duel/special_attacks.asm:1021:; Biruritchi (unused):
+UNUSED|src/engine/duel/special_attacks.asm:1032:; Biruritchi, unused
+UNUSED|src/engine/bank09.asm:2804:	ld a, DECK_SIZE ; unused
+UNUSED|src/engine/bank09.asm:3732:	db UNUSED_SAMS_PRACTICE_DECK_ID - 1
+UNUSED|src/engine/bank09.asm:3743:	db UNUSED_SAMS_PRACTICE_DECK_ID
+UNUSED|src/engine/bank06.asm:470:	dw AnimationCommand_AnimEnd2     ; ANIMCMD_END_UNUSED
+UNUSED|src/engine/bank06.asm:665:	dw AttackAnimation_Unused0B                    ; ATK_ANIM_UNUSED_0B
+UNUSED|src/engine/bank06.asm:696:	dw AttackAnimation_Unused2A                    ; ATK_ANIM_UNUSED_2A
+UNUSED|src/engine/bank06.asm:706:	dw AttackAnimation_Unused34                    ; ATK_ANIM_UNUSED_34
+UNUSED|src/engine/bank06.asm:712:	dw AttackAnimation_Unused3A                    ; ATK_ANIM_UNUSED_3A
+UNUSED|src/engine/bank06.asm:716:	dw AttackAnimation_Unused3E                    ; ATK_ANIM_UNUSED_3E
+UNUSED|src/engine/bank06.asm:722:	dw AttackAnimation_Unused44                    ; ATK_ANIM_UNUSED_44
+UNUSED|src/engine/bank06.asm:727:	dw AttackAnimation_Unused49                    ; ATK_ANIM_UNUSED_49
+UNUSED|src/engine/bank06.asm:757:	dw AttackAnimation_Unused67                    ; ATK_ANIM_UNUSED_67
+UNUSED|src/engine/bank06.asm:758:	dw AttackAnimation_Unused68                    ; ATK_ANIM_UNUSED_68
+UNUSED|src/engine/bank06.asm:759:	dw AttackAnimation_Unused69                    ; ATK_ANIM_UNUSED_69
+UNUSED|src/engine/bank06.asm:766:	dw AttackAnimation_Unused70                    ; ATK_ANIM_UNUSED_70
+UNUSED|src/engine/bank06.asm:772:	dw AttackAnimation_Unused76                    ; ATK_ANIM_UNUSED_76
+UNUSED|src/engine/bank06.asm:773:	dw AttackAnimation_Unused77                    ; ATK_ANIM_UNUSED_77
+UNUSED|src/engine/bank06.asm:783:	dw AttackAnimation_Unused81                    ; ATK_ANIM_UNUSED_81
+UNUSED|src/engine/bank06.asm:791:	dw AttackAnimation_Unused89                    ; ATK_ANIM_UNUSED_89
+UNUSED|src/engine/bank06.asm:793:	dw AttackAnimation_Unused8B                    ; ATK_ANIM_UNUSED_8B
+UNUSED|src/engine/bank06.asm:802:	dw AttackAnimation_Unused94                    ; ATK_ANIM_UNUSED_94
+UNUSED|src/engine/bank06.asm:803:	dw AttackAnimation_Unused95                    ; ATK_ANIM_UNUSED_95
+UNUSED|src/engine/bank06.asm:804:	dw AttackAnimation_Unused96                    ; ATK_ANIM_UNUSED_96
+UNUSED|src/engine/bank06.asm:806:	dw AttackAnimation_Unused98                    ; ATK_ANIM_UNUSED_98
+UNUSED|src/engine/bank06.asm:807:	dw AttackAnimation_Unused99                    ; ATK_ANIM_UNUSED_99
+UNUSED|src/engine/bank06.asm:810:	dw AttackAnimation_Unused9C                    ; ATK_ANIM_UNUSED_9C
+UNUSED|src/engine/bank06.asm:811:	dw AttackAnimation_Unused9D                    ; ATK_ANIM_UNUSED_9D
+UNUSED|src/engine/bank06.asm:818:	dw AttackAnimation_UnusedA4                    ; ATK_ANIM_UNUSED_A4
+UNUSED|src/engine/bank06.asm:821:	dw AttackAnimation_UnusedA7                    ; ATK_ANIM_UNUSED_A7
+UNUSED|src/engine/bank06.asm:824:	dw AttackAnimation_UnusedAA                    ; ATK_ANIM_UNUSED_AA
+UNUSED|src/engine/bank06.asm:827:	dw AttackAnimation_UnusedAD                    ; ATK_ANIM_UNUSED_AD
+UNUSED|src/engine/bank06.asm:833:	dw AttackAnimation_UnusedB3                    ; ATK_ANIM_UNUSED_B3
+UNUSED|src/engine/bank06.asm:834:	dw AttackAnimation_UnusedB4                    ; ATK_ANIM_UNUSED_B4
+UNUSED|src/engine/bank06.asm:837:	dw AttackAnimation_UnusedB7                    ; ATK_ANIM_UNUSED_B7
+UNUSED|src/engine/bank06.asm:839:	dw AttackAnimation_UnusedB9                    ; ATK_ANIM_UNUSED_B9
+UNUSED|src/engine/bank06.asm:843:	dw AttackAnimation_UnusedBD                    ; ATK_ANIM_UNUSED_BD
+UNUSED|src/engine/bank06.asm:850:	dw AttackAnimation_UnusedC4                    ; ATK_ANIM_UNUSED_C4
+UNUSED|src/engine/bank06.asm:851:	dw AttackAnimation_UnusedC5                    ; ATK_ANIM_UNUSED_C5
+UNUSED|src/engine/bank06.asm:861:	dw AttackAnimation_UnusedCF                    ; ATK_ANIM_UNUSED_CF
+UNUSED|src/engine/bank06.asm:868:	dw AttackAnimation_UnusedD6                    ; ATK_ANIM_UNUSED_D6
+UNUSED|src/engine/bank06.asm:871:	dw AttackAnimation_UnusedD9                    ; ATK_ANIM_UNUSED_D9
+UNUSED|src/engine/bank06.asm:875:	dw AttackAnimation_UnusedDD                    ; ATK_ANIM_UNUSED_DD
+UNUSED|src/engine/bank06.asm:878:	dw AttackAnimation_UnusedE0                    ; ATK_ANIM_UNUSED_E0
+UNUSED|src/engine/bank06.asm:882:	dw AttackAnimation_UnusedE4                    ; ATK_ANIM_UNUSED_E4
+UNUSED|src/engine/bank06.asm:887:	dw AttackAnimation_UnusedE9                    ; ATK_ANIM_UNUSED_E9
+UNUSED|src/engine/bank06.asm:902:	dw AttackAnimation_UnusedF8                    ; ATK_ANIM_UNUSED_F8
+UNUSED|src/engine/bank06.asm:948:AttackAnimation_Unused0B:
+UNUSED|src/engine/bank06.asm:1146:AttackAnimation_Unused2A:
+UNUSED|src/engine/bank06.asm:1198:AttackAnimation_Unused34:
+UNUSED|src/engine/bank06.asm:1210:AttackAnimation_Unused3A:
+UNUSED|src/engine/bank06.asm:1226:AttackAnimation_Unused3E:
+UNUSED|src/engine/bank06.asm:1252:AttackAnimation_Unused44:
+UNUSED|src/engine/bank06.asm:1284:AttackAnimation_Unused49:
+UNUSED|src/engine/bank06.asm:1470:AttackAnimation_Unused67:
+UNUSED|src/engine/bank06.asm:1471:AttackAnimation_Unused68:
+UNUSED|src/engine/bank06.asm:1478:AttackAnimation_Unused69:
+UNUSED|src/engine/bank06.asm:1514:AttackAnimation_Unused70:
+UNUSED|src/engine/bank06.asm:1551:AttackAnimation_Unused76:
+UNUSED|src/engine/bank06.asm:1556:AttackAnimation_Unused77:
+UNUSED|src/engine/bank06.asm:1607:AttackAnimation_Unused81:
+UNUSED|src/engine/bank06.asm:1659:AttackAnimation_Unused89:
+UNUSED|src/engine/bank06.asm:1669:AttackAnimation_Unused8B:
+UNUSED|src/engine/bank06.asm:1726:AttackAnimation_Unused94:
+UNUSED|src/engine/bank06.asm:1727:AttackAnimation_Unused95:
+UNUSED|src/engine/bank06.asm:1728:AttackAnimation_Unused96:
+UNUSED|src/engine/bank06.asm:1732:AttackAnimation_Unused98:
+UNUSED|src/engine/bank06.asm:1737:AttackAnimation_Unused99:
+UNUSED|src/engine/bank06.asm:1758:AttackAnimation_Unused9C:
+UNUSED|src/engine/bank06.asm:1759:AttackAnimation_Unused9D:
+UNUSED|src/engine/bank06.asm:1808:AttackAnimation_UnusedA4:
+UNUSED|src/engine/bank06.asm:1829:AttackAnimation_UnusedA7:
+UNUSED|src/engine/bank06.asm:1848:AttackAnimation_UnusedAD:
+UNUSED|src/engine/bank06.asm:1856:AttackAnimation_UnusedAA:
+UNUSED|src/engine/bank06.asm:1915:AttackAnimation_UnusedB3:
+UNUSED|src/engine/bank06.asm:1925:AttackAnimation_UnusedB4:
+UNUSED|src/engine/bank06.asm:1942:AttackAnimation_UnusedB7:
+UNUSED|src/engine/bank06.asm:1952:AttackAnimation_UnusedB9:
+UNUSED|src/engine/bank06.asm:1982:AttackAnimation_UnusedBD:
+UNUSED|src/engine/bank06.asm:2022:AttackAnimation_UnusedC4:
+UNUSED|src/engine/bank06.asm:2030:AttackAnimation_UnusedC5:
+UNUSED|src/engine/bank06.asm:2102:AttackAnimation_UnusedCF:
+UNUSED|src/engine/bank06.asm:2152:AttackAnimation_UnusedD6:
+UNUSED|src/engine/bank06.asm:2169:AttackAnimation_UnusedD9:
+UNUSED|src/engine/bank06.asm:2194:AttackAnimation_UnusedDD:
+UNUSED|src/engine/bank06.asm:2208:AttackAnimation_UnusedE0:
+UNUSED|src/engine/bank06.asm:2241:AttackAnimation_UnusedE4:
+UNUSED|src/engine/bank06.asm:2263:AttackAnimation_UnusedE9:
+UNUSED|src/engine/bank06.asm:2352:AttackAnimation_UnusedF8:
+UNUSED|src/engine/bank06.asm:2474:	ld a, UNUSED_SAMS_PRACTICE_DECK ; old BULBASAUR_AND_FRIENDS_DECK
+UNUSED|src/engine/bank06.asm:6412:	ld d, [hl] ; unused byte
+UNUSED|src/engine/bank06.asm:6482:	db $01 ; unused
+UNUSED|src/engine/bank06.asm:6485:	db \4, \5 ; unused
+UNUSED|src/engine/slot_machine.asm:302:	db SLOTMACHINESYMBOL_UNUSED,    52 ; 12%
+UNUSED|src/engine/slot_machine.asm:594:	slotsymbol_tileset $a8, $a ; SLOTMACHINESYMBOL_UNUSED
+UNUSED|src/engine/slot_machine.asm:861:; (or 50 if biased towards SLOTMACHINESYMBOL_UNUSED; 3n in offset),
+UNUSED|src/engine/slot_machine.asm:1107:	dw .LegendaryHit ; SLOTMACHINESYMBOL_UNUSED
+UNUSED|src/engine/slot_machine.asm:1244:	db   0 ; SLOTMACHINESYMBOL_UNUSED
+UNUSED|src/engine/slot_machine.asm:1278:	db 0 ; unused
+UNUSED|src/engine/slot_machine.asm:1280:	db 1 ; unused
+UNUSED|src/engine/slot_machine.asm:1281:	db 2 ; unused
+UNUSED|src/engine/slot_machine.asm:1282:	db 2 ; unused
+UNUSED|src/engine/save.asm:473:; unused?
+UNUSED|src/engine/bank10.asm:1912:	start_duel UNUSED_SAMS_PRACTICE_DECK_ID, MUSIC_MATCH_START_MEMBER
+UNUSED|src/engine/bank10.asm:5935:.pick_unused_exec_deck
+UNUSED|src/engine/bank10.asm:5947:	jr nz, .pick_unused_exec_deck
+UNUSED|src/engine/bank10.asm:5961:	jr nz, .pick_unused_exec_deck
+UNUSED|src/engine/bank10.asm:5975:	jr nz, .pick_unused_exec_deck
+UNUSED|src/engine/bank10.asm:5989:	jr nz, .pick_unused_exec_deck
+UNUSED|src/engine/bank01.asm:3948:	tx PromostarRarityText ; PROMOSTAR (unused)
+UNUSED|src/engine/bank01.asm:4016:	db $2 ; HEADER_POKEMON (unused)
+UNUSED|src/engine/bank01.asm:7629:	ld de, 0 ; unused
+UNUSED|src/engine/bank05.asm:31:	dw AIActionTable_GeneralDecks               ; UNUSED_SAMS_PRACTICE_DECK_ID
+UNUSED|src/engine/bank13.asm:619:	db PERSONALITY_EMOTIONLESS ; UNUSED_SAMS_PRACTICE_DECK_ID
+UNUSED|src/audio/music5_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music5_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music5_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music5_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music5_headers.asm:425:;Music_Unused2E
+UNUSED|src/audio/music5_headers.asm:446:;Music_Unused31
+UNUSED|src/audio/sfx2_headers.asm:175:SfxUnused:
+UNUSED|src/audio/sfx2_headers.asm:176:	db BANK(SfxUnused)
+UNUSED|src/audio/sfx2_headers.asm:178:	dw SfxUnused_Ch1
+UNUSED|src/audio/noise_instruments.asm:4:	dw .unused
+UNUSED|src/audio/noise_instruments.asm:8:	dw .unused
+UNUSED|src/audio/noise_instruments.asm:11:	dw .unused
+UNUSED|src/audio/noise_instruments.asm:14:.unused
+UNUSED|src/engine/black_box.asm:850:	ld d, a     ; unused
+UNUSED|src/audio/sfx1.asm:181:	dw SFX_unused
+UNUSED|src/audio/sfx1.asm:182:	dw SFX_unused
+UNUSED|src/audio/sfx1.asm:183:	dw SFX_unused
+UNUSED|src/audio/sfx1.asm:184:	dw SFX_unused
+UNUSED|src/audio/sfx1.asm:185:	dw SFX_unused
+UNUSED|src/audio/sfx1.asm:188:SFX_unused:
+UNUSED|src/audio/music6_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music6_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music6_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music6_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music6_headers.asm:425:;Music_Unused2E
+UNUSED|src/audio/music6_headers.asm:446:;Music_Unused31
+UNUSED|src/engine/bank03.asm:4814:	ld b, TRUE ; unused?
+UNUSED|src/audio/music4.asm:2403:INCLUDE "audio/music/unused2e.asm"
+UNUSED|src/audio/music4.asm:2406:INCLUDE "audio/music/unused31.asm"
+UNUSED|src/audio/music4_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music4_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music4_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music4_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music4_headers.asm:428:Music_Unused2E:
+UNUSED|src/audio/music4_headers.asm:449:Music_Unused31:
+UNUSED|src/audio/music1_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music1_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music1_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music1_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music1_headers.asm:425:;Music_Unused2E
+UNUSED|src/audio/music1_headers.asm:446:;Music_Unused31
+UNUSED|src/audio/sfx2.asm:181:	dw SFX2_unused
+UNUSED|src/audio/sfx2.asm:182:	dw SFX2_unused
+UNUSED|src/audio/sfx2.asm:183:	dw SFX2_unused
+UNUSED|src/audio/sfx2.asm:184:	dw SFX2_unused
+UNUSED|src/audio/sfx2.asm:185:	dw SFX2_unused
+UNUSED|src/audio/sfx2.asm:188:SFX2_unused:
+UNUSED|src/audio/sfx2.asm:540:INCLUDE "audio/sfx/sfx_unused.asm"
+UNUSED|src/audio/music/unused31.asm:1:Music_Unused31_Ch1:
+UNUSED|src/audio/music/unused2e.asm:1:Music_Unused2E_Ch1:
+UNUSED|src/audio/music2_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music2_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music2_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music2_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music2_headers.asm:429:;Music_Unused2E
+UNUSED|src/audio/music2_headers.asm:450:;Music_Unused31
+UNUSED|src/audio/sfx1_headers.asm:175:;SfxUnused
+UNUSED|src/audio/sfx1_headers.asm:176:	db BANK(SfxUnused)
+UNUSED|src/audio/sfx1_headers.asm:178:	dw SfxUnused_Ch1
+UNUSED|src/text/text2.asm:1282:UnusedText023a: ; unused
+UNUSED|src/text/text2.asm:1581:GameCenterBillsPCChooseACardToInsertText: ; unused?
+UNUSED|src/text/text2.asm:1604:GameCenterBillsPCReceivedRewardText: ; unused?
+UNUSED|src/text/text2.asm:1709:ParticleOText: ; unused?
+UNUSED|src/text/text2.asm:1734:Deck5Text: ; unused?
+UNUSED|src/text/text2.asm:1995:CannotSaveDeckToMachine60FullText: ; unused (was 60 in tcg1 but 50 in tcg2)
+UNUSED|src/text/text2.asm:2000:ParticleNOText: ; unused?
+UNUSED|src/home/ai.asm:11:	cp UNUSED_SAMS_PRACTICE_DECK_ID
+UNUSED|src/text/text1.asm:634:UnusedText008c: ; unused
+UNUSED|src/text/text1.asm:1178:CardPopUnavailableOnSGBText: ; unused
+UNUSED|src/home/menus.asm:694:	db $fc, $03 ; TYPE_ENERGY_UNUSED
+UNUSED|src/home/unsorted.asm:1649:	ld a, [hli] ; unused
+UNUSED|src/home/unsorted.asm:2350:	cp DUEL_ANIM_158_UNUSED
+UNUSED|src/home/unsorted.asm:2375:	dw DuelAnim153        ; DUEL_ANIM_153_UNUSED
+UNUSED|src/home/unsorted.asm:2376:	dw DuelAnim154        ; DUEL_ANIM_154_UNUSED
+UNUSED|src/home/unsorted.asm:2377:	dw DuelAnim155        ; DUEL_ANIM_155_UNUSED
+UNUSED|src/home/unsorted.asm:2378:	dw DuelAnim156        ; DUEL_ANIM_156_UNUSED
+UNUSED|src/home/unsorted.asm:2379:	dw DuelAnim157        ; DUEL_ANIM_157_UNUSED
+UNUSED|src/data/npc_duelists.asm:105:	db UNUSED_SAMS_PRACTICE_DECK_ID
+UNUSED|src/text/text_offsets.asm:146:	textpointer UnusedText008c                                        ; 0x008c
+UNUSED|src/text/text_offsets.asm:576:	textpointer UnusedText023a                                        ; 0x023a
+UNUSED|src/data/cards2.asm:7834:	db TYPE_ENERGY_UNUSED ; type
+UNUSED|src/data/cards2.asm:7846:	db TYPE_ENERGY_UNUSED ; type
+UNUSED|src/data/cards2.asm:7858:	db TYPE_ENERGY_UNUSED ; type
+UNUSED|src/data/cards2.asm:7870:	db TYPE_ENERGY_UNUSED ; type
+UNUSED|src/audio/sfx/sfx_unused.asm:1:SfxUnused_Ch1:
+UNUSED|src/macros/credits_commands.asm:1:MACRO credits_reset_unused
+UNUSED|src/macros/credits_commands.asm:128:MACRO credits_scroll_unused
+UNUSED|src/macros/credits_commands.asm:203:MACRO credits_load_npc_unused
+UNUSED|src/macros/audio.asm:106:; unused
+UNUSED|src/macros/audio.asm:162:; unused
+UNUSED|src/macros/audio.asm:191:; unused
+UNUSED|src/macros/animations.asm:33:	const ANIMCMD_END_UNUSED ; $6
+UNUSED|src/macros/animations.asm:35:	db ANIMCMD_END_UNUSED
+UNUSED|src/audio/music3_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music3_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music3_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music3_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music3_headers.asm:425:;Music_Unused2E
+UNUSED|src/audio/music3_headers.asm:446:;Music_Unused31
+UNUSED|src/audio/music7_headers.asm:51:	db BANK(Music_Unused2E)
+UNUSED|src/audio/music7_headers.asm:54:	db BANK(Music_Unused31)
+UNUSED|src/audio/music7_headers.asm:113:	dw Music_Unused2E
+UNUSED|src/audio/music7_headers.asm:116:	dw Music_Unused31
+UNUSED|src/audio/music7_headers.asm:425:;Music_Unused2E
+UNUSED|src/audio/music7_headers.asm:446:;Music_Unused31
+TODO|src/sram.asm:97:; TODO: break down into each segment (after fully labelling wram?)
+TODO|src/sram.asm:122:; TODO: break down into each segment (after fully labelling wram?)
+TODO|src/constants/script_constants.asm:332:; TODO: Identify WRAM to give them proper names
