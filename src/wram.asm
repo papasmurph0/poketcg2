@@ -4080,7 +4080,8 @@ wSFXIsPlaying:: ; d0eb
 wSFXChannelLoadMask:: ; d0ec
 	ds $1
 
-wAudio_d0ed:: ; d0ed
+; rotating per-channel bitmask copy used while iterating active SFX channels in SFX_Update/SFX2_Update
+wSFXChannelUpdateMask:: ; d0ed
 	ds $1
 
 wCurSongIDBackup:: ; d0ee

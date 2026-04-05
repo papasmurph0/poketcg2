@@ -80,7 +80,7 @@ Glossary:
 	call DoFrame
 	ld a, [wGlossaryReinit]
 	or a
-	call nz, .Func_18763
+	call nz, .CheckSpecialRuleMenuIsActive
 	farcall HandleMultiDirectionalMenu
 	jr nc, .topic_menu
 	cp $ff
@@ -99,7 +99,7 @@ Glossary:
 	ld [wScrollMenuCursorBlinkCounter], a
 	jr .topic_menu
 
-.Func_18763:
+.CheckSpecialRuleMenuIsActive:
 	ld a, [wGlossaryMenu]
 	cp GLOSSARY_SPECIAL_DUEL_RULES
 	ret nz ; not in special duel rules menu

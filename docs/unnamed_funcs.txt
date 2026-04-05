@@ -3606,3 +3606,54 @@ Func_12c17 -> FindMatchingSlotMachinePreset
 Func_6808d -> MarkPokemonPowerNeedsLinkSync
 ; marks that the current Pokemon Power effect needs pre-selection link sync handling
 
+Func_6c15 -> CopyCGBBGPalsFromHLToPal2
+; copies 3 CGB background palettes from hl into wBackgroundPalettesCGB starting at slot 2; shared body for LoadCardDetailScreenPalettes and LoadCardDetailScreenPalettes_Alt
+
+Func_6c1d -> LoadCardDetailScreenPalettes_Alt
+; loads alternate card detail screen palettes (Pals_6f0f0) then falls through to CopyCGBBGPalsFromHLToPal2
+
+Func_10cd9 -> OrBit0OfAIntoHL
+; sets bit 0 of [hl] by OR-ing bit 0 of a into it; used as a local helper in bank04
+
+Func_1126b -> WriteByteAToHL
+; stores a to [hl] and returns; simple single-instruction helper in bank04
+
+Serial_Func_0be6 -> ExchangeLinkDuelRoleByte
+; sends SERIAL_OP_MASTER_TCG2 if a nonzero, or checks for received master byte if a=0; used to determine link duel master/slave assignment
+
+Serial_Func_0e12 -> SaveSerialExecutionState
+; saves sp-2 and the top-of-stack return address to wSerialSavedStackPointer and wSerialSavedReturnAddress (TCG1 Func_0ef1)
+
+Serial_Func_0e26 -> RestoreSerialExecutionStateIfSaved
+; if wSerialSavedReturnAddress is set, restores the saved stack pointer and jumps to the saved return address (TCG1 Func_0f05)
+
+Func_fc094 -> ExecuteSFXCommand
+; dispatches an SFX sub-command from the SFX command stream by indexing into SFX_CommandTable via the upper nibble of the current byte
+
+Func_fc105 -> UpdateSFXChannelPointer
+; stores the updated SFX channel read pointer (de) back to wSFXChannelPointers for channel bc
+
+Func_fc18d -> ApplySFXChannelPitchOffset
+; adds wSFXChannelPitchOffset to wSFXChannelFrequency for the current channel and triggers a restart if needed
+
+Func_fc1cd -> ApplyNoiseChannelPitchOffset
+; adds wSFXNoisePitchOffset to wSFXNoiseFrequency and triggers a noise channel restart if needed
+
+Func_fc26c -> StopSFXPlayback
+; clears wSFXIsPlaying, wSfxPriority, and wAudio_d005 to stop all SFX playback
+
+Func_fc094_2 -> ExecuteSFXCommand_2
+; bank 7f mirror of ExecuteSFXCommand; dispatches SFX commands for the second SFX bank via SFX2_CommandTable
+
+Func_fc105_2 -> UpdateSFXChannelPointer_2
+; bank 7f mirror of UpdateSFXChannelPointer
+
+Func_fc18d_2 -> ApplySFXChannelPitchOffset_2
+; bank 7f mirror of ApplySFXChannelPitchOffset
+
+Func_fc1cd_2 -> ApplyNoiseChannelPitchOffset_2
+; bank 7f mirror of ApplyNoiseChannelPitchOffset
+
+Func_fc26c_2 -> StopSFXPlayback_2
+; bank 7f mirror of StopSFXPlayback
+

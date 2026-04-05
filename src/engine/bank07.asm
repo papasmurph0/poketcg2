@@ -4131,13 +4131,13 @@ UpdateDuelAnimations:: ; Func_1e088
 
 .update_animations
 	call .ClearInactiveAnimations
-	call .Func_1e0e8
+	call .CheckNoAnimationsOrCallbackActive
 	jr nz, .done
 	call LoadBufferedDuelAnimation
 	ld a, [wCurAnimation]
 	and a
 	jr z, .done
-	call .Func_1e0f8
+	call .ClearAndDispatchDuelAnimation
 .done
 	pop hl
 	pop de
@@ -4176,7 +4176,7 @@ UpdateDuelAnimations:: ; Func_1e088
 	pop af
 	ret
 
-.Func_1e0e8:
+.CheckNoAnimationsOrCallbackActive:
 	ld a, [wActiveScreenAnim]
 	cp $ff
 	ret nz
@@ -4187,7 +4187,7 @@ UpdateDuelAnimations:: ; Func_1e088
 	and a
 	ret
 
-.Func_1e0f8:
+.ClearAndDispatchDuelAnimation:
 	ld a, $01 ; unused
 
 	farcall ClearSpriteAnims
@@ -7070,7 +7070,7 @@ ProcessScreenShakeEffect:: ; Func_1f57b
 	ld a, [wScreenShakeType]
 	and a
 	jr z, .asm_1f588
-	call .Func_1f58d
+	call .CalcScreenShakeOffset
 .asm_1f588
 	pop hl
 	pop de
@@ -7078,7 +7078,7 @@ ProcessScreenShakeEffect:: ; Func_1f57b
 	pop af
 	ret
 
-.Func_1f58d:
+.CalcScreenShakeOffset:
 	dec a
 	add a ; *2
 	ld c, a

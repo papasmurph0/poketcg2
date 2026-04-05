@@ -8384,7 +8384,7 @@ PrinterMenu_PokemonCards:
 
 .asm_b40c
 	call DrawListCursor_Visible
-	call .Func_b45d
+	call .ClearCardListHeaderRegion
 	lb de, 1, 1
 	call InitTextPrinting
 	ldtx hl, PrintThisCardPromptYesNoText
@@ -8418,11 +8418,11 @@ PrinterMenu_PokemonCards:
 	jp .asm_b3be
 
 .asm_b454
-	call .Func_b45d
+	call .ClearCardListHeaderRegion
 	call PrintPlayersCardsHeaderInfo_SkipEmptyScreen
 	jp .asm_b3be
 
-.Func_b45d:
+.ClearCardListHeaderRegion:
 	xor a
 	lb hl, 0, 0
 	lb de, 0, 0

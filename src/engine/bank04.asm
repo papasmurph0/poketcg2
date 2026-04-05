@@ -2388,7 +2388,7 @@ SetSpriteAnimAnimation::
 	ret
 
 ; bit 0, [hl] = or bit 0, a
-Func_10cd9:
+OrBit0OfAIntoHL: ; Func_10cd9
 	push bc
 	and 1
 	ld b, a
@@ -3502,7 +3502,7 @@ ENDR
 	ret
 
 ; just set [hl] to a
-Func_1126b:
+WriteByteAToHL: ; Func_1126b
 	ld [hl], a
 	ret
 
@@ -3742,7 +3742,7 @@ StepAllScriptedNPCs:: ; Func_11384
 	pop hl
 	jr nz, .next ; is moving
 	push de
-	call .Func_113af
+	call .ReadAndBeginNPCMovementStep
 	pop de
 .next
 	pop hl
@@ -3757,7 +3757,7 @@ StepAllScriptedNPCs:: ; Func_11384
 	pop af
 	ret
 
-.Func_113af:
+.ReadAndBeginNPCMovementStep:
 	inc hl
 	ld d, [hl] ; OWOBJSTRUCT_ID
 REPT OWOBJSTRUCT_4 - OWOBJSTRUCT_ID
@@ -4844,7 +4844,7 @@ AnimateSubtitleEnter:
 	ld [wIntroDistortionCounter], a
 	xor a
 	ld [wIntroStateCounter], a
-	call .Func_11a98
+	call .CalcIntroLineSCXDistortion
 .asm_11a3c
 	call DoFrame
 	ldh a, [hKeysPressed]
@@ -4895,7 +4895,7 @@ AnimateSubtitleEnter:
 	ld a, [wIntroStateCounter]
 	inc a
 	ld [wIntroStateCounter], a
-	call .Func_11a98
+	call .CalcIntroLineSCXDistortion
 	ld a, [wIntroDistortionCounter]
 	and a
 	jr nz, .asm_11a3c
@@ -4903,7 +4903,7 @@ AnimateSubtitleEnter:
 	ccf
 	ret
 
-.Func_11a98:
+.CalcIntroLineSCXDistortion:
 	push de
 	ld hl, Data_11dd2
 	ld de, wIntroLineSCXBuffer

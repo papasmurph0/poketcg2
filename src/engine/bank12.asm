@@ -4398,13 +4398,13 @@ FindEvolutionInDeckNotInHandForEvolutionaryLight: ; Func_4b9f4
 
 	; card ID is in Deck and not in Hand
 	push af
-	call .Func_4ba0b
+	call .CheckAndScoreEvolutionCandidate
 	pop bc
 	ret nc
 	ld a, b
 	ret
 
-.Func_4ba0b:
+.CheckAndScoreEvolutionCandidate:
 	ld [wTempAIPokemonCard], a
 	bank1call IsPrehistoricPowerActive
 	ccf

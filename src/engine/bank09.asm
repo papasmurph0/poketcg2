@@ -1491,11 +1491,11 @@ ExecuteCardSearchFunc:
 	dw .SearchDarkPkmn               ; CARDSEARCH_DARK_POKEMON
 	dw .SearchPsychicEnergy          ; CARDSEARCH_PSYCHIC_ENERGY
 	dw .SearchEvolutionPkmn          ; CARDSEARCH_EVOLUTION_POKEMON
-	dw .Func_24df6                   ; CARDSEARCH_UNK_9
+	dw .set_carry                   ; CARDSEARCH_UNK_9
 	dw .SearchTrainer                ; CARDSEARCH_TRAINER
 	dw .SearchEvolutionColorlessPkmn ; CARDSEARCH_EVOLUTION_COLORLESS_POKEMON
 	dw .SearchLightningEnergy        ; CARDSEARCH_LIGHTNING_ENERGY
-	dw .Func_24df6                   ; CARDSEARCH_UNK_D
+	dw .set_carry                   ; CARDSEARCH_UNK_D
 	dw .SearchBasicPkmn              ; CARDSEARCH_BASIC_POKEMON
 
 .no_carry
@@ -1661,7 +1661,7 @@ ExecuteCardSearchFunc:
 	scf
 	ret
 
-.Func_24df6:
+.set_carry:
 	scf
 	ret
 
@@ -2266,7 +2266,7 @@ ShowDeckDiagnosisAdvice: ; Func_2517f
 	ld [wDeckDiagnosisAdvice], a
 	call .GetTextIDsForAdvice
 	jp c, CheckDeck
-	call .Func_251c2
+	call .DrawDeckDiagnosisStepPortrait
 	bank1call SetNoLineSeparation
 .loop
 	push hl
@@ -2291,7 +2291,7 @@ ShowDeckDiagnosisAdvice: ; Func_2517f
 	jr z, .done
 	push hl
 	call .GetTextIDsForAdvice
-	call .Func_251c2
+	call .DrawDeckDiagnosisStepPortrait
 	pop hl
 	jr .loop
 .done
@@ -2299,7 +2299,7 @@ ShowDeckDiagnosisAdvice: ; Func_2517f
 	or a
 	ret
 
-.Func_251c2:
+.DrawDeckDiagnosisStepPortrait:
 	push de
 	push hl
 	ld a, [wDeckDiagnosisStep]

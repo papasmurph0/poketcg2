@@ -36,7 +36,7 @@ SerialTimerHandler:
 	ret
 
 ; tcg1: Func_0cc5
-Serial_Func_0be6::
+ExchangeLinkDuelRoleByte:: ; Serial_Func_0be6
 	ld hl, wSerialRecvCounter
 	or a
 	jr nz, .input_nonzero
@@ -461,7 +461,7 @@ SerialRecvBytes:
 	ret
 
 ; tcg1: Func_0ef1
-Serial_Func_0e12:
+SaveSerialExecutionState: ; Serial_Func_0e12
 	ld de, wSerialSavedStackPointer
 	ld hl, sp+$fe
 	ld a, l
@@ -481,7 +481,7 @@ Serial_Func_0e12:
 	ret
 
 ; tcg1: Func_0f05
-Serial_Func_0e26:
+RestoreSerialExecutionStateIfSaved: ; Serial_Func_0e26
 	push hl
 	ld hl, wSerialSavedReturnAddress
 	ld a, [hli]

@@ -339,7 +339,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	call SwapTurn
 	and b
 	jr nz, .no_carry
-	call .Func_20ae8
+	call .CheckOppBenchCardHasWeakness
 	ret nc
 	scf
 	ret
@@ -348,7 +348,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	ret
 
 .asm_20a79
-	call .Func_20ae8
+	call .CheckOppBenchCardHasWeakness
 	ret c
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	call GetNonTurnDuelistVariable
@@ -417,7 +417,7 @@ AIChooseGustOfWindBenchTarget: ; Func_209fc
 	scf
 	ret
 
-.Func_20ae8:
+.CheckOppBenchCardHasWeakness:
 	ld a, DUELVARS_BENCH
 	call GetNonTurnDuelistVariable
 	ld c, PLAY_AREA_BENCH_1 - 1
@@ -570,10 +570,10 @@ FindBenchCardThatCanBeKnockedOut:
 ; e = PLAY_AREA_* constant
 .CheckIfAnyAttackCanKO:
 	xor a ; FIRST_ATTACK_OR_PKMN_POWER
-	call .Func_20bd2
+	call .CheckIfAttackCanKODefender
 	ret c
 	ld a, SECOND_ATTACK
-.Func_20bd2:
+.CheckIfAttackCanKODefender:
 	push de
 	farcall EstimateDamage_VersusDefendingCard
 	pop de

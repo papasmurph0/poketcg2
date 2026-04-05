@@ -111,16 +111,16 @@ SFX_Update:
 	ld a, [wSFXChannelMask]
 	or a
 	jr nz, .asm_fc063
-	call Func_fc26c
+	call StopSFXPlayback
 	ret
 .asm_fc063
 	xor a
 	ld b, a
 	ld c, a
 	ld a, [wSFXChannelMask]
-	ld [wAudio_d0ed], a
+	ld [wSFXChannelUpdateMask], a
 .asm_fc06c
-	ld hl, wAudio_d0ed
+	ld hl, wSFXChannelUpdateMask
 	ld a, [hl]
 	rrca
 	ld [hl], a
@@ -131,7 +131,7 @@ SFX_Update:
 	dec a
 	jr z, .asm_fc082
 	ld [hl], a
-	call Func_fc18d
+	call ApplySFXChannelPitchOffset
 	jr .asm_fc08d
 .asm_fc082
 	ld hl, wSFXChannelPointers
@@ -140,7 +140,7 @@ SFX_Update:
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
-	call Func_fc094
+	call ExecuteSFXCommand
 .asm_fc08d
 	inc c
 	ld a, c
@@ -148,7 +148,7 @@ SFX_Update:
 	jr nz, .asm_fc06c
 	ret
 
-Func_fc094:
+ExecuteSFXCommand: ; Func_fc094
 	ld a, [hl]
 	and $f0
 	swap a
@@ -186,7 +186,7 @@ SFX_CommandTable:
 	dw SFX_end
 
 SFX_unused:
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_frequency:
 	ld d, a
@@ -233,7 +233,7 @@ SFX_frequency:
 	ld [hli], a
 	ld [hl], d
 	pop de
-Func_fc105:
+UpdateSFXChannelPointer: ; Func_fc105
 	ld hl, wSFXChannelPointers
 	add hl, bc
 	add hl, bc
@@ -260,7 +260,7 @@ SFX_envelope:
 	ld l, a
 	ld [hl], e
 	pop hl
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_duty:
 	swap a
@@ -274,7 +274,7 @@ SFX_duty:
 	ld l, a
 	ld [hl], e
 	pop hl
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_loop:
 	ld hl, wSFXChannelLoopPtr
@@ -291,7 +291,7 @@ SFX_loop:
 	ld [hl], a
 	ld l, e
 	ld h, d
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_endloop:
 	ld hl, wSFXChannelLoopCount
@@ -307,10 +307,10 @@ SFX_endloop:
 	ld h, [hl]
 	ld l, a
 	pop de
-	jp Func_fc094
+	jp ExecuteSFXCommand
 .asm_fc162
 	pop hl
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_pitch_offset:
 	ld hl, wSFXChannelPitchOffset
@@ -320,16 +320,16 @@ SFX_pitch_offset:
 	pop hl
 	ld a, [hli]
 	ld [de], a
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_wait:
 	ld a, c
 	cp $3
 	jr nz, .asm_fc17c
-	call Func_fc1cd
+	call ApplyNoiseChannelPitchOffset
 	jr .asm_fc17f
 .asm_fc17c
-	call Func_fc18d
+	call ApplySFXChannelPitchOffset
 .asm_fc17f
 	ld hl, wSFXChannelFrameDelay
 	add hl, bc
@@ -340,9 +340,9 @@ SFX_wait:
 	ld [de], a
 	ld e, l
 	ld d, h
-	jp Func_fc105
+	jp UpdateSFXChannelPointer
 
-Func_fc18d:
+ApplySFXChannelPitchOffset: ; Func_fc18d
 	ld hl, wSFXChannelPitchOffset
 	add hl, bc
 	ld a, [hl]
@@ -396,7 +396,7 @@ Func_fc18d:
 .asm_fc1cc
 	ret
 
-Func_fc1cd:
+ApplyNoiseChannelPitchOffset: ; Func_fc1cd
 	ld hl, wSFXNoisePitchOffset
 	ld a, [hl]
 	or a
@@ -465,7 +465,7 @@ SFX_wave:
 	ldh [rAUD3ENA], a
 	ld b, $0
 	pop hl
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_pan:
 	pop hl
@@ -489,13 +489,13 @@ SFX_pan:
 	ld [hl], a
 	pop bc
 	pop hl
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_sweep:
 	pop hl
 	ld a, [hli]
 	ldh [rAUD1SWEEP], a
-	jp Func_fc094
+	jp ExecuteSFXCommand
 
 SFX_end:
 	ld e, c
@@ -525,7 +525,7 @@ SFX_end:
 	pop hl
 	ret
 
-Func_fc26c:
+StopSFXPlayback: ; Func_fc26c
 	xor a
 	ld [wSFXIsPlaying], a
 	ld [wSfxPriority], a

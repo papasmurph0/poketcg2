@@ -843,14 +843,14 @@ DuelMenuShortcut_BothActivePokemon:
 OpenVariousPlayAreaScreens_FromSelectPresses:
 	call OpenInPlayAreaScreen_FromSelectButton
 	ret c
-	call .Func_45a9
+	call .view_play_area
 	ret c
 	call SwapTurn
-	call .Func_45a9
+	call .view_play_area
 	call SwapTurn
 	ret
 
-.Func_45a9
+.view_play_area
 	call HasAlivePokemonInPlayArea
 	ld a, $02
 	ld [wPlayAreaSelectAction], a
@@ -3077,7 +3077,7 @@ TurnDuelistTakePrizes:
 	ret
 
 .opponent
-	call .Func_588a
+	call .DrawPrizeCardPlayAreaScreen
 	ldtx hl, WillDrawXPrizesText
 	call DrawWideTextBox_PrintText
 	call CountPrizes
@@ -3131,10 +3131,10 @@ TurnDuelistTakePrizes:
 	ldtx hl, DrewFromPrizesText
 	farcall _DisplayCardDetailScreen
 	call OpenCardPage_FromHand
-	call .Func_588a ; can be fallthrough
+	call .DrawPrizeCardPlayAreaScreen ; can be fallthrough
 	ret
 
-.Func_588a:
+.DrawPrizeCardPlayAreaScreen:
 	ld l, PLAYER_TURN
 	ldh a, [hWhoseTurn]
 	ld h, a
@@ -5941,7 +5941,7 @@ HandleBetweenTurnKnockOuts:
 	xor a
 	ld [wDuelFinishParam], a
 	call SwapTurn
-	call .Func_6ef6
+	call .HandleKOAndRollFinishParam
 	call SwapTurn
 	ld a, [wDuelFinishParam]
 	or a
@@ -5963,7 +5963,7 @@ HandleBetweenTurnKnockOuts:
 	ld a, TURN_PLAYER_WON
 	jr .set_duel_finished
 .asm_6e86
-	call .Func_6ef6
+	call .HandleKOAndRollFinishParam
 	ld a, [wDuelFinishParam]
 	cp TRUE
 	jr nz, .asm_6e9f
@@ -5975,9 +5975,9 @@ HandleBetweenTurnKnockOuts:
 	jr .set_duel_finished
 .asm_6e9f
 	call SwapTurn
-	call .Func_6eff
+	call .ReplaceKOAndRollFinishParam
 	call SwapTurn
-	call .Func_6eff
+	call .ReplaceKOAndRollFinishParam
 	ld a, [wDuelFinishParam]
 	or a
 	jr nz, .asm_6ec4
@@ -6024,13 +6024,13 @@ HandleBetweenTurnKnockOuts:
 	call ClearDamageReductionSubstatus2
 	ret
 
-.Func_6ef6:
+.HandleKOAndRollFinishParam:
 	call HandleKnockedOutAndTakePrizes
 	ld hl, wDuelFinishParam
 	rl [hl]
 	ret
 
-.Func_6eff:
+.ReplaceKOAndRollFinishParam:
 	call ReplaceKnockedOutPokemon
 	ld hl, wDuelFinishParam
 	rl [hl]
@@ -7196,13 +7196,13 @@ SetFontAndTextBoxFrameColor:
 
 LoadCardDetailScreenPalettes:: ; Func_6c12
 	ld hl, Pals_6f0d8 - $4000
-Func_6c15:
+CopyCGBBGPalsFromHLToPal2: ; Func_6c15
 	ld de, wBackgroundPalettesCGB + 2 * PAL_SIZE
 	ld c, 3 palettes
 	jp CopyFontsOrDuelGraphicsBytes
-Func_6c1d:
+LoadCardDetailScreenPalettes_Alt: ; Func_6c1d
 	ld hl, Pals_6f0f0 - $4000
-	jr Func_6c15
+	jr CopyCGBBGPalsFromHLToPal2
 
 HandleDamageModifiersEffects::
 	call HandlePrehistoricDreamDamageBoost
@@ -7226,7 +7226,7 @@ HandleDamageModifiersEffects::
 	jr z, .triple_damage
 	ret
 .double_damage
-	call .Func_6c5a
+	call .CheckLoadedAttackMatchesTurnHolderAttack
 	ret nz
 	ld a, e
 	or d
@@ -7235,7 +7235,7 @@ HandleDamageModifiersEffects::
 	rl d
 	ret
 .triple_damage
-	call .Func_6c5a
+	call .CheckLoadedAttackMatchesTurnHolderAttack
 	ret nz
 	ld l, e
 	ld h, d
@@ -7248,7 +7248,7 @@ HandleDamageModifiersEffects::
 ; compares loaded attack name with
 ; turn holder's DUELVARS_ATTACK_NAME
 ; if it's the same, then return z
-.Func_6c5a:
+.CheckLoadedAttackMatchesTurnHolderAttack:
 	push hl
 	push de
 	ld l, DUELVARS_ATTACK_NAME
@@ -8684,7 +8684,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	call DrawWideTextBox_WaitForInput
 	pop de
 
-	call .Func_74ab
+	call .HandleStrikesBackWithForcedSwitch
 
 .no_mirror_shell_damage
 	; restore variables from cache
@@ -8716,7 +8716,7 @@ ProcessEffectsTriggeredByTakingDamage::
 	call CheckAndProcessFinalBeam
 	ret
 
-.Func_74ab:
+.HandleStrikesBackWithForcedSwitch:
 	ld a, [wAttackingCardPlayAreaLocation]
 	or a
 	jr nz, .not_arena
@@ -9546,15 +9546,15 @@ CheckPoisonMistPkmnPowers: ; Func_796b
 	call CheckGoopGasAttackAndToxicGasActive
 	ccf
 	ret nc
-	call .Func_797f
+	call .CheckPoisonMistBlockedForDuelist
 	jr c, .done
 	call SwapTurn
-	call .Func_797f
+	call .CheckPoisonMistBlockedForDuelist
 	call SwapTurn
 .done
 	ret
 
-.Func_797f:
+.CheckPoisonMistBlockedForDuelist:
 	ld a, DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA
 	get_turn_duelist_var
 	ld c, a
@@ -9915,7 +9915,7 @@ DecideLinkDuelVariables:
 	bit B_PAD_B, a
 	jr nz, .link_cancel
 	and PAD_START
-	call Serial_Func_0be6
+	call ExchangeLinkDuelRoleByte
 	jr nc, .input_loop
 	ld hl, wPlayerDuelVariables
 	ld a, [wSerialOp]

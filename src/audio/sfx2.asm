@@ -111,16 +111,16 @@ SFX2_Update:
 	ld a, [wSFXChannelMask]
 	or a
 	jr nz, .asm_fc063
-	call Func_fc26c_2
+	call StopSFXPlayback_2
 	ret
 .asm_fc063
 	xor a
 	ld b, a
 	ld c, a
 	ld a, [wSFXChannelMask]
-	ld [wAudio_d0ed], a
+	ld [wSFXChannelUpdateMask], a
 .asm_fc06c
-	ld hl, wAudio_d0ed
+	ld hl, wSFXChannelUpdateMask
 	ld a, [hl]
 	rrca
 	ld [hl], a
@@ -131,7 +131,7 @@ SFX2_Update:
 	dec a
 	jr z, .asm_fc082
 	ld [hl], a
-	call Func_fc18d_2
+	call ApplySFXChannelPitchOffset_2
 	jr .asm_fc08d
 .asm_fc082
 	ld hl, wSFXChannelPointers
@@ -140,7 +140,7 @@ SFX2_Update:
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
-	call Func_fc094_2
+	call ExecuteSFXCommand_2
 .asm_fc08d
 	inc c
 	ld a, c
@@ -148,7 +148,7 @@ SFX2_Update:
 	jr nz, .asm_fc06c
 	ret
 
-Func_fc094_2:
+ExecuteSFXCommand_2: ; Func_fc094_2
 	ld a, [hl]
 	and $f0
 	swap a
@@ -186,7 +186,7 @@ SFX2_CommandTable:
 	dw SFX2_end
 
 SFX2_unused:
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_frequency:
 	ld d, a
@@ -233,7 +233,7 @@ SFX2_frequency:
 	ld [hli], a
 	ld [hl], d
 	pop de
-Func_fc105_2:
+UpdateSFXChannelPointer_2: ; Func_fc105_2
 	ld hl, wSFXChannelPointers
 	add hl, bc
 	add hl, bc
@@ -260,7 +260,7 @@ SFX2_envelope:
 	ld l, a
 	ld [hl], e
 	pop hl
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_duty:
 	swap a
@@ -274,7 +274,7 @@ SFX2_duty:
 	ld l, a
 	ld [hl], e
 	pop hl
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_loop:
 	ld hl, wSFXChannelLoopPtr
@@ -291,7 +291,7 @@ SFX2_loop:
 	ld [hl], a
 	ld l, e
 	ld h, d
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_endloop:
 	ld hl, wSFXChannelLoopCount
@@ -307,10 +307,10 @@ SFX2_endloop:
 	ld h, [hl]
 	ld l, a
 	pop de
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 .asm_fc162
 	pop hl
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_pitch_offset:
 	ld hl, wSFXChannelPitchOffset
@@ -320,16 +320,16 @@ SFX2_pitch_offset:
 	pop hl
 	ld a, [hli]
 	ld [de], a
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_wait:
 	ld a, c
 	cp $3
 	jr nz, .asm_fc17c
-	call Func_fc1cd_2
+	call ApplyNoiseChannelPitchOffset_2
 	jr .asm_fc17f
 .asm_fc17c
-	call Func_fc18d_2
+	call ApplySFXChannelPitchOffset_2
 .asm_fc17f
 	ld hl, wSFXChannelFrameDelay
 	add hl, bc
@@ -340,9 +340,9 @@ SFX2_wait:
 	ld [de], a
 	ld e, l
 	ld d, h
-	jp Func_fc105_2
+	jp UpdateSFXChannelPointer_2
 
-Func_fc18d_2:
+ApplySFXChannelPitchOffset_2: ; Func_fc18d_2
 	ld hl, wSFXChannelPitchOffset
 	add hl, bc
 	ld a, [hl]
@@ -396,7 +396,7 @@ Func_fc18d_2:
 .asm_fc1cc
 	ret
 
-Func_fc1cd_2:
+ApplyNoiseChannelPitchOffset_2: ; Func_fc1cd_2
 	ld hl, wSFXNoisePitchOffset
 	ld a, [hl]
 	or a
@@ -465,7 +465,7 @@ SFX2_wave:
 	ldh [rAUD3ENA], a
 	ld b, $0
 	pop hl
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_pan:
 	pop hl
@@ -489,13 +489,13 @@ SFX2_pan:
 	ld [hl], a
 	pop bc
 	pop hl
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_sweep:
 	pop hl
 	ld a, [hli]
 	ldh [rAUD1SWEEP], a
-	jp Func_fc094_2
+	jp ExecuteSFXCommand_2
 
 SFX2_end:
 	ld e, c
@@ -525,7 +525,7 @@ SFX2_end:
 	pop hl
 	ret
 
-Func_fc26c_2:
+StopSFXPlayback_2: ; Func_fc26c_2
 	xor a
 	ld [wSFXIsPlaying], a
 	ld [wSfxPriority], a

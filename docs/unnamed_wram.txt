@@ -196,3 +196,6 @@ wd96c -> wTempColorTableIndex
 wd96d -> wTempColorTableWord
 ; temporary 16-bit color word loaded from SetwD96CAndwD96D's local table.
 
+wAudio_d0ed -> wSFXChannelUpdateMask
+; rotating copy of wSFXChannelMask consumed while iterating per-channel SFX updates.
+

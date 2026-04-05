@@ -34,3 +34,9 @@ tools/repo_structure.dot
 tools/repo_structure.mmd
 tools/repo_structure.html
 tools/repo_components/
+
+# local debug artifacts
+.vscode/
+docs/emulicious_expressions.txt
+docs/logs.txt
+docs/sfx_debug_logpoints.txt

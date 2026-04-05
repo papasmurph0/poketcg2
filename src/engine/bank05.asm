@@ -8810,7 +8810,7 @@ GetAIScoreOfAttack:
 	add b
 	ld b, a
 	ld a, $01
-	call .Func_17769
+	call .CountBenchPkmnAboveHPThreshold
 	jr c, .asm_176af
 	jr .asm_176b6
 	call CountPrizes
@@ -8819,7 +8819,7 @@ GetAIScoreOfAttack:
 	ld b, $14
 	call SwapTurn
 	xor a
-	call .Func_17769
+	call .CountBenchPkmnAboveHPThreshold
 	call SwapTurn
 	jr c, .asm_176b6
 .asm_17705
@@ -8843,13 +8843,13 @@ GetAIScoreOfAttack:
 	push bc
 	call SwapTurn
 	xor a
-	call .Func_17769
+	call .CountBenchPkmnAboveHPThreshold
 	call SwapTurn
 	pop bc
 	jr c, .asm_17751
 	push de
 	ld a, $01
-	call .Func_17769
+	call .CountBenchPkmnAboveHPThreshold
 	pop bc
 	jr nc, .asm_17759
 	xor a
@@ -8872,7 +8872,7 @@ GetAIScoreOfAttack:
 	call AIEncourage
 	jr .asm_17799
 
-.Func_17769:
+.CountBenchPkmnAboveHPThreshold:
 	ld d, a
 	ld a, DUELVARS_BENCH
 	get_turn_duelist_var
