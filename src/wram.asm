@@ -153,16 +153,16 @@ wOAM:: ; ca00
 wStringBuffer:: ; caa0
 	ds $10
 
-; cleared at startup in SetupRegisters; no confirmed consumer yet
-wUnusedStartupByte0:: ; cab0
+; cleared during SetupRegisters initialization; no confirmed consumer yet
+wSetupInitByte0:: ; cab0
 	ds $1
 
-; cleared at startup in SetupRegisters; no confirmed consumer yet
-wUnusedStartupByte1:: ; cab1
+; cleared during SetupRegisters initialization; no confirmed consumer yet
+wSetupInitByte1:: ; cab1
 	ds $1
 
-; cleared at startup in SetupRegisters; no confirmed consumer yet
-wUnusedStartupByte2:: ; cab2
+; cleared during SetupRegisters initialization; no confirmed consumer yet
+wSetupInitByte2:: ; cab2
 	ds $1
 
 ; initial value of the A register. used to tell the console when reset
@@ -629,7 +629,7 @@ wOpponentDeckID:: ; cc09
 	ds $1
 
 ; set to $ff at duel init; no confirmed consumer yet
-wUnusedDuelInitByte_ff:: ; cc0a
+wDuelInitByteFF:: ; cc0a
 	ds $1
 
 ; index (0-1) of the attack or Pokemon Power being used by the player's arena card
@@ -730,8 +730,8 @@ wAIMinDamage:: ; cccb
 wAIMaxDamage:: ; cccc
 	ds $1
 
-; only written, never read
-wUnusedHPRecoveryAmount:: ; cccd
+; temporary HP recovery amount snapshot written by ApplyAndAnimateHPRecovery
+wHPRecoveryAmountTemp:: ; cccd
 	ds $2
 
 ; damage dealt by an attack to a target
@@ -801,7 +801,7 @@ wIsDamageToSelf:: ; ccfb
 	ds $1
 
 ; cleared at duel init; no confirmed consumer yet
-wUnusedDuelInitByte_00:: ; ccfc
+wDuelInitByte00:: ; ccfc
 	ds $1
 
 wDuelFinishParam:: ; cce8
@@ -1336,16 +1336,15 @@ wPrinterNumberLineFeeds:: ; ce1d
 wPrintOnlyStarRarity:: ; ce1e
 	ds $1
 
-; only written by unreferenced function Func_1a14b
-; otherwise unused/dead
-wUnusedPrinterStubValue:: ; ce1f
+; value written by unreferenced function Func_1a14b
+wPrinterStubValue:: ; ce1f
 	; value 1-5 written by unreferenced Func_1a14b stub
 	ds $1
 
 wPrinterInitAttempts:: ; ce20
 	ds $1
 
-wUnusedPrinterGfxClearState:: ; ce21
+wPrinterGfxClearState:: ; ce21
 	; cleared by ClearPrinterGfxBuffer; no confirmed consumer yet
 	ds $1
 
@@ -1655,7 +1654,7 @@ wAITriedAttack:: ; d04a
 	ds $1
 
 ; cleared at AI turn init; no confirmed consumer yet
-wUnusedAITurnInitByte0:: ; d04b
+wAITurnInitByte0:: ; d04b
 	ds $1
 
 ; used to temporarily backup wPlayAreaAIScore values.
@@ -1769,7 +1768,7 @@ wAIRetreatConsiderStatus:: ; d080
 	ds $1
 
 ; cleared at AI turn init; no confirmed consumer yet
-wUnusedAITurnInitByte1:: ; d081
+wAITurnInitByte1:: ; d081
 	ds $1
 
 ; number of Basic Pokemon cards when

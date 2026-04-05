@@ -4277,7 +4277,7 @@ ClearPrinterGfxBuffer:
 	or b
 	jr nz, .loop
 	xor a
-	ld [wUnusedPrinterGfxClearState], a
+	ld [wPrinterGfxClearState], a
 	ret
 
 ; reverts settings changed by PrepareForPrinterCommunications
@@ -4467,7 +4467,7 @@ Func_1a14b: ; unreferenced
 	jr .store_and_return
 	ld a, $05
 .store_and_return
-	ld [wUnusedPrinterStubValue], a
+	ld [wPrinterStubValue], a
 	scf
 	ret
 

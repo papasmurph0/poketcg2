@@ -621,7 +621,7 @@ AddDamageIfHeads:
 ;	de = HP amount to recover
 ApplyAndAnimateHPRecovery:
 	push de
-	ld hl, wUnusedHPRecoveryAmount
+	ld hl, wHPRecoveryAmountTemp
 	ld [hl], e
 	inc hl
 	ld [hl], d

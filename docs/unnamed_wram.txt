@@ -202,34 +202,34 @@ wAudio_d0ed -> wSFXChannelUpdateMask
 wc000 -> wTempScratchBuffer
 ; generic c000 scratch buffer alias used by temporary list/text copy flows when no context-specific c000 union alias applies.
 
-wce9d -> wUnusedPrinterStubValue
-; dead/unreferenced printer stub byte written with values 1-5 only by Func_1a14b.
+wce9d -> wPrinterStubValue
+; printer stub byte written with values 1-5 only by unreferenced Func_1a14b.
 
-wce9f -> wUnusedPrinterGfxClearState
+wce9f -> wPrinterGfxClearState
 ; byte cleared by ClearPrinterGfxBuffer with no confirmed consumer in current code paths.
 
-wcab0 -> wUnusedStartupByte0
-; cleared during SetupRegisters startup initialization; no confirmed consumer.
+wcab0 -> wSetupInitByte0
+; cleared during SetupRegisters hardware/register initialization; no confirmed consumer.
 
-wcab1 -> wUnusedStartupByte1
-; cleared during SetupRegisters startup initialization; no confirmed consumer.
+wcab1 -> wSetupInitByte1
+; cleared during SetupRegisters hardware/register initialization; no confirmed consumer.
 
-wcab2 -> wUnusedStartupByte2
-; cleared during SetupRegisters startup initialization; no confirmed consumer.
+wcab2 -> wSetupInitByte2
+; cleared during SetupRegisters hardware/register initialization; no confirmed consumer.
 
-wcc0f -> wUnusedDuelInitByte_ff
+wcc0f -> wDuelInitByteFF
 ; set to $ff in InitVariablesToBeginDuel and not currently read elsewhere.
 
-wccbd -> wUnusedHPRecoveryAmount
-; two-byte scratch write in ApplyAndAnimateHPRecovery that is never read.
+wccbd -> wHPRecoveryAmountTemp
+; two-byte temporary HP recovery amount snapshot written in ApplyAndAnimateHPRecovery.
 
-wccfc -> wUnusedDuelInitByte_00
+wccfc -> wDuelInitByte00
 ; cleared to $00 in InitVariablesToBeginDuel and not currently read elsewhere.
 
-wcddc -> wUnusedAITurnInitByte0
+wcddc -> wAITurnInitByte0
 ; cleared in InitAITurnVars at turn start with no confirmed consumer.
 
-wd081 -> wUnusedAITurnInitByte1
+wd081 -> wAITurnInitByte1
 ; cleared in InitAITurnVars at turn start with no confirmed consumer.
 
 wd40e -> wUnknown_d40e

@@ -3274,9 +3274,9 @@ InitAITurnVars:
 	xor a
 	ld [wPreviousAIFlags], a
 	ld [wAITriedAttack], a
-	ld [wUnusedAITurnInitByte0], a
+	ld [wAITurnInitByte0], a
 	ld [wAIRetreatedThisTurn], a
-	ld [wUnusedAITurnInitByte1], a
+	ld [wAITurnInitByte1], a
 
 ; checks if the Player used an attack last turn
 ; and if it was the second attack of their card.
