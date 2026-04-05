@@ -1636,3 +1636,63 @@ In HandleMenuBox, branch that proceeds to confirm/cancel key checks after option
 src/engine/bank07.asm .asm_1cbda -> .return_selection
 In HandleMenuBox, branch that focuses the current item and returns the selected/focused index when action keys are detected.
 
+src/engine/bank07.asm .asm_1c6e1 -> .fade_to_white_or_black
+In FadePalettes, branch that runs white/black fade mode when wPaletteFadeMode is not target-fade mode.
+
+src/engine/bank07.asm .asm_1c71f -> .loop_colors
+In FadeOBPalsToWhiteOrBlack, loop over object palette colors applying optional fade per config entry.
+
+src/engine/bank07.asm .asm_1c72b -> .store_color
+In FadeOBPalsToWhiteOrBlack, shared branch that writes the (possibly faded) color back to object palette memory.
+
+src/engine/bank07.asm .asm_1c740 -> .loop_colors
+In FadeBGPalsToTarget, loop over background palette colors applying optional fade toward target values.
+
+src/engine/bank07.asm .asm_1c755 -> .store_color
+In FadeBGPalsToTarget, shared branch that stores the (possibly faded) background color result.
+
+src/engine/bank07.asm .asm_1c772 -> .loop_colors
+In FadeOBPalsToTarget, loop over object palette colors applying optional fade toward target values.
+
+src/engine/bank07.asm .asm_1c787 -> .store_color
+In FadeOBPalsToTarget, shared branch that stores the (possibly faded) object color result.
+
+src/engine/bank07.asm .asm_1c967 -> .skip_bg_fill
+In InitFadePalettes, branch that skips writing the fill color for a background color entry when fade config disables it.
+
+src/engine/bank07.asm .asm_1c96d -> .check_ob_fade_flags
+In InitFadePalettes, branch that proceeds to object-palette filling after the background-palette pass.
+
+src/engine/bank07.asm .asm_1c98b -> .done
+Common return path for InitFadePalettes after optional background/object palette fill passes.
+
+src/engine/bank0c.asm .asm_325b1 -> .return_success
+In PlayFireFortEntranceRonaldThemePostload, branch that returns success without changing music when Ronald-theme conditions are not met.
+
+src/engine/bank0c.asm .asm_325b3 -> .play_ronald_theme
+In PlayFireFortEntranceRonaldThemePostload, branch that queues Ronald music when Magmar coin is obtained and meeting-count threshold is still active.
+
+src/engine/bank0c.asm .asm_325e0 -> .apply_closed_door_overlay
+In HandleFireFortEntranceWarpFadeInPreload, branch that applies closed-door overlay and optional clerk reposition when the entrance door is closed.
+
+src/engine/bank0c.asm .asm_325fd -> .check_start_ronald_intro
+In HandleFireFortEntranceWarpFadeInPreload, branch that checks Magmar coin progression and conditionally starts the Ronald intro script path.
+
+src/engine/bank0c.asm .asm_3261a -> .done
+Common successful return path for HandleFireFortEntranceWarpFadeInPreload after overlay/script branching.
+
+src/engine/bank0c.asm .asm_3262a -> .done
+Common successful return path for HandleFireFortEntranceInteractions after NPC and optional OW interaction handling.
+
+src/engine/bank0c.asm .asm_32691 -> .done
+Common return path for ScriptFireFortEntranceDoorInteraction after either already-open check or door-opening script flow.
+
+src/engine/bank0c.asm .asm_3271e -> .play_imakuni_red_theme
+In PlayFireFortLobbyImakuniRedThemePostload, branch that queues Imakuni Red music when VAR_26 reaches the reveal value.
+
+src/engine/bank0c.asm .asm_32745 -> .done
+Common successful return path for HandleFireFortLobbyInteractions after NPC and optional OW interaction handling.
+
+src/engine/bank0c.asm .asm_32767 -> .done
+Common successful return path for HandleFireFortLobbyContinueOverworld after optional Imakuni cleanup and music restore.
+

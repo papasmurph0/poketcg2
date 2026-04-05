@@ -937,11 +937,11 @@ FadePalettes::
 	jr nz, .done
 	ld a, [wPaletteFadeMode]
 	dec a
-	jr nz, .asm_1c6e1
+	jr nz, .fade_to_white_or_black
 ; wPaletteFadeMode == 1
 	call ApplyPaletteFadeToTarget
 	jr .decrement_counter
-.asm_1c6e1
+.fade_to_white_or_black
 ; wPaletteFadeMode != 1
 	call ApplyPaletteFadeToWhiteOrBlack
 .decrement_counter
@@ -991,7 +991,7 @@ FadeOBPalsToWhiteOrBlack:
 	ld bc, wOBColorFadeConfigList
 	ld hl, wObjectPalettesCGB
 	ld a, (NUM_OBJECT_PALETTES palettes) / 2
-.asm_1c71f
+.loop_colors
 	push af
 	ld e, [hl]
 	inc hl
@@ -999,9 +999,9 @@ FadeOBPalsToWhiteOrBlack:
 	dec hl
 	ld a, [bc]
 	or a
-	jr nz, .asm_1c72b
+	jr nz, .store_color
 	call FadeColorToBlackOrWhite
-.asm_1c72b
+.store_color
 	ld [hl], e
 	inc hl
 	ld [hl], d
@@ -1009,7 +1009,7 @@ FadeOBPalsToWhiteOrBlack:
 	pop af
 	inc bc
 	dec a
-	jr nz, .asm_1c71f
+	jr nz, .loop_colors
 	ret
 
 FadeBGPalsToTarget: ; Func_1c735
@@ -1017,7 +1017,7 @@ FadeBGPalsToTarget: ; Func_1c735
 	ld hl, wTargetBGPalettes
 	ld de, wBackgroundPalettesCGB
 	ld a, (NUM_BACKGROUND_PALETTES palettes) / 2
-.asm_1c740
+.loop_colors
 	push af
 	push hl
 	push de
@@ -1034,9 +1034,9 @@ FadeBGPalsToTarget: ; Func_1c735
 	ld l, a
 	ld a, [bc]
 	or a
-	jr nz, .asm_1c755
+	jr nz, .store_color
 	call FadeColorToTarget
-.asm_1c755
+.store_color
 	ld h, d
 	ld l, e
 	pop de
@@ -1052,7 +1052,7 @@ FadeBGPalsToTarget: ; Func_1c735
 	pop af
 	inc bc
 	dec a
-	jr nz, .asm_1c740
+	jr nz, .loop_colors
 	ret
 
 FadeOBPalsToTarget: ; Func_1c767
@@ -1060,7 +1060,7 @@ FadeOBPalsToTarget: ; Func_1c767
 	ld hl, wTargetOBPalettes
 	ld de, wObjectPalettesCGB
 	ld a, (NUM_OBJECT_PALETTES palettes) / 2
-.asm_1c772
+.loop_colors
 	push af
 	push hl
 	push de
@@ -1077,9 +1077,9 @@ FadeOBPalsToTarget: ; Func_1c767
 	ld l, a
 	ld a, [bc]
 	or a
-	jr nz, .asm_1c787
+	jr nz, .store_color
 	call FadeColorToTarget
-.asm_1c787
+.store_color
 	ld h, d
 	ld l, e
 	pop de
@@ -1095,7 +1095,7 @@ FadeOBPalsToTarget: ; Func_1c767
 	pop af
 	inc bc
 	dec a
-	jr nz, .asm_1c772
+	jr nz, .loop_colors
 	ret
 
 ApplyPaletteFadeToWhiteOrBlack: ; Func_1c799
@@ -1404,30 +1404,30 @@ InitFadePalettes:
 	ld e, a
 	ld hl, wPaletteFadeFlags
 	bit 0, [hl]
-	jr z, .asm_1c96d
+	jr z, .check_ob_fade_flags
 	ld bc, wBGColorFadeConfigList
 	ld hl, wBackgroundPalettesCGB
 	ld d, (NUM_BACKGROUND_PALETTES palettes) / 2
 .loop_1
 	ld a, [bc]
 	or a
-	jr nz, .asm_1c967
+	jr nz, .skip_bg_fill
 	push hl
 	ld [hl], e
 	inc hl
 	ld [hl], e
 	pop hl
-.asm_1c967
+.skip_bg_fill
 	inc hl
 	inc hl
 	inc bc
 	dec d
 	jr nz, .loop_1
 
-.asm_1c96d
+.check_ob_fade_flags
 	ld hl, wPaletteFadeFlags
 	bit 7, [hl]
-	jr z, .asm_1c98b
+	jr z, .done
 	ld bc, wOBColorFadeConfigList
 	ld hl, wObjectPalettesCGB
 	ld d, (NUM_OBJECT_PALETTES palettes) / 2
@@ -1446,7 +1446,7 @@ InitFadePalettes:
 	inc bc
 	dec d
 	jr nz, .loop_2
-.asm_1c98b
+.done
 	pop hl
 	pop de
 	pop bc

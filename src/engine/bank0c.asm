@@ -3523,15 +3523,15 @@ FireFortEntrance_MapScripts:
 PlayFireFortEntranceRonaldThemePostload: ; Func_3259f
 	ld a, EVENT_GOT_MAGMAR_COIN
 	farcall GetEventValue
-	jr z, .asm_325b1
+	jr z, .return_success
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $06
-	jr c, .asm_325b3
-.asm_325b1
+	jr c, .play_ronald_theme
+.return_success
 	scf
 	ret
-.asm_325b3
+.play_ronald_theme
 	ld a, MUSIC_RONALD
 	farcall PlayAfterCurrentSong
 	scf
@@ -3553,27 +3553,27 @@ LoadFireFortEntranceNPCs: ; Func_325c3
 HandleFireFortEntranceWarpFadeInPreload: ; Func_325cc
 	ld a, EVENT_FIRE_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr z, .asm_325e0
+	jr z, .apply_closed_door_overlay
 	ld a, VAR_TIMES_MET_RONALD
 	farcall GetVarValue
 	cp $06
-	jr c, .asm_325fd
-	jr .asm_3261a
-.asm_325e0
+	jr c, .check_start_ronald_intro
+	jr .done
+.apply_closed_door_overlay
 	ld bc, TILEMAP_073
 	lb de, 4, 7
 	farcall AddOWTilemapOverlay
 	ld a, EVENT_GOT_MAGNEMITE_COIN
 	farcall GetEventValue
-	jr nz, .asm_3261a
+	jr nz, .done
 	ld a, NPC_GR_CLERK_FIRE_FORT
 	lb de, 4, 8
 	farcall SetOWObjectTilePosition
-	jr .asm_3261a
-.asm_325fd
+	jr .done
+.check_start_ronald_intro
 	ld a, EVENT_GOT_MAGMAR_COIN
 	farcall GetEventValue
-	jr z, .asm_3261a
+	jr z, .done
 	ld a, OWMODE_SCRIPT
 	ld [wOverworldMode], a
 	ld a, BANK(RunRonaldPowerDeckDuelIntroScript)
@@ -3583,17 +3583,17 @@ HandleFireFortEntranceWarpFadeInPreload: ; Func_325cc
 	ld [wOverworldScriptPointer], a
 	ld a, h
 	ld [wOverworldScriptPointer + 1], a
-.asm_3261a
+.done
 	scf
 	ret
 
 HandleFireFortEntranceInteractions: ; Func_3261c
 	ld hl, FireFortEntrance_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_3262a
+	jr nc, .done
 	ld hl, FireFortEntrance_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_3262a
+.done
 	scf
 	ret
 
@@ -3632,7 +3632,7 @@ ScriptFireFortEntranceClerk: ; Func_32632
 ScriptFireFortEntranceDoorInteraction: ; Func_32664
 	ld a, EVENT_FIRE_FORT_ENTRANCE_DOOR_STATE
 	farcall GetEventValue
-	jr nz, .asm_32691
+	jr nz, .done
 	xor a
 	start_script
 	start_dialog
@@ -3647,11 +3647,11 @@ ScriptFireFortEntranceDoorInteraction: ; Func_32664
 	play_sfx SFX_DOORS
 	load_tilemap TILEMAP_074, $04, $07
 	end_script
-	jr .asm_32691
+	jr .done
 .ows_3268f
 	end_dialog
 	end_script
-.asm_32691
+.done
 	ret
 
 Script_32692:
@@ -3702,10 +3702,10 @@ PlayFireFortLobbyImakuniRedThemePostload: ; Func_32712
 	ld a, VAR_26
 	farcall GetVarValue
 	cp $07
-	jr z, .asm_3271e
+	jr z, .play_imakuni_red_theme
 	scf
 	ret
-.asm_3271e
+.play_imakuni_red_theme
 	ld a, MUSIC_IMAKUNI_RED
 	farcall PlayAfterCurrentSong
 	scf
@@ -3727,10 +3727,10 @@ LoadFireFortLobbyNPCs: ; Func_3272e
 HandleFireFortLobbyInteractions: ; Func_32737
 	ld hl, FireFortLobby_NPCInteractions
 	call HandleNPCInteractions
-	jr nc, .asm_32745
+	jr nc, .done
 	ld hl, FireFortLobby_OWInteractions
 	call ExecutePlayerCoordScriptIfNotMoving
-.asm_32745
+.done
 	scf
 	ret
 
@@ -3742,14 +3742,14 @@ HandleFireFortLobbyAfterDuel: ; Func_32747
 HandleFireFortLobbyContinueOverworld: ; Func_3274d
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall GetEventValue
-	jr z, .asm_32767
+	jr z, .done
 	ld a, NPC_IMAKUNI_RED
 	farcall ClearOWObject
 	ld a, EVENT_MASONS_LAB_CHALLENGE_MACHINE_STATE_DUMMY
 	farcall ZeroOutEventValue
 	ld a, [wNextMusic]
 	ld [wCurMusic], a
-.asm_32767
+.done
 	scf
 	ret
 
